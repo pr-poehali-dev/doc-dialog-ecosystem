@@ -67,7 +67,6 @@ export default function ReviewsSection({ entityType, entityId }: ReviewsSectionP
           'Content-Type': 'application/json',
           'X-Authorization': `Bearer ${token}`
         },
-        credentials: 'include',
         body: JSON.stringify({
           entity_type: entityType,
           entity_id: entityId,
