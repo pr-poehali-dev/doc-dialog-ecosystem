@@ -239,17 +239,7 @@ export default function MastermindPage() {
                     {mastermind.max_participants && (
                       <div className="flex items-center gap-3">
                         <Icon name="Users" size={20} className="text-primary" />
-                        <span>
-                          Участников: <strong>{mastermind.current_participants} / {mastermind.max_participants}</strong>
-                          {availableSpots !== null && availableSpots > 0 && (
-                            <span className="ml-2 text-green-600">
-                              (осталось {availableSpots} {availableSpots === 1 ? 'место' : availableSpots < 5 ? 'места' : 'мест'})
-                            </span>
-                          )}
-                          {availableSpots === 0 && (
-                            <span className="ml-2 text-red-600">(мест нет)</span>
-                          )}
-                        </span>
+                        <span>Участников: <strong>{mastermind.current_participants} / {mastermind.max_participants}</strong></span>
                       </div>
                     )}
                   </div>
