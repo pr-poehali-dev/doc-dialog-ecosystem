@@ -2,13 +2,15 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import Icon from "@/components/ui/icon";
 import CourseModerationTab from "@/components/CourseModerationTab";
 import MastermindModerationTab from "@/components/MastermindModerationTab";
 import ReviewsModerationTab from "@/components/ReviewsModerationTab";
+import AdminDashboardTab from "@/components/admin/AdminDashboardTab";
+import AdminUsersTab from "@/components/admin/AdminUsersTab";
+import AdminModerationTab from "@/components/admin/AdminModerationTab";
 
 interface Stats {
   total_users: number;
@@ -284,205 +286,24 @@ export default function AdminPanel() {
           </div>
 
           {/* Dashboard Tab */}
-          {activeTab === 'dashboard' && stats && (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Icon name="Users" className="text-primary" />
-                    Всего пользователей
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-4xl font-bold">{stats.total_users}</div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Icon name="UserCheck" className="text-primary" />
-                    Массажистов
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-4xl font-bold">{stats.total_masseurs}</div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Icon name="Calendar" className="text-primary" />
-                    Записей
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-4xl font-bold">{stats.total_appointments}</div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Icon name="MessageSquare" className="text-orange-500" />
-                    Отзывов на модерации
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-4xl font-bold text-orange-500">{stats.pending_reviews}</div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Icon name="AlertCircle" className="text-red-500" />
-                    Ожидают модерации
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-4xl font-bold text-red-500">{stats.pending_moderations}</div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Icon name="BookOpen" className="text-blue-500" />
-                    Курсов на модерации
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-4xl font-bold text-blue-500">{stats.pending_courses}</div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Icon name="Users" className="text-purple-500" />
-                    Мастермайндов на модерации
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-4xl font-bold text-purple-500">{stats.pending_masterminds}</div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
+          {activeTab === 'dashboard' && <AdminDashboardTab stats={stats} />}
 
           {/* Users Tab */}
           {activeTab === 'users' && (
-            <div className="space-y-4">
-              {loading ? (
-                <Card>
-                  <CardContent className="p-8 text-center">
-                    <Icon name="Loader2" className="animate-spin mx-auto mb-4" size={32} />
-                    <p>Загрузка пользователей...</p>
-                  </CardContent>
-                </Card>
-              ) : (
-                users.map(user => (
-                  <Card key={user.id}>
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <CardTitle>{user.email}</CardTitle>
-                          <CardDescription>
-                            ID: {user.id} • Роль: {user.role} • Создан: {new Date(user.created_at).toLocaleDateString()}
-                          </CardDescription>
-                        </div>
-                        <div className="flex gap-2">
-                          {user.is_admin && <Badge variant="destructive">Администратор</Badge>}
-                          {user.is_moderator && <Badge variant="secondary">Модератор</Badge>}
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant={user.is_admin ? "default" : "outline"}
-                          onClick={() => updateUserRole(user.id, !user.is_admin, user.is_moderator)}
-                        >
-                          {user.is_admin ? "Убрать админа" : "Назначить админом"}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant={user.is_moderator ? "secondary" : "outline"}
-                          onClick={() => updateUserRole(user.id, user.is_admin, !user.is_moderator)}
-                        >
-                          {user.is_moderator ? "Убрать модератора" : "Назначить модератором"}
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              )}
-            </div>
+            <AdminUsersTab 
+              users={users} 
+              loading={loading} 
+              onUpdateUserRole={updateUserRole} 
+            />
           )}
 
           {/* Moderation Tab */}
           {activeTab === 'moderation' && (
-            <div className="space-y-4">
-              {loading ? (
-                <Card>
-                  <CardContent className="p-8 text-center">
-                    <Icon name="Loader2" className="animate-spin mx-auto mb-4" size={32} />
-                    <p>Загрузка задач модерации...</p>
-                  </CardContent>
-                </Card>
-              ) : moderationItems.length === 0 ? (
-                <Card>
-                  <CardContent className="p-8 text-center">
-                    <Icon name="CheckCircle" className="mx-auto mb-4 text-green-500" size={48} />
-                    <p className="text-lg font-medium">Нет задач на модерацию</p>
-                    <p className="text-muted-foreground">Все изменения обработаны</p>
-                  </CardContent>
-                </Card>
-              ) : (
-                moderationItems.map(item => (
-                  <Card key={item.id}>
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <CardTitle>
-                            {item.action_type} - {item.entity_type}
-                          </CardTitle>
-                          <CardDescription>
-                            Пользователь: {item.user_email} • {new Date(item.created_at).toLocaleString()}
-                          </CardDescription>
-                        </div>
-                        <Badge>{item.status}</Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="mb-4 p-4 bg-muted rounded-lg">
-                        <pre className="text-sm overflow-auto">{JSON.stringify(item.new_data, null, 2)}</pre>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          onClick={() => moderateItem(item.id, true)}
-                        >
-                          <Icon name="Check" size={16} className="mr-2" />
-                          Одобрить
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => moderateItem(item.id, false)}
-                        >
-                          <Icon name="X" size={16} className="mr-2" />
-                          Отклонить
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              )}
-            </div>
+            <AdminModerationTab 
+              moderationItems={moderationItems} 
+              loading={loading} 
+              onModerate={moderateItem} 
+            />
           )}
 
           {/* Courses Moderation Tab */}
