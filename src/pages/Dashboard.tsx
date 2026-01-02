@@ -252,6 +252,115 @@ export default function Dashboard() {
               </div>
             </div>
           )}
+
+          {(user.role === 'admin' || user.role === 'moderator') && (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-red-500/10 rounded-full flex items-center justify-center">
+                    <Icon name="Shield" className="text-red-600" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Админ-панель</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Модерация и управление платформой</p>
+                <Link to="/admin">
+                  <Button className="w-full">Открыть панель</Button>
+                </Link>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="BookOpen" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Все курсы</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Просмотр всех курсов на платформе</p>
+                <Link to="/courses">
+                  <Button className="w-full" variant="outline">Смотреть курсы</Button>
+                </Link>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="Users" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Массажисты</h3>
+                </div>
+                <p className="text-gray-600 mb-4">База массажистов платформы</p>
+                <Link to="/masseurs">
+                  <Button className="w-full" variant="outline">Смотреть каталог</Button>
+                </Link>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="Building2" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Салоны</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Массажные салоны и вакансии</p>
+                <Button className="w-full" variant="outline">Смотреть салоны</Button>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="MessageSquare" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Чат с клиентами</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Сообщения и поддержка</p>
+                <Button className="w-full" variant="outline">Открыть чат</Button>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center">
+                    <Icon name="DollarSign" className="text-green-600" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Биллинг</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Платежи и подписки</p>
+                <Button className="w-full" variant="outline">Открыть биллинг</Button>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="BarChart3" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Аналитика</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Статистика и отчёты</p>
+                <Button className="w-full" variant="outline">Смотреть отчёты</Button>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="Settings" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Настройки</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Настройки платформы</p>
+                <Button className="w-full" variant="outline">Открыть настройки</Button>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-purple-500/10 rounded-full flex items-center justify-center">
+                    <Icon name="Mail" className="text-purple-600" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Рассылки</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Email и уведомления</p>
+                <Button className="w-full" variant="outline">Создать рассылку</Button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
