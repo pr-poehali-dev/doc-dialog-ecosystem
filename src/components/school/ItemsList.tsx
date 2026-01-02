@@ -85,7 +85,7 @@ export default function ItemsList({ activeTab, courses, masterminds, specialists
                 </div>
                 {course.price && (
                   <div className="flex items-center gap-2">
-                    <Icon name="DollarSign" size={16} className="text-primary" />
+                    <Icon name="Coins" size={16} className="text-primary" />
                     <span>{course.price.toLocaleString()} {course.currency}</span>
                   </div>
                 )}
