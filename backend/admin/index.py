@@ -53,8 +53,9 @@ def handler(event: dict, context) -> dict:
     admin_id = admin_user[0]
     is_admin = admin_user[2]
     
-    path_params = event.get('pathParams', {})
-    action = path_params.get('action', '')
+    # Get action from query parameters
+    query_params = event.get('queryStringParameters', {}) or {}
+    action = query_params.get('action', '')
     
     # GET /admin - Get dashboard stats
     if method == 'GET' and not action:
@@ -144,8 +145,8 @@ def handler(event: dict, context) -> dict:
             'body': json.dumps(result)
         }
     
-    # PUT /admin/users/:id/role - Update user roles (admin only)
-    if method == 'PUT' and action == 'users':
+    # PUT /admin?action=update_user - Update user roles (admin only)
+    if method == 'PUT' and action == 'update_user':
         if not is_admin:
             cur.close()
             conn.close()
@@ -155,8 +156,8 @@ def handler(event: dict, context) -> dict:
                 'body': json.dumps({'error': 'Only admin can manage user roles'})
             }
         
-        user_id = path_params.get('id')
         body = json.loads(event.get('body', '{}'))
+        user_id = body.get('user_id')
         is_admin_new = body.get('is_admin', False)
         is_moderator_new = body.get('is_moderator', False)
         
@@ -192,10 +193,10 @@ def handler(event: dict, context) -> dict:
             'body': json.dumps(result)
         }
     
-    # POST /admin/moderation/:id/approve - Approve moderation item
-    if method == 'POST' and action == 'moderation':
-        log_id = path_params.get('id')
+    # POST /admin?action=moderate - Approve moderation item
+    if method == 'POST' and action == 'moderate':
         body = json.loads(event.get('body', '{}'))
+        log_id = body.get('log_id')
         approve = body.get('approve', True)
         comment = body.get('comment', '')
         

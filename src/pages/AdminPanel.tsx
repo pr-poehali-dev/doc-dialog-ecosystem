@@ -93,7 +93,7 @@ export default function AdminPanel() {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('https://functions.poehali.dev/d9ed333b-313d-40b6-8ca2-016db5854f7c/users', {
+      const response = await fetch('https://functions.poehali.dev/d9ed333b-313d-40b6-8ca2-016db5854f7c?action=users', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -118,7 +118,7 @@ export default function AdminPanel() {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('https://functions.poehali.dev/d9ed333b-313d-40b6-8ca2-016db5854f7c/moderation', {
+      const response = await fetch('https://functions.poehali.dev/d9ed333b-313d-40b6-8ca2-016db5854f7c?action=moderation', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -142,13 +142,13 @@ export default function AdminPanel() {
   const updateUserRole = async (userId: number, isAdmin: boolean, isModerator: boolean) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`https://functions.poehali.dev/d9ed333b-313d-40b6-8ca2-016db5854f7c/users/${userId}`, {
+      const response = await fetch('https://functions.poehali.dev/d9ed333b-313d-40b6-8ca2-016db5854f7c?action=update_user', {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ is_admin: isAdmin, is_moderator: isModerator })
+        body: JSON.stringify({ user_id: userId, is_admin: isAdmin, is_moderator: isModerator })
       });
       
       if (response.ok) {
@@ -172,13 +172,13 @@ export default function AdminPanel() {
   const moderateItem = async (itemId: number, approve: boolean, comment: string = '') => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`https://functions.poehali.dev/d9ed333b-313d-40b6-8ca2-016db5854f7c/moderation/${itemId}`, {
+      const response = await fetch('https://functions.poehali.dev/d9ed333b-313d-40b6-8ca2-016db5854f7c?action=moderate', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ approve, comment })
+        body: JSON.stringify({ log_id: itemId, approve, comment })
       });
       
       if (response.ok) {
