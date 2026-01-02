@@ -76,8 +76,10 @@ def handler(event: dict, context) -> dict:
         }
     
     # POST /reviews - Add review (requires auth)
-    if method == 'POST':
+    if method == 'POST' and not action:
+        print(f"[DEBUG] POST request received. Headers: {event.get('headers', {})}")
         body = json.loads(event.get('body', '{}'))
+        print(f"[DEBUG] Body parsed: {body}")
         
         entity_type = body.get('entity_type')
         entity_id = body.get('entity_id')
@@ -96,7 +98,9 @@ def handler(event: dict, context) -> dict:
         
         # Get user from token (headers come in lowercase from proxy)
         headers = event.get('headers', {})
+        print(f"[DEBUG] All headers keys: {list(headers.keys())}")
         token = headers.get('x-authorization', headers.get('X-Authorization', '')).replace('Bearer ', '')
+        print(f"[DEBUG] Token extracted: {token[:20] if token else 'NO TOKEN'}...")
         
         if not token:
             cur.close()
