@@ -14,6 +14,8 @@ interface Course {
   external_url: string;
   status: string;
   moderation_comment?: string;
+  original_price?: number | null;
+  discount_price?: number | null;
   created_at: string;
 }
 
@@ -53,9 +55,11 @@ interface ItemsListProps {
   masterminds: Mastermind[];
   specialists: SpecialistRequest[];
   getStatusBadge: (status: string) => JSX.Element;
+  onEditCourse?: (course: Course) => void;
+  onDeleteCourse?: (courseId: number) => void;
 }
 
-export default function ItemsList({ activeTab, courses, masterminds, specialists, getStatusBadge }: ItemsListProps) {
+export default function ItemsList({ activeTab, courses, masterminds, specialists, getStatusBadge, onEditCourse, onDeleteCourse }: ItemsListProps) {
   return (
     <>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -83,18 +87,45 @@ export default function ItemsList({ activeTab, courses, masterminds, specialists
                   <Icon name="Monitor" size={16} className="text-primary" />
                   <span>{course.course_type === 'online' ? 'Онлайн' : course.course_type === 'offline' ? 'Офлайн' : 'Бесплатный'}</span>
                 </div>
-                {course.price && (
+                {(course.original_price || course.discount_price) ? (
+                  <div className="flex items-center gap-2">
+                    <Icon name="Coins" size={16} className="text-primary" />
+                    <div className="flex items-center gap-2">
+                      {course.original_price && (
+                        <span className="line-through text-muted-foreground">{course.original_price.toLocaleString()} {course.currency}</span>
+                      )}
+                      {course.discount_price && (
+                        <span className="text-red-600 font-semibold">{course.discount_price.toLocaleString()} {course.currency}</span>
+                      )}
+                    </div>
+                  </div>
+                ) : course.price ? (
                   <div className="flex items-center gap-2">
                     <Icon name="Coins" size={16} className="text-primary" />
                     <span>{course.price.toLocaleString()} {course.currency}</span>
                   </div>
-                )}
+                ) : null}
                 {course.duration_hours && (
                   <div className="flex items-center gap-2">
                     <Icon name="Clock" size={16} className="text-primary" />
                     <span>{course.duration_hours} часов</span>
                   </div>
                 )}
+              </div>
+              <div className="flex gap-2 mt-4 pt-4 border-t">
+                <button
+                  onClick={() => onEditCourse?.(course)}
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                >
+                  <Icon name="Pencil" size={16} />
+                  Редактировать
+                </button>
+                <button
+                  onClick={() => onDeleteCourse?.(course.id)}
+                  className="flex items-center justify-center gap-2 px-3 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
+                >
+                  <Icon name="Trash2" size={16} />
+                </button>
               </div>
             </CardContent>
           </Card>

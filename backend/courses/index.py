@@ -37,7 +37,7 @@ def handler(event: dict, context) -> dict:
         status_filter = query_params.get('status', 'approved')
         category = query_params.get('category')
         
-        query = f"SELECT id, school_id, title, description, category, course_type, price, currency, duration_hours, image_url, external_url, status, moderation_comment, created_at FROM {schema}.courses WHERE 1=1"
+        query = f"SELECT id, school_id, title, description, category, course_type, price, currency, duration_hours, image_url, external_url, status, moderation_comment, original_price, discount_price, created_at FROM {schema}.courses WHERE 1=1"
         
         if school_id:
             query += f" AND school_id = {school_id}"
@@ -65,7 +65,9 @@ def handler(event: dict, context) -> dict:
             'external_url': c[10],
             'status': c[11],
             'moderation_comment': c[12],
-            'created_at': c[13].isoformat() if c[13] else None
+            'original_price': float(c[13]) if c[13] else None,
+            'discount_price': float(c[14]) if c[14] else None,
+            'created_at': c[15].isoformat() if c[15] else None
         } for c in courses]
         
         cur.close()
@@ -186,9 +188,12 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
+        original_price = body.get('original_price')
+        discount_price = body.get('discount_price')
+        
         cur.execute(f"""
-            INSERT INTO {schema}.courses (school_id, title, description, category, course_type, price, currency, duration_hours, image_url, external_url, status)
-            VALUES ({school_id}, '{title.replace("'", "''")}', '{description.replace("'", "''")}', '{category}', '{course_type}', {price if price else 'NULL'}, '{currency}', {duration_hours if duration_hours else 'NULL'}, {f"'{image_url}'" if image_url else 'NULL'}, '{external_url}', 'pending')
+            INSERT INTO {schema}.courses (school_id, title, description, category, course_type, price, currency, duration_hours, image_url, external_url, original_price, discount_price, status)
+            VALUES ({school_id}, '{title.replace("'", "''")}', '{description.replace("'", "''")}', '{category}', '{course_type}', {price if price else 'NULL'}, '{currency}', {duration_hours if duration_hours else 'NULL'}, {f"'{image_url}'" if image_url else 'NULL'}, '{external_url}', {original_price if original_price else 'NULL'}, {discount_price if discount_price else 'NULL'}, 'pending')
             RETURNING id, title, status, created_at
         """)
         
@@ -304,6 +309,124 @@ def handler(event: dict, context) -> dict:
             'statusCode': 201,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
             'body': json.dumps(result),
+            'isBase64Encoded': False
+        }
+    
+    # PUT /courses?type=courses&id=X - Update course (sends to moderation)
+    if method == 'PUT' and entity_type == 'courses':
+        course_id = query_params.get('id')
+        if not course_id:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Missing course id'}),
+                'isBase64Encoded': False
+            }
+        
+        body = json.loads(event.get('body', '{}'))
+        
+        title = body.get('title')
+        description = body.get('description', '')
+        category = body.get('category')
+        course_type = body.get('course_type')
+        price = body.get('price')
+        currency = body.get('currency', 'RUB')
+        duration_hours = body.get('duration_hours')
+        image_url = body.get('image_url')
+        external_url = body.get('external_url')
+        original_price = body.get('original_price')
+        discount_price = body.get('discount_price')
+        
+        if not all([title, category, course_type, external_url]):
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Missing required fields'}),
+                'isBase64Encoded': False
+            }
+        
+        cur.execute(f"""
+            UPDATE {schema}.courses
+            SET title = '{title.replace("'", "''")}',
+                description = '{description.replace("'", "''")}',
+                category = '{category}',
+                course_type = '{course_type}',
+                price = {price if price else 'NULL'},
+                currency = '{currency}',
+                duration_hours = {duration_hours if duration_hours else 'NULL'},
+                image_url = {f"'{image_url}'" if image_url else 'NULL'},
+                external_url = '{external_url}',
+                original_price = {original_price if original_price else 'NULL'},
+                discount_price = {discount_price if discount_price else 'NULL'},
+                status = 'pending',
+                updated_at = NOW()
+            WHERE id = {course_id}
+            RETURNING id, title, status
+        """)
+        
+        updated_course = cur.fetchone()
+        
+        if not updated_course:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Course not found'}),
+                'isBase64Encoded': False
+            }
+        
+        result = {
+            'id': updated_course[0],
+            'title': updated_course[1],
+            'status': updated_course[2]
+        }
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps(result),
+            'isBase64Encoded': False
+        }
+    
+    # DELETE /courses?type=courses&id=X - Delete course
+    if method == 'DELETE' and entity_type == 'courses':
+        course_id = query_params.get('id')
+        if not course_id:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Missing course id'}),
+                'isBase64Encoded': False
+            }
+        
+        cur.execute(f"DELETE FROM {schema}.courses WHERE id = {course_id} RETURNING id")
+        deleted = cur.fetchone()
+        
+        if not deleted:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Course not found'}),
+                'isBase64Encoded': False
+            }
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'message': 'Course deleted successfully'}),
             'isBase64Encoded': False
         }
     

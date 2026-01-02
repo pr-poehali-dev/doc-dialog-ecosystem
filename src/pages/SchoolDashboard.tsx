@@ -21,6 +21,8 @@ interface Course {
   external_url: string;
   status: string;
   moderation_comment?: string;
+  original_price?: number | null;
+  discount_price?: number | null;
   created_at: string;
 }
 
@@ -60,6 +62,7 @@ export default function SchoolDashboard() {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<'courses' | 'masterminds' | 'specialists'>('courses');
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editingCourseId, setEditingCourseId] = useState<number | null>(null);
   
   const [courses, setCourses] = useState<Course[]>([]);
   const [masterminds, setMasterminds] = useState<Mastermind[]>([]);
@@ -75,7 +78,9 @@ export default function SchoolDashboard() {
     price: '',
     duration_hours: '',
     image_url: '',
-    external_url: ''
+    external_url: '',
+    original_price: '',
+    discount_price: ''
   });
   
   const [mastermindForm, setMastermindForm] = useState({
@@ -133,18 +138,82 @@ export default function SchoolDashboard() {
           school_id: schoolId,
           ...courseForm,
           price: courseForm.price ? parseFloat(courseForm.price) : null,
-          duration_hours: courseForm.duration_hours ? parseInt(courseForm.duration_hours) : null
+          duration_hours: courseForm.duration_hours ? parseInt(courseForm.duration_hours) : null,
+          original_price: courseForm.original_price ? parseFloat(courseForm.original_price) : null,
+          discount_price: courseForm.discount_price ? parseFloat(courseForm.discount_price) : null
         })
       });
       
       if (response.ok) {
         toast({ title: 'Курс добавлен', description: 'Курс отправлен на модерацию' });
         setShowAddForm(false);
-        setCourseForm({ title: '', description: '', category: 'Классический массаж', course_type: 'online', price: '', duration_hours: '', image_url: '', external_url: '' });
+        setCourseForm({ title: '', description: '', category: 'Классический массаж', course_type: 'online', price: '', duration_hours: '', image_url: '', external_url: '', original_price: '', discount_price: '' });
         loadData();
       }
     } catch (error) {
       toast({ title: 'Ошибка', description: 'Не удалось добавить курс', variant: 'destructive' });
+    }
+  };
+
+  const handleEditCourse = (course: Course) => {
+    setCourseForm({
+      title: course.title,
+      description: course.description,
+      category: course.category,
+      course_type: course.course_type,
+      price: course.price?.toString() || '',
+      duration_hours: course.duration_hours?.toString() || '',
+      image_url: course.image_url || '',
+      external_url: course.external_url,
+      original_price: course.original_price?.toString() || '',
+      discount_price: course.discount_price?.toString() || ''
+    });
+    setEditingCourseId(course.id);
+    setShowAddForm(true);
+  };
+
+  const handleUpdateCourse = async () => {
+    if (!editingCourseId) return;
+    
+    try {
+      const response = await fetch(`${COURSE_API_URL}?type=courses&id=${editingCourseId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...courseForm,
+          price: courseForm.price ? parseFloat(courseForm.price) : null,
+          duration_hours: courseForm.duration_hours ? parseInt(courseForm.duration_hours) : null,
+          original_price: courseForm.original_price ? parseFloat(courseForm.original_price) : null,
+          discount_price: courseForm.discount_price ? parseFloat(courseForm.discount_price) : null
+        })
+      });
+      
+      if (response.ok) {
+        toast({ title: 'Курс обновлен', description: 'Курс отправлен на модерацию' });
+        setShowAddForm(false);
+        setEditingCourseId(null);
+        setCourseForm({ title: '', description: '', category: 'Классический массаж', course_type: 'online', price: '', duration_hours: '', image_url: '', external_url: '', original_price: '', discount_price: '' });
+        loadData();
+      }
+    } catch (error) {
+      toast({ title: 'Ошибка', description: 'Не удалось обновить курс', variant: 'destructive' });
+    }
+  };
+
+  const handleDeleteCourse = async (courseId: number) => {
+    if (!confirm('Вы уверены, что хотите удалить этот курс?')) return;
+    
+    try {
+      const response = await fetch(`${COURSE_API_URL}?type=courses&id=${courseId}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        toast({ title: 'Курс удален', description: 'Курс успешно удален' });
+        loadData();
+      }
+    } catch (error) {
+      toast({ title: 'Ошибка', description: 'Не удалось удалить курс', variant: 'destructive' });
     }
   };
 
@@ -267,8 +336,13 @@ export default function SchoolDashboard() {
           <CourseForm
             courseForm={courseForm}
             setCourseForm={setCourseForm}
-            onSubmit={handleAddCourse}
-            onCancel={() => setShowAddForm(false)}
+            onSubmit={editingCourseId ? handleUpdateCourse : handleAddCourse}
+            onCancel={() => {
+              setShowAddForm(false);
+              setEditingCourseId(null);
+              setCourseForm({ title: '', description: '', category: 'Классический массаж', course_type: 'online', price: '', duration_hours: '', image_url: '', external_url: '', original_price: '', discount_price: '' });
+            }}
+            isEditing={!!editingCourseId}
           />
         )}
 
@@ -297,6 +371,8 @@ export default function SchoolDashboard() {
             masterminds={masterminds}
             specialists={specialists}
             getStatusBadge={getStatusBadge}
+            onEditCourse={handleEditCourse}
+            onDeleteCourse={handleDeleteCourse}
           />
         )}
       </div>

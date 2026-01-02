@@ -14,6 +14,8 @@ interface CourseFormProps {
     duration_hours: string;
     image_url: string;
     external_url: string;
+    original_price: string;
+    discount_price: string;
   };
   setCourseForm: React.Dispatch<React.SetStateAction<{
     title: string;
@@ -24,16 +26,19 @@ interface CourseFormProps {
     duration_hours: string;
     image_url: string;
     external_url: string;
+    original_price: string;
+    discount_price: string;
   }>>;
   onSubmit: () => void;
   onCancel: () => void;
+  isEditing?: boolean;
 }
 
-export default function CourseForm({ courseForm, setCourseForm, onSubmit, onCancel }: CourseFormProps) {
+export default function CourseForm({ courseForm, setCourseForm, onSubmit, onCancel, isEditing }: CourseFormProps) {
   return (
     <Card className="mb-6">
       <CardHeader>
-        <CardTitle>Добавить новый курс</CardTitle>
+        <CardTitle>{isEditing ? 'Редактировать курс' : 'Добавить новый курс'}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
@@ -76,6 +81,16 @@ export default function CourseForm({ courseForm, setCourseForm, onSubmit, onCanc
             <Input type="number" value={courseForm.duration_hours} onChange={(e) => setCourseForm({...courseForm, duration_hours: e.target.value})} />
           </div>
         </div>
+        <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <Label>Полная цена (перечеркнутая, ₽)</Label>
+            <Input type="number" value={courseForm.original_price} onChange={(e) => setCourseForm({...courseForm, original_price: e.target.value})} placeholder="Необязательно" />
+          </div>
+          <div>
+            <Label>Цена со скидкой (красная, ₽)</Label>
+            <Input type="number" value={courseForm.discount_price} onChange={(e) => setCourseForm({...courseForm, discount_price: e.target.value})} placeholder="Необязательно" />
+          </div>
+        </div>
         <div>
           <Label>URL изображения</Label>
           <Input value={courseForm.image_url} onChange={(e) => setCourseForm({...courseForm, image_url: e.target.value})} placeholder="https://..." />
@@ -85,7 +100,7 @@ export default function CourseForm({ courseForm, setCourseForm, onSubmit, onCanc
           <Input value={courseForm.external_url} onChange={(e) => setCourseForm({...courseForm, external_url: e.target.value})} placeholder="https://..." />
         </div>
         <div className="flex gap-2">
-          <Button onClick={onSubmit}>Добавить курс</Button>
+          <Button onClick={onSubmit}>{isEditing ? 'Сохранить изменения' : 'Добавить курс'}</Button>
           <Button variant="outline" onClick={onCancel}>Отмена</Button>
         </div>
       </CardContent>
