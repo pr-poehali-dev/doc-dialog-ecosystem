@@ -39,7 +39,12 @@ export default function CourseModerationTab() {
   const loadPendingCourses = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${COURSE_API_URL}?status=pending`);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${ADMIN_API_URL}?action=courses`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       const data = await response.json();
       setCourses(data);
     } catch (error) {

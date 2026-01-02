@@ -20,6 +20,7 @@ interface Course {
   image_url: string | null;
   external_url: string;
   status: string;
+  moderation_comment?: string;
   created_at: string;
 }
 

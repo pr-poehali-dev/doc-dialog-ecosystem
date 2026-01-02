@@ -13,6 +13,7 @@ interface Course {
   image_url: string | null;
   external_url: string;
   status: string;
+  moderation_comment?: string;
   created_at: string;
 }
 
@@ -66,6 +67,11 @@ export default function ItemsList({ activeTab, courses, masterminds, specialists
                 {getStatusBadge(course.status)}
               </div>
               <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
+              {course.status === 'rejected' && course.moderation_comment && (
+                <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-xs text-red-800">
+                  <strong>Причина отклонения:</strong> {course.moderation_comment}
+                </div>
+              )}
             </CardHeader>
             <CardContent>
               <div className="space-y-2 text-sm">

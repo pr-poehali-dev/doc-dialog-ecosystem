@@ -247,6 +247,46 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
+    # GET /admin?action=courses - Get pending courses
+    if method == 'GET' and action == 'courses':
+        cur.execute(f"""
+            SELECT c.id, c.school_id, s.name as school_name, c.title, c.description, 
+                   c.category, c.course_type, c.price, c.currency, c.duration_hours, 
+                   c.image_url, c.external_url, c.status, c.moderation_comment, c.created_at
+            FROM {schema}.courses c
+            LEFT JOIN {schema}.schools s ON c.school_id = s.id
+            WHERE c.status = 'pending'
+            ORDER BY c.created_at DESC
+        """)
+        courses = cur.fetchall()
+        
+        result = [{
+            'id': c[0],
+            'school_id': c[1],
+            'school_name': c[2],
+            'title': c[3],
+            'description': c[4],
+            'category': c[5],
+            'course_type': c[6],
+            'price': float(c[7]) if c[7] else None,
+            'currency': c[8],
+            'duration_hours': c[9],
+            'image_url': c[10],
+            'external_url': c[11],
+            'status': c[12],
+            'moderation_comment': c[13],
+            'created_at': c[14].isoformat() if c[14] else None
+        } for c in courses]
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps(result),
+            'isBase64Encoded': False
+        }
+    
     # POST /admin?action=moderate_course - Moderate course
     if method == 'POST' and action == 'moderate_course':
         body = json.loads(event.get('body', '{}'))
