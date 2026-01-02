@@ -1,12 +1,64 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
+
+type UserType = 'masseur' | 'school' | 'salon' | null;
 
 const Index = () => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [userType, setUserType] = useState<UserType>(null);
+
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     element?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  const openDialog = (type: UserType) => {
+    setUserType(type);
+    setIsDialogOpen(true);
+  };
+
+  const getDialogContent = () => {
+    switch (userType) {
+      case 'masseur':
+        return {
+          title: 'Регистрация массажиста',
+          description: 'Присоединяйтесь к профессиональному сообществу массажистов',
+          icon: 'Users'
+        };
+      case 'school':
+        return {
+          title: 'Регистрация школы',
+          description: 'Разместите свои курсы и найдите учеников',
+          icon: 'GraduationCap'
+        };
+      case 'salon':
+        return {
+          title: 'Регистрация салона',
+          description: 'Найдите квалифицированных специалистов для вашего бизнеса',
+          icon: 'Building2'
+        };
+      default:
+        return {
+          title: '',
+          description: '',
+          icon: 'Users'
+        };
+    }
+  };
+
+  const dialogContent = getDialogContent();
 
   return (
     <div className="min-h-screen bg-background">
@@ -51,13 +103,13 @@ const Index = () => {
               Обучение, инструменты, практика и карьерный рост — в одном пространстве для специалистов массажа
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Button size="lg" className="text-lg px-8">
+              <Button size="lg" className="text-lg px-8" onClick={() => openDialog('masseur')}>
                 Я массажист
               </Button>
-              <Button size="lg" variant="outline" className="text-lg px-8">
+              <Button size="lg" variant="outline" className="text-lg px-8" onClick={() => openDialog('school')}>
                 Я школа
               </Button>
-              <Button size="lg" variant="outline" className="text-lg px-8">
+              <Button size="lg" variant="outline" className="text-lg px-8" onClick={() => openDialog('salon')}>
                 Я салон
               </Button>
             </div>
@@ -473,13 +525,13 @@ const Index = () => {
               Выберите формат, который подходит именно вам
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Button size="lg" className="text-lg px-12">
+              <Button size="lg" className="text-lg px-12" onClick={() => openDialog('masseur')}>
                 Я массажист
               </Button>
-              <Button size="lg" variant="outline" className="text-lg px-12">
+              <Button size="lg" variant="outline" className="text-lg px-12" onClick={() => openDialog('school')}>
                 Я школа
               </Button>
-              <Button size="lg" variant="outline" className="text-lg px-12">
+              <Button size="lg" variant="outline" className="text-lg px-12" onClick={() => openDialog('salon')}>
                 Я салон
               </Button>
             </div>
@@ -531,6 +583,69 @@ const Index = () => {
           </div>
         </div>
       </footer>
+
+      {/* Registration Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Icon name={dialogContent.icon} className="text-primary" size={24} />
+              </div>
+              <DialogTitle className="text-2xl">{dialogContent.title}</DialogTitle>
+            </div>
+            <DialogDescription className="text-base">
+              {dialogContent.description}
+            </DialogDescription>
+          </DialogHeader>
+          <form className="space-y-4 mt-4" onSubmit={(e) => { e.preventDefault(); }}>
+            <div className="space-y-2">
+              <Label htmlFor="name">Имя {userType === 'masseur' ? '' : 'или название организации'}</Label>
+              <Input id="name" placeholder="Введите ваше имя" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" placeholder="your@email.com" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="phone">Телефон</Label>
+              <Input id="phone" type="tel" placeholder="+7 (999) 123-45-67" />
+            </div>
+            {userType === 'masseur' && (
+              <div className="space-y-2">
+                <Label htmlFor="experience">Опыт работы</Label>
+                <Input id="experience" placeholder="Например: 3 года" />
+              </div>
+            )}
+            {userType === 'school' && (
+              <div className="space-y-2">
+                <Label htmlFor="courses">Какие курсы предлагаете?</Label>
+                <Textarea id="courses" placeholder="Опишите ваши курсы" rows={3} />
+              </div>
+            )}
+            {userType === 'salon' && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="location">Местоположение салона</Label>
+                  <Input id="location" placeholder="Город, адрес" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="positions">Какие специалисты нужны?</Label>
+                  <Textarea id="positions" placeholder="Опишите вакансии" rows={3} />
+                </div>
+              </>
+            )}
+            <div className="space-y-2">
+              <Label htmlFor="message">Дополнительная информация</Label>
+              <Textarea id="message" placeholder="Расскажите о себе" rows={3} />
+            </div>
+            <div className="flex gap-3 pt-2">
+              <Button type="submit" className="flex-1">Отправить заявку</Button>
+              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Отмена</Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
