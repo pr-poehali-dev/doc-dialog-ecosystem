@@ -15,7 +15,8 @@ def handler(event: dict, context) -> dict:
                 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
                 'Access-Control-Allow-Headers': 'Content-Type, X-Authorization'
             },
-            'body': ''
+            'body': '',
+            'isBase64Encoded': False
         }
     
     # Check admin authorization
@@ -24,7 +25,8 @@ def handler(event: dict, context) -> dict:
         return {
             'statusCode': 401,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'error': 'Unauthorized'})
+            'body': json.dumps({'error': 'Unauthorized'}),
+            'isBase64Encoded': False
         }
     
     token = auth_header.replace('Bearer ', '')
@@ -47,7 +49,8 @@ def handler(event: dict, context) -> dict:
         return {
             'statusCode': 403,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'error': 'Access denied: Admin or Moderator role required'})
+            'body': json.dumps({'error': 'Access denied: Admin or Moderator role required'}),
+            'isBase64Encoded': False
         }
     
     admin_id = admin_user[0]
@@ -82,7 +85,8 @@ def handler(event: dict, context) -> dict:
         return {
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps(result)
+            'body': json.dumps(result),
+            'isBase64Encoded': False
         }
     
     # GET /admin/users - List all users
@@ -108,7 +112,8 @@ def handler(event: dict, context) -> dict:
         return {
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps(result)
+            'body': json.dumps(result),
+            'isBase64Encoded': False
         }
     
     # GET /admin/moderation - List pending items for moderation
@@ -142,7 +147,8 @@ def handler(event: dict, context) -> dict:
         return {
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps(result)
+            'body': json.dumps(result),
+            'isBase64Encoded': False
         }
     
     # PUT /admin?action=update_user - Update user roles (admin only)
@@ -153,7 +159,8 @@ def handler(event: dict, context) -> dict:
             return {
                 'statusCode': 403,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Only admin can manage user roles'})
+                'body': json.dumps({'error': 'Only admin can manage user roles'}),
+                'isBase64Encoded': False
             }
         
         body = json.loads(event.get('body', '{}'))
@@ -175,7 +182,8 @@ def handler(event: dict, context) -> dict:
             return {
                 'statusCode': 404,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'User not found'})
+                'body': json.dumps({'error': 'User not found'}),
+                'isBase64Encoded': False
             }
         
         result = {
@@ -190,7 +198,8 @@ def handler(event: dict, context) -> dict:
         return {
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps(result)
+            'body': json.dumps(result),
+            'isBase64Encoded': False
         }
     
     # POST /admin?action=moderate - Approve moderation item
@@ -219,7 +228,8 @@ def handler(event: dict, context) -> dict:
             return {
                 'statusCode': 404,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Moderation log not found'})
+                'body': json.dumps({'error': 'Moderation log not found'}),
+                'isBase64Encoded': False
             }
         
         result = {
@@ -232,7 +242,8 @@ def handler(event: dict, context) -> dict:
         return {
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps(result)
+            'body': json.dumps(result),
+            'isBase64Encoded': False
         }
     
     cur.close()
@@ -240,5 +251,6 @@ def handler(event: dict, context) -> dict:
     return {
         'statusCode': 404,
         'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-        'body': json.dumps({'error': 'Endpoint not found'})
+        'body': json.dumps({'error': 'Endpoint not found'}),
+        'isBase64Encoded': False
     }

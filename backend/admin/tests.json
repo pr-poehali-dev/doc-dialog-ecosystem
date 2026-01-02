@@ -20,7 +20,7 @@
     {
       "name": "Get users list",
       "method": "GET",
-      "path": "/users",
+      "path": "/?action=users",
       "headers": {
         "X-Authorization": "Bearer test-token"
       },
