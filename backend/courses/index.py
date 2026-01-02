@@ -38,7 +38,7 @@ def handler(event: dict, context) -> dict:
             SELECT c.id, c.school_id, s.name as school_name, c.title, c.description, 
                    c.category, c.course_type, c.price, c.currency, c.duration_hours, 
                    c.image_url, c.external_url, c.status, c.original_price, c.discount_price,
-                   c.author_name, c.author_photo, c.course_content, c.view_count, c.created_at
+                   c.author_name, c.author_photo, c.course_content, c.view_count, c.author_position, c.co_authors, c.created_at
             FROM {schema}.courses c
             LEFT JOIN {schema}.schools s ON c.school_id = s.id
             WHERE c.id = {course_id} AND c.status = 'approved'
@@ -77,7 +77,9 @@ def handler(event: dict, context) -> dict:
             'author_photo': course[16],
             'course_content': course[17],
             'view_count': course[18],
-            'created_at': course[19].isoformat() if course[19] else None
+            'author_position': course[19],
+            'co_authors': course[20],
+            'created_at': course[21].isoformat() if course[21] else None
         }
         
         cur.close()
@@ -145,7 +147,7 @@ def handler(event: dict, context) -> dict:
                    m.event_date, m.location, m.max_participants, m.current_participants,
                    m.price, m.currency, m.image_url, m.external_url, m.status,
                    m.original_price, m.discount_price, m.author_name, m.author_photo,
-                   m.event_content, m.view_count, m.created_at
+                   m.event_content, m.view_count, m.author_position, m.co_authors, m.created_at
             FROM {schema}.masterminds m
             LEFT JOIN {schema}.schools s ON m.school_id = s.id
             WHERE m.id = {course_id} AND m.status = 'approved'
@@ -185,7 +187,9 @@ def handler(event: dict, context) -> dict:
             'author_photo': mastermind[17],
             'event_content': mastermind[18],
             'view_count': mastermind[19],
-            'created_at': mastermind[20].isoformat() if mastermind[20] else None
+            'author_position': mastermind[20],
+            'co_authors': mastermind[21],
+            'created_at': mastermind[22].isoformat() if mastermind[22] else None
         }
         
         cur.close()

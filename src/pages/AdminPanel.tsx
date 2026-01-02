@@ -478,10 +478,10 @@ export default function AdminPanel() {
           )}
 
           {/* Courses Moderation Tab */}
-          {activeTab === 'courses' && <CourseModerationTab />}
+          {activeTab === 'courses' && <CourseModerationTab onModerationComplete={loadDashboardStats} />}
 
           {/* Masterminds Moderation Tab */}
-          {activeTab === 'masterminds' && <MastermindModerationTab />}
+          {activeTab === 'masterminds' && <MastermindModerationTab onModerationComplete={loadDashboardStats} />}
         </div>
       </div>
     </div>

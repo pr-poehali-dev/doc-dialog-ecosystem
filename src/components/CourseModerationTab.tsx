@@ -25,7 +25,11 @@ interface Course {
 const COURSE_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f';
 const ADMIN_API_URL = 'https://functions.poehali.dev/d9ed333b-313d-40b6-8ca2-016db5854f7c';
 
-export default function CourseModerationTab() {
+interface CourseModerationTabProps {
+  onModerationComplete?: () => void;
+}
+
+export default function CourseModerationTab({ onModerationComplete }: CourseModerationTabProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [courses, setCourses] = useState<Course[]>([]);
@@ -75,6 +79,7 @@ export default function CourseModerationTab() {
         setModerationComment('');
         setSelectedCourse(null);
         loadPendingCourses();
+        if (onModerationComplete) onModerationComplete();
       } else {
         toast({ title: 'Ошибка', description: 'Не удалось одобрить курс', variant: 'destructive' });
       }
@@ -109,6 +114,7 @@ export default function CourseModerationTab() {
         setModerationComment('');
         setSelectedCourse(null);
         loadPendingCourses();
+        if (onModerationComplete) onModerationComplete();
       } else {
         toast({ title: 'Ошибка', description: 'Не удалось отклонить курс', variant: 'destructive' });
       }

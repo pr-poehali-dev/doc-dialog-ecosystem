@@ -6,6 +6,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 
+interface CoAuthor {
+  name: string;
+  position?: string;
+  photo?: string;
+}
+
 interface MastermindDetails {
   id: number;
   school_id: number;
@@ -24,7 +30,9 @@ interface MastermindDetails {
   discount_price?: number | null;
   author_name?: string;
   author_photo?: string;
+  author_position?: string;
   event_content?: string;
+  co_authors?: CoAuthor[];
   view_count?: number;
   created_at: string;
 }
@@ -137,25 +145,60 @@ export default function MastermindPage() {
 
               {mastermind.author_name && (
                 <Card>
-                  <CardContent className="flex items-center gap-4 p-6">
-                    {mastermind.author_photo ? (
-                      <img 
-                        src={mastermind.author_photo} 
-                        alt={mastermind.author_name}
-                        className="w-16 h-16 rounded-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(mastermind.author_name);
-                        }}
-                      />
-                    ) : (
-                      <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                        <Icon name="User" size={32} className="text-primary" />
+                  <CardContent className="p-6 space-y-4">
+                    <div className="flex items-center gap-4">
+                      {mastermind.author_photo ? (
+                        <img 
+                          src={mastermind.author_photo} 
+                          alt={mastermind.author_name}
+                          className="w-16 h-16 rounded-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(mastermind.author_name);
+                          }}
+                        />
+                      ) : (
+                        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                          <Icon name="User" size={32} className="text-primary" />
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-sm text-muted-foreground">Ведущий</p>
+                        <p className="text-lg font-semibold">{mastermind.author_name}</p>
+                        {mastermind.author_position && (
+                          <p className="text-sm text-muted-foreground">{mastermind.author_position}</p>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {mastermind.co_authors && mastermind.co_authors.length > 0 && (
+                      <div className="pt-4 border-t space-y-3">
+                        <p className="text-sm font-medium text-muted-foreground">Соведущие:</p>
+                        {mastermind.co_authors.map((coAuthor, index) => (
+                          <div key={index} className="flex items-center gap-3">
+                            {coAuthor.photo ? (
+                              <img 
+                                src={coAuthor.photo} 
+                                alt={coAuthor.name}
+                                className="w-12 h-12 rounded-full object-cover"
+                                onError={(e) => {
+                                  e.currentTarget.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(coAuthor.name);
+                                }}
+                              />
+                            ) : (
+                              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                                <Icon name="User" size={24} className="text-primary" />
+                              </div>
+                            )}
+                            <div>
+                              <p className="font-medium">{coAuthor.name}</p>
+                              {coAuthor.position && (
+                                <p className="text-sm text-muted-foreground">{coAuthor.position}</p>
+                              )}
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     )}
-                    <div>
-                      <p className="text-sm text-muted-foreground">Ведущий</p>
-                      <p className="text-lg font-semibold">{mastermind.author_name}</p>
-                    </div>
                   </CardContent>
                 </Card>
               )}

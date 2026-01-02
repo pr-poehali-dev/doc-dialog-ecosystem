@@ -25,7 +25,11 @@ interface Mastermind {
 
 const ADMIN_API_URL = 'https://functions.poehali.dev/d9ed333b-313d-40b6-8ca2-016db5854f7c';
 
-export default function MastermindModerationTab() {
+interface MastermindModerationTabProps {
+  onModerationComplete?: () => void;
+}
+
+export default function MastermindModerationTab({ onModerationComplete }: MastermindModerationTabProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [masterminds, setMasterminds] = useState<Mastermind[]>([]);
@@ -75,6 +79,7 @@ export default function MastermindModerationTab() {
         setModerationComment('');
         setSelectedMastermind(null);
         loadPendingMasterminds();
+        if (onModerationComplete) onModerationComplete();
       } else {
         toast({ title: 'Ошибка', description: 'Не удалось одобрить мастермайнд', variant: 'destructive' });
       }
@@ -109,6 +114,7 @@ export default function MastermindModerationTab() {
         setModerationComment('');
         setSelectedMastermind(null);
         loadPendingMasterminds();
+        if (onModerationComplete) onModerationComplete();
       } else {
         toast({ title: 'Ошибка', description: 'Не удалось отклонить мастермайнд', variant: 'destructive' });
       }

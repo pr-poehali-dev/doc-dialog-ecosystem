@@ -6,6 +6,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 
+interface CoAuthor {
+  name: string;
+  position?: string;
+  photo?: string;
+}
+
 interface CourseDetails {
   id: number;
   school_id: number;
@@ -23,7 +29,9 @@ interface CourseDetails {
   discount_price?: number | null;
   author_name?: string;
   author_photo?: string;
+  author_position?: string;
   course_content?: string;
+  co_authors?: CoAuthor[];
   view_count?: number;
   created_at: string;
 }
@@ -134,25 +142,60 @@ export default function CoursePage() {
 
               {course.author_name && (
                 <Card>
-                  <CardContent className="flex items-center gap-4 p-6">
-                    {course.author_photo ? (
-                      <img 
-                        src={course.author_photo} 
-                        alt={course.author_name}
-                        className="w-16 h-16 rounded-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(course.author_name);
-                        }}
-                      />
-                    ) : (
-                      <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                        <Icon name="User" size={32} className="text-primary" />
+                  <CardContent className="p-6 space-y-4">
+                    <div className="flex items-center gap-4">
+                      {course.author_photo ? (
+                        <img 
+                          src={course.author_photo} 
+                          alt={course.author_name}
+                          className="w-16 h-16 rounded-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(course.author_name);
+                          }}
+                        />
+                      ) : (
+                        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                          <Icon name="User" size={32} className="text-primary" />
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-sm text-muted-foreground">Автор курса</p>
+                        <p className="text-lg font-semibold">{course.author_name}</p>
+                        {course.author_position && (
+                          <p className="text-sm text-muted-foreground">{course.author_position}</p>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {course.co_authors && course.co_authors.length > 0 && (
+                      <div className="pt-4 border-t space-y-3">
+                        <p className="text-sm font-medium text-muted-foreground">Преподаватели:</p>
+                        {course.co_authors.map((coAuthor, index) => (
+                          <div key={index} className="flex items-center gap-3">
+                            {coAuthor.photo ? (
+                              <img 
+                                src={coAuthor.photo} 
+                                alt={coAuthor.name}
+                                className="w-12 h-12 rounded-full object-cover"
+                                onError={(e) => {
+                                  e.currentTarget.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(coAuthor.name);
+                                }}
+                              />
+                            ) : (
+                              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                                <Icon name="User" size={24} className="text-primary" />
+                              </div>
+                            )}
+                            <div>
+                              <p className="font-medium">{coAuthor.name}</p>
+                              {coAuthor.position && (
+                                <p className="text-sm text-muted-foreground">{coAuthor.position}</p>
+                              )}
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     )}
-                    <div>
-                      <p className="text-sm text-muted-foreground">Автор курса</p>
-                      <p className="text-lg font-semibold">{course.author_name}</p>
-                    </div>
                   </CardContent>
                 </Card>
               )}
