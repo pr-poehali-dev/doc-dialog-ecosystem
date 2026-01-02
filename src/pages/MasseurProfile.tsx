@@ -173,10 +173,6 @@ const MasseurProfile = () => {
                     <Icon name="Briefcase" size={20} className="text-primary" />
                     <span className="text-sm">Опыт: {masseur.experience_years} лет</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <Icon name="Phone" size={20} className="text-primary" />
-                    <span className="text-sm">{masseur.phone}</span>
-                  </div>
                   {masseur.languages && (
                     <div className="flex items-center gap-3">
                       <Icon name="Globe" size={20} className="text-primary" />
