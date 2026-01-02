@@ -1,16 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap");
-
-@font-face {
-  font-family: "HandilPro";
-  src:
-    url("https://cdn.poehali.dev/projects/3c77f42e-2f18-416c-a087-0e15daa8e0f7/bucket/HandilPro-Medium.woff2")
-      format("woff2"),
-    url("https://cdn.poehali.dev/projects/3c77f42e-2f18-416c-a087-0e15daa8e0f7/bucket/HandilPro-Medium.woff")
-      format("woff");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -72,7 +60,7 @@
   h4,
   h5,
   h6 {
-    font-family: "HandilPro", sans-serif;
+    font-family: "Montserrat", sans-serif;
   }
 
   .dark {
