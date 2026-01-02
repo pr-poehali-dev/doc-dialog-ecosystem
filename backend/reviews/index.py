@@ -2,6 +2,7 @@ import json
 import os
 import psycopg2
 import random
+import jwt
 
 def handler(event: dict, context) -> dict:
     """API для работы с отзывами к курсам и мастермайндам"""
@@ -106,11 +107,22 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
-        # Validate token and get user
-        cur.execute(f"SELECT id, email, name FROM {schema}.users WHERE token = '{token}'")
-        user = cur.fetchone()
-        
-        if not user:
+        # Validate JWT token and get user
+        try:
+            secret_key = os.environ.get('JWT_SECRET', 'default_secret_key')
+            payload = jwt.decode(token, secret_key, algorithms=['HS256'])
+            user_id = payload.get('user_id')
+            user_email = payload.get('email')
+        except jwt.ExpiredSignatureError:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 401,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Token expired'}),
+                'isBase64Encoded': False
+            }
+        except jwt.InvalidTokenError:
             cur.close()
             conn.close()
             return {
@@ -120,9 +132,8 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
-        user_id = user[0]
-        user_email = user[1]
-        user_name = user[2] or user_email.split('@')[0]
+        # Get user name from email
+        user_name = user_email.split('@')[0]
         
         # Insert review
         cur.execute(f"""
