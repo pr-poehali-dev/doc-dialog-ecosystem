@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import Icon from "@/components/ui/icon";
 import CourseModerationTab from "@/components/CourseModerationTab";
+import MastermindModerationTab from "@/components/MastermindModerationTab";
 
 interface Stats {
   total_users: number;
@@ -14,6 +15,8 @@ interface Stats {
   total_appointments: number;
   pending_reviews: number;
   pending_moderations: number;
+  pending_courses: number;
+  pending_masterminds: number;
 }
 
 interface User {
@@ -40,7 +43,7 @@ interface ModerationItem {
 export default function AdminPanel() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'moderation' | 'courses'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'moderation' | 'courses' | 'masterminds'>('dashboard');
   const [loading, setLoading] = useState(false);
   
   const [stats, setStats] = useState<Stats | null>(null);
@@ -256,6 +259,19 @@ export default function AdminPanel() {
             >
               <Icon name="BookOpen" size={18} className="mr-2" />
               Курсы
+              {stats && stats.pending_courses > 0 && (
+                <Badge className="ml-2" variant="destructive">{stats.pending_courses}</Badge>
+              )}
+            </Button>
+            <Button 
+              variant={activeTab === 'masterminds' ? 'default' : 'outline'}
+              onClick={() => setActiveTab('masterminds')}
+            >
+              <Icon name="Users" size={18} className="mr-2" />
+              Мастермайнды
+              {stats && stats.pending_masterminds > 0 && (
+                <Badge className="ml-2" variant="destructive">{stats.pending_masterminds}</Badge>
+              )}
             </Button>
           </div>
 
@@ -319,6 +335,30 @@ export default function AdminPanel() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-4xl font-bold text-red-500">{stats.pending_moderations}</div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Icon name="BookOpen" className="text-blue-500" />
+                    Курсов на модерации
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-4xl font-bold text-blue-500">{stats.pending_courses}</div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Icon name="Users" className="text-purple-500" />
+                    Мастермайндов на модерации
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-4xl font-bold text-purple-500">{stats.pending_masterminds}</div>
                 </CardContent>
               </Card>
             </div>
@@ -439,6 +479,9 @@ export default function AdminPanel() {
 
           {/* Courses Moderation Tab */}
           {activeTab === 'courses' && <CourseModerationTab />}
+
+          {/* Masterminds Moderation Tab */}
+          {activeTab === 'masterminds' && <MastermindModerationTab />}
         </div>
       </div>
     </div>

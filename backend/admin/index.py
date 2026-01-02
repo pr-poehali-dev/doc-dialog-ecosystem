@@ -69,7 +69,9 @@ def handler(event: dict, context) -> dict:
                 (SELECT COUNT(*) FROM {schema}.masseur_profiles) as total_masseurs,
                 (SELECT COUNT(*) FROM {schema}.appointments) as total_appointments,
                 (SELECT COUNT(*) FROM {schema}.reviews WHERE moderation_status = 'pending') as pending_reviews,
-                (SELECT COUNT(*) FROM {schema}.moderation_logs WHERE status = 'pending') as pending_moderations
+                (SELECT COUNT(*) FROM {schema}.moderation_logs WHERE status = 'pending') as pending_moderations,
+                (SELECT COUNT(*) FROM {schema}.courses WHERE status = 'pending') as pending_courses,
+                (SELECT COUNT(*) FROM {schema}.masterminds WHERE status = 'pending') as pending_masterminds
         """)
         stats = cur.fetchone()
         
@@ -78,7 +80,9 @@ def handler(event: dict, context) -> dict:
             'total_masseurs': stats[1],
             'total_appointments': stats[2],
             'pending_reviews': stats[3],
-            'pending_moderations': stats[4]
+            'pending_moderations': stats[4],
+            'pending_courses': stats[5],
+            'pending_masterminds': stats[6]
         }
         
         cur.close()
@@ -321,6 +325,91 @@ def handler(event: dict, context) -> dict:
             'id': updated_course[0],
             'title': updated_course[1],
             'status': updated_course[2]
+        }
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps(result),
+            'isBase64Encoded': False
+        }
+    
+    # GET /admin?action=masterminds - Get pending masterminds
+    if method == 'GET' and action == 'masterminds':
+        cur.execute(f"""
+            SELECT m.id, m.school_id, s.name as school_name, m.title, m.description,
+                   m.event_date, m.location, m.max_participants, m.price, m.currency,
+                   m.image_url, m.external_url, m.status, m.moderation_comment, m.created_at
+            FROM {schema}.masterminds m
+            LEFT JOIN {schema}.schools s ON m.school_id = s.id
+            WHERE m.status = 'pending'
+            ORDER BY m.created_at DESC
+        """)
+        masterminds = cur.fetchall()
+        
+        result = [{
+            'id': m[0],
+            'school_id': m[1],
+            'school_name': m[2],
+            'title': m[3],
+            'description': m[4],
+            'event_date': m[5].isoformat() if m[5] else None,
+            'location': m[6],
+            'max_participants': m[7],
+            'price': float(m[8]) if m[8] else None,
+            'currency': m[9],
+            'image_url': m[10],
+            'external_url': m[11],
+            'status': m[12],
+            'moderation_comment': m[13],
+            'created_at': m[14].isoformat() if m[14] else None
+        } for m in masterminds]
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps(result),
+            'isBase64Encoded': False
+        }
+    
+    # POST /admin?action=moderate_mastermind - Moderate mastermind
+    if method == 'POST' and action == 'moderate_mastermind':
+        body = json.loads(event.get('body', '{}'))
+        mastermind_id = body.get('mastermind_id')
+        approve = body.get('approve', True)
+        comment = body.get('comment', '')
+        
+        status = 'approved' if approve else 'rejected'
+        
+        cur.execute(f"""
+            UPDATE {schema}.masterminds
+            SET status = '{status}',
+                moderation_comment = '{comment.replace("'", "''")}',
+                approved_at = {'NOW()' if approve else 'NULL'},
+                approved_by = {admin_id if approve else 'NULL'}
+            WHERE id = {mastermind_id}
+            RETURNING id, title, status
+        """)
+        updated_mastermind = cur.fetchone()
+        
+        if not updated_mastermind:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Mastermind not found'}),
+                'isBase64Encoded': False
+            }
+        
+        result = {
+            'id': updated_mastermind[0],
+            'title': updated_mastermind[1],
+            'status': updated_mastermind[2]
         }
         
         cur.close()
