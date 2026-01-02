@@ -438,9 +438,8 @@ const MainContent = ({ openDialog }: MainContentProps) => {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-8 max-w-6xl mx-auto">
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Icon name="Stethoscope" className="text-primary" size={24} />
-                <span className="text-lg font-bold">Док диалог</span>
+              <div className="mb-4">
+                <img src="https://cdn.poehali.dev/files/LOGO.png" alt="Док диалог" className="h-8" />
               </div>
               <p className="text-sm text-muted-foreground">
                 Профессиональная экосистема для массажистов
