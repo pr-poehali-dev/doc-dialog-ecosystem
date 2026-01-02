@@ -14,6 +14,11 @@ interface MastermindFormProps {
     price: string;
     image_url: string;
     external_url: string;
+    original_price: string;
+    discount_price: string;
+    author_name: string;
+    author_photo: string;
+    event_content: string;
   };
   setMastermindForm: React.Dispatch<React.SetStateAction<{
     title: string;
@@ -24,16 +29,22 @@ interface MastermindFormProps {
     price: string;
     image_url: string;
     external_url: string;
+    original_price: string;
+    discount_price: string;
+    author_name: string;
+    author_photo: string;
+    event_content: string;
   }>>;
   onSubmit: () => void;
   onCancel: () => void;
+  isEditing?: boolean;
 }
 
-export default function MastermindForm({ mastermindForm, setMastermindForm, onSubmit, onCancel }: MastermindFormProps) {
+export default function MastermindForm({ mastermindForm, setMastermindForm, onSubmit, onCancel, isEditing }: MastermindFormProps) {
   return (
     <Card className="mb-6">
       <CardHeader>
-        <CardTitle>Добавить мастермайнд</CardTitle>
+        <CardTitle>{isEditing ? 'Редактировать мастермайнд' : 'Добавить мастермайнд'}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
@@ -70,10 +81,35 @@ export default function MastermindForm({ mastermindForm, setMastermindForm, onSu
         </div>
         <div>
           <Label>Ссылка для регистрации*</Label>
-          <Input value={mastermindForm.external_url} onChange={(e) => setMastermindForm({...mastermindForm, external_url: e.target.value})} placeholder="https://..." />
+          <Input value={mastermindForm.external_url} onChange={(e) => setMastermindForm({...mastermindForm, external_url: e.target.value})} placeholder="https://... (ссылка на страницу оплаты)" />
+          <p className="text-xs text-muted-foreground mt-1">Укажите прямую ссылку на страницу оплаты</p>
+        </div>
+        <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <Label>Полная цена (перечеркнутая, ₽)</Label>
+            <Input type="number" value={mastermindForm.original_price} onChange={(e) => setMastermindForm({...mastermindForm, original_price: e.target.value})} placeholder="Необязательно" />
+          </div>
+          <div>
+            <Label>Цена со скидкой (красная, ₽)</Label>
+            <Input type="number" value={mastermindForm.discount_price} onChange={(e) => setMastermindForm({...mastermindForm, discount_price: e.target.value})} placeholder="Необязательно" />
+          </div>
+        </div>
+        <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <Label>Имя ведущего</Label>
+            <Input value={mastermindForm.author_name} onChange={(e) => setMastermindForm({...mastermindForm, author_name: e.target.value})} placeholder="Иван Иванов" />
+          </div>
+          <div>
+            <Label>Фото ведущего (URL)</Label>
+            <Input value={mastermindForm.author_photo} onChange={(e) => setMastermindForm({...mastermindForm, author_photo: e.target.value})} placeholder="https://..." />
+          </div>
+        </div>
+        <div>
+          <Label>Программа мастермайнда</Label>
+          <Textarea value={mastermindForm.event_content} onChange={(e) => setMastermindForm({...mastermindForm, event_content: e.target.value})} rows={6} placeholder="Подробное описание программы, темы, агенда..." />
         </div>
         <div className="flex gap-2">
-          <Button onClick={onSubmit}>Добавить мастермайнд</Button>
+          <Button onClick={onSubmit}>{isEditing ? 'Сохранить изменения' : 'Добавить мастермайнд'}</Button>
           <Button variant="outline" onClick={onCancel}>Отмена</Button>
         </div>
       </CardContent>

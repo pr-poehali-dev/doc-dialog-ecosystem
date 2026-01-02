@@ -249,18 +249,91 @@ export default function SchoolDashboard() {
           school_id: schoolId,
           ...mastermindForm,
           price: mastermindForm.price ? parseFloat(mastermindForm.price) : null,
-          max_participants: mastermindForm.max_participants ? parseInt(mastermindForm.max_participants) : null
+          max_participants: mastermindForm.max_participants ? parseInt(mastermindForm.max_participants) : null,
+          original_price: mastermindForm.original_price ? parseFloat(mastermindForm.original_price) : null,
+          discount_price: mastermindForm.discount_price ? parseFloat(mastermindForm.discount_price) : null,
+          author_name: mastermindForm.author_name,
+          author_photo: mastermindForm.author_photo,
+          event_content: mastermindForm.event_content
         })
       });
       
       if (response.ok) {
         toast({ title: 'Мастермайнд добавлен', description: 'Мастермайнд отправлен на модерацию' });
         setShowAddForm(false);
-        setMastermindForm({ title: '', description: '', event_date: '', location: '', max_participants: '', price: '', image_url: '', external_url: '' });
+        setMastermindForm({ title: '', description: '', event_date: '', location: '', max_participants: '', price: '', image_url: '', external_url: '', original_price: '', discount_price: '', author_name: '', author_photo: '', event_content: '' });
         loadData();
       }
     } catch (error) {
       toast({ title: 'Ошибка', description: 'Не удалось добавить мастермайнд', variant: 'destructive' });
+    }
+  };
+
+  const handleEditMastermind = (mastermind: Mastermind) => {
+    setMastermindForm({
+      title: mastermind.title,
+      description: mastermind.description,
+      event_date: mastermind.event_date,
+      location: mastermind.location || '',
+      max_participants: mastermind.max_participants?.toString() || '',
+      price: mastermind.price?.toString() || '',
+      image_url: mastermind.image_url || '',
+      external_url: mastermind.external_url,
+      original_price: mastermind.original_price?.toString() || '',
+      discount_price: mastermind.discount_price?.toString() || '',
+      author_name: '',
+      author_photo: '',
+      event_content: ''
+    });
+    setEditingMastermindId(mastermind.id);
+    setShowAddForm(true);
+  };
+
+  const handleUpdateMastermind = async () => {
+    if (!editingMastermindId) return;
+    
+    try {
+      const response = await fetch(`${COURSE_API_URL}?type=masterminds&id=${editingMastermindId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...mastermindForm,
+          price: mastermindForm.price ? parseFloat(mastermindForm.price) : null,
+          max_participants: mastermindForm.max_participants ? parseInt(mastermindForm.max_participants) : null,
+          original_price: mastermindForm.original_price ? parseFloat(mastermindForm.original_price) : null,
+          discount_price: mastermindForm.discount_price ? parseFloat(mastermindForm.discount_price) : null,
+          author_name: mastermindForm.author_name,
+          author_photo: mastermindForm.author_photo,
+          event_content: mastermindForm.event_content
+        })
+      });
+      
+      if (response.ok) {
+        toast({ title: 'Мастермайнд обновлен', description: 'Мастермайнд отправлен на модерацию' });
+        setShowAddForm(false);
+        setEditingMastermindId(null);
+        setMastermindForm({ title: '', description: '', event_date: '', location: '', max_participants: '', price: '', image_url: '', external_url: '', original_price: '', discount_price: '', author_name: '', author_photo: '', event_content: '' });
+        loadData();
+      }
+    } catch (error) {
+      toast({ title: 'Ошибка', description: 'Не удалось обновить мастермайнд', variant: 'destructive' });
+    }
+  };
+
+  const handleDeleteMastermind = async (mastermindId: number) => {
+    if (!confirm('Вы уверены, что хотите удалить этот мастермайнд?')) return;
+    
+    try {
+      const response = await fetch(`${COURSE_API_URL}?type=masterminds&id=${mastermindId}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        toast({ title: 'Мастермайнд удален', description: 'Мастермайнд успешно удален' });
+        loadData();
+      }
+    } catch (error) {
+      toast({ title: 'Ошибка', description: 'Не удалось удалить мастермайнд', variant: 'destructive' });
     }
   };
 
@@ -285,6 +358,63 @@ export default function SchoolDashboard() {
       }
     } catch (error) {
       toast({ title: 'Ошибка', description: 'Не удалось создать запрос', variant: 'destructive' });
+    }
+  };
+
+  const handleEditSpecialist = (specialist: SpecialistRequest) => {
+    setSpecialistForm({
+      title: specialist.title,
+      description: specialist.description,
+      specialty: specialist.specialty,
+      budget_from: specialist.budget_from?.toString() || '',
+      budget_to: specialist.budget_to?.toString() || '',
+      location: specialist.location || '',
+      deadline_date: specialist.deadline_date || ''
+    });
+    setEditingSpecialistId(specialist.id);
+    setShowAddForm(true);
+  };
+
+  const handleUpdateSpecialist = async () => {
+    if (!editingSpecialistId) return;
+    
+    try {
+      const response = await fetch(`${COURSE_API_URL}?type=specialists&id=${editingSpecialistId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...specialistForm,
+          budget_from: specialistForm.budget_from ? parseFloat(specialistForm.budget_from) : null,
+          budget_to: specialistForm.budget_to ? parseFloat(specialistForm.budget_to) : null
+        })
+      });
+      
+      if (response.ok) {
+        toast({ title: 'Запрос обновлен', description: 'Объявление успешно обновлено' });
+        setShowAddForm(false);
+        setEditingSpecialistId(null);
+        setSpecialistForm({ title: '', description: '', specialty: 'Видеооператор', budget_from: '', budget_to: '', location: '', deadline_date: '' });
+        loadData();
+      }
+    } catch (error) {
+      toast({ title: 'Ошибка', description: 'Не удалось обновить запрос', variant: 'destructive' });
+    }
+  };
+
+  const handleDeleteSpecialist = async (specialistId: number) => {
+    if (!confirm('Вы уверены, что хотите удалить этот запрос?')) return;
+    
+    try {
+      const response = await fetch(`${COURSE_API_URL}?type=specialists&id=${specialistId}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        toast({ title: 'Запрос удален', description: 'Запрос успешно удален' });
+        loadData();
+      }
+    } catch (error) {
+      toast({ title: 'Ошибка', description: 'Не удалось удалить запрос', variant: 'destructive' });
     }
   };
 
@@ -373,8 +503,13 @@ export default function SchoolDashboard() {
           <MastermindForm
             mastermindForm={mastermindForm}
             setMastermindForm={setMastermindForm}
-            onSubmit={handleAddMastermind}
-            onCancel={() => setShowAddForm(false)}
+            onSubmit={editingMastermindId ? handleUpdateMastermind : handleAddMastermind}
+            onCancel={() => {
+              setShowAddForm(false);
+              setEditingMastermindId(null);
+              setMastermindForm({ title: '', description: '', event_date: '', location: '', max_participants: '', price: '', image_url: '', external_url: '', original_price: '', discount_price: '', author_name: '', author_photo: '', event_content: '' });
+            }}
+            isEditing={!!editingMastermindId}
           />
         )}
 
@@ -382,8 +517,13 @@ export default function SchoolDashboard() {
           <SpecialistForm
             specialistForm={specialistForm}
             setSpecialistForm={setSpecialistForm}
-            onSubmit={handleAddSpecialist}
-            onCancel={() => setShowAddForm(false)}
+            onSubmit={editingSpecialistId ? handleUpdateSpecialist : handleAddSpecialist}
+            onCancel={() => {
+              setShowAddForm(false);
+              setEditingSpecialistId(null);
+              setSpecialistForm({ title: '', description: '', specialty: 'Видеооператор', budget_from: '', budget_to: '', location: '', deadline_date: '' });
+            }}
+            isEditing={!!editingSpecialistId}
           />
         )}
 
@@ -396,6 +536,10 @@ export default function SchoolDashboard() {
             getStatusBadge={getStatusBadge}
             onEditCourse={handleEditCourse}
             onDeleteCourse={handleDeleteCourse}
+            onEditMastermind={handleEditMastermind}
+            onDeleteMastermind={handleDeleteMastermind}
+            onEditSpecialist={handleEditSpecialist}
+            onDeleteSpecialist={handleDeleteSpecialist}
           />
         )}
       </div>

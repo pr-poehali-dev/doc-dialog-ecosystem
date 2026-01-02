@@ -24,6 +24,7 @@ interface CourseDetails {
   author_name?: string;
   author_photo?: string;
   course_content?: string;
+  view_count?: number;
   created_at: string;
 }
 

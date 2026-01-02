@@ -21,6 +21,7 @@ interface Course {
   status: string;
   original_price?: number | null;
   discount_price?: number | null;
+  view_count?: number;
   created_at: string;
 }
 

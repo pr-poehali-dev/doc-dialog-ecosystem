@@ -25,13 +25,14 @@ interface SpecialistFormProps {
   }>>;
   onSubmit: () => void;
   onCancel: () => void;
+  isEditing?: boolean;
 }
 
-export default function SpecialistForm({ specialistForm, setSpecialistForm, onSubmit, onCancel }: SpecialistFormProps) {
+export default function SpecialistForm({ specialistForm, setSpecialistForm, onSubmit, onCancel, isEditing }: SpecialistFormProps) {
   return (
     <Card className="mb-6">
       <CardHeader>
-        <CardTitle>Найти специалиста</CardTitle>
+        <CardTitle>{isEditing ? 'Редактировать запрос' : 'Найти специалиста'}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
@@ -75,7 +76,7 @@ export default function SpecialistForm({ specialistForm, setSpecialistForm, onSu
           </div>
         </div>
         <div className="flex gap-2">
-          <Button onClick={onSubmit}>Опубликовать</Button>
+          <Button onClick={onSubmit}>{isEditing ? 'Сохранить изменения' : 'Опубликовать'}</Button>
           <Button variant="outline" onClick={onCancel}>Отмена</Button>
         </div>
       </CardContent>

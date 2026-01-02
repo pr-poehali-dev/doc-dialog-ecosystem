@@ -32,6 +32,9 @@ interface Mastermind {
   image_url: string | null;
   external_url: string;
   status: string;
+  original_price?: number | null;
+  discount_price?: number | null;
+  view_count?: number;
   created_at: string;
 }
 
@@ -57,9 +60,13 @@ interface ItemsListProps {
   getStatusBadge: (status: string) => JSX.Element;
   onEditCourse?: (course: Course) => void;
   onDeleteCourse?: (courseId: number) => void;
+  onEditMastermind?: (mastermind: Mastermind) => void;
+  onDeleteMastermind?: (mastermindId: number) => void;
+  onEditSpecialist?: (specialist: SpecialistRequest) => void;
+  onDeleteSpecialist?: (specialistId: number) => void;
 }
 
-export default function ItemsList({ activeTab, courses, masterminds, specialists, getStatusBadge, onEditCourse, onDeleteCourse }: ItemsListProps) {
+export default function ItemsList({ activeTab, courses, masterminds, specialists, getStatusBadge, onEditCourse, onDeleteCourse, onEditMastermind, onDeleteMastermind, onEditSpecialist, onDeleteSpecialist }: ItemsListProps) {
   return (
     <>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -111,6 +118,12 @@ export default function ItemsList({ activeTab, courses, masterminds, specialists
                     <span>{course.duration_hours} часов</span>
                   </div>
                 )}
+                {course.view_count !== undefined && (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Icon name="Eye" size={16} className="text-primary" />
+                    <span>{course.view_count} просмотров</span>
+                  </div>
+                )}
               </div>
               <div className="flex gap-2 mt-4 pt-4 border-t">
                 <button
@@ -158,12 +171,45 @@ export default function ItemsList({ activeTab, courses, masterminds, specialists
                     <span>{mm.current_participants}/{mm.max_participants} участников</span>
                   </div>
                 )}
-                {mm.price && (
+                {(mm.original_price || mm.discount_price) ? (
                   <div className="flex items-center gap-2">
-                    <Icon name="DollarSign" size={16} className="text-primary" />
+                    <Icon name="Coins" size={16} className="text-primary" />
+                    <div className="flex items-center gap-2">
+                      {mm.original_price && (
+                        <span className="line-through text-muted-foreground">{mm.original_price.toLocaleString()} {mm.currency}</span>
+                      )}
+                      {mm.discount_price && (
+                        <span className="text-red-600 font-semibold">{mm.discount_price.toLocaleString()} {mm.currency}</span>
+                      )}
+                    </div>
+                  </div>
+                ) : mm.price ? (
+                  <div className="flex items-center gap-2">
+                    <Icon name="Coins" size={16} className="text-primary" />
                     <span>{mm.price.toLocaleString()} {mm.currency}</span>
                   </div>
+                ) : null}
+                {mm.view_count !== undefined && (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Icon name="Eye" size={16} className="text-primary" />
+                    <span>{mm.view_count} просмотров</span>
+                  </div>
                 )}
+              </div>
+              <div className="flex gap-2 mt-4 pt-4 border-t">
+                <button
+                  onClick={() => onEditMastermind?.(mm)}
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                >
+                  <Icon name="Pencil" size={16} />
+                  Редактировать
+                </button>
+                <button
+                  onClick={() => onDeleteMastermind?.(mm.id)}
+                  className="flex items-center justify-center gap-2 px-3 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
+                >
+                  <Icon name="Trash2" size={16} />
+                </button>
               </div>
             </CardContent>
           </Card>
@@ -209,6 +255,21 @@ export default function ItemsList({ activeTab, courses, masterminds, specialists
                     <span>До {new Date(spec.deadline_date).toLocaleDateString('ru-RU')}</span>
                   </div>
                 )}
+              </div>
+              <div className="flex gap-2 mt-4 pt-4 border-t">
+                <button
+                  onClick={() => onEditSpecialist?.(spec)}
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                >
+                  <Icon name="Pencil" size={16} />
+                  Редактировать
+                </button>
+                <button
+                  onClick={() => onDeleteSpecialist?.(spec.id)}
+                  className="flex items-center justify-center gap-2 px-3 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
+                >
+                  <Icon name="Trash2" size={16} />
+                </button>
               </div>
             </CardContent>
           </Card>
