@@ -51,6 +51,7 @@ export interface SpecialistRequest {
 }
 
 export interface CourseFormData {
+  school_name: string;
   title: string;
   description: string;
   category: string;
@@ -67,6 +68,7 @@ export interface CourseFormData {
 }
 
 export interface MastermindFormData {
+  school_name: string;
   title: string;
   description: string;
   event_date: string;
@@ -95,6 +97,7 @@ export interface SpecialistFormData {
 export const COURSE_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f';
 
 export const INITIAL_COURSE_FORM: CourseFormData = {
+  school_name: '',
   title: '',
   description: '',
   category: 'Классический массаж',
@@ -111,6 +114,7 @@ export const INITIAL_COURSE_FORM: CourseFormData = {
 };
 
 export const INITIAL_MASTERMIND_FORM: MastermindFormData = {
+  school_name: '',
   title: '',
   description: '',
   event_date: '',

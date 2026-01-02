@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 
 interface CourseFormProps {
   courseForm: {
+    school_name: string;
     title: string;
     description: string;
     category: string;
@@ -21,6 +22,7 @@ interface CourseFormProps {
     course_content: string;
   };
   setCourseForm: React.Dispatch<React.SetStateAction<{
+    school_name: string;
     title: string;
     description: string;
     category: string;
@@ -47,6 +49,11 @@ export default function CourseForm({ courseForm, setCourseForm, onSubmit, onCanc
         <CardTitle>{isEditing ? 'Редактировать курс' : 'Добавить новый курс'}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        <div>
+          <Label>Название школы*</Label>
+          <Input value={courseForm.school_name} onChange={(e) => setCourseForm({...courseForm, school_name: e.target.value})} placeholder="Школа массажа 'Название'" />
+          <p className="text-xs text-muted-foreground mt-1">Укажите полное название вашей школы, как оно отображается для учеников</p>
+        </div>
         <div>
           <Label>Название курса*</Label>
           <Input value={courseForm.title} onChange={(e) => setCourseForm({...courseForm, title: e.target.value})} />

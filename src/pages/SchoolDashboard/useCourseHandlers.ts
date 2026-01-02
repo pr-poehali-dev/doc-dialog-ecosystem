@@ -53,6 +53,7 @@ export function useCourseHandlers({
 
   const handleEditCourse = (course: Course) => {
     setCourseForm({
+      school_name: '',
       title: course.title,
       description: course.description,
       category: course.category,

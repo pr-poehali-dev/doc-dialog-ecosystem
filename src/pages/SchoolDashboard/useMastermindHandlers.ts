@@ -53,6 +53,7 @@ export function useMastermindHandlers({
 
   const handleEditMastermind = (mastermind: Mastermind) => {
     setMastermindForm({
+      school_name: '',
       title: mastermind.title,
       description: mastermind.description,
       event_date: mastermind.event_date,

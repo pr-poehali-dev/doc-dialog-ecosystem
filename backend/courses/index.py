@@ -35,7 +35,7 @@ def handler(event: dict, context) -> dict:
     # GET /courses?id=X - Get single course with full details + increment view counter
     if method == 'GET' and course_id and not action:
         cur.execute(f"""
-            SELECT c.id, c.school_id, s.name as school_name, c.title, c.description, 
+            SELECT c.id, c.school_id, COALESCE(c.school_name, s.name) as school_name, c.title, c.description, 
                    c.category, c.course_type, c.price, c.currency, c.duration_hours, 
                    c.image_url, c.external_url, c.status, c.original_price, c.discount_price,
                    c.author_name, c.author_photo, c.course_content, c.view_count, c.author_position, c.co_authors, c.created_at
@@ -143,7 +143,7 @@ def handler(event: dict, context) -> dict:
     # GET /courses?action=masterminds&id=X - Get single mastermind with full details + increment view counter
     if method == 'GET' and action == 'masterminds' and course_id:
         cur.execute(f"""
-            SELECT m.id, m.school_id, s.name as school_name, m.title, m.description,
+            SELECT m.id, m.school_id, COALESCE(m.school_name, s.name) as school_name, m.title, m.description,
                    m.event_date, m.location, m.max_participants, m.current_participants,
                    m.price, m.currency, m.image_url, m.external_url, m.status,
                    m.original_price, m.discount_price, m.author_name, m.author_photo,
@@ -318,10 +318,11 @@ def handler(event: dict, context) -> dict:
         author_name = body.get('author_name', '')
         author_photo = body.get('author_photo')
         course_content = body.get('course_content', '')
+        school_name = body.get('school_name', '')
         
         cur.execute(f"""
-            INSERT INTO {schema}.courses (school_id, title, description, category, course_type, price, currency, duration_hours, image_url, external_url, original_price, discount_price, author_name, author_photo, course_content, status)
-            VALUES ({school_id}, '{title.replace("'", "''")}', '{description.replace("'", "''")}', '{category}', '{course_type}', {price if price else 'NULL'}, '{currency}', {duration_hours if duration_hours else 'NULL'}, {f"'{image_url}'" if image_url else 'NULL'}, '{external_url}', {original_price if original_price else 'NULL'}, {discount_price if discount_price else 'NULL'}, '{author_name.replace("'", "''")}', {f"'{author_photo}'" if author_photo else 'NULL'}, '{course_content.replace("'", "''")}', 'pending')
+            INSERT INTO {schema}.courses (school_id, title, description, category, course_type, price, currency, duration_hours, image_url, external_url, original_price, discount_price, author_name, author_photo, course_content, school_name, status)
+            VALUES ({school_id}, '{title.replace("'", "''")}', '{description.replace("'", "''")}', '{category}', '{course_type}', {price if price else 'NULL'}, '{currency}', {duration_hours if duration_hours else 'NULL'}, {f"'{image_url}'" if image_url else 'NULL'}, '{external_url}', {original_price if original_price else 'NULL'}, {discount_price if discount_price else 'NULL'}, '{author_name.replace("'", "''")}', {f"'{author_photo}'" if author_photo else 'NULL'}, '{course_content.replace("'", "''")}', '{school_name.replace("'", "''")}', 'pending')
             RETURNING id, title, status, created_at
         """)
         
@@ -362,6 +363,7 @@ def handler(event: dict, context) -> dict:
         author_name = body.get('author_name', '')
         author_photo = body.get('author_photo')
         event_content = body.get('event_content', '')
+        school_name = body.get('school_name', '')
         
         if not all([school_id, title, event_date, external_url]):
             cur.close()
@@ -374,8 +376,8 @@ def handler(event: dict, context) -> dict:
             }
         
         cur.execute(f"""
-            INSERT INTO {schema}.masterminds (school_id, title, description, event_date, location, max_participants, price, currency, image_url, external_url, original_price, discount_price, author_name, author_photo, event_content, status)
-            VALUES ({school_id}, '{title.replace("'", "''")}', '{description.replace("'", "''")}', '{event_date}', {f"'{location}'" if location else 'NULL'}, {max_participants if max_participants else 'NULL'}, {price if price else 'NULL'}, '{currency}', {f"'{image_url}'" if image_url else 'NULL'}, '{external_url}', {original_price if original_price else 'NULL'}, {discount_price if discount_price else 'NULL'}, '{author_name.replace("'", "''")}', {f"'{author_photo}'" if author_photo else 'NULL'}, '{event_content.replace("'", "''")}', 'pending')
+            INSERT INTO {schema}.masterminds (school_id, title, description, event_date, location, max_participants, price, currency, image_url, external_url, original_price, discount_price, author_name, author_photo, event_content, school_name, status)
+            VALUES ({school_id}, '{title.replace("'", "''")}', '{description.replace("'", "''")}', '{event_date}', {f"'{location}'" if location else 'NULL'}, {max_participants if max_participants else 'NULL'}, {price if price else 'NULL'}, '{currency}', {f"'{image_url}'" if image_url else 'NULL'}, '{external_url}', {original_price if original_price else 'NULL'}, {discount_price if discount_price else 'NULL'}, '{author_name.replace("'", "''")}', {f"'{author_photo}'" if author_photo else 'NULL'}, '{event_content.replace("'", "''")}', '{school_name.replace("'", "''")}', 'pending')
             RETURNING id, title, status, created_at
         """)
         
@@ -474,6 +476,7 @@ def handler(event: dict, context) -> dict:
         author_name = body.get('author_name', '')
         author_photo = body.get('author_photo')
         course_content = body.get('course_content', '')
+        school_name = body.get('school_name', '')
         
         if not all([title, category, course_type, external_url]):
             cur.close()
@@ -501,6 +504,7 @@ def handler(event: dict, context) -> dict:
                 author_name = '{author_name.replace("'", "''")}',
                 author_photo = {f"'{author_photo}'" if author_photo else 'NULL'},
                 course_content = '{course_content.replace("'", "''")}',
+                school_name = '{school_name.replace("'", "''")}',
                 status = 'pending',
                 updated_at = NOW()
             WHERE id = {course_id}
@@ -592,6 +596,7 @@ def handler(event: dict, context) -> dict:
         author_name = body.get('author_name', '')
         author_photo = body.get('author_photo')
         event_content = body.get('event_content', '')
+        school_name = body.get('school_name', '')
         
         if not all([title, event_date, external_url]):
             cur.close()
@@ -606,7 +611,7 @@ def handler(event: dict, context) -> dict:
                 external_url = '{external_url}', original_price = {original_price if original_price else 'NULL'}, 
                 discount_price = {discount_price if discount_price else 'NULL'}, author_name = '{author_name.replace("'", "''")}', 
                 author_photo = {f"'{author_photo}'" if author_photo else 'NULL'}, event_content = '{event_content.replace("'", "''")}', 
-                status = 'pending', updated_at = NOW()
+                school_name = '{school_name.replace("'", "''")}', status = 'pending', updated_at = NOW()
             WHERE id = {mastermind_id}
             RETURNING id, title, status
         """)

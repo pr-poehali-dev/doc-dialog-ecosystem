@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 
 interface MastermindFormProps {
   mastermindForm: {
+    school_name: string;
     title: string;
     description: string;
     event_date: string;
@@ -21,6 +22,7 @@ interface MastermindFormProps {
     event_content: string;
   };
   setMastermindForm: React.Dispatch<React.SetStateAction<{
+    school_name: string;
     title: string;
     description: string;
     event_date: string;
@@ -48,7 +50,12 @@ export default function MastermindForm({ mastermindForm, setMastermindForm, onSu
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <Label>Название*</Label>
+          <Label>Название школы*</Label>
+          <Input value={mastermindForm.school_name} onChange={(e) => setMastermindForm({...mastermindForm, school_name: e.target.value})} placeholder="Школа массажа 'Название'" />
+          <p className="text-xs text-muted-foreground mt-1">Укажите полное название вашей школы, как оно отображается для учеников</p>
+        </div>
+        <div>
+          <Label>Название мастермайнда*</Label>
           <Input value={mastermindForm.title} onChange={(e) => setMastermindForm({...mastermindForm, title: e.target.value})} />
         </div>
         <div>
