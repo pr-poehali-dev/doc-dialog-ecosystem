@@ -25,6 +25,27 @@ interface Course {
   created_at: string;
 }
 
+interface Mastermind {
+  id: number;
+  school_id: number;
+  title: string;
+  description: string;
+  event_date: string;
+  location: string | null;
+  max_participants: number | null;
+  price: number | null;
+  currency: string;
+  image_url: string | null;
+  external_url: string;
+  status: string;
+  original_price?: number | null;
+  discount_price?: number | null;
+  view_count?: number;
+  created_at: string;
+}
+
+type CatalogItem = (Course & { itemType: 'course' }) | (Mastermind & { itemType: 'mastermind'; category: string; course_type: string });
+
 const COURSE_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f';
 
 const CATEGORIES = [
@@ -35,31 +56,50 @@ const CATEGORIES = [
   'SPA массаж',
   'Косметический массаж',
   'Детский массаж',
+  'Офлайн мероприятия',
   'Другое'
 ];
 
 export default function CoursesCatalog() {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
+  const [items, setItems] = useState<CatalogItem[]>([]);
+  const [filteredItems, setFilteredItems] = useState<CatalogItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Все категории');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadCourses();
+    loadAllItems();
   }, []);
 
   useEffect(() => {
-    filterCourses();
-  }, [searchQuery, selectedCategory, selectedType, courses]);
+    filterItems();
+  }, [searchQuery, selectedCategory, selectedType, items]);
 
-  const loadCourses = async () => {
+  const loadAllItems = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${COURSE_API_URL}?status=approved`);
-      const data = await response.json();
-      setCourses(data);
+      
+      const [coursesResponse, mastermindsResponse] = await Promise.all([
+        fetch(`${COURSE_API_URL}?status=approved`),
+        fetch(`${COURSE_API_URL}?action=masterminds&status=approved`)
+      ]);
+      
+      const coursesData: Course[] = await coursesResponse.json();
+      const mastermindsData: Mastermind[] = await mastermindsResponse.json();
+      
+      const allItems: CatalogItem[] = [
+        ...coursesData.map(c => ({ ...c, itemType: 'course' as const })),
+        ...mastermindsData.map(m => ({ 
+          ...m, 
+          itemType: 'mastermind' as const,
+          category: 'Офлайн мероприятия',
+          course_type: 'offline',
+          duration_hours: null
+        }))
+      ];
+      
+      setItems(allItems);
     } catch (error) {
       console.error('Load error:', error);
     } finally {
@@ -67,25 +107,25 @@ export default function CoursesCatalog() {
     }
   };
 
-  const filterCourses = () => {
-    let filtered = [...courses];
+  const filterItems = () => {
+    let filtered = [...items];
 
     if (searchQuery) {
-      filtered = filtered.filter(c => 
-        c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter(item => 
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.description?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
     if (selectedCategory !== 'Все категории') {
-      filtered = filtered.filter(c => c.category === selectedCategory);
+      filtered = filtered.filter(item => item.category === selectedCategory);
     }
 
     if (selectedType !== 'all') {
-      filtered = filtered.filter(c => c.course_type === selectedType);
+      filtered = filtered.filter(item => item.course_type === selectedType);
     }
 
-    setFilteredCourses(filtered);
+    setFilteredItems(filtered);
   };
 
   const getCourseTypeLabel = (type: string) => {
@@ -113,10 +153,10 @@ export default function CoursesCatalog() {
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-            Каталог курсов
+            Каталог курсов и мастермайндов
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Профессиональные курсы массажа от лучших школ и экспертов
+            Профессиональные курсы массажа и офлайн-мероприятия от лучших школ и экспертов
           </p>
         </div>
 
@@ -184,62 +224,84 @@ export default function CoursesCatalog() {
         ) : (
           <>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-              {filteredCourses.map((course) => (
-                <Card key={course.id} className="hover:shadow-lg transition-shadow flex flex-col">
-                  {course.image_url && (
+              {filteredItems.map((item) => (
+                <Card key={`${item.itemType}-${item.id}`} className="hover:shadow-lg transition-shadow flex flex-col">
+                  {item.image_url && (
                     <div className="w-full h-48 overflow-hidden rounded-t-lg">
                       <img 
-                        src={course.image_url} 
-                        alt={course.title}
+                        src={item.image_url} 
+                        alt={item.title}
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                          e.currentTarget.src = 'https://placehold.co/600x400/e2e8f0/64748b?text=Курс';
+                          e.currentTarget.src = item.itemType === 'mastermind' 
+                            ? 'https://placehold.co/600x400/e2e8f0/64748b?text=Мастермайнд'
+                            : 'https://placehold.co/600x400/e2e8f0/64748b?text=Курс';
                         }}
                       />
                     </div>
                   )}
                   <CardHeader className="flex-1">
                     <div className="flex justify-between items-start gap-2 mb-2">
-                      <CardTitle className="text-lg">{course.title}</CardTitle>
-                      <Badge className={getCourseTypeColor(course.course_type)}>
-                        {getCourseTypeLabel(course.course_type)}
+                      <CardTitle className="text-lg">{item.title}</CardTitle>
+                      <Badge className={getCourseTypeColor(item.course_type)}>
+                        {item.itemType === 'mastermind' ? 'Мастермайнд' : getCourseTypeLabel(item.course_type)}
                       </Badge>
                     </div>
-                    <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
+                    <p className="text-sm text-muted-foreground line-clamp-2">{item.description}</p>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="flex items-center gap-2 text-sm">
                       <Icon name="Tag" size={16} className="text-primary" />
-                      <span className="text-muted-foreground">{course.category}</span>
+                      <span className="text-muted-foreground">{item.category}</span>
                     </div>
                     
-                    {course.duration_hours && (
+                    {item.itemType === 'mastermind' ? (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Icon name="Calendar" size={16} className="text-primary" />
+                        <span className="text-muted-foreground">
+                          {new Date(item.event_date).toLocaleDateString('ru-RU', { 
+                            day: 'numeric', 
+                            month: 'long', 
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </span>
+                      </div>
+                    ) : item.duration_hours ? (
                       <div className="flex items-center gap-2 text-sm">
                         <Icon name="Clock" size={16} className="text-primary" />
-                        <span className="text-muted-foreground">{course.duration_hours} часов</span>
+                        <span className="text-muted-foreground">{item.duration_hours} часов</span>
+                      </div>
+                    ) : null}
+                    
+                    {item.itemType === 'mastermind' && item.location && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Icon name="MapPin" size={16} className="text-primary" />
+                        <span className="text-muted-foreground">{item.location}</span>
                       </div>
                     )}
 
                     <div className="flex items-center justify-between pt-2 border-t">
                       <div>
-                        {course.discount_price ? (
+                        {item.discount_price ? (
                           <div className="flex flex-col gap-1">
                             <span className="text-sm text-muted-foreground line-through">
-                              {course.original_price?.toLocaleString()} {course.currency}
+                              {item.original_price?.toLocaleString()} {item.currency}
                             </span>
                             <span className="text-xl font-bold text-red-600">
-                              {course.discount_price.toLocaleString()} {course.currency}
+                              {item.discount_price.toLocaleString()} {item.currency}
                             </span>
                           </div>
-                        ) : course.price ? (
+                        ) : item.price ? (
                           <span className="text-xl font-bold text-primary">
-                            {course.price.toLocaleString()} {course.currency}
+                            {item.price.toLocaleString()} {item.currency}
                           </span>
                         ) : (
                           <span className="text-xl font-bold text-green-600">Бесплатно</span>
                         )}
                       </div>
-                      <Button size="sm" onClick={() => window.location.href = `/course/${course.id}`}>
+                      <Button size="sm" onClick={() => window.location.href = `/course/${item.id}`}>
                         Подробнее
                         <Icon name="ArrowRight" size={16} className="ml-2" />
                       </Button>
@@ -249,7 +311,7 @@ export default function CoursesCatalog() {
               ))}
             </div>
 
-            {filteredCourses.length === 0 && (
+            {filteredItems.length === 0 && (
               <div className="text-center py-12">
                 <Icon name="Search" size={48} className="mx-auto mb-4 text-muted-foreground" />
                 <p className="text-xl text-muted-foreground mb-2">Курсы не найдены</p>
