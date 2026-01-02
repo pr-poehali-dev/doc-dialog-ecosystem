@@ -19,6 +19,8 @@ interface Course {
   image_url: string | null;
   external_url: string;
   status: string;
+  original_price?: number | null;
+  discount_price?: number | null;
   created_at: string;
 }
 
@@ -202,7 +204,7 @@ export default function CoursesCatalog() {
                         {getCourseTypeLabel(course.course_type)}
                       </Badge>
                     </div>
-                    <p className="text-sm text-muted-foreground line-clamp-3">{course.description}</p>
+                    <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="flex items-center gap-2 text-sm">
@@ -218,15 +220,28 @@ export default function CoursesCatalog() {
                     )}
 
                     <div className="flex items-center justify-between pt-2 border-t">
-                      <div className="text-lg font-bold text-primary">
-                        {course.price ? `${course.price.toLocaleString()} ${course.currency}` : 'Бесплатно'}
+                      <div>
+                        {course.discount_price ? (
+                          <div className="flex flex-col gap-1">
+                            <span className="text-sm text-muted-foreground line-through">
+                              {course.original_price?.toLocaleString()} {course.currency}
+                            </span>
+                            <span className="text-xl font-bold text-red-600">
+                              {course.discount_price.toLocaleString()} {course.currency}
+                            </span>
+                          </div>
+                        ) : course.price ? (
+                          <span className="text-xl font-bold text-primary">
+                            {course.price.toLocaleString()} {course.currency}
+                          </span>
+                        ) : (
+                          <span className="text-xl font-bold text-green-600">Бесплатно</span>
+                        )}
                       </div>
-                      <a href={course.external_url} target="_blank" rel="noopener noreferrer">
-                        <Button size="sm">
-                          Подробнее
-                          <Icon name="ExternalLink" size={16} className="ml-2" />
-                        </Button>
-                      </a>
+                      <Button size="sm" onClick={() => window.location.href = `/course/${course.id}`}>
+                        Подробнее
+                        <Icon name="ArrowRight" size={16} className="ml-2" />
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>

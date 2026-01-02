@@ -80,7 +80,10 @@ export default function SchoolDashboard() {
     image_url: '',
     external_url: '',
     original_price: '',
-    discount_price: ''
+    discount_price: '',
+    author_name: '',
+    author_photo: '',
+    course_content: ''
   });
   
   const [mastermindForm, setMastermindForm] = useState({
@@ -140,14 +143,17 @@ export default function SchoolDashboard() {
           price: courseForm.price ? parseFloat(courseForm.price) : null,
           duration_hours: courseForm.duration_hours ? parseInt(courseForm.duration_hours) : null,
           original_price: courseForm.original_price ? parseFloat(courseForm.original_price) : null,
-          discount_price: courseForm.discount_price ? parseFloat(courseForm.discount_price) : null
+          discount_price: courseForm.discount_price ? parseFloat(courseForm.discount_price) : null,
+          author_name: courseForm.author_name,
+          author_photo: courseForm.author_photo,
+          course_content: courseForm.course_content
         })
       });
       
       if (response.ok) {
         toast({ title: 'Курс добавлен', description: 'Курс отправлен на модерацию' });
         setShowAddForm(false);
-        setCourseForm({ title: '', description: '', category: 'Классический массаж', course_type: 'online', price: '', duration_hours: '', image_url: '', external_url: '', original_price: '', discount_price: '' });
+        setCourseForm({ title: '', description: '', category: 'Классический массаж', course_type: 'online', price: '', duration_hours: '', image_url: '', external_url: '', original_price: '', discount_price: '', author_name: '', author_photo: '', course_content: '' });
         loadData();
       }
     } catch (error) {
@@ -166,7 +172,10 @@ export default function SchoolDashboard() {
       image_url: course.image_url || '',
       external_url: course.external_url,
       original_price: course.original_price?.toString() || '',
-      discount_price: course.discount_price?.toString() || ''
+      discount_price: course.discount_price?.toString() || '',
+      author_name: '',
+      author_photo: '',
+      course_content: ''
     });
     setEditingCourseId(course.id);
     setShowAddForm(true);
@@ -184,7 +193,10 @@ export default function SchoolDashboard() {
           price: courseForm.price ? parseFloat(courseForm.price) : null,
           duration_hours: courseForm.duration_hours ? parseInt(courseForm.duration_hours) : null,
           original_price: courseForm.original_price ? parseFloat(courseForm.original_price) : null,
-          discount_price: courseForm.discount_price ? parseFloat(courseForm.discount_price) : null
+          discount_price: courseForm.discount_price ? parseFloat(courseForm.discount_price) : null,
+          author_name: courseForm.author_name,
+          author_photo: courseForm.author_photo,
+          course_content: courseForm.course_content
         })
       });
       
@@ -192,7 +204,7 @@ export default function SchoolDashboard() {
         toast({ title: 'Курс обновлен', description: 'Курс отправлен на модерацию' });
         setShowAddForm(false);
         setEditingCourseId(null);
-        setCourseForm({ title: '', description: '', category: 'Классический массаж', course_type: 'online', price: '', duration_hours: '', image_url: '', external_url: '', original_price: '', discount_price: '' });
+        setCourseForm({ title: '', description: '', category: 'Классический массаж', course_type: 'online', price: '', duration_hours: '', image_url: '', external_url: '', original_price: '', discount_price: '', author_name: '', author_photo: '', course_content: '' });
         loadData();
       }
     } catch (error) {
@@ -340,7 +352,7 @@ export default function SchoolDashboard() {
             onCancel={() => {
               setShowAddForm(false);
               setEditingCourseId(null);
-              setCourseForm({ title: '', description: '', category: 'Классический массаж', course_type: 'online', price: '', duration_hours: '', image_url: '', external_url: '', original_price: '', discount_price: '' });
+              setCourseForm({ title: '', description: '', category: 'Классический массаж', course_type: 'online', price: '', duration_hours: '', image_url: '', external_url: '', original_price: '', discount_price: '', author_name: '', author_photo: '', course_content: '' });
             }}
             isEditing={!!editingCourseId}
           />

@@ -30,6 +30,61 @@ def handler(event: dict, context) -> dict:
     query_params = event.get('queryStringParameters', {}) or {}
     action = query_params.get('action', '')
     entity_type = query_params.get('type', 'courses')
+    course_id = query_params.get('id')
+    
+    # GET /courses?id=X - Get single course with full details
+    if method == 'GET' and course_id and not action:
+        cur.execute(f"""
+            SELECT c.id, c.school_id, s.name as school_name, c.title, c.description, 
+                   c.category, c.course_type, c.price, c.currency, c.duration_hours, 
+                   c.image_url, c.external_url, c.status, c.original_price, c.discount_price,
+                   c.author_name, c.author_photo, c.course_content, c.created_at
+            FROM {schema}.courses c
+            LEFT JOIN {schema}.schools s ON c.school_id = s.id
+            WHERE c.id = {course_id} AND c.status = 'approved'
+        """)
+        course = cur.fetchone()
+        
+        if not course:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Course not found'}),
+                'isBase64Encoded': False
+            }
+        
+        result = {
+            'id': course[0],
+            'school_id': course[1],
+            'school_name': course[2],
+            'title': course[3],
+            'description': course[4],
+            'category': course[5],
+            'course_type': course[6],
+            'price': float(course[7]) if course[7] else None,
+            'currency': course[8],
+            'duration_hours': course[9],
+            'image_url': course[10],
+            'external_url': course[11],
+            'status': course[12],
+            'original_price': float(course[13]) if course[13] else None,
+            'discount_price': float(course[14]) if course[14] else None,
+            'author_name': course[15],
+            'author_photo': course[16],
+            'course_content': course[17],
+            'created_at': course[18].isoformat() if course[18] else None
+        }
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps(result),
+            'isBase64Encoded': False
+        }
     
     # GET /courses - List courses (public or by school)
     if method == 'GET' and not action:
@@ -190,10 +245,13 @@ def handler(event: dict, context) -> dict:
         
         original_price = body.get('original_price')
         discount_price = body.get('discount_price')
+        author_name = body.get('author_name', '')
+        author_photo = body.get('author_photo')
+        course_content = body.get('course_content', '')
         
         cur.execute(f"""
-            INSERT INTO {schema}.courses (school_id, title, description, category, course_type, price, currency, duration_hours, image_url, external_url, original_price, discount_price, status)
-            VALUES ({school_id}, '{title.replace("'", "''")}', '{description.replace("'", "''")}', '{category}', '{course_type}', {price if price else 'NULL'}, '{currency}', {duration_hours if duration_hours else 'NULL'}, {f"'{image_url}'" if image_url else 'NULL'}, '{external_url}', {original_price if original_price else 'NULL'}, {discount_price if discount_price else 'NULL'}, 'pending')
+            INSERT INTO {schema}.courses (school_id, title, description, category, course_type, price, currency, duration_hours, image_url, external_url, original_price, discount_price, author_name, author_photo, course_content, status)
+            VALUES ({school_id}, '{title.replace("'", "''")}', '{description.replace("'", "''")}', '{category}', '{course_type}', {price if price else 'NULL'}, '{currency}', {duration_hours if duration_hours else 'NULL'}, {f"'{image_url}'" if image_url else 'NULL'}, '{external_url}', {original_price if original_price else 'NULL'}, {discount_price if discount_price else 'NULL'}, '{author_name.replace("'", "''")}', {f"'{author_photo}'" if author_photo else 'NULL'}, '{course_content.replace("'", "''")}', 'pending')
             RETURNING id, title, status, created_at
         """)
         
@@ -338,6 +396,9 @@ def handler(event: dict, context) -> dict:
         external_url = body.get('external_url')
         original_price = body.get('original_price')
         discount_price = body.get('discount_price')
+        author_name = body.get('author_name', '')
+        author_photo = body.get('author_photo')
+        course_content = body.get('course_content', '')
         
         if not all([title, category, course_type, external_url]):
             cur.close()
@@ -362,6 +423,9 @@ def handler(event: dict, context) -> dict:
                 external_url = '{external_url}',
                 original_price = {original_price if original_price else 'NULL'},
                 discount_price = {discount_price if discount_price else 'NULL'},
+                author_name = '{author_name.replace("'", "''")}',
+                author_photo = {f"'{author_photo}'" if author_photo else 'NULL'},
+                course_content = '{course_content.replace("'", "''")}',
                 status = 'pending',
                 updated_at = NOW()
             WHERE id = {course_id}

@@ -16,6 +16,7 @@ import ProfileEdit from "./pages/ProfileEdit";
 import AdminPanel from "./pages/AdminPanel";
 import SchoolDashboard from "./pages/SchoolDashboard";
 import CoursesCatalog from "./pages/CoursesCatalog";
+import CoursePage from "./pages/CoursePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +40,7 @@ const App = () => (
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="/school/dashboard" element={<SchoolDashboard />} />
           <Route path="/courses" element={<CoursesCatalog />} />
+          <Route path="/course/:id" element={<CoursePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
