@@ -51,7 +51,7 @@ const HeroSection = ({ openDialog }: HeroSectionProps) => {
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="text-lg px-8 bg-white/80 backdrop-blur-sm hover:bg-white" 
+                className="text-lg px-8 bg-white/80 backdrop-blur-sm hover:bg-primary hover:text-white border-primary text-primary transition-all" 
                 onClick={() => openDialog('school')}
               >
                 Я школа
@@ -59,7 +59,7 @@ const HeroSection = ({ openDialog }: HeroSectionProps) => {
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="text-lg px-8 bg-white/80 backdrop-blur-sm hover:bg-white" 
+                className="text-lg px-8 bg-white/80 backdrop-blur-sm hover:bg-secondary hover:text-white border-secondary text-secondary transition-all" 
                 onClick={() => openDialog('salon')}
               >
                 Я салон
@@ -67,7 +67,7 @@ const HeroSection = ({ openDialog }: HeroSectionProps) => {
             </div>
             
             <Link to="/masseurs">
-              <Button size="lg" variant="secondary" className="text-lg px-8 bg-white/80 backdrop-blur-sm hover:bg-white">
+              <Button size="lg" variant="secondary" className="text-lg px-8 bg-secondary text-white hover:bg-secondary/90 shadow-md hover:shadow-lg transition-all">
                 <Icon name="Search" size={20} className="mr-2" />
                 Найти массажиста
               </Button>
