@@ -107,10 +107,6 @@ export default function MastermindPage() {
     );
   }
 
-  const availableSpots = mastermind.max_participants 
-    ? mastermind.max_participants - mastermind.current_participants 
-    : null;
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/5">
       <Navigation />
@@ -239,7 +235,7 @@ export default function MastermindPage() {
                     {mastermind.max_participants && (
                       <div className="flex items-center gap-3">
                         <Icon name="Users" size={20} className="text-primary" />
-                        <span>Участников: <strong>{mastermind.current_participants} / {mastermind.max_participants}</strong></span>
+                        <span>Количество мест: <strong>{mastermind.max_participants}</strong></span>
                       </div>
                     )}
                   </div>
@@ -277,19 +273,9 @@ export default function MastermindPage() {
                     size="lg" 
                     className="w-full text-lg py-6"
                     onClick={() => window.open(mastermind.external_url, '_blank')}
-                    disabled={availableSpots === 0}
                   >
-                    {availableSpots === 0 ? (
-                      <>
-                        <Icon name="XCircle" size={20} className="mr-2" />
-                        Мест нет
-                      </>
-                    ) : (
-                      <>
-                        <Icon name="Calendar" size={20} className="mr-2" />
-                        Записаться
-                      </>
-                    )}
+                    <Icon name="Calendar" size={20} className="mr-2" />
+                    Записаться
                   </Button>
 
                   {mastermind.view_count !== undefined && (
