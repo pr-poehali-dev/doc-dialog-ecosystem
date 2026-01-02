@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Icon from "@/components/ui/icon";
+import { BookingDialog } from "@/components/BookingDialog";
 
 interface Masseur {
   id: number;
@@ -40,6 +41,7 @@ const MasseurProfile = () => {
   const { id } = useParams();
   const [masseur, setMasseur] = useState<Masseur | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   useEffect(() => {
     const mockMasseur: Masseur = {
@@ -187,7 +189,12 @@ const MasseurProfile = () => {
                   <Icon name="MessageCircle" size={20} className="mr-2" />
                   Написать
                 </Button>
-                <Button variant="outline" className="w-full" size="lg">
+                <Button 
+                  variant="outline" 
+                  className="w-full" 
+                  size="lg"
+                  onClick={() => setIsBookingOpen(true)}
+                >
                   <Icon name="Calendar" size={20} className="mr-2" />
                   Записаться
                 </Button>
@@ -314,6 +321,16 @@ const MasseurProfile = () => {
             </Tabs>
           </div>
         </div>
+
+        {masseur && (
+          <BookingDialog
+            isOpen={isBookingOpen}
+            onClose={() => setIsBookingOpen(false)}
+            masseurName={masseur.full_name}
+            masseurId={masseur.id}
+            specializations={masseur.specializations}
+          />
+        )}
       </div>
     </div>
   );
