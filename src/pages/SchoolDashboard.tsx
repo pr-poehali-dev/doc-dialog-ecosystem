@@ -64,7 +64,7 @@ export default function SchoolDashboard() {
   const [masterminds, setMasterminds] = useState<Mastermind[]>([]);
   const [specialists, setSpecialists] = useState<SpecialistRequest[]>([]);
   
-  const schoolId = 2;
+  const schoolId = 1;
   
   const [courseForm, setCourseForm] = useState({
     title: '',
