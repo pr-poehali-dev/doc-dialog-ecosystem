@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
+import CourseForm from '@/components/school/CourseForm';
+import MastermindForm from '@/components/school/MastermindForm';
+import SpecialistForm from '@/components/school/SpecialistForm';
+import ItemsList from '@/components/school/ItemsList';
 
 interface Course {
   id: number;
@@ -64,7 +64,7 @@ export default function SchoolDashboard() {
   const [masterminds, setMasterminds] = useState<Mastermind[]>([]);
   const [specialists, setSpecialists] = useState<SpecialistRequest[]>([]);
   
-  const schoolId = 2; // Temporarily hardcoded, should come from auth
+  const schoolId = 2;
   
   const [courseForm, setCourseForm] = useState({
     title: '',
@@ -263,311 +263,40 @@ export default function SchoolDashboard() {
         </div>
 
         {showAddForm && activeTab === 'courses' && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Добавить новый курс</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label>Название курса*</Label>
-                <Input value={courseForm.title} onChange={(e) => setCourseForm({...courseForm, title: e.target.value})} />
-              </div>
-              <div>
-                <Label>Описание</Label>
-                <Textarea value={courseForm.description} onChange={(e) => setCourseForm({...courseForm, description: e.target.value})} rows={3} />
-              </div>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <Label>Категория*</Label>
-                  <select value={courseForm.category} onChange={(e) => setCourseForm({...courseForm, category: e.target.value})} className="w-full px-3 py-2 border rounded-md">
-                    <option>Классический массаж</option>
-                    <option>Спортивный массаж</option>
-                    <option>Лечебный массаж</option>
-                    <option>SPA массаж</option>
-                    <option>Косметический массаж</option>
-                    <option>Детский массаж</option>
-                    <option>Другое</option>
-                  </select>
-                </div>
-                <div>
-                  <Label>Тип курса*</Label>
-                  <select value={courseForm.course_type} onChange={(e) => setCourseForm({...courseForm, course_type: e.target.value})} className="w-full px-3 py-2 border rounded-md">
-                    <option value="online">Онлайн</option>
-                    <option value="offline">Офлайн</option>
-                    <option value="free">Бесплатный</option>
-                  </select>
-                </div>
-              </div>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <Label>Цена (₽)</Label>
-                  <Input type="number" value={courseForm.price} onChange={(e) => setCourseForm({...courseForm, price: e.target.value})} />
-                </div>
-                <div>
-                  <Label>Длительность (часов)</Label>
-                  <Input type="number" value={courseForm.duration_hours} onChange={(e) => setCourseForm({...courseForm, duration_hours: e.target.value})} />
-                </div>
-              </div>
-              <div>
-                <Label>URL изображения</Label>
-                <Input value={courseForm.image_url} onChange={(e) => setCourseForm({...courseForm, image_url: e.target.value})} placeholder="https://..." />
-              </div>
-              <div>
-                <Label>Ссылка на курс (внешний сайт)*</Label>
-                <Input value={courseForm.external_url} onChange={(e) => setCourseForm({...courseForm, external_url: e.target.value})} placeholder="https://..." />
-              </div>
-              <div className="flex gap-2">
-                <Button onClick={handleAddCourse}>Добавить курс</Button>
-                <Button variant="outline" onClick={() => setShowAddForm(false)}>Отмена</Button>
-              </div>
-            </CardContent>
-          </Card>
+          <CourseForm
+            courseForm={courseForm}
+            setCourseForm={setCourseForm}
+            onSubmit={handleAddCourse}
+            onCancel={() => setShowAddForm(false)}
+          />
         )}
 
         {showAddForm && activeTab === 'masterminds' && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Добавить мастермайнд</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label>Название*</Label>
-                <Input value={mastermindForm.title} onChange={(e) => setMastermindForm({...mastermindForm, title: e.target.value})} />
-              </div>
-              <div>
-                <Label>Описание</Label>
-                <Textarea value={mastermindForm.description} onChange={(e) => setMastermindForm({...mastermindForm, description: e.target.value})} rows={3} />
-              </div>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <Label>Дата и время*</Label>
-                  <Input type="datetime-local" value={mastermindForm.event_date} onChange={(e) => setMastermindForm({...mastermindForm, event_date: e.target.value})} />
-                </div>
-                <div>
-                  <Label>Место проведения</Label>
-                  <Input value={mastermindForm.location} onChange={(e) => setMastermindForm({...mastermindForm, location: e.target.value})} placeholder="Москва, ул. ..." />
-                </div>
-              </div>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <Label>Макс. участников</Label>
-                  <Input type="number" value={mastermindForm.max_participants} onChange={(e) => setMastermindForm({...mastermindForm, max_participants: e.target.value})} />
-                </div>
-                <div>
-                  <Label>Цена (₽)</Label>
-                  <Input type="number" value={mastermindForm.price} onChange={(e) => setMastermindForm({...mastermindForm, price: e.target.value})} />
-                </div>
-              </div>
-              <div>
-                <Label>URL изображения</Label>
-                <Input value={mastermindForm.image_url} onChange={(e) => setMastermindForm({...mastermindForm, image_url: e.target.value})} placeholder="https://..." />
-              </div>
-              <div>
-                <Label>Ссылка для регистрации*</Label>
-                <Input value={mastermindForm.external_url} onChange={(e) => setMastermindForm({...mastermindForm, external_url: e.target.value})} placeholder="https://..." />
-              </div>
-              <div className="flex gap-2">
-                <Button onClick={handleAddMastermind}>Добавить мастермайнд</Button>
-                <Button variant="outline" onClick={() => setShowAddForm(false)}>Отмена</Button>
-              </div>
-            </CardContent>
-          </Card>
+          <MastermindForm
+            mastermindForm={mastermindForm}
+            setMastermindForm={setMastermindForm}
+            onSubmit={handleAddMastermind}
+            onCancel={() => setShowAddForm(false)}
+          />
         )}
 
         {showAddForm && activeTab === 'specialists' && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Найти специалиста</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label>Название вакансии*</Label>
-                <Input value={specialistForm.title} onChange={(e) => setSpecialistForm({...specialistForm, title: e.target.value})} placeholder="Требуется видеооператор" />
-              </div>
-              <div>
-                <Label>Описание*</Label>
-                <Textarea value={specialistForm.description} onChange={(e) => setSpecialistForm({...specialistForm, description: e.target.value})} rows={4} placeholder="Подробное описание требований..." />
-              </div>
-              <div>
-                <Label>Специализация*</Label>
-                <select value={specialistForm.specialty} onChange={(e) => setSpecialistForm({...specialistForm, specialty: e.target.value})} className="w-full px-3 py-2 border rounded-md">
-                  <option>Видеооператор</option>
-                  <option>Фотограф</option>
-                  <option>Монтажер</option>
-                  <option>Дизайнер</option>
-                  <option>Копирайтер</option>
-                  <option>SMM-специалист</option>
-                  <option>Другое</option>
-                </select>
-              </div>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <Label>Бюджет от (₽)</Label>
-                  <Input type="number" value={specialistForm.budget_from} onChange={(e) => setSpecialistForm({...specialistForm, budget_from: e.target.value})} />
-                </div>
-                <div>
-                  <Label>Бюджет до (₽)</Label>
-                  <Input type="number" value={specialistForm.budget_to} onChange={(e) => setSpecialistForm({...specialistForm, budget_to: e.target.value})} />
-                </div>
-              </div>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <Label>Город</Label>
-                  <Input value={specialistForm.location} onChange={(e) => setSpecialistForm({...specialistForm, location: e.target.value})} placeholder="Москва" />
-                </div>
-                <div>
-                  <Label>Срок до</Label>
-                  <Input type="date" value={specialistForm.deadline_date} onChange={(e) => setSpecialistForm({...specialistForm, deadline_date: e.target.value})} />
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <Button onClick={handleAddSpecialist}>Опубликовать</Button>
-                <Button variant="outline" onClick={() => setShowAddForm(false)}>Отмена</Button>
-              </div>
-            </CardContent>
-          </Card>
+          <SpecialistForm
+            specialistForm={specialistForm}
+            setSpecialistForm={setSpecialistForm}
+            onSubmit={handleAddSpecialist}
+            onCancel={() => setShowAddForm(false)}
+          />
         )}
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {activeTab === 'courses' && courses.map((course) => (
-            <Card key={course.id}>
-              <CardHeader>
-                <div className="flex justify-between items-start mb-2">
-                  <CardTitle className="text-lg">{course.title}</CardTitle>
-                  {getStatusBadge(course.status)}
-                </div>
-                <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Icon name="Tag" size={16} className="text-primary" />
-                    <span>{course.category}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Icon name="Monitor" size={16} className="text-primary" />
-                    <span>{course.course_type === 'online' ? 'Онлайн' : course.course_type === 'offline' ? 'Офлайн' : 'Бесплатный'}</span>
-                  </div>
-                  {course.price && (
-                    <div className="flex items-center gap-2">
-                      <Icon name="DollarSign" size={16} className="text-primary" />
-                      <span>{course.price.toLocaleString()} {course.currency}</span>
-                    </div>
-                  )}
-                  {course.duration_hours && (
-                    <div className="flex items-center gap-2">
-                      <Icon name="Clock" size={16} className="text-primary" />
-                      <span>{course.duration_hours} часов</span>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-
-          {activeTab === 'masterminds' && masterminds.map((mm) => (
-            <Card key={mm.id}>
-              <CardHeader>
-                <div className="flex justify-between items-start mb-2">
-                  <CardTitle className="text-lg">{mm.title}</CardTitle>
-                  {getStatusBadge(mm.status)}
-                </div>
-                <p className="text-sm text-muted-foreground line-clamp-2">{mm.description}</p>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Icon name="Calendar" size={16} className="text-primary" />
-                    <span>{new Date(mm.event_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
-                  </div>
-                  {mm.location && (
-                    <div className="flex items-center gap-2">
-                      <Icon name="MapPin" size={16} className="text-primary" />
-                      <span>{mm.location}</span>
-                    </div>
-                  )}
-                  {mm.max_participants && (
-                    <div className="flex items-center gap-2">
-                      <Icon name="Users" size={16} className="text-primary" />
-                      <span>{mm.current_participants}/{mm.max_participants} участников</span>
-                    </div>
-                  )}
-                  {mm.price && (
-                    <div className="flex items-center gap-2">
-                      <Icon name="DollarSign" size={16} className="text-primary" />
-                      <span>{mm.price.toLocaleString()} {mm.currency}</span>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-
-          {activeTab === 'specialists' && specialists.map((spec) => (
-            <Card key={spec.id}>
-              <CardHeader>
-                <div className="flex justify-between items-start mb-2">
-                  <CardTitle className="text-lg">{spec.title}</CardTitle>
-                  {getStatusBadge(spec.status)}
-                </div>
-                <p className="text-sm text-muted-foreground line-clamp-3">{spec.description}</p>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Icon name="Briefcase" size={16} className="text-primary" />
-                    <span>{spec.specialty}</span>
-                  </div>
-                  {(spec.budget_from || spec.budget_to) && (
-                    <div className="flex items-center gap-2">
-                      <Icon name="DollarSign" size={16} className="text-primary" />
-                      <span>
-                        {spec.budget_from && spec.budget_to 
-                          ? `${spec.budget_from.toLocaleString()}-${spec.budget_to.toLocaleString()}`
-                          : spec.budget_from 
-                            ? `от ${spec.budget_from.toLocaleString()}`
-                            : `до ${spec.budget_to?.toLocaleString()}`
-                        } {spec.currency}
-                      </span>
-                    </div>
-                  )}
-                  {spec.location && (
-                    <div className="flex items-center gap-2">
-                      <Icon name="MapPin" size={16} className="text-primary" />
-                      <span>{spec.location}</span>
-                    </div>
-                  )}
-                  {spec.deadline_date && (
-                    <div className="flex items-center gap-2">
-                      <Icon name="Calendar" size={16} className="text-primary" />
-                      <span>До {new Date(spec.deadline_date).toLocaleDateString('ru-RU')}</span>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {activeTab === 'courses' && courses.length === 0 && !showAddForm && (
-          <div className="text-center py-12 text-muted-foreground">
-            <Icon name="BookOpen" size={48} className="mx-auto mb-4 opacity-50" />
-            <p>Пока нет курсов. Добавьте первый курс!</p>
-          </div>
-        )}
-
-        {activeTab === 'masterminds' && masterminds.length === 0 && !showAddForm && (
-          <div className="text-center py-12 text-muted-foreground">
-            <Icon name="Users" size={48} className="mx-auto mb-4 opacity-50" />
-            <p>Пока нет мастермайндов. Добавьте первое мероприятие!</p>
-          </div>
-        )}
-
-        {activeTab === 'specialists' && specialists.length === 0 && !showAddForm && (
-          <div className="text-center py-12 text-muted-foreground">
-            <Icon name="Search" size={48} className="mx-auto mb-4 opacity-50" />
-            <p>Пока нет запросов. Создайте первое объявление!</p>
-          </div>
+        {!showAddForm && (
+          <ItemsList
+            activeTab={activeTab}
+            courses={courses}
+            masterminds={masterminds}
+            specialists={specialists}
+            getStatusBadge={getStatusBadge}
+          />
         )}
       </div>
     </div>
