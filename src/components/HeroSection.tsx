@@ -48,7 +48,7 @@ const HeroSection = ({ openDialog }: HeroSectionProps) => {
           </div>
 
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight bg-gradient-to-r from-slate-900 via-primary to-slate-900 bg-clip-text text-transparent">
-            Для Массажистов, Школ и Массажных Салонов
+            Для массажистов, школ и массажных салонов
           </h1>
           
           <p className="text-xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">

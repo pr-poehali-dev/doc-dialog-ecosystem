@@ -15,7 +15,7 @@ const MainContent = ({ openDialog }: MainContentProps) => {
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
-            Для Кого Создан Док Диалог
+            Для кого создан Док диалог
           </h2>
           <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
             {/* Masseurs Card */}
@@ -24,7 +24,7 @@ const MainContent = ({ openDialog }: MainContentProps) => {
                 <div className="mb-4 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
                   <Icon name="Users" className="text-primary" size={24} />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">Для Массажистов</h3>
+                <h3 className="text-2xl font-bold mb-4">Для массажистов</h3>
                 <div className="space-y-3 mb-6">
                   <p className="text-sm font-medium text-muted-foreground">Если вы:</p>
                   <ul className="space-y-2 text-sm text-muted-foreground">
@@ -80,7 +80,7 @@ const MainContent = ({ openDialog }: MainContentProps) => {
                 <div className="mb-4 w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center">
                   <Icon name="GraduationCap" className="text-secondary" size={24} />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">Для Школ Массажа</h3>
+                <h3 className="text-2xl font-bold mb-4">Для школ массажа</h3>
                 <div className="space-y-3 mb-6">
                   <p className="text-sm font-medium text-muted-foreground">Если вы:</p>
                   <ul className="space-y-2 text-sm text-muted-foreground">
@@ -132,7 +132,7 @@ const MainContent = ({ openDialog }: MainContentProps) => {
                 <div className="mb-4 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
                   <Icon name="Building2" className="text-primary" size={24} />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">Для Массажных Салонов</h3>
+                <h3 className="text-2xl font-bold mb-4">Для массажных салонов</h3>
                 <div className="space-y-3 mb-6">
                   <p className="text-sm font-medium text-muted-foreground">Если вам важно:</p>
                   <ul className="space-y-2 text-sm text-muted-foreground">
