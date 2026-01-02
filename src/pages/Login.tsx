@@ -11,50 +11,12 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showResendVerification, setShowResendVerification] = useState(false);
-  const [resendingEmail, setResendingEmail] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
-
-  const handleResendVerification = async () => {
-    setResendingEmail(true);
-    
-    try {
-      const response = await fetch(`${API_URL}?action=resend-verification`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
-      });
-      
-      const data = await response.json();
-      
-      if (response.ok) {
-        toast({
-          title: 'Письмо отправлено',
-          description: 'Проверьте вашу почту',
-        });
-      } else {
-        toast({
-          title: 'Ошибка',
-          description: data.error || 'Не удалось отправить письмо',
-          variant: 'destructive',
-        });
-      }
-    } catch (error) {
-      toast({
-        title: 'Ошибка',
-        description: 'Не удалось отправить письмо',
-        variant: 'destructive',
-      });
-    } finally {
-      setResendingEmail(false);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setShowResendVerification(false);
 
     try {
       const response = await fetch(`${API_URL}?action=login`, {
@@ -78,13 +40,6 @@ export default function Login() {
         });
 
         navigate('/dashboard');
-      } else if (response.status === 403 && data.email_verified === false) {
-        setShowResendVerification(true);
-        toast({
-          title: 'Email не подтверждён',
-          description: 'Проверьте почту или отправьте письмо повторно',
-          variant: 'destructive',
-        });
       } else {
         toast({
           title: 'Ошибка входа',
@@ -144,23 +99,6 @@ export default function Login() {
               {loading ? 'Вход...' : 'Войти'}
             </Button>
           </form>
-
-          {showResendVerification && (
-            <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-sm text-yellow-800 mb-2">
-                Ваш email не подтверждён. Проверьте почту или отправьте письмо повторно.
-              </p>
-              <Button 
-                onClick={handleResendVerification} 
-                variant="outline" 
-                size="sm"
-                disabled={resendingEmail}
-                className="w-full"
-              >
-                {resendingEmail ? 'Отправка...' : 'Отправить письмо повторно'}
-              </Button>
-            </div>
-          )}
 
           <div className="mt-6 text-center text-sm">
             <span className="text-gray-600">Нет аккаунта? </span>

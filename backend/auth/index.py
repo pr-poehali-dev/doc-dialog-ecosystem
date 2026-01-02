@@ -116,12 +116,10 @@ def register_user(data: dict) -> dict:
             }
         
         password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-        verification_token = secrets.token_urlsafe(32)
-        verification_expires = datetime.utcnow() + timedelta(hours=24)
         
         cursor.execute(
-            "INSERT INTO users (email, password_hash, role, email_verified, verification_token, verification_token_expires) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
-            (email, password_hash, role, False, verification_token, verification_expires)
+            "INSERT INTO users (email, password_hash, role, email_verified) VALUES (%s, %s, %s, %s) RETURNING id",
+            (email, password_hash, role, True)
         )
         user_id = cursor.fetchone()['id']
         
@@ -143,15 +141,18 @@ def register_user(data: dict) -> dict:
         
         conn.commit()
         
-        send_verification_email(email, verification_token)
+        token = generate_token(user_id, email, role)
         
         return {
             'statusCode': 201,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
-                'message': 'Регистрация успешна! Проверьте email для подтверждения аккаунта.',
-                'email': email,
-                'user_id': user_id
+                'token': token,
+                'user': {
+                    'id': user_id,
+                    'email': email,
+                    'role': role
+                }
             }),
             'isBase64Encoded': False
         }
@@ -193,14 +194,6 @@ def login_user(data: dict) -> dict:
                 'statusCode': 401,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
                 'body': json.dumps({'error': 'Неверный email или пароль'}),
-                'isBase64Encoded': False
-            }
-        
-        if not user['email_verified']:
-            return {
-                'statusCode': 403,
-                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Email не подтверждён. Проверьте почту или запросите новое письмо.', 'email_verified': False}),
                 'isBase64Encoded': False
             }
         

@@ -30,7 +30,6 @@ const AUTH_API_URL = 'https://functions.poehali.dev/049813c7-cf1a-4ff1-93bc-af74
 const RegistrationDialog = ({ isOpen, onClose, userType, dialogContent }: RegistrationDialogProps) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [registered, setRegistered] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -73,11 +72,20 @@ const RegistrationDialog = ({ isOpen, onClose, userType, dialogContent }: Regist
       const data = await response.json();
 
       if (response.ok) {
-        setRegistered(true);
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('userRole', data.user.role);
+        
         toast({
           title: 'Регистрация успешна!',
-          description: 'Проверьте вашу почту для подтверждения аккаунта'
+          description: 'Добро пожаловать в Док диалог!'
         });
+        
+        handleClose();
+        
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 500);
       } else {
         toast({
           title: 'Ошибка регистрации',
@@ -98,43 +106,8 @@ const RegistrationDialog = ({ isOpen, onClose, userType, dialogContent }: Regist
 
   const handleClose = () => {
     setFormData({ name: '', email: '', password: '', phone: '', city: '' });
-    setRegistered(false);
     onClose();
   };
-
-  if (registered) {
-    return (
-      <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
-                <Icon name="CheckCircle" className="text-green-600" size={24} />
-              </div>
-              <DialogTitle className="text-2xl">Проверьте почту</DialogTitle>
-            </div>
-            <DialogDescription className="text-base">
-              Мы отправили письмо с подтверждением на <strong>{formData.email}</strong>
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 mt-4">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-800">
-                <Icon name="Mail" size={16} className="inline mr-2" />
-                Перейдите по ссылке в письме для активации аккаунта
-              </p>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Не получили письмо? Проверьте папку "Спам" или запросите новое письмо.
-            </p>
-            <Button onClick={handleClose} className="w-full">
-              Понятно
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
-  }
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
