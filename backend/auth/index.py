@@ -5,6 +5,10 @@ import bcrypt
 from datetime import datetime, timedelta
 import psycopg2
 from psycopg2.extras import RealDictCursor
+import secrets
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 def handler(event: dict, context) -> dict:
     '''API для регистрации и авторизации пользователей (массажисты, школы, салоны)'''
@@ -16,7 +20,7 @@ def handler(event: dict, context) -> dict:
             'statusCode': 200,
             'headers': {
                 'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
                 'Access-Control-Allow-Headers': 'Content-Type, X-Authorization'
             },
             'body': '',
@@ -27,6 +31,10 @@ def handler(event: dict, context) -> dict:
     action = query_params.get('action', '')
     
     try:
+        if method == 'GET' and action == 'verify-email':
+            token = query_params.get('token', '')
+            return verify_email(token)
+        
         if method == 'POST':
             body = json.loads(event.get('body', '{}'))
             
@@ -37,6 +45,8 @@ def handler(event: dict, context) -> dict:
             elif action == 'verify':
                 token = event.get('headers', {}).get('X-Authorization', '').replace('Bearer ', '')
                 return verify_token(token)
+            elif action == 'resend-verification':
+                return resend_verification_email(body)
         
         return {
             'statusCode': 405,
@@ -106,10 +116,12 @@ def register_user(data: dict) -> dict:
             }
         
         password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        verification_token = secrets.token_urlsafe(32)
+        verification_expires = datetime.utcnow() + timedelta(hours=24)
         
         cursor.execute(
-            "INSERT INTO users (email, password_hash, role) VALUES (%s, %s, %s) RETURNING id",
-            (email, password_hash, role)
+            "INSERT INTO users (email, password_hash, role, email_verified, verification_token, verification_token_expires) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
+            (email, password_hash, role, False, verification_token, verification_expires)
         )
         user_id = cursor.fetchone()['id']
         
@@ -131,12 +143,16 @@ def register_user(data: dict) -> dict:
         
         conn.commit()
         
-        token = generate_token(user_id, email, role)
+        send_verification_email(email, verification_token)
         
         return {
             'statusCode': 201,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'token': token, 'user': {'id': user_id, 'email': email, 'role': role}}),
+            'body': json.dumps({
+                'message': 'Регистрация успешна! Проверьте email для подтверждения аккаунта.',
+                'email': email,
+                'user_id': user_id
+            }),
             'isBase64Encoded': False
         }
     
@@ -161,7 +177,7 @@ def login_user(data: dict) -> dict:
     conn, cursor = get_db_connection()
     
     try:
-        cursor.execute("SELECT id, password_hash, role FROM users WHERE email = %s", (email,))
+        cursor.execute("SELECT id, password_hash, role, email_verified FROM users WHERE email = %s", (email,))
         user = cursor.fetchone()
         
         if not user:
@@ -177,6 +193,14 @@ def login_user(data: dict) -> dict:
                 'statusCode': 401,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
                 'body': json.dumps({'error': 'Неверный email или пароль'}),
+                'isBase64Encoded': False
+            }
+        
+        if not user['email_verified']:
+            return {
+                'statusCode': 403,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Email не подтверждён. Проверьте почту или запросите новое письмо.', 'email_verified': False}),
                 'isBase64Encoded': False
             }
         
@@ -243,3 +267,196 @@ def generate_token(user_id: int, email: str, role: str) -> str:
     }
     
     return jwt.encode(payload, jwt_secret, algorithm='HS256')
+
+
+def send_verification_email(email: str, token: str):
+    '''Отправка письма с подтверждением email'''
+    try:
+        smtp_config_str = os.environ.get('SMTP_CONFIG')
+        if not smtp_config_str:
+            print('[WARNING] SMTP_CONFIG not configured, skipping email send')
+            return
+        
+        smtp_config = json.loads(smtp_config_str)
+        
+        verification_url = f"https://functions.poehali.dev/d6aba2e7-25ea-4ec5-affd-1cf4b6e37db3?action=verify-email&token={token}"
+        
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = 'Подтверждение регистрации в Док диалог'
+        msg['From'] = smtp_config['from']
+        msg['To'] = email
+        
+        html = f"""
+        <html>
+          <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+              <h2 style="color: #2563eb;">Добро пожаловать в Док диалог!</h2>
+              <p>Спасибо за регистрацию. Для активации аккаунта подтвердите ваш email, нажав на кнопку ниже:</p>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="{verification_url}" 
+                   style="background-color: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                  Подтвердить email
+                </a>
+              </div>
+              <p style="color: #666; font-size: 14px;">Или скопируйте ссылку в браузер:</p>
+              <p style="color: #666; font-size: 12px; word-break: break-all;">{verification_url}</p>
+              <p style="color: #666; font-size: 14px; margin-top: 30px;">Ссылка действительна 24 часа.</p>
+              <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+              <p style="color: #999; font-size: 12px;">Если вы не регистрировались на сайте Док диалог, проигнорируйте это письмо.</p>
+            </div>
+          </body>
+        </html>
+        """
+        
+        msg.attach(MIMEText(html, 'html'))
+        
+        server = smtplib.SMTP(smtp_config['host'], smtp_config['port'])
+        server.starttls()
+        server.login(smtp_config['user'], smtp_config['password'])
+        server.send_message(msg)
+        server.quit()
+        
+        print(f'[INFO] Verification email sent to {email}')
+    
+    except Exception as e:
+        print(f'[ERROR] Failed to send verification email: {str(e)}')
+
+
+def verify_email(token: str) -> dict:
+    '''Подтверждение email по токену'''
+    if not token:
+        return {
+            'statusCode': 400,
+            'headers': {'Content-Type': 'text/html', 'Access-Control-Allow-Origin': '*'},
+            'body': '<html><body><h1>Ошибка</h1><p>Токен не предоставлен</p></body></html>',
+            'isBase64Encoded': False
+        }
+    
+    conn, cursor = get_db_connection()
+    
+    try:
+        cursor.execute(
+            "SELECT id, email, role, email_verified, verification_token_expires FROM users WHERE verification_token = %s",
+            (token,)
+        )
+        user = cursor.fetchone()
+        
+        if not user:
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'text/html', 'Access-Control-Allow-Origin': '*'},
+                'body': '<html><body><h1>Ошибка</h1><p>Неверный токен подтверждения</p></body></html>',
+                'isBase64Encoded': False
+            }
+        
+        if user['email_verified']:
+            return {
+                'statusCode': 200,
+                'headers': {'Content-Type': 'text/html', 'Access-Control-Allow-Origin': '*'},
+                'body': '<html><body><h1>Email уже подтверждён</h1><p>Вы можете <a href="https://doc-dialog-ecosystem.poehali.dev">войти в личный кабинет</a></p></body></html>',
+                'isBase64Encoded': False
+            }
+        
+        if user['verification_token_expires'] < datetime.utcnow():
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'text/html', 'Access-Control-Allow-Origin': '*'},
+                'body': '<html><body><h1>Ошибка</h1><p>Токен истёк. Запросите новое письмо для подтверждения.</p></body></html>',
+                'isBase64Encoded': False
+            }
+        
+        cursor.execute(
+            "UPDATE users SET email_verified = TRUE, verification_token = NULL WHERE id = %s",
+            (user['id'],)
+        )
+        conn.commit()
+        
+        auth_token = generate_token(user['id'], user['email'], user['role'])
+        
+        dashboard_url = 'https://doc-dialog-ecosystem.poehali.dev'
+        redirect_html = f"""
+        <html>
+          <head>
+            <script>
+              localStorage.setItem('token', '{auth_token}');
+              localStorage.setItem('userRole', '{user['role']}');
+              setTimeout(function() {{
+                window.location.href = '{dashboard_url}';
+              }}, 2000);
+            </script>
+          </head>
+          <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
+            <h1 style="color: #2563eb;">Email успешно подтверждён!</h1>
+            <p>Перенаправляем вас в личный кабинет...</p>
+            <p><a href="{dashboard_url}">Нажмите здесь</a>, если перенаправление не произошло автоматически.</p>
+          </body>
+        </html>
+        """
+        
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'text/html', 'Access-Control-Allow-Origin': '*'},
+            'body': redirect_html,
+            'isBase64Encoded': False
+        }
+    
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def resend_verification_email(data: dict) -> dict:
+    '''Повторная отправка письма с подтверждением'''
+    email = data.get('email')
+    
+    if not email:
+        return {
+            'statusCode': 400,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Email обязателен'}),
+            'isBase64Encoded': False
+        }
+    
+    conn, cursor = get_db_connection()
+    
+    try:
+        cursor.execute("SELECT id, email_verified FROM users WHERE email = %s", (email,))
+        user = cursor.fetchone()
+        
+        if not user:
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Пользователь не найден'}),
+                'isBase64Encoded': False
+            }
+        
+        if user['email_verified']:
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Email уже подтверждён'}),
+                'isBase64Encoded': False
+            }
+        
+        new_token = secrets.token_urlsafe(32)
+        new_expires = datetime.utcnow() + timedelta(hours=24)
+        
+        cursor.execute(
+            "UPDATE users SET verification_token = %s, verification_token_expires = %s WHERE id = %s",
+            (new_token, new_expires, user['id'])
+        )
+        conn.commit()
+        
+        send_verification_email(email, new_token)
+        
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'message': 'Письмо с подтверждением отправлено'}),
+            'isBase64Encoded': False
+        }
+    
+    finally:
+        cursor.close()
+        conn.close()
