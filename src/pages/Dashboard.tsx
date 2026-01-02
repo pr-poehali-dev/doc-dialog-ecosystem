@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
@@ -68,6 +68,19 @@ export default function Dashboard() {
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="Search" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Каталог массажистов</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Найти коллег и обменяться опытом</p>
+                <Link to="/masseurs">
+                  <Button className="w-full">Перейти в каталог</Button>
+                </Link>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                     <Icon name="BookOpen" className="text-primary" size={24} />
                   </div>
                   <h3 className="text-xl font-semibold">Мои курсы</h3>
@@ -114,10 +127,12 @@ export default function Dashboard() {
                   <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                     <Icon name="User" className="text-primary" size={24} />
                   </div>
-                  <h3 className="text-xl font-semibold">Профиль</h3>
+                  <h3 className="text-xl font-semibold">Мой профиль</h3>
                 </div>
-                <p className="text-gray-600 mb-4">Настройки аккаунта</p>
-                <Button className="w-full" variant="outline">Редактировать</Button>
+                <p className="text-gray-600 mb-4">Редактировать профиль массажиста</p>
+                <Link to="/profile/edit">
+                  <Button className="w-full" variant="outline">Редактировать</Button>
+                </Link>
               </div>
 
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">

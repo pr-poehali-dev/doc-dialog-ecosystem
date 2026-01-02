@@ -1,0 +1,152 @@
+import json
+import os
+import psycopg2
+from psycopg2.extras import RealDictCursor
+
+def handler(event: dict, context) -> dict:
+    """
+    API для получения и обновления профиля массажиста
+    GET - получить профиль
+    PUT - обновить профиль
+    """
+    method = event.get('httpMethod', 'GET')
+    
+    if method == 'OPTIONS':
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, PUT, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, X-Authorization',
+                'Access-Control-Max-Age': '86400'
+            },
+            'body': '',
+            'isBase64Encoded': False
+        }
+    
+    headers = event.get('headers', {})
+    auth_header = headers.get('X-Authorization', headers.get('x-authorization', ''))
+    
+    if not auth_header:
+        return {
+            'statusCode': 401,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Не авторизован'}),
+            'isBase64Encoded': False
+        }
+    
+    user_id = 1
+    
+    dsn = os.environ['DATABASE_URL']
+    schema = os.environ['MAIN_DB_SCHEMA']
+    
+    conn = psycopg2.connect(dsn)
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    
+    try:
+        if method == 'GET':
+            cur.execute(f"""
+                SELECT 
+                    id, user_id, full_name, phone, city, 
+                    experience_years, specializations, about,
+                    avatar_url, education, languages, 
+                    certificates, portfolio_images, rating, reviews_count
+                FROM {schema}.masseur_profiles
+                WHERE user_id = {user_id}
+            """)
+            
+            profile = cur.fetchone()
+            
+            if not profile:
+                return {
+                    'statusCode': 404,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'Профиль не найден'}),
+                    'isBase64Encoded': False
+                }
+            
+            return {
+                'statusCode': 200,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps(dict(profile), default=str),
+                'isBase64Encoded': False
+            }
+        
+        elif method == 'PUT':
+            body = json.loads(event.get('body', '{}'))
+            
+            full_name = body.get('full_name', '')
+            phone = body.get('phone', '')
+            city = body.get('city', '')
+            experience_years = body.get('experience_years', 0)
+            about = body.get('about', '')
+            education = body.get('education', '')
+            languages = body.get('languages', [])
+            specializations = body.get('specializations', [])
+            certificates = body.get('certificates', [])
+            
+            if not full_name or not phone or not city:
+                return {
+                    'statusCode': 400,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'Заполните обязательные поля'}),
+                    'isBase64Encoded': False
+                }
+            
+            cur.execute(f"""
+                SELECT id FROM {schema}.masseur_profiles WHERE user_id = {user_id}
+            """)
+            existing = cur.fetchone()
+            
+            if existing:
+                languages_str = '{' + ','.join([f'"{lang}"' for lang in languages]) + '}'
+                specs_str = '{' + ','.join([f'"{spec}"' for spec in specializations]) + '}'
+                certs_str = '{' + ','.join([f'"{cert}"' for cert in certificates]) + '}'
+                
+                cur.execute(f"""
+                    UPDATE {schema}.masseur_profiles
+                    SET 
+                        full_name = '{full_name}',
+                        phone = '{phone}',
+                        city = '{city}',
+                        experience_years = {experience_years},
+                        about = '{about}',
+                        education = '{education}',
+                        languages = '{languages_str}',
+                        specializations = '{specs_str}',
+                        certificates = '{certs_str}'
+                    WHERE user_id = {user_id}
+                    RETURNING id
+                """)
+            else:
+                languages_str = '{' + ','.join([f'"{lang}"' for lang in languages]) + '}'
+                specs_str = '{' + ','.join([f'"{spec}"' for spec in specializations]) + '}'
+                certs_str = '{' + ','.join([f'"{cert}"' for cert in certificates]) + '}'
+                
+                cur.execute(f"""
+                    INSERT INTO {schema}.masseur_profiles 
+                    (user_id, full_name, phone, city, experience_years, about, education, languages, specializations, certificates)
+                    VALUES ({user_id}, '{full_name}', '{phone}', '{city}', {experience_years}, '{about}', '{education}', 
+                            '{languages_str}', '{specs_str}', '{certs_str}')
+                    RETURNING id
+                """)
+            
+            conn.commit()
+            
+            return {
+                'statusCode': 200,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'success': True, 'message': 'Профиль сохранен'}),
+                'isBase64Encoded': False
+            }
+        
+        return {
+            'statusCode': 405,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Метод не поддерживается'}),
+            'isBase64Encoded': False
+        }
+    
+    finally:
+        cur.close()
+        conn.close()

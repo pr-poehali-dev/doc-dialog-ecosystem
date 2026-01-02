@@ -12,6 +12,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import MasseursDirectory from "./pages/MasseursDirectory";
 import MasseurProfile from "./pages/MasseurProfile";
+import ProfileEdit from "./pages/ProfileEdit";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/masseurs" element={<MasseursDirectory />} />
           <Route path="/masseurs/:id" element={<MasseurProfile />} />
+          <Route path="/profile/edit" element={<ProfileEdit />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

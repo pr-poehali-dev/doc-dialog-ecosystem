@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import Icon from "@/components/ui/icon";
 
 type UserType = 'masseur' | 'school' | 'salon' | null;
 
@@ -17,16 +19,25 @@ const HeroSection = ({ openDialog }: HeroSectionProps) => {
           <p className="text-xl text-muted-foreground mb-12 max-w-3xl mx-auto">
             Обучение, инструменты, практика и карьерный рост — в одном пространстве для специалистов массажа
           </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Button size="lg" className="text-lg px-8" onClick={() => openDialog('masseur')}>
-              Я массажист
-            </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8" onClick={() => openDialog('school')}>
-              Я школа
-            </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8" onClick={() => openDialog('salon')}>
-              Я салон
-            </Button>
+          <div className="flex flex-col items-center gap-6">
+            <div className="flex flex-wrap gap-4 justify-center">
+              <Button size="lg" className="text-lg px-8" onClick={() => openDialog('masseur')}>
+                Я массажист
+              </Button>
+              <Button size="lg" variant="outline" className="text-lg px-8" onClick={() => openDialog('school')}>
+                Я школа
+              </Button>
+              <Button size="lg" variant="outline" className="text-lg px-8" onClick={() => openDialog('salon')}>
+                Я салон
+              </Button>
+            </div>
+            
+            <Link to="/masseurs">
+              <Button size="lg" variant="secondary" className="text-lg px-8">
+                <Icon name="Search" size={20} className="mr-2" />
+                Найти массажиста
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
