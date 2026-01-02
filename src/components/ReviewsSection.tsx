@@ -76,7 +76,10 @@ export default function ReviewsSection({ entityType, entityId }: ReviewsSectionP
       });
 
       if (response.ok) {
-        toast({ title: 'Отзыв добавлен', description: 'Спасибо за ваш отзыв!' });
+        toast({ 
+          title: 'Отзыв отправлен на модерацию', 
+          description: 'Ваш отзыв появится на сайте после проверки администратором' 
+        });
         setComment('');
         setRating(5);
         setShowForm(false);

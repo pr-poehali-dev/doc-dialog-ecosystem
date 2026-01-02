@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import Icon from "@/components/ui/icon";
 import CourseModerationTab from "@/components/CourseModerationTab";
 import MastermindModerationTab from "@/components/MastermindModerationTab";
+import ReviewsModerationTab from "@/components/ReviewsModerationTab";
 
 interface Stats {
   total_users: number;
@@ -43,7 +44,7 @@ interface ModerationItem {
 export default function AdminPanel() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'moderation' | 'courses' | 'masterminds'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'moderation' | 'courses' | 'masterminds' | 'reviews'>('dashboard');
   const [loading, setLoading] = useState(false);
   
   const [stats, setStats] = useState<Stats | null>(null);
@@ -273,6 +274,13 @@ export default function AdminPanel() {
                 <Badge className="ml-2" variant="destructive">{stats.pending_masterminds}</Badge>
               )}
             </Button>
+            <Button 
+              variant={activeTab === 'reviews' ? 'default' : 'outline'}
+              onClick={() => setActiveTab('reviews')}
+            >
+              <Icon name="MessageSquare" size={18} className="mr-2" />
+              Отзывы
+            </Button>
           </div>
 
           {/* Dashboard Tab */}
@@ -482,6 +490,9 @@ export default function AdminPanel() {
 
           {/* Masterminds Moderation Tab */}
           {activeTab === 'masterminds' && <MastermindModerationTab onModerationComplete={loadDashboardStats} />}
+
+          {/* Reviews Moderation Tab */}
+          {activeTab === 'reviews' && <ReviewsModerationTab />}
         </div>
       </div>
     </div>
