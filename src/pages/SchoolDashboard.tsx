@@ -23,6 +23,7 @@ interface Course {
   moderation_comment?: string;
   original_price?: number | null;
   discount_price?: number | null;
+  view_count?: number;
   created_at: string;
 }
 
@@ -39,6 +40,9 @@ interface Mastermind {
   image_url: string | null;
   external_url: string;
   status: string;
+  original_price?: number | null;
+  discount_price?: number | null;
+  view_count?: number;
   created_at: string;
 }
 
@@ -63,6 +67,8 @@ export default function SchoolDashboard() {
   const [activeTab, setActiveTab] = useState<'courses' | 'masterminds' | 'specialists'>('courses');
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingCourseId, setEditingCourseId] = useState<number | null>(null);
+  const [editingMastermindId, setEditingMastermindId] = useState<number | null>(null);
+  const [editingSpecialistId, setEditingSpecialistId] = useState<number | null>(null);
   
   const [courses, setCourses] = useState<Course[]>([]);
   const [masterminds, setMasterminds] = useState<Mastermind[]>([]);
@@ -94,7 +100,12 @@ export default function SchoolDashboard() {
     max_participants: '',
     price: '',
     image_url: '',
-    external_url: ''
+    external_url: '',
+    original_price: '',
+    discount_price: '',
+    author_name: '',
+    author_photo: '',
+    event_content: ''
   });
   
   const [specialistForm, setSpecialistForm] = useState({

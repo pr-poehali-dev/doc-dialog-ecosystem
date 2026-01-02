@@ -32,13 +32,13 @@ def handler(event: dict, context) -> dict:
     entity_type = query_params.get('type', 'courses')
     course_id = query_params.get('id')
     
-    # GET /courses?id=X - Get single course with full details
+    # GET /courses?id=X - Get single course with full details + increment view counter
     if method == 'GET' and course_id and not action:
         cur.execute(f"""
             SELECT c.id, c.school_id, s.name as school_name, c.title, c.description, 
                    c.category, c.course_type, c.price, c.currency, c.duration_hours, 
                    c.image_url, c.external_url, c.status, c.original_price, c.discount_price,
-                   c.author_name, c.author_photo, c.course_content, c.created_at
+                   c.author_name, c.author_photo, c.course_content, c.view_count, c.created_at
             FROM {schema}.courses c
             LEFT JOIN {schema}.schools s ON c.school_id = s.id
             WHERE c.id = {course_id} AND c.status = 'approved'
@@ -54,6 +54,8 @@ def handler(event: dict, context) -> dict:
                 'body': json.dumps({'error': 'Course not found'}),
                 'isBase64Encoded': False
             }
+        
+        cur.execute(f"UPDATE {schema}.courses SET view_count = view_count + 1 WHERE id = {course_id}")
         
         result = {
             'id': course[0],
@@ -74,7 +76,8 @@ def handler(event: dict, context) -> dict:
             'author_name': course[15],
             'author_photo': course[16],
             'course_content': course[17],
-            'created_at': course[18].isoformat() if course[18] else None
+            'view_count': course[18],
+            'created_at': course[19].isoformat() if course[19] else None
         }
         
         cur.close()
@@ -92,7 +95,7 @@ def handler(event: dict, context) -> dict:
         status_filter = query_params.get('status', 'approved')
         category = query_params.get('category')
         
-        query = f"SELECT id, school_id, title, description, category, course_type, price, currency, duration_hours, image_url, external_url, status, moderation_comment, original_price, discount_price, created_at FROM {schema}.courses WHERE 1=1"
+        query = f"SELECT id, school_id, title, description, category, course_type, price, currency, duration_hours, image_url, external_url, status, moderation_comment, original_price, discount_price, view_count, created_at FROM {schema}.courses WHERE 1=1"
         
         if school_id:
             query += f" AND school_id = {school_id}"
@@ -122,8 +125,68 @@ def handler(event: dict, context) -> dict:
             'moderation_comment': c[12],
             'original_price': float(c[13]) if c[13] else None,
             'discount_price': float(c[14]) if c[14] else None,
-            'created_at': c[15].isoformat() if c[15] else None
+            'view_count': c[15] or 0,
+            'created_at': c[16].isoformat() if c[16] else None
         } for c in courses]
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps(result),
+            'isBase64Encoded': False
+        }
+    
+    # GET /courses?action=masterminds&id=X - Get single mastermind with full details + increment view counter
+    if method == 'GET' and action == 'masterminds' and course_id:
+        cur.execute(f"""
+            SELECT m.id, m.school_id, s.name as school_name, m.title, m.description,
+                   m.event_date, m.location, m.max_participants, m.current_participants,
+                   m.price, m.currency, m.image_url, m.external_url, m.status,
+                   m.original_price, m.discount_price, m.author_name, m.author_photo,
+                   m.event_content, m.view_count, m.created_at
+            FROM {schema}.masterminds m
+            LEFT JOIN {schema}.schools s ON m.school_id = s.id
+            WHERE m.id = {course_id} AND m.status = 'approved'
+        """)
+        mastermind = cur.fetchone()
+        
+        if not mastermind:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Mastermind not found'}),
+                'isBase64Encoded': False
+            }
+        
+        cur.execute(f"UPDATE {schema}.masterminds SET view_count = view_count + 1 WHERE id = {course_id}")
+        
+        result = {
+            'id': mastermind[0],
+            'school_id': mastermind[1],
+            'school_name': mastermind[2],
+            'title': mastermind[3],
+            'description': mastermind[4],
+            'event_date': mastermind[5].isoformat() if mastermind[5] else None,
+            'location': mastermind[6],
+            'max_participants': mastermind[7],
+            'current_participants': mastermind[8],
+            'price': float(mastermind[9]) if mastermind[9] else None,
+            'currency': mastermind[10],
+            'image_url': mastermind[11],
+            'external_url': mastermind[12],
+            'status': mastermind[13],
+            'original_price': float(mastermind[14]) if mastermind[14] else None,
+            'discount_price': float(mastermind[15]) if mastermind[15] else None,
+            'author_name': mastermind[16],
+            'author_photo': mastermind[17],
+            'event_content': mastermind[18],
+            'view_count': mastermind[19],
+            'created_at': mastermind[20].isoformat() if mastermind[20] else None
+        }
         
         cur.close()
         conn.close()
@@ -139,7 +202,7 @@ def handler(event: dict, context) -> dict:
         school_id = query_params.get('school_id')
         status_filter = query_params.get('status', 'approved')
         
-        query = f"SELECT id, school_id, title, description, event_date, location, max_participants, current_participants, price, currency, image_url, external_url, status, created_at FROM {schema}.masterminds WHERE 1=1"
+        query = f"SELECT id, school_id, title, description, event_date, location, max_participants, current_participants, price, currency, image_url, external_url, status, original_price, discount_price, view_count, created_at FROM {schema}.masterminds WHERE 1=1"
         
         if school_id:
             query += f" AND school_id = {school_id}"
@@ -165,7 +228,10 @@ def handler(event: dict, context) -> dict:
             'image_url': m[10],
             'external_url': m[11],
             'status': m[12],
-            'created_at': m[13].isoformat() if m[13] else None
+            'original_price': float(m[13]) if m[13] else None,
+            'discount_price': float(m[14]) if m[14] else None,
+            'view_count': m[15] or 0,
+            'created_at': m[16].isoformat() if m[16] else None
         } for m in masterminds]
         
         cur.close()
@@ -287,6 +353,11 @@ def handler(event: dict, context) -> dict:
         currency = body.get('currency', 'RUB')
         image_url = body.get('image_url')
         external_url = body.get('external_url')
+        original_price = body.get('original_price')
+        discount_price = body.get('discount_price')
+        author_name = body.get('author_name', '')
+        author_photo = body.get('author_photo')
+        event_content = body.get('event_content', '')
         
         if not all([school_id, title, event_date, external_url]):
             cur.close()
@@ -299,8 +370,8 @@ def handler(event: dict, context) -> dict:
             }
         
         cur.execute(f"""
-            INSERT INTO {schema}.masterminds (school_id, title, description, event_date, location, max_participants, price, currency, image_url, external_url, status)
-            VALUES ({school_id}, '{title.replace("'", "''")}', '{description.replace("'", "''")}', '{event_date}', {f"'{location}'" if location else 'NULL'}, {max_participants if max_participants else 'NULL'}, {price if price else 'NULL'}, '{currency}', {f"'{image_url}'" if image_url else 'NULL'}, '{external_url}', 'pending')
+            INSERT INTO {schema}.masterminds (school_id, title, description, event_date, location, max_participants, price, currency, image_url, external_url, original_price, discount_price, author_name, author_photo, event_content, status)
+            VALUES ({school_id}, '{title.replace("'", "''")}', '{description.replace("'", "''")}', '{event_date}', {f"'{location}'" if location else 'NULL'}, {max_participants if max_participants else 'NULL'}, {price if price else 'NULL'}, '{currency}', {f"'{image_url}'" if image_url else 'NULL'}, '{external_url}', {original_price if original_price else 'NULL'}, {discount_price if discount_price else 'NULL'}, '{author_name.replace("'", "''")}', {f"'{author_photo}'" if author_photo else 'NULL'}, '{event_content.replace("'", "''")}', 'pending')
             RETURNING id, title, status, created_at
         """)
         
@@ -493,6 +564,136 @@ def handler(event: dict, context) -> dict:
             'body': json.dumps({'message': 'Course deleted successfully'}),
             'isBase64Encoded': False
         }
+    
+    # PUT /courses?type=masterminds&id=X - Update mastermind
+    if method == 'PUT' and entity_type == 'masterminds':
+        mastermind_id = query_params.get('id')
+        if not mastermind_id:
+            cur.close()
+            conn.close()
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Missing mastermind id'}), 'isBase64Encoded': False}
+        
+        body = json.loads(event.get('body', '{}'))
+        title = body.get('title')
+        description = body.get('description', '')
+        event_date = body.get('event_date')
+        location = body.get('location')
+        max_participants = body.get('max_participants')
+        price = body.get('price')
+        currency = body.get('currency', 'RUB')
+        image_url = body.get('image_url')
+        external_url = body.get('external_url')
+        original_price = body.get('original_price')
+        discount_price = body.get('discount_price')
+        author_name = body.get('author_name', '')
+        author_photo = body.get('author_photo')
+        event_content = body.get('event_content', '')
+        
+        if not all([title, event_date, external_url]):
+            cur.close()
+            conn.close()
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Missing required fields'}), 'isBase64Encoded': False}
+        
+        cur.execute(f"""
+            UPDATE {schema}.masterminds
+            SET title = '{title.replace("'", "''")}', description = '{description.replace("'", "''")}', event_date = '{event_date}', 
+                location = {f"'{location}'" if location else 'NULL'}, max_participants = {max_participants if max_participants else 'NULL'}, 
+                price = {price if price else 'NULL'}, currency = '{currency}', image_url = {f"'{image_url}'" if image_url else 'NULL'}, 
+                external_url = '{external_url}', original_price = {original_price if original_price else 'NULL'}, 
+                discount_price = {discount_price if discount_price else 'NULL'}, author_name = '{author_name.replace("'", "''")}', 
+                author_photo = {f"'{author_photo}'" if author_photo else 'NULL'}, event_content = '{event_content.replace("'", "''")}', 
+                status = 'pending', updated_at = NOW()
+            WHERE id = {mastermind_id}
+            RETURNING id, title, status
+        """)
+        updated = cur.fetchone()
+        if not updated:
+            cur.close()
+            conn.close()
+            return {'statusCode': 404, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Mastermind not found'}), 'isBase64Encoded': False}
+        
+        cur.close()
+        conn.close()
+        return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'id': updated[0], 'title': updated[1], 'status': updated[2]}), 'isBase64Encoded': False}
+    
+    # DELETE /courses?type=masterminds&id=X - Delete mastermind
+    if method == 'DELETE' and entity_type == 'masterminds':
+        mastermind_id = query_params.get('id')
+        if not mastermind_id:
+            cur.close()
+            conn.close()
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Missing mastermind id'}), 'isBase64Encoded': False}
+        
+        cur.execute(f"DELETE FROM {schema}.masterminds WHERE id = {mastermind_id} RETURNING id")
+        deleted = cur.fetchone()
+        if not deleted:
+            cur.close()
+            conn.close()
+            return {'statusCode': 404, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Mastermind not found'}), 'isBase64Encoded': False}
+        
+        cur.close()
+        conn.close()
+        return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'message': 'Mastermind deleted'}), 'isBase64Encoded': False}
+    
+    # PUT /courses?type=specialists&id=X - Update specialist request
+    if method == 'PUT' and entity_type == 'specialists':
+        spec_id = query_params.get('id')
+        if not spec_id:
+            cur.close()
+            conn.close()
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Missing specialist id'}), 'isBase64Encoded': False}
+        
+        body = json.loads(event.get('body', '{}'))
+        title = body.get('title')
+        description = body.get('description', '')
+        specialty = body.get('specialty')
+        budget_from = body.get('budget_from')
+        budget_to = body.get('budget_to')
+        currency = body.get('currency', 'RUB')
+        location = body.get('location')
+        deadline_date = body.get('deadline_date')
+        
+        if not all([title, description, specialty]):
+            cur.close()
+            conn.close()
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Missing required fields'}), 'isBase64Encoded': False}
+        
+        cur.execute(f"""
+            UPDATE {schema}.specialist_requests
+            SET title = '{title.replace("'", "''")}', description = '{description.replace("'", "''")}', specialty = '{specialty}',
+                budget_from = {budget_from if budget_from else 'NULL'}, budget_to = {budget_to if budget_to else 'NULL'}, currency = '{currency}',
+                location = {f"'{location}'" if location else 'NULL'}, deadline_date = {f"'{deadline_date}'" if deadline_date else 'NULL'}
+            WHERE id = {spec_id}
+            RETURNING id, title, status
+        """)
+        updated = cur.fetchone()
+        if not updated:
+            cur.close()
+            conn.close()
+            return {'statusCode': 404, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Specialist request not found'}), 'isBase64Encoded': False}
+        
+        cur.close()
+        conn.close()
+        return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'id': updated[0], 'title': updated[1], 'status': updated[2]}), 'isBase64Encoded': False}
+    
+    # DELETE /courses?type=specialists&id=X - Delete specialist request
+    if method == 'DELETE' and entity_type == 'specialists':
+        spec_id = query_params.get('id')
+        if not spec_id:
+            cur.close()
+            conn.close()
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Missing specialist id'}), 'isBase64Encoded': False}
+        
+        cur.execute(f"DELETE FROM {schema}.specialist_requests WHERE id = {spec_id} RETURNING id")
+        deleted = cur.fetchone()
+        if not deleted:
+            cur.close()
+            conn.close()
+            return {'statusCode': 404, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Specialist request not found'}), 'isBase64Encoded': False}
+        
+        cur.close()
+        conn.close()
+        return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'message': 'Specialist request deleted'}), 'isBase64Encoded': False}
     
     cur.close()
     conn.close()
