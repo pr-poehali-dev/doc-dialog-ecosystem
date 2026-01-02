@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import ReviewsSection from '@/components/ReviewsSection';
+import RatingDisplay from '@/components/RatingDisplay';
 
 interface CoAuthor {
   name: string;
@@ -43,6 +44,8 @@ export default function CoursePage() {
   const { id } = useParams<{ id: string }>();
   const [course, setCourse] = useState<CourseDetails | null>(null);
   const [loading, setLoading] = useState(true);
+  const [rating, setRating] = useState(0);
+  const [reviewCount, setReviewCount] = useState(0);
 
   useEffect(() => {
     loadCourse();
@@ -138,7 +141,8 @@ export default function CoursePage() {
                   <Badge variant="outline">{course.category}</Badge>
                 </div>
                 <h1 className="text-4xl font-bold mb-4">{course.title}</h1>
-                <p className="text-lg text-muted-foreground">{course.description}</p>
+                <RatingDisplay rating={rating} reviewCount={reviewCount} size="lg" />
+                <p className="text-lg text-muted-foreground mt-4">{course.description}</p>
               </div>
 
               {course.author_name && (
@@ -288,7 +292,14 @@ export default function CoursePage() {
           </div>
 
           <div className="mt-12">
-            <ReviewsSection entityType="course" entityId={parseInt(id || '0')} />
+            <ReviewsSection 
+              entityType="course" 
+              entityId={parseInt(id || '0')} 
+              onRatingChange={(avgRating, count) => {
+                setRating(avgRating);
+                setReviewCount(count);
+              }}
+            />
           </div>
         </div>
       </div>

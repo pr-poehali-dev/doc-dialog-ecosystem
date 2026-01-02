@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import ReviewsSection from '@/components/ReviewsSection';
+import RatingDisplay from '@/components/RatingDisplay';
 
 interface CoAuthor {
   name: string;
@@ -44,6 +45,8 @@ export default function MastermindPage() {
   const { id } = useParams<{ id: string }>();
   const [mastermind, setMastermind] = useState<MastermindDetails | null>(null);
   const [loading, setLoading] = useState(true);
+  const [rating, setRating] = useState(0);
+  const [reviewCount, setReviewCount] = useState(0);
 
   useEffect(() => {
     loadMastermind();
@@ -137,7 +140,8 @@ export default function MastermindPage() {
                   <Badge variant="outline">Офлайн мероприятия</Badge>
                 </div>
                 <h1 className="text-4xl font-bold mb-4">{mastermind.title}</h1>
-                <p className="text-lg text-muted-foreground">{mastermind.description}</p>
+                <RatingDisplay rating={rating} reviewCount={reviewCount} size="lg" />
+                <p className="text-lg text-muted-foreground mt-4">{mastermind.description}</p>
               </div>
 
               {mastermind.author_name && (
@@ -293,7 +297,14 @@ export default function MastermindPage() {
           </div>
 
           <div className="mt-12">
-            <ReviewsSection entityType="mastermind" entityId={parseInt(id || '0')} />
+            <ReviewsSection 
+              entityType="mastermind" 
+              entityId={parseInt(id || '0')}
+              onRatingChange={(avgRating, count) => {
+                setRating(avgRating);
+                setReviewCount(count);
+              }}
+            />
           </div>
 
           <div className="mt-8 text-center">

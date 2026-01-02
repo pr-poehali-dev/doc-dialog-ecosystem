@@ -17,11 +17,12 @@ interface Review {
 interface ReviewsSectionProps {
   entityType: 'course' | 'mastermind';
   entityId: number;
+  onRatingChange?: (rating: number, count: number) => void;
 }
 
 const REVIEWS_API_URL = 'https://functions.poehali.dev/dacb9e9b-c76e-4430-8ed9-362ffc8b9566';
 
-export default function ReviewsSection({ entityType, entityId }: ReviewsSectionProps) {
+export default function ReviewsSection({ entityType, entityId, onRatingChange }: ReviewsSectionProps) {
   const { toast } = useToast();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,6 +45,13 @@ export default function ReviewsSection({ entityType, entityId }: ReviewsSectionP
       if (response.ok) {
         const data = await response.json();
         setReviews(data);
+        
+        if (onRatingChange && data.length > 0) {
+          const avgRating = data.reduce((sum: number, r: Review) => sum + r.rating, 0) / data.length;
+          onRatingChange(avgRating, data.length);
+        } else if (onRatingChange) {
+          onRatingChange(0, 0);
+        }
       }
     } catch (error) {
       console.error('Failed to load reviews:', error);
