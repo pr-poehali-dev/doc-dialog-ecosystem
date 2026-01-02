@@ -54,7 +54,7 @@ export default function Dashboard() {
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-4xl font-bold mb-2">Личный кабинет</h1>
+              <h1 className="text-4xl font-bold mb-2">Личный Кабинет</h1>
               <p className="text-gray-600">{user.email} • {getRoleTitle()}</p>
             </div>
             <Button onClick={handleLogout} variant="outline">

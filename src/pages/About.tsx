@@ -7,12 +7,12 @@ export default function About() {
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-5xl font-bold mb-8 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            О проекте Док диалог
+            О Проекте Док Диалог
           </h1>
           
           <div className="prose prose-lg max-w-none">
             <section className="mb-12">
-              <h2 className="text-3xl font-bold mb-4">Философия проекта</h2>
+              <h2 className="text-3xl font-bold mb-4">Философия Проекта</h2>
               <p className="text-lg text-gray-700 leading-relaxed">
                 «Док диалог» — это не просто платформа, это экосистема для массажистов, школ и салонов. 
                 Мы создаём пространство, где профессионалы могут развиваться, учиться и находить лучшие возможности 
@@ -21,7 +21,7 @@ export default function About() {
             </section>
 
             <section className="mb-12">
-              <h2 className="text-3xl font-bold mb-4">Зачем создан проект</h2>
+              <h2 className="text-3xl font-bold mb-4">Зачем Создан Проект</h2>
               <p className="text-lg text-gray-700 leading-relaxed">
                 Мы увидели, что в индустрии массажа не хватает единого центра, где можно получить качественное 
                 образование, найти работу и общаться с коллегами. Док диалог объединяет всё это в одном месте.
@@ -29,7 +29,7 @@ export default function About() {
             </section>
 
             <section className="mb-12">
-              <h2 className="text-3xl font-bold mb-4">Принципы и ценности</h2>
+              <h2 className="text-3xl font-bold mb-4">Принципы и Ценности</h2>
               <ul className="space-y-4 text-lg text-gray-700">
                 <li>✨ <strong>Качество образования</strong> — только проверенные методики и эксперты</li>
                 <li>🤝 <strong>Сообщество</strong> — поддержка и обмен опытом между профессионалами</li>
@@ -39,18 +39,18 @@ export default function About() {
             </section>
 
             <section>
-              <h2 className="text-3xl font-bold mb-4">Как устроена экосистема</h2>
+              <h2 className="text-3xl font-bold mb-4">Как Устроена Экосистема</h2>
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                  <h3 className="text-xl font-semibold mb-3">Для массажистов</h3>
+                  <h3 className="text-xl font-semibold mb-3">Для Массажистов</h3>
                   <p className="text-gray-600">Обучение, инструменты, поиск работы и профессиональное развитие</p>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                  <h3 className="text-xl font-semibold mb-3">Для школ</h3>
+                  <h3 className="text-xl font-semibold mb-3">Для Школ</h3>
                   <p className="text-gray-600">Платформа для размещения курсов и привлечения студентов</p>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                  <h3 className="text-xl font-semibold mb-3">Для салонов</h3>
+                  <h3 className="text-xl font-semibold mb-3">Для Салонов</h3>
                   <p className="text-gray-600">Доступ к базе квалифицированных специалистов</p>
                 </div>
               </div>

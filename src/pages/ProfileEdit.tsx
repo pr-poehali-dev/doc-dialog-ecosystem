@@ -129,7 +129,7 @@ export default function ProfileEdit() {
               Назад
             </Button>
             <div>
-              <h1 className="text-4xl font-bold">Редактирование профиля</h1>
+              <h1 className="text-4xl font-bold">Редактирование Профиля</h1>
               <p className="text-muted-foreground mt-2">Заполните информацию о себе</p>
             </div>
           </div>
