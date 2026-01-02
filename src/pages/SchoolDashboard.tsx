@@ -65,8 +65,12 @@ export default function SchoolDashboard() {
             'Content-Type': 'application/json'
           }
         });
-        const data = await response.json();
-        setOfflineTrainings(data);
+        if (response.ok) {
+          const data = await response.json();
+          setOfflineTrainings(Array.isArray(data) ? data : []);
+        } else {
+          setOfflineTrainings([]);
+        }
       } else if (activeTab === 'specialists') {
         const response = await fetch(`${COURSE_API_URL}?action=specialists&school_id=${schoolId}&status=all`);
         const data = await response.json();
