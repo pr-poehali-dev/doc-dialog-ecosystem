@@ -17,6 +17,7 @@ import AdminPanel from "./pages/AdminPanel";
 import SchoolDashboard from "./pages/SchoolDashboard";
 import CoursesCatalog from "./pages/CoursesCatalog";
 import CoursePage from "./pages/CoursePage";
+import MastermindPage from "./pages/MastermindPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +42,7 @@ const App = () => (
           <Route path="/school/dashboard" element={<SchoolDashboard />} />
           <Route path="/courses" element={<CoursesCatalog />} />
           <Route path="/course/:id" element={<CoursePage />} />
+          <Route path="/mastermind/:id" element={<MastermindPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

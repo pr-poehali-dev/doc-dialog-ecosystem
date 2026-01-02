@@ -301,7 +301,10 @@ export default function CoursesCatalog() {
                           <span className="text-xl font-bold text-green-600">Бесплатно</span>
                         )}
                       </div>
-                      <Button size="sm" onClick={() => window.location.href = `/course/${item.id}`}>
+                      <Button size="sm" onClick={() => {
+                        const url = item.itemType === 'mastermind' ? `/mastermind/${item.id}` : `/course/${item.id}`;
+                        window.location.href = url;
+                      }}>
                         Подробнее
                         <Icon name="ArrowRight" size={16} className="ml-2" />
                       </Button>
