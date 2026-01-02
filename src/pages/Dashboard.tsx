@@ -7,7 +7,7 @@ import Icon from '@/components/ui/icon';
 interface User {
   id: number;
   email: string;
-  role: 'masseur' | 'school' | 'salon';
+  role: 'masseur' | 'school' | 'salon' | 'admin' | 'moderator';
 }
 
 export default function Dashboard() {
@@ -42,10 +42,16 @@ export default function Dashboard() {
         return 'Школа массажа';
       case 'salon':
         return 'Массажный салон';
+      case 'admin':
+        return 'Администратор';
+      case 'moderator':
+        return 'Модератор';
       default:
         return '';
     }
   };
+
+  const isAdminOrModerator = user.role === 'admin' || user.role === 'moderator';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-blue-50">
@@ -58,12 +64,14 @@ export default function Dashboard() {
               <p className="text-gray-600">{user.email} • {getRoleTitle()}</p>
             </div>
             <div className="flex gap-2">
-              <Link to="/admin">
-                <Button variant="secondary">
-                  <Icon name="Shield" size={18} className="mr-2" />
-                  Админ-панель
-                </Button>
-              </Link>
+              {isAdminOrModerator && (
+                <Link to="/admin">
+                  <Button variant="secondary">
+                    <Icon name="Shield" size={18} className="mr-2" />
+                    Админ-панель
+                  </Button>
+                </Link>
+              )}
               <Button onClick={handleLogout} variant="outline">
                 <Icon name="LogOut" size={18} className="mr-2" />
                 Выйти
