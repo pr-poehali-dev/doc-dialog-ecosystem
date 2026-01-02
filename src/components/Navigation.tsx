@@ -11,7 +11,7 @@ const Navigation = ({ scrollToSection }: NavigationProps) => {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/f50c4eb3-02b6-4ce7-99bf-8853b24d1740.jpg" alt="Док диалог" className="h-10" />
+            <img src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/495f2ba1-12f0-49bb-ba1d-6fd8cd607af2.jpg" alt="Док диалог" className="h-10" />
           </div>
           <div className="hidden md:flex items-center gap-8">
             <button onClick={() => scrollToSection('education')} className="text-sm font-medium hover:text-primary transition-colors">
