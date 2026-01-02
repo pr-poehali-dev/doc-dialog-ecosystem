@@ -21,6 +21,7 @@ def handler(event: dict, context) -> dict:
         }
     
     dsn = os.environ.get('DATABASE_URL')
+    schema = 't_p46047379_doc_dialog_ecosystem'
     
     conn = psycopg2.connect(dsn)
     conn.autocommit = True
@@ -38,26 +39,26 @@ def handler(event: dict, context) -> dict:
         is_admin = False
         
         if token:
-            cur.execute("SELECT id, role FROM users WHERE token = %s", (token,))
+            cur.execute(f"SELECT id, role FROM {schema}.users WHERE token = %s", (token,))
             user = cur.fetchone()
             if user:
                 user_id = user[0]
                 is_admin = user[1] in ('admin', 'moderator')
         
         if is_admin:
-            cur.execute("""
+            cur.execute(f"""
                 SELECT id, user_id, school_name, title, description, event_date, location,
                        max_participants, price, image_url, external_url, is_moderated, created_at,
                        original_price, discount_price, author_name, author_photo, event_content
-                FROM offline_training
+                FROM {schema}.offline_training
                 ORDER BY created_at DESC
             """)
         else:
-            cur.execute("""
+            cur.execute(f"""
                 SELECT id, user_id, school_name, title, description, event_date, location,
                        max_participants, price, image_url, external_url, is_moderated, created_at,
                        original_price, discount_price, author_name, author_photo, event_content
-                FROM offline_training
+                FROM {schema}.offline_training
                 WHERE is_moderated = true
                 ORDER BY created_at DESC
             """)
@@ -96,11 +97,11 @@ def handler(event: dict, context) -> dict:
     
     # GET /offline-training?id=X - Get single training
     if method == 'GET' and training_id:
-        cur.execute("""
+        cur.execute(f"""
             SELECT id, user_id, school_name, title, description, event_date, location,
                    max_participants, price, image_url, external_url, is_moderated, created_at,
                    original_price, discount_price, author_name, author_photo, event_content
-            FROM offline_training
+            FROM {schema}.offline_training
             WHERE id = %s
         """, (training_id,))
         
@@ -161,7 +162,7 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
-        cur.execute("SELECT id FROM users WHERE token = %s", (token,))
+        cur.execute(f"SELECT id FROM {schema}.users WHERE token = %s", (token,))
         user = cur.fetchone()
         
         if not user:
@@ -177,8 +178,8 @@ def handler(event: dict, context) -> dict:
         user_id = user[0]
         body = json.loads(event.get('body', '{}'))
         
-        cur.execute("""
-            INSERT INTO offline_training (
+        cur.execute(f"""
+            INSERT INTO {schema}.offline_training (
                 user_id, school_name, title, description, event_date, location,
                 max_participants, price, image_url, external_url, original_price,
                 discount_price, author_name, author_photo, event_content
@@ -228,7 +229,7 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
-        cur.execute("SELECT id, role FROM users WHERE token = %s", (token,))
+        cur.execute(f"SELECT id, role FROM {schema}.users WHERE token = %s", (token,))
         user = cur.fetchone()
         
         if not user:
@@ -248,14 +249,14 @@ def handler(event: dict, context) -> dict:
         body = json.loads(event.get('body', '{}'))
         
         if 'is_moderated' in body and is_admin:
-            cur.execute("""
-                UPDATE offline_training
+            cur.execute(f"""
+                UPDATE {schema}.offline_training
                 SET is_moderated = %s
                 WHERE id = %s
             """, (body['is_moderated'], training_id))
         else:
-            cur.execute("""
-                UPDATE offline_training
+            cur.execute(f"""
+                UPDATE {schema}.offline_training
                 SET school_name = COALESCE(%s, school_name),
                     title = COALESCE(%s, title),
                     description = COALESCE(%s, description),
@@ -314,7 +315,7 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
-        cur.execute("SELECT id, role FROM users WHERE token = %s", (token,))
+        cur.execute(f"SELECT id, role FROM {schema}.users WHERE token = %s", (token,))
         user = cur.fetchone()
         
         if not user:
@@ -332,9 +333,9 @@ def handler(event: dict, context) -> dict:
         is_admin = user_role in ('admin', 'moderator')
         
         if is_admin:
-            cur.execute("DELETE FROM offline_training WHERE id = %s", (training_id,))
+            cur.execute(f"DELETE FROM {schema}.offline_training WHERE id = %s", (training_id,))
         else:
-            cur.execute("DELETE FROM offline_training WHERE id = %s AND user_id = %s", (training_id, user_id))
+            cur.execute(f"DELETE FROM {schema}.offline_training WHERE id = %s AND user_id = %s", (training_id, user_id))
         
         cur.close()
         conn.close()
