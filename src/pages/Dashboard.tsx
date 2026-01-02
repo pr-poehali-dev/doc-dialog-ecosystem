@@ -57,10 +57,18 @@ export default function Dashboard() {
               <h1 className="text-4xl font-bold mb-2">Личный кабинет</h1>
               <p className="text-gray-600">{user.email} • {getRoleTitle()}</p>
             </div>
-            <Button onClick={handleLogout} variant="outline">
-              <Icon name="LogOut" size={18} className="mr-2" />
-              Выйти
-            </Button>
+            <div className="flex gap-2">
+              <Link to="/admin">
+                <Button variant="secondary">
+                  <Icon name="Shield" size={18} className="mr-2" />
+                  Админ-панель
+                </Button>
+              </Link>
+              <Button onClick={handleLogout} variant="outline">
+                <Icon name="LogOut" size={18} className="mr-2" />
+                Выйти
+              </Button>
+            </div>
           </div>
 
           {user.role === 'masseur' && (

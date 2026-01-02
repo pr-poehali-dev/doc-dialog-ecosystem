@@ -1,0 +1,41 @@
+{
+  "tests": [
+    {
+      "name": "Get admin dashboard stats",
+      "method": "GET",
+      "path": "/",
+      "headers": {
+        "X-Authorization": "Bearer test-token"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "total_users": "number",
+        "total_masseurs": "number",
+        "total_appointments": "number",
+        "pending_reviews": "number",
+        "pending_moderations": "number"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Get users list",
+      "method": "GET",
+      "path": "/users",
+      "headers": {
+        "X-Authorization": "Bearer test-token"
+      },
+      "expectedStatus": 200,
+      "expectedBody": [],
+      "bodyMatcher": "type"
+    },
+    {
+      "name": "Unauthorized access without token",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 401,
+      "expectedBody": {
+        "error": "Unauthorized"
+      }
+    }
+  ]
+}
