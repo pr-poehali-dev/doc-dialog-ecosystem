@@ -94,8 +94,9 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
-        # Get user from token
-        token = event.get('headers', {}).get('X-Authorization', '').replace('Bearer ', '')
+        # Get user from token (headers come in lowercase from proxy)
+        headers = event.get('headers', {})
+        token = headers.get('x-authorization', headers.get('X-Authorization', '')).replace('Bearer ', '')
         
         if not token:
             cur.close()
