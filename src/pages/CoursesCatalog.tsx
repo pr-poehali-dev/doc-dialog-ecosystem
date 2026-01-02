@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
+import RatingDisplay from '@/components/RatingDisplay';
 
 interface Course {
   id: number;
@@ -23,6 +24,8 @@ interface Course {
   discount_price?: number | null;
   view_count?: number;
   created_at: string;
+  rating?: number;
+  review_count?: number;
 }
 
 interface Mastermind {
@@ -42,11 +45,14 @@ interface Mastermind {
   discount_price?: number | null;
   view_count?: number;
   created_at: string;
+  rating?: number;
+  review_count?: number;
 }
 
 type CatalogItem = (Course & { itemType: 'course' }) | (Mastermind & { itemType: 'mastermind'; category: string; course_type: string });
 
 const COURSE_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f';
+const REVIEWS_API_URL = 'https://functions.poehali.dev/dacb9e9b-c76e-4430-8ed9-362ffc8b9566';
 
 const CATEGORIES = [
   'Все категории',
@@ -88,7 +94,7 @@ export default function CoursesCatalog() {
       const coursesData: Course[] = await coursesResponse.json();
       const mastermindsData: Mastermind[] = await mastermindsResponse.json();
       
-      const allItems: CatalogItem[] = [
+      const allItemsWithoutRatings: CatalogItem[] = [
         ...coursesData.map(c => ({ ...c, itemType: 'course' as const })),
         ...mastermindsData.map(m => ({ 
           ...m, 
@@ -99,7 +105,27 @@ export default function CoursesCatalog() {
         }))
       ];
       
-      setItems(allItems);
+      const itemsWithRatings = await Promise.all(
+        allItemsWithoutRatings.map(async (item) => {
+          try {
+            const response = await fetch(
+              `${REVIEWS_API_URL}?entity_type=${item.itemType}&entity_id=${item.id}`
+            );
+            if (response.ok) {
+              const reviews = await response.json();
+              if (reviews.length > 0) {
+                const avgRating = reviews.reduce((sum: number, r: any) => sum + r.rating, 0) / reviews.length;
+                return { ...item, rating: avgRating, review_count: reviews.length };
+              }
+            }
+          } catch (error) {
+            console.error('Failed to load reviews for item:', item.id, error);
+          }
+          return { ...item, rating: 0, review_count: 0 };
+        })
+      );
+      
+      setItems(itemsWithRatings);
     } catch (error) {
       console.error('Load error:', error);
     } finally {
@@ -246,6 +272,13 @@ export default function CoursesCatalog() {
                       <Badge className={getCourseTypeColor(item.course_type)}>
                         {item.itemType === 'mastermind' ? 'Мастермайнд' : getCourseTypeLabel(item.course_type)}
                       </Badge>
+                    </div>
+                    <div className="mb-2">
+                      <RatingDisplay 
+                        rating={item.rating || 0} 
+                        reviewCount={item.review_count || 0} 
+                        size="sm" 
+                      />
                     </div>
                     <p className="text-sm text-muted-foreground line-clamp-2">{item.description}</p>
                   </CardHeader>
