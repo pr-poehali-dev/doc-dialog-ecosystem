@@ -5,6 +5,7 @@ import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
 import CourseForm from '@/components/school/CourseForm';
 import MastermindForm from '@/components/school/MastermindForm';
+import OfflineTrainingForm from '@/components/school/OfflineTrainingForm';
 import SpecialistForm from '@/components/school/SpecialistForm';
 import ItemsList from '@/components/school/ItemsList';
 import {
@@ -18,24 +19,28 @@ import {
 } from './SchoolDashboard/types';
 import { useCourseHandlers } from './SchoolDashboard/useCourseHandlers';
 import { useMastermindHandlers } from './SchoolDashboard/useMastermindHandlers';
+import { useOfflineTrainingHandlers } from './SchoolDashboard/useOfflineTrainingHandlers';
 import { useSpecialistHandlers } from './SchoolDashboard/useSpecialistHandlers';
 
 export default function SchoolDashboard() {
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<'courses' | 'masterminds' | 'specialists'>('courses');
+  const [activeTab, setActiveTab] = useState<'courses' | 'masterminds' | 'offline-training' | 'specialists'>('courses');
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingCourseId, setEditingCourseId] = useState<number | null>(null);
   const [editingMastermindId, setEditingMastermindId] = useState<number | null>(null);
+  const [editingTrainingId, setEditingTrainingId] = useState<number | null>(null);
   const [editingSpecialistId, setEditingSpecialistId] = useState<number | null>(null);
   
   const [courses, setCourses] = useState<Course[]>([]);
   const [masterminds, setMasterminds] = useState<Mastermind[]>([]);
+  const [offlineTrainings, setOfflineTrainings] = useState<any[]>([]);
   const [specialists, setSpecialists] = useState<SpecialistRequest[]>([]);
   
   const schoolId = 1;
   
   const [courseForm, setCourseForm] = useState(INITIAL_COURSE_FORM);
   const [mastermindForm, setMastermindForm] = useState(INITIAL_MASTERMIND_FORM);
+  const [trainingForm, setTrainingForm] = useState(INITIAL_MASTERMIND_FORM);
   const [specialistForm, setSpecialistForm] = useState(INITIAL_SPECIALIST_FORM);
 
   useEffect(() => {
@@ -52,6 +57,13 @@ export default function SchoolDashboard() {
         const response = await fetch(`${COURSE_API_URL}?action=masterminds&school_id=${schoolId}&status=all`);
         const data = await response.json();
         setMasterminds(data);
+      } else if (activeTab === 'offline-training') {
+        const token = localStorage.getItem('token');
+        const response = await fetch('https://functions.poehali.dev/3dbad6d0-7948-4c83-ac47-fa9e9e92bf26', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        setOfflineTrainings(data);
       } else if (activeTab === 'specialists') {
         const response = await fetch(`${COURSE_API_URL}?action=specialists&school_id=${schoolId}&status=all`);
         const data = await response.json();
@@ -90,6 +102,21 @@ export default function SchoolDashboard() {
     setMastermindForm,
     editingMastermindId,
     setEditingMastermindId,
+    setShowAddForm,
+    loadData,
+    toast
+  });
+
+  const {
+    handleAddTraining,
+    handleEditTraining,
+    handleUpdateTraining,
+    handleDeleteTraining
+  } = useOfflineTrainingHandlers({
+    trainingForm,
+    setTrainingForm,
+    editingTrainingId,
+    setEditingTrainingId,
     setShowAddForm,
     loadData,
     toast
@@ -161,6 +188,13 @@ export default function SchoolDashboard() {
             Мастермайнды
           </button>
           <button
+            onClick={() => { setActiveTab('offline-training'); setShowAddForm(false); }}
+            className={`px-4 py-2 font-medium transition-colors ${activeTab === 'offline-training' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+          >
+            <Icon name="GraduationCap" size={18} className="inline mr-2" />
+            Очное обучение
+          </button>
+          <button
             onClick={() => { setActiveTab('specialists'); setShowAddForm(false); }}
             className={`px-4 py-2 font-medium transition-colors ${activeTab === 'specialists' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
           >
@@ -174,6 +208,7 @@ export default function SchoolDashboard() {
             <Icon name="Plus" size={18} className="mr-2" />
             {activeTab === 'courses' && 'Добавить курс'}
             {activeTab === 'masterminds' && 'Добавить мастермайнд'}
+            {activeTab === 'offline-training' && 'Добавить очное обучение'}
             {activeTab === 'specialists' && 'Найти специалиста'}
           </Button>
         </div>
@@ -206,6 +241,20 @@ export default function SchoolDashboard() {
           />
         )}
 
+        {showAddForm && activeTab === 'offline-training' && (
+          <OfflineTrainingForm
+            trainingForm={trainingForm}
+            setTrainingForm={setTrainingForm}
+            onSubmit={editingTrainingId ? handleUpdateTraining : handleAddTraining}
+            onCancel={() => {
+              setShowAddForm(false);
+              setEditingTrainingId(null);
+              setTrainingForm(INITIAL_MASTERMIND_FORM);
+            }}
+            isEditing={!!editingTrainingId}
+          />
+        )}
+
         {showAddForm && activeTab === 'specialists' && (
           <SpecialistForm
             specialistForm={specialistForm}
@@ -225,12 +274,15 @@ export default function SchoolDashboard() {
             activeTab={activeTab}
             courses={courses}
             masterminds={masterminds}
+            offlineTrainings={offlineTrainings}
             specialists={specialists}
             getStatusBadge={getStatusBadge}
             onEditCourse={handleEditCourse}
             onDeleteCourse={handleDeleteCourse}
             onEditMastermind={handleEditMastermind}
             onDeleteMastermind={handleDeleteMastermind}
+            onEditTraining={handleEditTraining}
+            onDeleteTraining={handleDeleteTraining}
             onEditSpecialist={handleEditSpecialist}
             onDeleteSpecialist={handleDeleteSpecialist}
           />

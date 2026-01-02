@@ -53,20 +53,23 @@ interface SpecialistRequest {
 }
 
 interface ItemsListProps {
-  activeTab: 'courses' | 'masterminds' | 'specialists';
+  activeTab: 'courses' | 'masterminds' | 'offline-training' | 'specialists';
   courses: Course[];
   masterminds: Mastermind[];
+  offlineTrainings?: any[];
   specialists: SpecialistRequest[];
   getStatusBadge: (status: string) => JSX.Element;
   onEditCourse?: (course: Course) => void;
   onDeleteCourse?: (courseId: number) => void;
   onEditMastermind?: (mastermind: Mastermind) => void;
   onDeleteMastermind?: (mastermindId: number) => void;
+  onEditTraining?: (training: any) => void;
+  onDeleteTraining?: (trainingId: number) => void;
   onEditSpecialist?: (specialist: SpecialistRequest) => void;
   onDeleteSpecialist?: (specialistId: number) => void;
 }
 
-export default function ItemsList({ activeTab, courses, masterminds, specialists, getStatusBadge, onEditCourse, onDeleteCourse, onEditMastermind, onDeleteMastermind, onEditSpecialist, onDeleteSpecialist }: ItemsListProps) {
+export default function ItemsList({ activeTab, courses, masterminds, offlineTrainings = [], specialists, getStatusBadge, onEditCourse, onDeleteCourse, onEditMastermind, onDeleteMastermind, onEditTraining, onDeleteTraining, onEditSpecialist, onDeleteSpecialist }: ItemsListProps) {
   return (
     <>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -206,6 +209,73 @@ export default function ItemsList({ activeTab, courses, masterminds, specialists
                 </button>
                 <button
                   onClick={() => onDeleteMastermind?.(mm.id)}
+                  className="flex items-center justify-center gap-2 px-3 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
+                >
+                  <Icon name="Trash2" size={16} />
+                </button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+
+        {activeTab === 'offline-training' && offlineTrainings.map((training) => (
+          <Card key={training.id}>
+            <CardHeader>
+              <div className="flex justify-between items-start mb-2">
+                <CardTitle className="text-lg">{training.title}</CardTitle>
+                <span className={`px-2 py-1 rounded text-xs font-medium ${training.is_moderated ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                  {training.is_moderated ? 'Одобрено' : 'На модерации'}
+                </span>
+              </div>
+              <p className="text-sm text-muted-foreground line-clamp-2">{training.description}</p>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <Icon name="Calendar" size={16} className="text-primary" />
+                  <span>{new Date(training.event_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                </div>
+                {training.location && (
+                  <div className="flex items-center gap-2">
+                    <Icon name="MapPin" size={16} className="text-primary" />
+                    <span>{training.location}</span>
+                  </div>
+                )}
+                {training.max_participants && (
+                  <div className="flex items-center gap-2">
+                    <Icon name="Users" size={16} className="text-primary" />
+                    <span>Макс. {training.max_participants} участников</span>
+                  </div>
+                )}
+                {(training.original_price || training.discount_price) ? (
+                  <div className="flex items-center gap-2">
+                    <Icon name="Coins" size={16} className="text-primary" />
+                    <div className="flex items-center gap-2">
+                      {training.original_price && (
+                        <span className="line-through text-muted-foreground">{training.original_price.toLocaleString()} ₽</span>
+                      )}
+                      {training.discount_price && (
+                        <span className="text-red-600 font-semibold">{training.discount_price.toLocaleString()} ₽</span>
+                      )}
+                    </div>
+                  </div>
+                ) : training.price ? (
+                  <div className="flex items-center gap-2">
+                    <Icon name="Coins" size={16} className="text-primary" />
+                    <span>{training.price.toLocaleString()} ₽</span>
+                  </div>
+                ) : null}
+              </div>
+              <div className="flex gap-2 mt-4 pt-4 border-t">
+                <button
+                  onClick={() => onEditTraining?.(training)}
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                >
+                  <Icon name="Pencil" size={16} />
+                  Редактировать
+                </button>
+                <button
+                  onClick={() => onDeleteTraining?.(training.id)}
                   className="flex items-center justify-center gap-2 px-3 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
                 >
                   <Icon name="Trash2" size={16} />

@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import Icon from "@/components/ui/icon";
 import CourseModerationTab from "@/components/CourseModerationTab";
 import MastermindModerationTab from "@/components/MastermindModerationTab";
+import OfflineTrainingModerationTab from "@/components/OfflineTrainingModerationTab";
 import ReviewsModerationTab from "@/components/ReviewsModerationTab";
 import AdminDashboardTab from "@/components/admin/AdminDashboardTab";
 import AdminUsersTab from "@/components/admin/AdminUsersTab";
@@ -46,7 +47,7 @@ interface ModerationItem {
 export default function AdminPanel() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'moderation' | 'courses' | 'masterminds' | 'reviews'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'moderation' | 'courses' | 'masterminds' | 'offline-training' | 'reviews'>('dashboard');
   const [loading, setLoading] = useState(false);
   
   const [stats, setStats] = useState<Stats | null>(null);
@@ -294,6 +295,13 @@ export default function AdminPanel() {
               )}
             </Button>
             <Button 
+              variant={activeTab === 'offline-training' ? 'default' : 'outline'}
+              onClick={() => setActiveTab('offline-training')}
+            >
+              <Icon name="GraduationCap" size={18} className="mr-2" />
+              Очное обучение
+            </Button>
+            <Button 
               variant={activeTab === 'reviews' ? 'default' : 'outline'}
               onClick={() => setActiveTab('reviews')}
             >
@@ -328,6 +336,9 @@ export default function AdminPanel() {
 
           {/* Masterminds Moderation Tab */}
           {activeTab === 'masterminds' && <MastermindModerationTab onModerationComplete={loadDashboardStats} />}
+
+          {/* Offline Training Moderation Tab */}
+          {activeTab === 'offline-training' && <OfflineTrainingModerationTab onModerationComplete={loadDashboardStats} />}
 
           {/* Reviews Moderation Tab */}
           {activeTab === 'reviews' && <ReviewsModerationTab />}
