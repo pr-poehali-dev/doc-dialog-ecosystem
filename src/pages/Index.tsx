@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Navigation from "@/components/Navigation";
+import { Navigation } from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
 import MainContent from "@/components/MainContent";
 import RegistrationDialog from "@/components/RegistrationDialog";

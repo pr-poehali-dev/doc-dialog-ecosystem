@@ -1,0 +1,213 @@
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Navigation } from '@/components/Navigation';
+import { Button } from '@/components/ui/button';
+import Icon from '@/components/ui/icon';
+
+interface User {
+  id: number;
+  email: string;
+  role: 'masseur' | 'school' | 'salon';
+}
+
+export default function Dashboard() {
+  const [user, setUser] = useState<User | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('user');
+
+    if (!token || !userData) {
+      navigate('/login');
+      return;
+    }
+
+    setUser(JSON.parse(userData));
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/');
+  };
+
+  if (!user) return null;
+
+  const getRoleTitle = () => {
+    switch (user.role) {
+      case 'masseur':
+        return 'Массажист';
+      case 'school':
+        return 'Школа массажа';
+      case 'salon':
+        return 'Массажный салон';
+      default:
+        return '';
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-white to-blue-50">
+      <Navigation />
+      <div className="container mx-auto px-4 py-16">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="text-4xl font-bold mb-2">Личный кабинет</h1>
+              <p className="text-gray-600">{user.email} • {getRoleTitle()}</p>
+            </div>
+            <Button onClick={handleLogout} variant="outline">
+              <Icon name="LogOut" size={18} className="mr-2" />
+              Выйти
+            </Button>
+          </div>
+
+          {user.role === 'masseur' && (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="BookOpen" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Мои курсы</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Доступ к обучающим материалам и курсам</p>
+                <Button className="w-full" variant="outline">Перейти к курсам</Button>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="Bot" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Чат-боты</h3>
+                </div>
+                <p className="text-gray-600 mb-4">MRTDD и другие ассистенты</p>
+                <Button className="w-full" variant="outline">Открыть ботов</Button>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="Briefcase" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Вакансии</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Найти работу в салонах</p>
+                <Button className="w-full" variant="outline">Смотреть вакансии</Button>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="Crown" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Подписка</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Тариф: <strong>Базовый (бесплатно)</strong></p>
+                <Button className="w-full">Улучшить подписку</Button>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="User" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Профиль</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Настройки аккаунта</p>
+                <Button className="w-full" variant="outline">Редактировать</Button>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="Users" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Мастермайнды</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Участие в офлайн-встречах</p>
+                <Button className="w-full" variant="outline">Записаться</Button>
+              </div>
+            </div>
+          )}
+
+          {user.role === 'school' && (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="GraduationCap" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Мои курсы</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Управление курсами школы</p>
+                <Button className="w-full">Добавить курс</Button>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="BarChart3" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Аналитика</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Статистика продаж и просмотров</p>
+                <Button className="w-full" variant="outline">Смотреть отчёты</Button>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="Building2" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Страница школы</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Редактировать профиль</p>
+                <Button className="w-full" variant="outline">Редактировать</Button>
+              </div>
+            </div>
+          )}
+
+          {user.role === 'salon' && (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="Briefcase" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Вакансии</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Управление вакансиями салона</p>
+                <Button className="w-full">Добавить вакансию</Button>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="Users" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Отклики</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Просмотр откликов специалистов</p>
+                <Button className="w-full" variant="outline">Смотреть отклики</Button>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="Building2" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Страница салона</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Редактировать профиль</p>
+                <Button className="w-full" variant="outline">Редактировать</Button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
