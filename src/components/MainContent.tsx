@@ -302,7 +302,7 @@ const MainContent = ({ openDialog }: MainContentProps) => {
                     <span>чувствовать уверенность в работе с клиентами</span>
                   </li>
                 </ul>
-                <Button size="lg">Перейти к курсам</Button>
+                <Button size="lg" onClick={() => openDialog('masseur')}>Перейти к курсам</Button>
               </div>
               <div className="bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl p-8 aspect-square flex items-center justify-center">
                 <Icon name="GraduationCap" size={120} className="text-primary/30" />
@@ -339,7 +339,7 @@ const MainContent = ({ openDialog }: MainContentProps) => {
                     <span>регулярные обновления</span>
                   </li>
                 </ul>
-                <Button size="lg" variant="secondary">Попробовать инструменты</Button>
+                <Button size="lg" variant="secondary" onClick={() => openDialog('masseur')}>Попробовать инструменты</Button>
               </div>
             </div>
 
@@ -370,7 +370,7 @@ const MainContent = ({ openDialog }: MainContentProps) => {
                     <span>профессиональная поддержка</span>
                   </li>
                 </ul>
-                <Button size="lg">Узнать о мастермайндах</Button>
+                <Button size="lg" onClick={() => openDialog('masseur')}>Узнать о мастермайндах</Button>
               </div>
               <div className="bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl p-8 aspect-square flex items-center justify-center">
                 <Icon name="Users" size={120} className="text-primary/30" />
