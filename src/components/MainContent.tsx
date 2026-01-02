@@ -439,7 +439,7 @@ const MainContent = ({ openDialog }: MainContentProps) => {
           <div className="grid md:grid-cols-4 gap-8 max-w-6xl mx-auto">
             <div>
               <div className="mb-4">
-                <img src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/495f2ba1-12f0-49bb-ba1d-6fd8cd607af2.jpg" alt="Док диалог" className="h-8" />
+                <img src="https://cdn.poehali.dev/files/Group 7 (6).png" alt="Док диалог" className="h-8" />
               </div>
               <p className="text-sm text-muted-foreground">
                 Профессиональная экосистема для массажистов
