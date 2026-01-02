@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
+import ReviewsSection from '@/components/ReviewsSection';
 
 interface CoAuthor {
   name: string;
@@ -289,6 +290,10 @@ export default function MastermindPage() {
                 </CardContent>
               </Card>
             </div>
+          </div>
+
+          <div className="mt-12">
+            <ReviewsSection entityType="mastermind" entityId={parseInt(id || '0')} />
           </div>
 
           <div className="mt-8 text-center">

@@ -24,6 +24,7 @@ interface Course {
 
 const COURSE_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f';
 const ADMIN_API_URL = 'https://functions.poehali.dev/d9ed333b-313d-40b6-8ca2-016db5854f7c';
+const REVIEWS_API_URL = 'https://functions.poehali.dev/dacb9e9b-c76e-4430-8ed9-362ffc8b9566';
 
 interface CourseModerationTabProps {
   onModerationComplete?: () => void;
@@ -75,7 +76,18 @@ export default function CourseModerationTab({ onModerationComplete }: CourseMode
       });
 
       if (response.ok) {
-        toast({ title: 'Курс одобрен', description: 'Курс опубликован в каталоге' });
+        // Generate auto reviews after approval
+        try {
+          await fetch(`${REVIEWS_API_URL}?action=generate_auto`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ entity_type: 'course', entity_id: courseId })
+          });
+        } catch (err) {
+          console.error('Failed to generate auto reviews:', err);
+        }
+        
+        toast({ title: 'Курс одобрен', description: 'Курс опубликован в каталоге с автоматическими отзывами' });
         setModerationComment('');
         setSelectedCourse(null);
         loadPendingCourses();
