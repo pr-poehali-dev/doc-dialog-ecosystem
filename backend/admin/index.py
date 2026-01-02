@@ -247,6 +247,51 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
+    # POST /admin?action=moderate_course - Moderate course
+    if method == 'POST' and action == 'moderate_course':
+        body = json.loads(event.get('body', '{}'))
+        course_id = body.get('course_id')
+        approve = body.get('approve', True)
+        comment = body.get('comment', '')
+        
+        status = 'approved' if approve else 'rejected'
+        
+        cur.execute(f"""
+            UPDATE {schema}.courses
+            SET status = '{status}',
+                moderation_comment = '{comment.replace("'", "''")}',
+                approved_at = {'NOW()' if approve else 'NULL'},
+                approved_by = {admin_id if approve else 'NULL'}
+            WHERE id = {course_id}
+            RETURNING id, title, status
+        """)
+        updated_course = cur.fetchone()
+        
+        if not updated_course:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Course not found'}),
+                'isBase64Encoded': False
+            }
+        
+        result = {
+            'id': updated_course[0],
+            'title': updated_course[1],
+            'status': updated_course[2]
+        }
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps(result),
+            'isBase64Encoded': False
+        }
+    
     cur.close()
     conn.close()
     return {

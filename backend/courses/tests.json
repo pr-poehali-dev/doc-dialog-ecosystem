@@ -1,0 +1,28 @@
+{
+  "tests": [
+    {
+      "name": "Get approved courses",
+      "method": "GET",
+      "path": "/?status=approved",
+      "expectedStatus": 200,
+      "expectedBody": [],
+      "bodyMatcher": "type"
+    },
+    {
+      "name": "Get masterminds",
+      "method": "GET",
+      "path": "/?action=masterminds&status=approved",
+      "expectedStatus": 200,
+      "expectedBody": [],
+      "bodyMatcher": "type"
+    },
+    {
+      "name": "Get specialist requests",
+      "method": "GET",
+      "path": "/?action=specialists&status=active",
+      "expectedStatus": 200,
+      "expectedBody": [],
+      "bodyMatcher": "type"
+    }
+  ]
+}

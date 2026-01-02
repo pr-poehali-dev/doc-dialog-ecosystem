@@ -14,6 +14,8 @@ import MasseursDirectory from "./pages/MasseursDirectory";
 import MasseurProfile from "./pages/MasseurProfile";
 import ProfileEdit from "./pages/ProfileEdit";
 import AdminPanel from "./pages/AdminPanel";
+import SchoolDashboard from "./pages/SchoolDashboard";
+import CoursesCatalog from "./pages/CoursesCatalog";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +37,8 @@ const App = () => (
           <Route path="/masseurs/:id" element={<MasseurProfile />} />
           <Route path="/profile/edit" element={<ProfileEdit />} />
           <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/school/dashboard" element={<SchoolDashboard />} />
+          <Route path="/courses" element={<CoursesCatalog />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

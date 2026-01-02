@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import Icon from "@/components/ui/icon";
+import CourseModerationTab from "@/components/CourseModerationTab";
 
 interface Stats {
   total_users: number;
@@ -39,7 +40,7 @@ interface ModerationItem {
 export default function AdminPanel() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'moderation'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'moderation' | 'courses'>('dashboard');
   const [loading, setLoading] = useState(false);
   
   const [stats, setStats] = useState<Stats | null>(null);
@@ -249,6 +250,13 @@ export default function AdminPanel() {
                 <Badge className="ml-2" variant="destructive">{stats.pending_moderations}</Badge>
               )}
             </Button>
+            <Button 
+              variant={activeTab === 'courses' ? 'default' : 'outline'}
+              onClick={() => setActiveTab('courses')}
+            >
+              <Icon name="BookOpen" size={18} className="mr-2" />
+              Курсы
+            </Button>
           </div>
 
           {/* Dashboard Tab */}
@@ -428,6 +436,9 @@ export default function AdminPanel() {
               )}
             </div>
           )}
+
+          {/* Courses Moderation Tab */}
+          {activeTab === 'courses' && <CourseModerationTab />}
         </div>
       </div>
     </div>
