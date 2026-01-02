@@ -60,7 +60,10 @@ export default function SchoolDashboard() {
       } else if (activeTab === 'offline-training') {
         const token = localStorage.getItem('token');
         const response = await fetch('https://functions.poehali.dev/3dbad6d0-7948-4c83-ac47-fa9e9e92bf26', {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         });
         const data = await response.json();
         setOfflineTrainings(data);
