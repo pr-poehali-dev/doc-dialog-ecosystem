@@ -37,11 +37,11 @@ def handler(event: dict, context) -> dict:
         status_filter = query_params.get('status', 'approved')
         category = query_params.get('category')
         
-        query = f"SELECT id, school_id, title, description, category, course_type, price, currency, duration_hours, image_url, external_url, status, created_at FROM {schema}.courses WHERE 1=1"
+        query = f"SELECT id, school_id, title, description, category, course_type, price, currency, duration_hours, image_url, external_url, status, moderation_comment, created_at FROM {schema}.courses WHERE 1=1"
         
         if school_id:
             query += f" AND school_id = {school_id}"
-        if status_filter:
+        if status_filter and status_filter != 'all':
             query += f" AND status = '{status_filter}'"
         if category:
             query += f" AND category = '{category}'"
@@ -64,7 +64,8 @@ def handler(event: dict, context) -> dict:
             'image_url': c[9],
             'external_url': c[10],
             'status': c[11],
-            'created_at': c[12].isoformat() if c[12] else None
+            'moderation_comment': c[12],
+            'created_at': c[13].isoformat() if c[13] else None
         } for c in courses]
         
         cur.close()
@@ -85,7 +86,7 @@ def handler(event: dict, context) -> dict:
         
         if school_id:
             query += f" AND school_id = {school_id}"
-        if status_filter:
+        if status_filter and status_filter != 'all':
             query += f" AND status = '{status_filter}'"
         
         query += " ORDER BY event_date ASC"
@@ -128,7 +129,7 @@ def handler(event: dict, context) -> dict:
         
         if school_id:
             query += f" AND school_id = {school_id}"
-        if status_filter:
+        if status_filter and status_filter != 'all':
             query += f" AND status = '{status_filter}'"
         
         query += " ORDER BY created_at DESC"
