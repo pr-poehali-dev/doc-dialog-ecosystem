@@ -24,6 +24,7 @@ import SchoolCatalog from "./pages/SchoolCatalog";
 import SchoolLanding from "./pages/SchoolLanding";
 import SchoolLandingEditor from "./pages/SchoolLandingEditor";
 import AddSchool from "./pages/AddSchool";
+import SchoolLandingBuilder from "./pages/SchoolLandingBuilder";
 import SalonCabinet from "./pages/SalonCabinet";
 import SalonsCatalog from "./pages/SalonsCatalog";
 import NotFound from "./pages/NotFound";
@@ -57,6 +58,7 @@ const App = () => (
           <Route path="/schools" element={<SchoolCatalog />} />
           <Route path="/school/:slug" element={<SchoolLanding />} />
           <Route path="/school/landing/edit/:id" element={<SchoolLandingEditor />} />
+          <Route path="/school/landing/builder" element={<SchoolLandingBuilder />} />
           <Route path="/salon/cabinet" element={<SalonCabinet />} />
           <Route path="/salons" element={<SalonsCatalog />} />
           <Route path="*" element={<NotFound />} />
