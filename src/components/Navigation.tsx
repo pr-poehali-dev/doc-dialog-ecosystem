@@ -44,6 +44,9 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
                 <Link to="/masseurs" className="text-sm font-medium hover:text-primary transition-colors">
                   Массажисты
                 </Link>
+                <Link to="/salons" className="text-sm font-medium hover:text-primary transition-colors">
+                  Салоны
+                </Link>
                 <Link to="/courses" className="text-sm font-medium hover:text-primary transition-colors">
                   Курсы
                 </Link>
