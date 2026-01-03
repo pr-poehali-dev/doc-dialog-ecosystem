@@ -389,8 +389,16 @@ export default function SchoolDashboard() {
                           try {
                             const token = localStorage.getItem('token');
                             const userStr = localStorage.getItem('user');
+                            console.log('User string from localStorage:', userStr);
                             const user = userStr ? JSON.parse(userStr) : null;
+                            console.log('Parsed user object:', user);
                             const userId = user?.id?.toString() || '';
+                            console.log('UserId for DELETE:', userId);
+                            
+                            if (!userId) {
+                              toast({ title: 'Ошибка', description: 'Пользователь не авторизован', variant: 'destructive' });
+                              return;
+                            }
                             
                             const response = await fetch(`https://functions.poehali.dev/6ac6b552-624e-4960-a4f1-94f540394c86?id=${landing.id}`, {
                               method: 'DELETE',
