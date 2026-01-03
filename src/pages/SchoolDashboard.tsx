@@ -10,6 +10,8 @@ import MastermindForm from '@/components/school/MastermindForm';
 import OfflineTrainingForm from '@/components/school/OfflineTrainingForm';
 import SpecialistForm from '@/components/school/SpecialistForm';
 import ItemsList from '@/components/school/ItemsList';
+import BalanceCard from '@/components/school/BalanceCard';
+import PromoteCourseDialog from '@/components/school/PromoteCourseDialog';
 import {
   Course,
   Mastermind,
@@ -45,6 +47,10 @@ export default function SchoolDashboard() {
   const [mastermindForm, setMastermindForm] = useState(INITIAL_MASTERMIND_FORM);
   const [trainingForm, setTrainingForm] = useState(INITIAL_MASTERMIND_FORM);
   const [specialistForm, setSpecialistForm] = useState(INITIAL_SPECIALIST_FORM);
+  
+  const [promoteCourseId, setPromoteCourseId] = useState<number | null>(null);
+  const [promoteCourseTitle, setPromoteCourseTitle] = useState('');
+  const [promoteCourseCategory, setPromoteCourseCategory] = useState('');
 
   useEffect(() => {
     loadUserSchool();
@@ -226,6 +232,10 @@ export default function SchoolDashboard() {
           <p className="text-muted-foreground">Управление курсами, мастермайндами и поиском специалистов</p>
         </div>
 
+        <div className="mb-8">
+          <BalanceCard />
+        </div>
+
         <div className="flex gap-2 mb-6 border-b">
           <button
             onClick={() => { setActiveTab('courses'); setShowAddForm(false); }}
@@ -347,6 +357,11 @@ export default function SchoolDashboard() {
             specialists={specialists}
             getStatusBadge={getStatusBadge}
             onEditCourse={handleEditCourse}
+            onPromoteCourse={(id, title, category) => {
+              setPromoteCourseId(id);
+              setPromoteCourseTitle(title);
+              setPromoteCourseCategory(category);
+            }}
             onDeleteCourse={handleDeleteCourse}
             onEditMastermind={handleEditMastermind}
             onDeleteMastermind={handleDeleteMastermind}
@@ -463,6 +478,23 @@ export default function SchoolDashboard() {
           </div>
         )}
       </div>
+
+      <PromoteCourseDialog
+        open={promoteCourseId !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setPromoteCourseId(null);
+            setPromoteCourseTitle('');
+            setPromoteCourseCategory('');
+          }
+        }}
+        courseId={promoteCourseId || 0}
+        courseTitle={promoteCourseTitle}
+        courseCategory={promoteCourseCategory}
+        onSuccess={() => {
+          loadData();
+        }}
+      />
     </div>
   );
 }

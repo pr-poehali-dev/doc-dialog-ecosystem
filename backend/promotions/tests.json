@@ -1,0 +1,31 @@
+{
+  "tests": [
+    {
+      "name": "Get promotion prices",
+      "method": "GET",
+      "path": "/?action=prices",
+      "headers": {
+        "X-User-Id": "1"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "prices": "object",
+        "currency": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Get active promotions",
+      "method": "GET",
+      "path": "/?action=active",
+      "headers": {
+        "X-User-Id": "1"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "promotions": "array"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

@@ -158,16 +158,30 @@ def handler(event: dict, context) -> dict:
         status_filter = query_params.get('status', 'approved')
         category = query_params.get('category')
         
-        query = f"SELECT id, school_id, title, description, category, course_type, price, currency, duration_hours, image_url, external_url, status, moderation_comment, original_price, discount_price, view_count, created_at, slug FROM {schema}.courses WHERE 1=1"
+        query = f"""
+            SELECT c.id, c.school_id, c.title, c.description, c.category, c.course_type, 
+                   c.price, c.currency, c.duration_hours, c.image_url, c.external_url, 
+                   c.status, c.moderation_comment, c.original_price, c.discount_price, 
+                   c.view_count, c.created_at, c.slug,
+                   cp.promoted_until, cp.promotion_type
+            FROM {schema}.courses c
+            LEFT JOIN {schema}.course_promotions cp ON c.id = cp.course_id 
+                AND cp.promoted_until > NOW()
+        """
         
+        conditions = ["1=1"]
         if school_id:
-            query += f" AND school_id = {school_id}"
+            conditions.append(f"c.school_id = {school_id}")
         if status_filter and status_filter != 'all':
-            query += f" AND status = '{status_filter}'"
+            conditions.append(f"c.status = '{status_filter}'")
         if category:
-            query += f" AND category = '{category}'"
+            conditions.append(f"c.category = '{category}'")
+            
+        if len(conditions) > 0:
+            query += " WHERE " + " AND ".join(conditions)
         
-        query += " ORDER BY created_at DESC"
+        # Сортировка: сначала промо (по дате окончания DESC), потом обычные (по created_at DESC)
+        query += " ORDER BY cp.promoted_until DESC NULLS LAST, c.created_at DESC"
         
         cur.execute(query)
         courses = cur.fetchall()
@@ -190,7 +204,10 @@ def handler(event: dict, context) -> dict:
             'discount_price': float(c[14]) if c[14] else None,
             'view_count': c[15] or 0,
             'created_at': c[16].isoformat() if c[16] else None,
-            'slug': c[17]
+            'slug': c[17],
+            'is_promoted': c[18] is not None,
+            'promoted_until': c[18].isoformat() if c[18] else None,
+            'promotion_type': c[19]
         } for c in courses]
         
         cur.close()

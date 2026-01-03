@@ -61,6 +61,7 @@ interface ItemsListProps {
   getStatusBadge: (status: string) => JSX.Element;
   onEditCourse?: (course: Course) => void;
   onDeleteCourse?: (courseId: number) => void;
+  onPromoteCourse?: (courseId: number, title: string, category: string) => void;
   onEditMastermind?: (mastermind: Mastermind) => void;
   onDeleteMastermind?: (mastermindId: number) => void;
   onEditTraining?: (training: any) => void;
@@ -69,7 +70,7 @@ interface ItemsListProps {
   onDeleteSpecialist?: (specialistId: number) => void;
 }
 
-export default function ItemsList({ activeTab, courses, masterminds, offlineTrainings = [], specialists, getStatusBadge, onEditCourse, onDeleteCourse, onEditMastermind, onDeleteMastermind, onEditTraining, onDeleteTraining, onEditSpecialist, onDeleteSpecialist }: ItemsListProps) {
+export default function ItemsList({ activeTab, courses, masterminds, offlineTrainings = [], specialists, getStatusBadge, onEditCourse, onDeleteCourse, onPromoteCourse, onEditMastermind, onDeleteMastermind, onEditTraining, onDeleteTraining, onEditSpecialist, onDeleteSpecialist }: ItemsListProps) {
   return (
     <>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -128,20 +129,31 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
                   </div>
                 )}
               </div>
-              <div className="flex gap-2 mt-4 pt-4 border-t">
-                <button
-                  onClick={() => onEditCourse?.(course)}
-                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-                >
-                  <Icon name="Pencil" size={16} />
-                  Редактировать
-                </button>
-                <button
-                  onClick={() => onDeleteCourse?.(course.id)}
-                  className="flex items-center justify-center gap-2 px-3 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
-                >
-                  <Icon name="Trash2" size={16} />
-                </button>
+              <div className="space-y-2 mt-4 pt-4 border-t">
+                {course.status === 'approved' && (
+                  <button
+                    onClick={() => onPromoteCourse?.(course.id, course.title, course.category)}
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-md hover:from-amber-600 hover:to-orange-600 transition-colors font-medium"
+                  >
+                    <Icon name="TrendingUp" size={16} />
+                    Поднять в топ
+                  </button>
+                )}
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => onEditCourse?.(course)}
+                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                  >
+                    <Icon name="Pencil" size={16} />
+                    Редактировать
+                  </button>
+                  <button
+                    onClick={() => onDeleteCourse?.(course.id)}
+                    className="flex items-center justify-center gap-2 px-3 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
+                  >
+                    <Icon name="Trash2" size={16} />
+                  </button>
+                </div>
               </div>
             </CardContent>
           </Card>
