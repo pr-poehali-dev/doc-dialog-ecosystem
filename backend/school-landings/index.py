@@ -426,6 +426,23 @@ def handler(event: dict, context) -> dict:
             conn.close()
             return response(201, result)
         
+        # GET /?action=edit&id=X - получение школы для редактирования
+        if method == 'GET' and event.get('queryStringParameters', {}).get('action') == 'edit':
+            school_id = event.get('queryStringParameters', {}).get('id')
+            user_id = event.get('headers', {}).get('X-User-Id')
+            
+            if not school_id or not user_id:
+                conn.close()
+                return response(400, {'error': 'Требуется id и X-User-Id'})
+            
+            school = get_school_for_edit(conn, int(school_id), int(user_id))
+            conn.close()
+            
+            if not school:
+                return response(404, {'error': 'Школа не найдена или нет прав доступа'})
+            
+            return response(200, school)
+        
         # GET /?school_id=X - список лендингов школы для дашборда
         if method == 'GET' and event.get('queryStringParameters', {}).get('school_id'):
             school_id = event.get('queryStringParameters', {}).get('school_id')
@@ -476,7 +493,26 @@ def handler(event: dict, context) -> dict:
             
             return response(200, school)
         
-        # PUT /:id - обновление лендинга школы
+        # PUT /?action=update&id=X - обновление школы
+        if method == 'PUT' and event.get('queryStringParameters', {}).get('action') == 'update':
+            school_id = event.get('queryStringParameters', {}).get('id')
+            user_id = event.get('headers', {}).get('X-User-Id')
+            
+            if not school_id or not user_id:
+                conn.close()
+                return response(400, {'error': 'Требуется id и X-User-Id'})
+            
+            data = json.loads(event.get('body', '{}'))
+            
+            success = update_school_landing(conn, int(school_id), int(user_id), data)
+            conn.close()
+            
+            if not success:
+                return response(404, {'error': 'Школа не найдена или нет прав доступа'})
+            
+            return response(200, {'success': True, 'message': 'Лендинг школы обновлен'})
+        
+        # PUT /:id - обновление лендинга школы (старый формат для совместимости)
         if method == 'PUT':
             school_id = event.get('pathParams', {}).get('id')
             user_id = event.get('headers', {}).get('X-User-Id')

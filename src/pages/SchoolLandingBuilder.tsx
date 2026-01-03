@@ -93,7 +93,7 @@ export default function SchoolLandingBuilder() {
       setLoading(true);
       const token = localStorage.getItem('token');
       const userId = localStorage.getItem('userId');
-      const response = await fetch(`${SCHOOL_API_URL}/${id}`, {
+      const response = await fetch(`${SCHOOL_API_URL}?action=edit&id=${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'X-User-Id': userId || ''
@@ -179,8 +179,22 @@ export default function SchoolLandingBuilder() {
       setLoading(true);
       const token = localStorage.getItem('token');
       const userId = localStorage.getItem('userId');
-      const url = id ? `${SCHOOL_API_URL}/${id}` : SCHOOL_API_URL;
+      const url = id ? `${SCHOOL_API_URL}?action=update&id=${id}` : SCHOOL_API_URL;
       const method = id ? 'PUT' : 'POST';
+
+      // Преобразуем данные в формат, который ожидает backend
+      const schoolData = {
+        name: data.name,
+        short_description: data.shortDescription,
+        description: data.aboutText,
+        city: data.contacts.city,
+        address: data.contacts.address,
+        phone: data.contacts.phone,
+        email: data.contacts.email,
+        website: data.contacts.website,
+        students_count: parseInt(data.stats.studentsCount) || null,
+        founded_year: data.stats.yearsExperience ? new Date().getFullYear() - parseInt(data.stats.yearsExperience) : null
+      };
 
       const response = await fetch(url, {
         method,
@@ -189,13 +203,15 @@ export default function SchoolLandingBuilder() {
           'X-User-Id': userId || '',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(schoolData)
       });
 
       if (response.ok) {
         alert('Лендинг школы сохранён!');
         navigate('/school/dashboard');
       } else {
+        const error = await response.text();
+        console.error('Server error:', error);
         alert('Ошибка сохранения лендинга');
       }
     } catch (error) {
