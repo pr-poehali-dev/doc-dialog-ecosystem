@@ -160,6 +160,14 @@ export default function SchoolCatalog() {
                       </div>
                     )}
                   </div>
+
+                  {/* Кнопка "Подробнее" */}
+                  <div className="mt-4">
+                    <div className="flex items-center justify-between text-blue-600 font-semibold group-hover:gap-2 transition-all">
+                      <span>Подробнее</span>
+                      <Icon name="ArrowRight" size={18} className="group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </div>
                 </div>
               </Link>
             ))}
