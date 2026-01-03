@@ -4,6 +4,7 @@ import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from typing import Any
+import jwt
 
 
 def get_db_connection():
@@ -373,29 +374,30 @@ def handler(event: dict, context) -> dict:
                 conn.close()
                 return response(401, {'error': 'Требуется авторизация'})
             
-            with conn.cursor() as cur:
-                cur.execute("""
-                    SELECT u.role FROM t_p46047379_doc_dialog_ecosystem.users u
-                    JOIN t_p46047379_doc_dialog_ecosystem.sessions s ON s.user_id = u.id
-                    WHERE s.token = %s
-                """, (token,))
-                user_data = cur.fetchone()
+            try:
+                jwt_secret = os.environ.get('JWT_SECRET', 'your-secret-key')
+                decoded = jwt.decode(token, jwt_secret, algorithms=['HS256'])
+                user_role = decoded.get('role')
                 
-                if not user_data or user_data['role'] not in ('admin', 'moderator'):
+                if user_role not in ('admin', 'moderator'):
                     conn.close()
                     return response(403, {'error': 'Доступ запрещён'})
                 
-                cur.execute("""
-                    SELECT s.id, s.user_id, u.email as user_email, s.name, s.slug, s.logo_url, 
-                           s.description, s.students_count, s.learning_direction, s.format, 
-                           s.city, s.created_at
-                    FROM t_p46047379_doc_dialog_ecosystem.schools s
-                    JOIN t_p46047379_doc_dialog_ecosystem.users u ON u.id = s.user_id
-                    ORDER BY s.created_at DESC
-                """)
-                schools = cur.fetchall()
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        SELECT s.id, s.user_id, u.email as user_email, s.name, s.slug, s.logo_url, 
+                               s.description, s.students_count, s.learning_direction, s.format, 
+                               s.city, s.created_at
+                        FROM t_p46047379_doc_dialog_ecosystem.schools s
+                        JOIN t_p46047379_doc_dialog_ecosystem.users u ON u.id = s.user_id
+                        ORDER BY s.created_at DESC
+                    """)
+                    schools = cur.fetchall()
+                    conn.close()
+                    return response(200, {'schools': schools})
+            except jwt.InvalidTokenError:
                 conn.close()
-                return response(200, {'schools': schools})
+                return response(401, {'error': 'Неверный токен'})
         
         # POST / - создание новой школы
         if method == 'POST':
@@ -467,24 +469,25 @@ def handler(event: dict, context) -> dict:
                 conn.close()
                 return response(400, {'error': 'Требуется токен и school_id'})
             
-            with conn.cursor() as cur:
-                cur.execute("""
-                    SELECT u.role FROM t_p46047379_doc_dialog_ecosystem.users u
-                    JOIN t_p46047379_doc_dialog_ecosystem.sessions s ON s.user_id = u.id
-                    WHERE s.token = %s
-                """, (token,))
-                user_data = cur.fetchone()
+            try:
+                jwt_secret = os.environ.get('JWT_SECRET', 'your-secret-key')
+                decoded = jwt.decode(token, jwt_secret, algorithms=['HS256'])
+                user_role = decoded.get('role')
                 
-                if not user_data or user_data['role'] not in ('admin', 'moderator'):
+                if user_role not in ('admin', 'moderator'):
                     conn.close()
                     return response(403, {'error': 'Доступ запрещён'})
                 
-                cur.execute("""
-                    DELETE FROM t_p46047379_doc_dialog_ecosystem.schools WHERE id = %s
-                """, (int(school_id),))
-                conn.commit()
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        DELETE FROM t_p46047379_doc_dialog_ecosystem.schools WHERE id = %s
+                    """, (int(school_id),))
+                    conn.commit()
+                    conn.close()
+                    return response(200, {'success': True})
+            except jwt.InvalidTokenError:
                 conn.close()
-                return response(200, {'success': True})
+                return response(401, {'error': 'Неверный токен'})
         
         conn.close()
         return response(405, {'error': 'Метод не поддерживается'})
