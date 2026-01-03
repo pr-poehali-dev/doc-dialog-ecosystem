@@ -24,6 +24,7 @@ import SchoolCatalog from "./pages/SchoolCatalog";
 import SchoolLanding from "./pages/SchoolLanding";
 import SchoolLandingEditor from "./pages/SchoolLandingEditor";
 import AddSchool from "./pages/AddSchool";
+import SalonCabinet from "./pages/SalonCabinet";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -55,6 +56,7 @@ const App = () => (
           <Route path="/schools" element={<SchoolCatalog />} />
           <Route path="/school/:slug" element={<SchoolLanding />} />
           <Route path="/school/landing/edit/:id" element={<SchoolLandingEditor />} />
+          <Route path="/salon/cabinet" element={<SalonCabinet />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
