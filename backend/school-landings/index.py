@@ -354,6 +354,21 @@ def handler(event: dict, context) -> dict:
             conn.close()
             return response(200, {'schools': schools})
         
+        # GET /?action=school&slug=X - публичный лендинг школы по slug
+        if method == 'GET' and event.get('queryStringParameters', {}).get('action') == 'school':
+            slug = event.get('queryStringParameters', {}).get('slug')
+            if not slug:
+                conn.close()
+                return response(400, {'error': 'Требуется параметр slug'})
+            
+            school = get_school_by_slug(conn, slug)
+            conn.close()
+            
+            if not school:
+                return response(404, {'error': 'Школа не найдена'})
+            
+            return response(200, school)
+        
         # GET /?action=my_schools - список школ пользователя
         if method == 'GET' and event.get('queryStringParameters', {}).get('action') == 'my_schools':
             user_id = event.get('headers', {}).get('X-User-Id')
