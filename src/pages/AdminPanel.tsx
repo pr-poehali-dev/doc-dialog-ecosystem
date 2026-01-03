@@ -12,6 +12,7 @@ import ReviewsModerationTab from "@/components/ReviewsModerationTab";
 import AdminDashboardTab from "@/components/admin/AdminDashboardTab";
 import AdminUsersTab from "@/components/admin/AdminUsersTab";
 import AdminModerationTab from "@/components/admin/AdminModerationTab";
+import AdminSchoolsTab from "@/components/admin/AdminSchoolsTab";
 
 interface Stats {
   total_users: number;
@@ -47,7 +48,7 @@ interface ModerationItem {
 export default function AdminPanel() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'moderation' | 'courses' | 'masterminds' | 'offline-training' | 'reviews'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'moderation' | 'courses' | 'masterminds' | 'offline-training' | 'reviews' | 'schools'>('dashboard');
   const [loading, setLoading] = useState(false);
   
   const [stats, setStats] = useState<Stats | null>(null);
@@ -308,6 +309,13 @@ export default function AdminPanel() {
               <Icon name="MessageSquare" size={18} className="mr-2" />
               Отзывы
             </Button>
+            <Button 
+              variant={activeTab === 'schools' ? 'default' : 'outline'}
+              onClick={() => setActiveTab('schools')}
+            >
+              <Icon name="Building2" size={18} className="mr-2" />
+              Школы
+            </Button>
           </div>
 
           {/* Dashboard Tab */}
@@ -342,6 +350,9 @@ export default function AdminPanel() {
 
           {/* Reviews Moderation Tab */}
           {activeTab === 'reviews' && <ReviewsModerationTab />}
+
+          {/* Schools Tab */}
+          {activeTab === 'schools' && <AdminSchoolsTab />}
         </div>
       </div>
     </div>

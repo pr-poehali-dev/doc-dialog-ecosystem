@@ -18,8 +18,8 @@ def cors_headers():
     """Базовые CORS заголовки"""
     return {
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, X-User-Id',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, X-User-Id, Authorization, X-Authorization',
         'Content-Type': 'application/json'
     }
 
@@ -361,6 +361,37 @@ def handler(event: dict, context) -> dict:
             conn.close()
             return response(200, {'schools': schools})
         
+        # GET /?action=all_schools - все школы для админов
+        if method == 'GET' and event.get('queryStringParameters', {}).get('action') == 'all_schools':
+            token = event.get('headers', {}).get('X-Authorization', '').replace('Bearer ', '')
+            if not token:
+                conn.close()
+                return response(401, {'error': 'Требуется авторизация'})
+            
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT u.role FROM t_p46047379_doc_dialog_ecosystem.users u
+                    JOIN t_p46047379_doc_dialog_ecosystem.sessions s ON s.user_id = u.id
+                    WHERE s.token = %s
+                """, (token,))
+                user_data = cur.fetchone()
+                
+                if not user_data or user_data['role'] not in ('admin', 'moderator'):
+                    conn.close()
+                    return response(403, {'error': 'Доступ запрещён'})
+                
+                cur.execute("""
+                    SELECT s.id, s.user_id, u.email as user_email, s.name, s.slug, s.logo_url, 
+                           s.description, s.students_count, s.learning_direction, s.format, 
+                           s.city, s.created_at
+                    FROM t_p46047379_doc_dialog_ecosystem.schools s
+                    JOIN t_p46047379_doc_dialog_ecosystem.users u ON u.id = s.user_id
+                    ORDER BY s.created_at DESC
+                """)
+                schools = cur.fetchall()
+                conn.close()
+                return response(200, {'schools': schools})
+        
         # POST / - создание новой школы
         if method == 'POST':
             user_id = event.get('headers', {}).get('X-User-Id')
@@ -419,6 +450,34 @@ def handler(event: dict, context) -> dict:
                 return response(404, {'error': 'Школа не найдена или нет прав доступа'})
             
             return response(200, {'success': True, 'message': 'Лендинг школы обновлен'})
+        
+        # DELETE /:id - удаление школы (для админов)
+        if method == 'DELETE':
+            school_id = event.get('queryStringParameters', {}).get('id')
+            token = event.get('headers', {}).get('X-Authorization', '').replace('Bearer ', '')
+            
+            if not token or not school_id:
+                conn.close()
+                return response(400, {'error': 'Требуется токен и school_id'})
+            
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT u.role FROM t_p46047379_doc_dialog_ecosystem.users u
+                    JOIN t_p46047379_doc_dialog_ecosystem.sessions s ON s.user_id = u.id
+                    WHERE s.token = %s
+                """, (token,))
+                user_data = cur.fetchone()
+                
+                if not user_data or user_data['role'] not in ('admin', 'moderator'):
+                    conn.close()
+                    return response(403, {'error': 'Доступ запрещён'})
+                
+                cur.execute("""
+                    DELETE FROM t_p46047379_doc_dialog_ecosystem.schools WHERE id = %s
+                """, (int(school_id),))
+                conn.commit()
+                conn.close()
+                return response(200, {'success': True})
         
         conn.close()
         return response(405, {'error': 'Метод не поддерживается'})
