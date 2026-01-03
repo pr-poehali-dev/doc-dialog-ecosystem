@@ -128,13 +128,19 @@ export default function CourseLandingEditor() {
   const loadLanding = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${LANDING_API_URL}?id=${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
+      const userId = localStorage.getItem('userId');
+      const response = await fetch(`${LANDING_API_URL}/${id}`, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'X-User-Id': userId || ''
+        }
       });
       
       if (response.ok) {
         const data = await response.json();
         setForm(data);
+      } else {
+        toast({ title: 'Ошибка', description: 'Не удалось загрузить лендинг', variant: 'destructive' });
       }
     } catch (error) {
       toast({ title: 'Ошибка', description: 'Не удалось загрузить лендинг', variant: 'destructive' });
@@ -150,13 +156,15 @@ export default function CourseLandingEditor() {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const url = id ? `${LANDING_API_URL}?id=${id}` : LANDING_API_URL;
+      const userId = localStorage.getItem('userId');
+      const url = id ? `${LANDING_API_URL}/${id}` : LANDING_API_URL;
       const method = id ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
         method,
         headers: {
           Authorization: `Bearer ${token}`,
+          'X-User-Id': userId || '',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(form)
@@ -164,11 +172,14 @@ export default function CourseLandingEditor() {
 
       if (response.ok) {
         toast({ title: 'Успех', description: 'Лендинг сохранён' });
-        navigate('/school-dashboard');
+        navigate('/school/dashboard');
       } else {
+        const error = await response.text();
+        console.error('Save error:', error);
         toast({ title: 'Ошибка', description: 'Не удалось сохранить', variant: 'destructive' });
       }
     } catch (error) {
+      console.error('Save exception:', error);
       toast({ title: 'Ошибка', description: 'Ошибка сохранения', variant: 'destructive' });
     } finally {
       setLoading(false);

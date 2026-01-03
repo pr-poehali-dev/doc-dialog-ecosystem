@@ -362,7 +362,7 @@ export default function SchoolDashboard() {
                         <span className="text-xs text-muted-foreground">{landing.format}</span>
                         {landing.slug && (
                           <a
-                            href={`/landing/${landing.slug}`}
+                            href={`/school/${landing.slug}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-xs text-primary hover:underline"
