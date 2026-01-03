@@ -390,13 +390,21 @@ export default function SchoolDashboard() {
                             const token = localStorage.getItem('token');
                             const response = await fetch(`https://functions.poehali.dev/6ac6b552-624e-4960-a4f1-94f540394c86?id=${landing.id}`, {
                               method: 'DELETE',
-                              headers: { Authorization: `Bearer ${token}` }
+                              headers: { 
+                                'Authorization': `Bearer ${token}`,
+                                'X-Authorization': `Bearer ${token}`
+                              }
                             });
                             if (response.ok) {
                               toast({ title: 'Успех', description: 'Лендинг удалён' });
                               loadData();
+                            } else {
+                              const error = await response.text();
+                              console.error('Delete error:', error);
+                              toast({ title: 'Ошибка', description: 'Не удалось удалить', variant: 'destructive' });
                             }
                           } catch (error) {
+                            console.error('Delete error:', error);
                             toast({ title: 'Ошибка', description: 'Не удалось удалить', variant: 'destructive' });
                           }
                         }
