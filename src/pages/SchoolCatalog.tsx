@@ -137,7 +137,7 @@ export default function SchoolCatalog() {
                     {school.rating > 0 && (
                       <div className="flex items-center gap-1 text-amber-600">
                         <Icon name="Star" size={16} />
-                        <span className="font-semibold">{school.rating.toFixed(1)}</span>
+                        <span className="font-semibold">{Number(school.rating).toFixed(1)}</span>
                         {school.reviews_count > 0 && (
                           <span className="text-gray-500">({school.reviews_count})</span>
                         )}
