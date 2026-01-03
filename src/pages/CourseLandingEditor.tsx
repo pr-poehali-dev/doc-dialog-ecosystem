@@ -9,13 +9,13 @@ import { EditorSectionMain } from '@/components/landing-editor/EditorSectionMain
 import { EditorSectionContent } from '@/components/landing-editor/EditorSectionContent';
 import { EditorSectionMeta } from '@/components/landing-editor/EditorSectionMeta';
 
-const LANDING_API_URL = 'https://functions.poehali.dev/428c2825-cfd3-4c2c-9666-df1320295ced';
+const LANDING_API_URL = 'https://functions.poehali.dev/a81dd7cd-c267-4f44-85f5-0da8353dc741';
 
 interface LandingFormData {
   school_id: number;
   title: string;
   short_description: string;
-  format: string;
+  type: string;
   category: string;
   cover_url: string;
   cta_button_text: string;
@@ -53,10 +53,10 @@ const INITIAL_FORM: LandingFormData = {
   school_id: 1,
   title: '',
   short_description: '',
-  format: 'онлайн',
+  type: 'онлайн',
   category: '',
   cover_url: '',
-  cta_button_text: 'Записаться на курс',
+  cta_button_text: 'Запросить промокод',
   author_name: '',
   author_photo_url: '',
   author_position: '',
