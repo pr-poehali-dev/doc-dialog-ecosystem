@@ -64,7 +64,13 @@ export default function SchoolCatalog() {
             <p className="text-xl text-muted-foreground mb-8">
               Найдите лучшие школы и курсы массажа в вашем городе
             </p>
-            <div className="flex gap-4 justify-center">
+            <div className="flex gap-4 justify-center flex-wrap">
+              <Link to="/register">
+                <Button size="lg" className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70">
+                  <Icon name="Plus" size={20} className="mr-2" />
+                  Стать партнером
+                </Button>
+              </Link>
               <Link to="/courses">
                 <Button variant="outline" size="lg">
                   <Icon name="BookOpen" size={20} className="mr-2" />
@@ -193,6 +199,30 @@ export default function SchoolCatalog() {
             ))}
           </div>
         )}
+        
+        {/* CTA секция */}
+        <div className="mt-16 bg-gradient-to-br from-primary/10 via-primary/5 to-background rounded-2xl p-12 text-center border border-primary/20">
+          <div className="max-w-2xl mx-auto">
+            <Icon name="GraduationCap" size={64} className="text-primary mx-auto mb-6" />
+            <h2 className="text-3xl font-bold mb-4">Ваша школа массажа еще не в каталоге?</h2>
+            <p className="text-lg text-muted-foreground mb-8">
+              Присоединяйтесь к нашей платформе и получите доступ к тысячам потенциальных студентов
+            </p>
+            <div className="flex gap-4 justify-center flex-wrap">
+              <Link to="/register">
+                <Button size="lg" className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70">
+                  <Icon name="Plus" size={20} className="mr-2" />
+                  Зарегистрировать школу
+                </Button>
+              </Link>
+              <Link to="/login">
+                <Button variant="outline" size="lg">
+                  У меня уже есть аккаунт
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
