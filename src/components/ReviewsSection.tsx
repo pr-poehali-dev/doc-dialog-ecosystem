@@ -17,12 +17,12 @@ interface Review {
 interface ReviewsSectionProps {
   entityType: 'course' | 'mastermind';
   entityId: number;
-  onRatingChange?: (rating: number, count: number) => void;
+  onRatingUpdate?: (rating: number, count: number) => void;
 }
 
 const REVIEWS_API_URL = 'https://functions.poehali.dev/dacb9e9b-c76e-4430-8ed9-362ffc8b9566';
 
-export default function ReviewsSection({ entityType, entityId, onRatingChange }: ReviewsSectionProps) {
+export default function ReviewsSection({ entityType, entityId, onRatingUpdate }: ReviewsSectionProps) {
   const { toast } = useToast();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,11 +46,11 @@ export default function ReviewsSection({ entityType, entityId, onRatingChange }:
         const data = await response.json();
         setReviews(data);
         
-        if (onRatingChange && data.length > 0) {
+        if (onRatingUpdate && data.length > 0) {
           const avgRating = data.reduce((sum: number, r: Review) => sum + r.rating, 0) / data.length;
-          onRatingChange(avgRating, data.length);
-        } else if (onRatingChange) {
-          onRatingChange(0, 0);
+          onRatingUpdate(avgRating, data.length);
+        } else if (onRatingUpdate) {
+          onRatingUpdate(0, 0);
         }
       }
     } catch (error) {
@@ -92,6 +92,12 @@ export default function ReviewsSection({ entityType, entityId, onRatingChange }:
         setRating(5);
         setShowForm(false);
         loadReviews();
+      } else if (response.status === 403) {
+        toast({ 
+          title: 'Доступ запрещён', 
+          description: 'Только зарегистрированные массажисты и школы могут оставлять отзывы', 
+          variant: 'destructive' 
+        });
       } else {
         toast({ title: 'Ошибка', description: 'Не удалось добавить отзыв', variant: 'destructive' });
       }

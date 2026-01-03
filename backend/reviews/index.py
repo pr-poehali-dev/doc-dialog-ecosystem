@@ -118,6 +118,7 @@ def handler(event: dict, context) -> dict:
             payload = jwt.decode(token, secret_key, algorithms=['HS256'])
             user_id = payload.get('user_id')
             user_email = payload.get('email')
+            user_role = payload.get('role', 'user')
         except jwt.ExpiredSignatureError:
             cur.close()
             conn.close()
@@ -134,6 +135,17 @@ def handler(event: dict, context) -> dict:
                 'statusCode': 401,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
                 'body': json.dumps({'error': 'Invalid token'}),
+                'isBase64Encoded': False
+            }
+        
+        # Check if user is masseur or school (only they can leave reviews)
+        if user_role not in ['masseur', 'school', 'admin']:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 403,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Только зарегистрированные массажисты и школы могут оставлять отзывы'}),
                 'isBase64Encoded': False
             }
         

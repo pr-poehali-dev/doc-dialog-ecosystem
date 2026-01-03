@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
 import { Navigation } from '@/components/Navigation';
+import ReviewsSection from '@/components/ReviewsSection';
+import RatingDisplay from '@/components/RatingDisplay';
 
 interface CourseData {
   id: number;
@@ -17,6 +19,8 @@ interface CourseData {
   price: number | null;
   duration_text: string;
   about_course: string;
+  for_whom?: string;
+  expectations?: string;
   what_you_learn: Array<string>;
   program_modules: Array<{
     title: string;
@@ -50,6 +54,8 @@ export default function CoursePublicLanding() {
   const navigate = useNavigate();
   const [course, setCourse] = useState<CourseData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [rating, setRating] = useState(0);
+  const [reviewCount, setReviewCount] = useState(0);
 
   useEffect(() => {
     loadCourse();
@@ -106,6 +112,11 @@ export default function CoursePublicLanding() {
           <h1 className="text-5xl md:text-6xl font-bold mb-6">
             {course.hero_title || course.title}
           </h1>
+          <div className="flex justify-center mb-6">
+            <div className="bg-white/20 backdrop-blur-sm px-6 py-2 rounded-full">
+              <RatingDisplay rating={rating} reviewCount={reviewCount} size="lg" className="text-white" />
+            </div>
+          </div>
           <p className="text-xl md:text-2xl mb-8 text-white/90">
             {course.hero_subtitle || course.short_description}
           </p>
@@ -141,6 +152,51 @@ export default function CoursePublicLanding() {
             <p className="text-lg text-gray-700 leading-relaxed whitespace-pre-line">
               {course.about_course}
             </p>
+          </div>
+        </section>
+      )}
+
+      {/* Для кого и Ожидания */}
+      {(course.for_whom || course.expectations) && (
+        <section className="py-20 bg-gradient-to-br from-amber-50 to-orange-50">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="grid md:grid-cols-2 gap-8">
+              {course.for_whom && (
+                <Card className="border-2 border-amber-200 shadow-lg">
+                  <CardHeader className="bg-gradient-to-br from-amber-100 to-orange-100">
+                    <CardTitle className="flex items-center gap-3 text-2xl">
+                      <div className="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center">
+                        <Icon name="Users" size={24} className="text-white" />
+                      </div>
+                      Для кого этот курс
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-6">
+                    <p className="text-gray-700 leading-relaxed whitespace-pre-line text-lg">
+                      {course.for_whom}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+              
+              {course.expectations && (
+                <Card className="border-2 border-blue-200 shadow-lg">
+                  <CardHeader className="bg-gradient-to-br from-blue-100 to-purple-100">
+                    <CardTitle className="flex items-center gap-3 text-2xl">
+                      <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                        <Icon name="Target" size={24} className="text-white" />
+                      </div>
+                      Что вы получите
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-6">
+                    <p className="text-gray-700 leading-relaxed whitespace-pre-line text-lg">
+                      {course.expectations}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
           </div>
         </section>
       )}
@@ -239,39 +295,18 @@ export default function CoursePublicLanding() {
       )}
 
       {/* Отзывы */}
-      {course.testimonials && course.testimonials.length > 0 && (
-        <section className="py-20 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-4xl font-bold text-center mb-12">Отзывы студентов</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {course.testimonials.map((testimonial, i) => (
-                <Card key={i}>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center overflow-hidden">
-                        {testimonial.photo ? (
-                          <img src={testimonial.photo} alt={testimonial.name} className="w-full h-full object-cover" />
-                        ) : (
-                          <Icon name="User" size={24} className="text-white" />
-                        )}
-                      </div>
-                      <div>
-                        <p className="font-semibold">{testimonial.name}</p>
-                        <div className="flex">
-                          {Array.from({ length: testimonial.rating }).map((_, j) => (
-                            <Icon key={j} name="Star" size={14} className="text-amber-400 fill-amber-400" />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                    <p className="text-gray-700 italic">"{testimonial.text}"</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <ReviewsSection
+            entityType="course"
+            entityId={course.id}
+            onRatingUpdate={(newRating, newCount) => {
+              setRating(newRating);
+              setReviewCount(newCount);
+            }}
+          />
+        </div>
+      </section>
 
       {/* FAQ */}
       {course.faq && course.faq.length > 0 && (

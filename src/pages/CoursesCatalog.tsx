@@ -252,100 +252,101 @@ export default function CoursesCatalog() {
           <>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
               {filteredItems.map((item) => (
-                <Card key={`${item.itemType}-${item.id}`} className="hover:shadow-lg transition-shadow flex flex-col">
-                  {item.image_url && (
-                    <div className="w-full h-48 overflow-hidden rounded-t-lg">
-                      <img 
-                        src={item.image_url} 
-                        alt={item.title}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src = item.itemType === 'mastermind' 
-                            ? 'https://placehold.co/600x400/e2e8f0/64748b?text=Мастермайнд'
-                            : 'https://placehold.co/600x400/e2e8f0/64748b?text=Курс';
-                        }}
-                      />
-                    </div>
-                  )}
-                  <CardHeader className="flex-1">
-                    <div className="flex justify-between items-start gap-2 mb-2">
-                      <CardTitle className="text-lg">{item.title}</CardTitle>
-                      <Badge className={getCourseTypeColor(item.course_type)}>
+                <Card key={`${item.itemType}-${item.id}`} className="hover:shadow-xl transition-all duration-300 flex flex-col group overflow-hidden">
+                  <div className="w-full h-56 overflow-hidden relative">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 opacity-90"></div>
+                    <img 
+                      src={item.image_url || 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800'} 
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800';
+                      }}
+                    />
+                    <div className="absolute top-4 right-4">
+                      <Badge className={getCourseTypeColor(item.course_type) + ' shadow-lg'}>
                         {item.itemType === 'mastermind' ? 'Мастермайнд' : getCourseTypeLabel(item.course_type)}
                       </Badge>
                     </div>
-                    <div className="mb-2">
+                  </div>
+                  <CardHeader className="flex-1 pb-3">
+                    <CardTitle className="text-xl mb-3 line-clamp-2 group-hover:text-primary transition-colors">{item.title}</CardTitle>
+                    <div className="mb-3">
                       <RatingDisplay 
                         rating={item.rating || 0} 
                         reviewCount={item.review_count || 0} 
                         size="sm" 
                       />
                     </div>
-                    <p className="text-sm text-muted-foreground line-clamp-2">{item.description}</p>
+                    <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">{item.description || 'Профессиональное обучение массажу с практикой и поддержкой опытных наставников.'}</p>
                   </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="flex items-center gap-2 text-sm">
-                      <Icon name="Tag" size={16} className="text-primary" />
-                      <span className="text-muted-foreground">{item.category}</span>
+                  <CardContent className="space-y-3 pt-3">
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="flex items-center gap-1.5 bg-blue-50 dark:bg-blue-950 px-2 py-1.5 rounded-lg">
+                        <Icon name="Tag" size={14} className="text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                        <span className="text-blue-700 dark:text-blue-300 truncate">{item.category}</span>
+                      </div>
+                      {item.itemType === 'mastermind' ? (
+                        <div className="flex items-center gap-1.5 bg-purple-50 dark:bg-purple-950 px-2 py-1.5 rounded-lg">
+                          <Icon name="Calendar" size={14} className="text-purple-600 dark:text-purple-400 flex-shrink-0" />
+                          <span className="text-purple-700 dark:text-purple-300 truncate">
+                            {new Date(item.event_date).toLocaleDateString('ru-RU', { 
+                              day: 'numeric', 
+                              month: 'short'
+                            })}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1.5 bg-green-50 dark:bg-green-950 px-2 py-1.5 rounded-lg">
+                          <Icon name="Clock" size={14} className="text-green-600 dark:text-green-400 flex-shrink-0" />
+                          <span className="text-green-700 dark:text-green-300 truncate">
+                            {item.duration_hours ? `${item.duration_hours} ч` : '3 месяца'}
+                          </span>
+                        </div>
+                      )}
                     </div>
                     
-                    {item.itemType === 'mastermind' ? (
-                      <div className="flex items-center gap-2 text-sm">
-                        <Icon name="Calendar" size={16} className="text-primary" />
-                        <span className="text-muted-foreground">
-                          {new Date(item.event_date).toLocaleDateString('ru-RU', { 
-                            day: 'numeric', 
-                            month: 'long', 
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
-                        </span>
-                      </div>
-                    ) : item.duration_hours ? (
-                      <div className="flex items-center gap-2 text-sm">
-                        <Icon name="Clock" size={16} className="text-primary" />
-                        <span className="text-muted-foreground">{item.duration_hours} часов</span>
-                      </div>
-                    ) : null}
-                    
                     {item.itemType === 'mastermind' && item.location && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <Icon name="MapPin" size={16} className="text-primary" />
-                        <span className="text-muted-foreground">{item.location}</span>
+                      <div className="flex items-center gap-2 text-xs bg-amber-50 dark:bg-amber-950 px-2 py-1.5 rounded-lg">
+                        <Icon name="MapPin" size={14} className="text-amber-600 dark:text-amber-400 flex-shrink-0" />
+                        <span className="text-amber-700 dark:text-amber-300 truncate">{item.location}</span>
                       </div>
                     )}
 
-                    <div className="flex items-center justify-between pt-2 border-t">
+                    <div className="flex items-center justify-between pt-3 border-t mt-3">
                       <div>
                         {item.discount_price ? (
-                          <div className="flex flex-col gap-1">
-                            <span className="text-sm text-muted-foreground line-through">
-                              {item.original_price?.toLocaleString()} {item.currency}
+                          <div className="flex flex-col">
+                            <span className="text-xs text-muted-foreground line-through">
+                              {item.original_price?.toLocaleString()} ₽
                             </span>
-                            <span className="text-xl font-bold text-red-600">
-                              {item.discount_price.toLocaleString()} {item.currency}
+                            <span className="text-2xl font-bold text-red-600">
+                              {item.discount_price.toLocaleString()} ₽
                             </span>
                           </div>
                         ) : item.price ? (
-                          <span className="text-xl font-bold text-primary">
-                            {item.price.toLocaleString()} {item.currency}
+                          <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                            {item.price.toLocaleString()} ₽
                           </span>
                         ) : (
-                          <span className="text-xl font-bold text-green-600">Бесплатно</span>
+                          <span className="text-2xl font-bold text-green-600">Бесплатно</span>
                         )}
                       </div>
-                      <Button size="sm" onClick={() => {
-                        if (item.itemType === 'mastermind') {
-                          window.location.href = `/mastermind/${item.id}`;
-                        } else if ('slug' in item && item.slug) {
-                          window.location.href = `/course/landing/${item.slug}`;
-                        } else {
-                          window.location.href = `/course/${item.id}`;
-                        }
-                      }}>
+                      <Button 
+                        size="sm" 
+                        className="group-hover:bg-primary group-hover:shadow-lg transition-all"
+                        onClick={() => {
+                          if (item.itemType === 'mastermind') {
+                            window.location.href = `/mastermind/${item.id}`;
+                          } else if ('slug' in item && item.slug) {
+                            window.location.href = `/course/landing/${item.slug}`;
+                          } else {
+                            window.location.href = `/course/${item.id}`;
+                          }
+                        }}
+                      >
                         Подробнее
-                        <Icon name="ArrowRight" size={16} className="ml-2" />
+                        <Icon name="ArrowRight" size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
                       </Button>
                     </div>
                   </CardContent>

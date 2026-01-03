@@ -37,7 +37,7 @@ def handler(event: dict, context) -> dict:
     if method == 'GET' and slug and not action:
         cur.execute(f"""
             SELECT id, slug, title, short_description, hero_title, hero_subtitle, 
-                   category, type, price, duration_text, about_course, 
+                   category, type, price, duration_text, about_course, for_whom, expectations,
                    what_you_learn, program_modules, author_name, author_position, 
                    author_bio, author_photo, author_experience, benefits, 
                    testimonials, faq, cta_button_text, cta_button_url
@@ -68,18 +68,20 @@ def handler(event: dict, context) -> dict:
             'price': float(course[8]) if course[8] else None,
             'duration_text': course[9],
             'about_course': course[10],
-            'what_you_learn': course[11] if course[11] else [],
-            'program_modules': course[12] if course[12] else [],
-            'author_name': course[13],
-            'author_position': course[14],
-            'author_bio': course[15],
-            'author_photo': course[16],
-            'author_experience': course[17],
-            'benefits': course[18] if course[18] else [],
-            'testimonials': course[19] if course[19] else [],
-            'faq': course[20] if course[20] else [],
-            'cta_button_text': course[21],
-            'cta_button_url': course[22]
+            'for_whom': course[11],
+            'expectations': course[12],
+            'what_you_learn': course[13] if course[13] else [],
+            'program_modules': course[14] if course[14] else [],
+            'author_name': course[15],
+            'author_position': course[16],
+            'author_bio': course[17],
+            'author_photo': course[18],
+            'author_experience': course[19],
+            'benefits': course[20] if course[20] else [],
+            'testimonials': course[21] if course[21] else [],
+            'faq': course[22] if course[22] else [],
+            'cta_button_text': course[23],
+            'cta_button_url': course[24]
         }
         
         cur.close()
