@@ -52,7 +52,7 @@ export default function SchoolLanding() {
   const fetchSchool = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${SCHOOLS_API_URL}/slug/${slug}`);
+      const response = await fetch(`${SCHOOLS_API_URL}?action=school&slug=${slug}`);
       if (!response.ok) throw new Error('Школа не найдена');
       const data = await response.json();
       setSchool(data);
