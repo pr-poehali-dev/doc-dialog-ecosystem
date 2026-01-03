@@ -388,12 +388,15 @@ export default function SchoolDashboard() {
                         if (confirm('Удалить лендинг?')) {
                           try {
                             const token = localStorage.getItem('token');
-                            const userId = localStorage.getItem('userId');
+                            const userStr = localStorage.getItem('user');
+                            const user = userStr ? JSON.parse(userStr) : null;
+                            const userId = user?.id?.toString() || '';
+                            
                             const response = await fetch(`https://functions.poehali.dev/6ac6b552-624e-4960-a4f1-94f540394c86?id=${landing.id}`, {
                               method: 'DELETE',
                               headers: { 
                                 'Authorization': `Bearer ${token}`,
-                                'X-User-Id': userId || ''
+                                'X-User-Id': userId
                               }
                             });
                             if (response.ok) {
