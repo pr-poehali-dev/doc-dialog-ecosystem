@@ -749,8 +749,13 @@ export default function SchoolLandingBuilder() {
         <div className="flex justify-between mt-8">
           <Button
             variant="outline"
-            onClick={() => setStep(Math.max(1, step - 1))}
-            disabled={step === 1}
+            onClick={() => {
+              if (step === 1) {
+                navigate('/school/dashboard');
+              } else {
+                setStep(Math.max(1, step - 1));
+              }
+            }}
           >
             <Icon name="ChevronLeft" size={18} className="mr-2" />
             Назад
