@@ -4,6 +4,7 @@ import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
+import { getUserId } from '@/utils/auth';
 import CourseForm from '@/components/school/CourseForm';
 import MastermindForm from '@/components/school/MastermindForm';
 import OfflineTrainingForm from '@/components/school/OfflineTrainingForm';
@@ -57,22 +58,7 @@ export default function SchoolDashboard() {
 
   const loadUserSchool = async () => {
     try {
-      const token = localStorage.getItem('token');
-      let userId = '';
-      const userStr = localStorage.getItem('user');
-      if (userStr && userStr !== 'null') {
-        const user = JSON.parse(userStr);
-        userId = user?.id?.toString() || '';
-      }
-      
-      if (!userId && token) {
-        try {
-          const payload = JSON.parse(atob(token.split('.')[1]));
-          userId = payload.user_id?.toString() || '';
-        } catch (e) {
-          console.error('Failed to parse JWT:', e);
-        }
-      }
+      const userId = getUserId();
 
       if (!userId) {
         toast({ title: 'Требуется авторизация', variant: 'destructive' });
@@ -126,23 +112,7 @@ export default function SchoolDashboard() {
         const data = await response.json();
         setSpecialists(data);
       } else if (activeTab === 'landings') {
-        const token = localStorage.getItem('token');
-        let userId = '';
-        const userStr = localStorage.getItem('user');
-        if (userStr && userStr !== 'null') {
-          const user = JSON.parse(userStr);
-          userId = user?.id?.toString() || '';
-        }
-        
-        if (!userId && token) {
-          try {
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            userId = payload.user_id?.toString() || '';
-          } catch (e) {
-            console.error('Failed to parse JWT:', e);
-          }
-        }
-
+        const userId = getUserId();
         const response = await fetch(`https://functions.poehali.dev/6ac6b552-624e-4960-a4f1-94f540394c86?action=my_schools`, {
           headers: { 'X-User-Id': userId }
         });
@@ -450,24 +420,7 @@ export default function SchoolDashboard() {
                         if (confirm('Вы уверены, что хотите удалить лендинг школы?\n\nБудут удалены:\n• Все преподаватели\n• Все достижения\n• Галерея фотографий\n• Отзывы\n\nКурсы останутся, но будут отвязаны от школы.\n\nЭто действие нельзя отменить!')) {
                           try {
                             const token = localStorage.getItem('token');
-                            
-                            // Получаем userId из JWT токена если нет в localStorage
-                            let userId = '';
-                            const userStr = localStorage.getItem('user');
-                            if (userStr && userStr !== 'null') {
-                              const user = JSON.parse(userStr);
-                              userId = user?.id?.toString() || '';
-                            }
-                            
-                            // Если userId нет, пытаемся извлечь из JWT
-                            if (!userId && token) {
-                              try {
-                                const payload = JSON.parse(atob(token.split('.')[1]));
-                                userId = payload.user_id?.toString() || '';
-                              } catch (e) {
-                                console.error('Failed to parse JWT:', e);
-                              }
-                            }
+                            const userId = getUserId();
                             
                             if (!userId) {
                               toast({ 

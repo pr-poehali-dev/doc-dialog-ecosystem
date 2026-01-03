@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
+import { getUserId } from '@/utils/auth';
 
 interface LandingData {
   name: string;
@@ -92,27 +93,57 @@ export default function SchoolLandingBuilder() {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const userId = localStorage.getItem('userId');
+      const userId = getUserId();
+      
+      if (!userId) {
+        console.error('User ID not found');
+        navigate('/login');
+        return;
+      }
+
       const response = await fetch(`${SCHOOL_API_URL}?action=edit&id=${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'X-User-Id': userId || ''
+          'X-User-Id': userId
         }
       });
 
       if (response.ok) {
         const schoolData = await response.json();
-        // Преобразуем данные школы в формат лендинга
+        
+        // Преобразуем достижения
+        const advantages = schoolData.achievements?.map((a: any) => a.title) || ['', '', '', ''];
+        while (advantages.length < 4) advantages.push('');
+        
+        // Преобразуем преподавателей
+        const teachers = schoolData.teachers?.map((t: any) => ({
+          name: t.name || '',
+          specialization: t.specialization || '',
+          experience: t.experience_years ? `${t.experience_years} лет` : '',
+          photo: t.photo_url || ''
+        })) || [];
+        
+        // Преобразуем галерею
+        const gallery = schoolData.gallery?.map((g: any) => g.image_url) || [];
+        while (gallery.length < 4) gallery.push('');
+        
+        // Преобразуем отзывы
+        const testimonials = schoolData.reviews?.map((r: any) => ({
+          name: r.author_name || '',
+          text: r.review_text || '',
+          rating: r.rating || 5
+        })) || [];
+        
         setData({
           name: schoolData.name || '',
           shortDescription: schoolData.short_description || '',
           heroTitle: schoolData.name || '',
           heroSubtitle: schoolData.short_description || '',
-          aboutText: schoolData.description || '',
-          advantages: ['', '', '', ''],
+          aboutText: schoolData.about_school || schoolData.description || '',
+          advantages,
           courses: [{ title: '', duration: '', price: '', description: '' }],
-          teachers: [],
-          gallery: [],
+          teachers,
+          gallery,
           contacts: {
             city: schoolData.city || '',
             address: schoolData.address || '',
@@ -120,7 +151,7 @@ export default function SchoolLandingBuilder() {
             email: schoolData.email || '',
             website: schoolData.website || ''
           },
-          testimonials: [],
+          testimonials,
           stats: {
             studentsCount: schoolData.students_count?.toString() || '',
             yearsExperience: schoolData.founded_year ? (new Date().getFullYear() - schoolData.founded_year).toString() : '',
@@ -128,6 +159,8 @@ export default function SchoolLandingBuilder() {
             rating: schoolData.rating?.toString() || '5.0'
           }
         });
+      } else {
+        console.error('Failed to load school data:', await response.text());
       }
     } catch (error) {
       console.error('Ошибка загрузки школы:', error);
