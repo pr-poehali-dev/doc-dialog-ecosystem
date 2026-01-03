@@ -534,11 +534,15 @@ def handler(event: dict, context) -> dict:
         # DELETE /?id=X - удаление школы (владелец или админ)
         if method == 'DELETE':
             school_id = event.get('queryStringParameters', {}).get('id')
-            user_id = event.get('headers', {}).get('X-User-Id')
+            headers = event.get('headers', {})
+            user_id = headers.get('X-User-Id') or headers.get('x-user-id')
+            
+            print(f"DELETE headers: {headers}")
+            print(f"school_id: {school_id}, user_id: {user_id}")
             
             if not school_id or not user_id:
                 conn.close()
-                return response(400, {'error': 'Требуется id и X-User-Id'})
+                return response(400, {'error': 'Требуется id и X-User-Id', 'headers': list(headers.keys())})
             
             with conn.cursor() as cur:
                 # Проверяем права доступа - владелец школы может удалить
