@@ -388,15 +388,32 @@ export default function SchoolDashboard() {
                         if (confirm('Удалить лендинг?')) {
                           try {
                             const token = localStorage.getItem('token');
+                            
+                            // Получаем userId из JWT токена если нет в localStorage
+                            let userId = '';
                             const userStr = localStorage.getItem('user');
-                            console.log('User string from localStorage:', userStr);
-                            const user = userStr ? JSON.parse(userStr) : null;
-                            console.log('Parsed user object:', user);
-                            const userId = user?.id?.toString() || '';
-                            console.log('UserId for DELETE:', userId);
+                            if (userStr && userStr !== 'null') {
+                              const user = JSON.parse(userStr);
+                              userId = user?.id?.toString() || '';
+                            }
+                            
+                            // Если userId нет, пытаемся извлечь из JWT
+                            if (!userId && token) {
+                              try {
+                                const payload = JSON.parse(atob(token.split('.')[1]));
+                                userId = payload.user_id?.toString() || '';
+                              } catch (e) {
+                                console.error('Failed to parse JWT:', e);
+                              }
+                            }
                             
                             if (!userId) {
-                              toast({ title: 'Ошибка', description: 'Пользователь не авторизован', variant: 'destructive' });
+                              toast({ 
+                                title: 'Требуется авторизация', 
+                                description: 'Пожалуйста, войдите в систему заново',
+                                variant: 'destructive' 
+                              });
+                              navigate('/login');
                               return;
                             }
                             

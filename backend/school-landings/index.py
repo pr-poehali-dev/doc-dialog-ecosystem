@@ -537,12 +537,9 @@ def handler(event: dict, context) -> dict:
             headers = event.get('headers', {})
             user_id = headers.get('X-User-Id') or headers.get('x-user-id')
             
-            print(f"DELETE headers: {headers}")
-            print(f"school_id: {school_id}, user_id: {user_id}")
-            
             if not school_id or not user_id:
                 conn.close()
-                return response(400, {'error': 'Требуется id и X-User-Id', 'headers': list(headers.keys())})
+                return response(400, {'error': 'Требуется id и X-User-Id'})
             
             with conn.cursor() as cur:
                 # Проверяем права доступа - владелец школы может удалить
