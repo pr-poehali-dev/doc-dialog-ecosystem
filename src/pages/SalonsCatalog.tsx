@@ -124,12 +124,12 @@ export default function SalonsCatalog() {
                   className="w-full"
                 />
               </div>
-              <Select value={cityFilter} onValueChange={setCityFilter}>
+              <Select value={cityFilter || 'all'} onValueChange={(v) => setCityFilter(v === 'all' ? '' : v)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Все города" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Все города</SelectItem>
+                  <SelectItem value="all">Все города</SelectItem>
                   {cities.map((city) => (
                     <SelectItem key={city} value={city}>
                       {city}
@@ -137,12 +137,12 @@ export default function SalonsCatalog() {
                   ))}
                 </SelectContent>
               </Select>
-              <Select value={specializationFilter} onValueChange={setSpecializationFilter}>
+              <Select value={specializationFilter || 'all'} onValueChange={(v) => setSpecializationFilter(v === 'all' ? '' : v)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Все специализации" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Все специализации</SelectItem>
+                  <SelectItem value="all">Все специализации</SelectItem>
                   {SPECIALIZATIONS.map((spec) => (
                     <SelectItem key={spec} value={spec}>
                       {spec}
