@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import Icon from '@/components/ui/icon';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import VacancyForm from '@/components/VacancyForm';
+import SalonCreationForm from '@/components/salon/SalonCreationForm';
+import SalonProfileForm from '@/components/salon/SalonProfileForm';
+import SalonProfileView from '@/components/salon/SalonProfileView';
+import SalonRequestsList from '@/components/salon/SalonRequestsList';
 
 interface Salon {
   id: number;
@@ -40,17 +40,6 @@ interface Vacancy {
   requires_partner_courses: boolean;
   is_active?: boolean;
 }
-
-const MASSAGE_SPECIALIZATIONS = [
-  'Классический массаж',
-  'Спортивный массаж',
-  'Антицеллюлитный массаж',
-  'Лимфодренажный массаж',
-  'Лечебный массаж',
-  'SPA-процедуры',
-  'Тайский массаж',
-  'Расслабляющий массаж'
-];
 
 interface Request {
   id: number;
@@ -200,6 +189,7 @@ export default function SalonCabinet() {
       const data = await res.json();
       if (res.ok && data.salon) {
         setSalon(data.salon);
+        setVacancies(formData.vacancies);
         setEditing(false);
         toast({ title: 'Профиль обновлён!' });
       } else {
@@ -220,143 +210,20 @@ export default function SalonCabinet() {
 
   if (creating) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 p-6">
-        <div className="max-w-2xl mx-auto">
-          <Card>
-            <CardHeader>
-              <CardTitle>Создание профиля салона</CardTitle>
-              <CardDescription>Заполните информацию о вашем салоне красоты</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="name">Название салона *</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Название вашего салона"
-                />
-              </div>
-              <div>
-                <Label htmlFor="description">Описание</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Расскажите о вашем салоне"
-                  rows={4}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="city">Город</Label>
-                  <Input
-                    id="city"
-                    value={formData.city}
-                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    placeholder="Москва"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="phone">Телефон</Label>
-                  <Input
-                    id="phone"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="+7 (999) 123-45-67"
-                  />
-                </div>
-              </div>
-              <div>
-                <Label htmlFor="address">Адрес</Label>
-                <Input
-                  id="address"
-                  value={formData.address}
-                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  placeholder="Улица, дом"
-                />
-              </div>
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="salon@example.com"
-                />
-              </div>
-              <div>
-                <Label htmlFor="website">Сайт</Label>
-                <Input
-                  id="website"
-                  value={formData.website}
-                  onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                  placeholder="https://example.com"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label>Фото салона</Label>
-                <div className="flex gap-2">
-                  <Input
-                    value={photoInput}
-                    onChange={(e) => setPhotoInput(e.target.value)}
-                    placeholder="Ссылка на фото"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      if (photoInput.trim()) {
-                        setFormData({ ...formData, photos: [...formData.photos, photoInput.trim()] });
-                        setPhotoInput('');
-                      }
-                    }}
-                  >
-                    <Icon name="Plus" size={16} />
-                  </Button>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {formData.photos.map((photo, idx) => (
-                    <div key={idx} className="relative group">
-                      <img src={photo} alt="" className="w-20 h-20 object-cover rounded" />
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setFormData({ ...formData, photos: formData.photos.filter((_, i) => i !== idx) })
-                        }
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <Icon name="X" size={12} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <VacancyForm
-                vacancies={formData.vacancies}
-                onChange={(vacancies) => setFormData({ ...formData, vacancies })}
-              />
-
-              <Button onClick={handleCreateSalon} className="w-full">
-                Создать профиль
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      <SalonCreationForm
+        formData={formData}
+        setFormData={setFormData}
+        onSubmit={handleCreateSalon}
+      />
     );
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50">
-      <div className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Icon name="Sparkles" className="text-purple-600" size={28} />
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+      <div className="bg-gradient-to-r from-pink-600 to-purple-600 text-white py-8">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold">
               Личный кабинет салона
             </h1>
           </div>
@@ -394,261 +261,27 @@ export default function SalonCabinet() {
               </CardHeader>
               <CardContent>
                 {editing ? (
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="edit-name">Название салона</Label>
-                      <Input
-                        id="edit-name"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="edit-description">Описание</Label>
-                      <Textarea
-                        id="edit-description"
-                        value={formData.description}
-                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                        rows={4}
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="edit-city">Город</Label>
-                        <Input
-                          id="edit-city"
-                          value={formData.city}
-                          onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="edit-phone">Телефон</Label>
-                        <Input
-                          id="edit-phone"
-                          value={formData.phone}
-                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label htmlFor="edit-address">Адрес</Label>
-                      <Input
-                        id="edit-address"
-                        value={formData.address}
-                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="edit-email">Email</Label>
-                      <Input
-                        id="edit-email"
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="edit-website">Сайт</Label>
-                      <Input
-                        id="edit-website"
-                        value={formData.website}
-                        onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Фото салона</Label>
-                      <div className="flex gap-2">
-                        <Input
-                          value={photoInput}
-                          onChange={(e) => setPhotoInput(e.target.value)}
-                          placeholder="Ссылка на фото"
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => {
-                            if (photoInput.trim()) {
-                              setFormData({ ...formData, photos: [...formData.photos, photoInput.trim()] });
-                              setPhotoInput('');
-                            }
-                          }}
-                        >
-                          <Icon name="Plus" size={16} />
-                        </Button>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {formData.photos.map((photo, idx) => (
-                          <div key={idx} className="relative group">
-                            <img src={photo} alt="" className="w-20 h-20 object-cover rounded" />
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setFormData({ ...formData, photos: formData.photos.filter((_, i) => i !== idx) })
-                              }
-                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                              <Icon name="X" size={12} />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <VacancyForm
-                      vacancies={formData.vacancies}
-                      onChange={(vacancies) => setFormData({ ...formData, vacancies })}
-                    />
-
-                    <div className="flex gap-2">
-                      <Button onClick={handleUpdateSalon}>Сохранить</Button>
-                      <Button variant="outline" onClick={() => setEditing(false)}>
-                        Отмена
-                      </Button>
-                    </div>
-                  </div>
+                  <SalonProfileForm
+                    formData={formData}
+                    photoInput={photoInput}
+                    setFormData={setFormData}
+                    setPhotoInput={setPhotoInput}
+                    onSubmit={handleUpdateSalon}
+                    onCancel={() => setEditing(false)}
+                  />
                 ) : (
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-2 gap-6">
-                      <div>
-                        <p className="text-sm text-muted-foreground">Описание</p>
-                        <p className="mt-1">{salon?.description || 'Не указано'}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Город</p>
-                        <p className="mt-1">{salon?.city || 'Не указан'}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Адрес</p>
-                        <p className="mt-1">{salon?.address || 'Не указан'}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Телефон</p>
-                        <p className="mt-1">{salon?.phone || 'Не указан'}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Email</p>
-                        <p className="mt-1">{salon?.email || 'Не указан'}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Сайт</p>
-                        <p className="mt-1">{salon?.website || 'Не указан'}</p>
-                      </div>
-                    </div>
-
-                    {salon?.photos && salon.photos.length > 0 && (
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-2">Фото салона</p>
-                        <div className="flex flex-wrap gap-2">
-                          {salon.photos.map((photo, idx) => (
-                            <img
-                              key={idx}
-                              src={photo}
-                              alt={`Фото ${idx + 1}`}
-                              className="w-32 h-32 object-cover rounded"
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {vacancies.length > 0 && (
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-3">Вакансии ({vacancies.length})</p>
-                        <div className="space-y-3">
-                          {vacancies.map((vac, idx) => (
-                            <Card key={idx}>
-                              <CardContent className="pt-4">
-                                <div className="flex flex-wrap gap-2 mb-2">
-                                  {vac.specializations.map((spec) => (
-                                    <Badge key={spec} variant="secondary">
-                                      {spec}
-                                    </Badge>
-                                  ))}
-                                </div>
-                                <div className="text-sm space-y-1">
-                                  {vac.schedule && (
-                                    <p>
-                                      <span className="text-muted-foreground">График:</span> {vac.schedule}
-                                    </p>
-                                  )}
-                                  {(vac.salary_from || vac.salary_to) && (
-                                    <p>
-                                      <span className="text-muted-foreground">ЗП:</span>{' '}
-                                      {vac.salary_from?.toLocaleString()} - {vac.salary_to?.toLocaleString()}{' '}
-                                      {vac.salary_currency}
-                                    </p>
-                                  )}
-                                  {vac.requires_partner_courses && (
-                                    <Badge variant="outline" className="mt-1">
-                                      <Icon name="GraduationCap" size={12} className="mr-1" />
-                                      Требуется обучение в школах-партнерах
-                                    </Badge>
-                                  )}
-                                </div>
-                              </CardContent>
-                            </Card>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    <Button onClick={() => setEditing(true)}>
-                      <Icon name="Edit" size={16} className="mr-2" />
-                      Редактировать
-                    </Button>
-                  </div>
+                  <SalonProfileView
+                    salon={salon}
+                    vacancies={vacancies}
+                    onEdit={() => setEditing(true)}
+                  />
                 )}
               </CardContent>
             </Card>
           </TabsContent>
 
           <TabsContent value="requests">
-            <div className="space-y-4">
-              {requests.length === 0 ? (
-                <Card>
-                  <CardContent className="py-12 text-center">
-                    <Icon name="Inbox" size={48} className="mx-auto text-muted-foreground mb-4" />
-                    <p className="text-muted-foreground">Пока нет активных заявок</p>
-                  </CardContent>
-                </Card>
-              ) : (
-                requests.map((req) => (
-                  <Card key={req.id}>
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <CardTitle>{req.title}</CardTitle>
-                          <CardDescription>
-                            {req.school_name} • {req.location}
-                          </CardDescription>
-                        </div>
-                        <Badge>{req.specialty}</Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm mb-4">{req.description}</p>
-                      <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Icon name="DollarSign" size={16} />
-                          <span>
-                            {req.budget_from.toLocaleString()} - {req.budget_to.toLocaleString()} {req.currency}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Icon name="Calendar" size={16} />
-                          <span>до {new Date(req.deadline_date).toLocaleDateString('ru-RU')}</span>
-                        </div>
-                      </div>
-                      <Button className="mt-4">
-                        <Icon name="Send" size={16} className="mr-2" />
-                        Откликнуться
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))
-              )}
-            </div>
+            <SalonRequestsList requests={requests} />
           </TabsContent>
         </Tabs>
       </div>
