@@ -20,6 +20,7 @@ import CoursePage from "./pages/CoursePage";
 import MastermindPage from "./pages/MastermindPage";
 import CourseLandingEditor from "./pages/CourseLandingEditor";
 import CourseLandingPublic from "./pages/CourseLandingPublic";
+import CourseLandingBuilder from "./pages/CourseLandingBuilder";
 import SchoolCatalog from "./pages/SchoolCatalog";
 import SchoolLanding from "./pages/SchoolLanding";
 import SchoolLandingBuilder from "./pages/SchoolLandingBuilder";
@@ -52,6 +53,7 @@ const App = () => (
           <Route path="/mastermind/:id" element={<MastermindPage />} />
           <Route path="/school/landing/:id" element={<CourseLandingEditor />} />
           <Route path="/landing/:slug" element={<CourseLandingPublic />} />
+          <Route path="/course/landing/builder" element={<CourseLandingBuilder />} />
           <Route path="/schools" element={<SchoolCatalog />} />
           <Route path="/school/:slug" element={<SchoolLanding />} />
           <Route path="/school/landing/builder" element={<SchoolLandingBuilder />} />

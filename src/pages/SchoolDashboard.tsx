@@ -233,7 +233,13 @@ export default function SchoolDashboard() {
 
         {activeTab !== 'landings' && (
           <div className="mb-6">
-            <Button onClick={() => setShowAddForm(!showAddForm)}>
+            <Button onClick={() => {
+              if (activeTab === 'courses') {
+                navigate('/course/landing/builder');
+              } else {
+                setShowAddForm(!showAddForm);
+              }
+            }}>
               <Icon name="Plus" size={18} className="mr-2" />
               {activeTab === 'courses' && 'Добавить курс'}
               {activeTab === 'masterminds' && 'Добавить мастермайнд'}
