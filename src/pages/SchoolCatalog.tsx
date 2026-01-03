@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Navigation } from '@/components/Navigation';
 import Icon from '@/components/ui/icon';
+import { Button } from '@/components/ui/button';
 
 const SCHOOLS_API_URL = 'https://functions.poehali.dev/6ac6b552-624e-4960-a4f1-94f540394c86';
 
@@ -49,24 +51,40 @@ export default function SchoolCatalog() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
-      {/* Шапка */}
-      <header className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">Каталог школ массажа</h1>
-          <p className="text-gray-600 mt-2">Найдите лучшие школы и курсы массажа в вашем городе</p>
+    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/5">
+      <Navigation />
+      
+      {/* Герой секция */}
+      <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-background border-b">
+        <div className="max-w-7xl mx-auto px-4 py-16">
+          <div className="text-center max-w-3xl mx-auto">
+            <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              Каталог школ массажа
+            </h1>
+            <p className="text-xl text-muted-foreground mb-8">
+              Найдите лучшие школы и курсы массажа в вашем городе
+            </p>
+            <div className="flex gap-4 justify-center">
+              <Link to="/courses">
+                <Button variant="outline" size="lg">
+                  <Icon name="BookOpen" size={20} className="mr-2" />
+                  Каталог курсов
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
-      </header>
+      </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-12">
         {/* Фильтры */}
-        <div className="mb-8 flex gap-4 items-center">
-          <div className="flex items-center gap-2">
-            <Icon name="MapPin" size={20} className="text-gray-500" />
+        <div className="mb-8 bg-card rounded-xl shadow-sm p-6 flex gap-4 items-center flex-wrap">
+          <div className="flex items-center gap-3">
+            <Icon name="MapPin" size={20} className="text-primary" />
             <select
               value={cityFilter}
               onChange={(e) => setCityFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-4 py-2.5 border border-input rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-background"
             >
               <option value="">Все города</option>
               {cities.map(city => (
@@ -75,97 +93,99 @@ export default function SchoolCatalog() {
             </select>
           </div>
           
-          <div className="ml-auto text-sm text-gray-600">
-            Найдено школ: {schools.length}
+          <div className="ml-auto text-sm text-muted-foreground font-medium">
+            Найдено школ: <span className="text-primary">{schools.length}</span>
           </div>
         </div>
 
         {/* Список школ */}
         {loading ? (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            <p className="text-gray-600 mt-4">Загрузка школ...</p>
+          <div className="text-center py-16">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            <p className="text-muted-foreground mt-4">Загрузка школ...</p>
           </div>
         ) : schools.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-xl shadow-sm">
-            <Icon name="School" size={64} className="text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Школы не найдены</h3>
-            <p className="text-gray-600">Попробуйте изменить фильтры поиска</p>
+          <div className="text-center py-16 bg-card rounded-xl shadow-sm">
+            <Icon name="GraduationCap" size={64} className="text-muted-foreground mx-auto mb-4 opacity-50" />
+            <h3 className="text-xl font-semibold mb-2">Школы не найдены</h3>
+            <p className="text-muted-foreground">Попробуйте изменить фильтры поиска</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {schools.map(school => (
               <Link
                 key={school.id}
                 to={`/school/${school.slug}`}
-                className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group"
+                className="bg-card rounded-2xl shadow-md hover:shadow-2xl transition-all duration-500 overflow-hidden group border border-transparent hover:border-primary/20"
               >
-                {/* Логотип */}
-                <div className="h-48 bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center overflow-hidden">
+                {/* Логотип с градиентом */}
+                <div className="relative h-56 bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5 flex items-center justify-center overflow-hidden">
                   {school.logo_url ? (
                     <img
                       src={school.logo_url}
                       alt={school.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
                   ) : (
-                    <Icon name="GraduationCap" size={64} className="text-blue-400" />
+                    <Icon name="GraduationCap" size={80} className="text-primary/40 group-hover:scale-110 transition-transform duration-500" />
                   )}
+                  {/* Оверлей при наведении */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
 
                 {/* Контент */}
                 <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                  <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors line-clamp-2">
                     {school.name}
                   </h3>
                   
                   {school.short_description && (
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                    <p className="text-muted-foreground text-sm mb-4 line-clamp-3 leading-relaxed">
                       {school.short_description}
                     </p>
                   )}
 
                   {/* Метаинформация */}
-                  <div className="flex flex-wrap gap-3 text-sm">
+                  <div className="flex flex-wrap gap-3 mb-4">
                     {school.city && (
-                      <div className="flex items-center gap-1 text-gray-600">
-                        <Icon name="MapPin" size={16} />
-                        <span>{school.city}</span>
+                      <div className="flex items-center gap-1.5 text-sm px-3 py-1.5 bg-secondary rounded-full">
+                        <Icon name="MapPin" size={14} className="text-primary" />
+                        <span className="font-medium">{school.city}</span>
                       </div>
                     )}
                     
                     {school.rating > 0 && (
-                      <div className="flex items-center gap-1 text-amber-600">
-                        <Icon name="Star" size={16} />
+                      <div className="flex items-center gap-1.5 text-sm px-3 py-1.5 bg-amber-50 text-amber-700 rounded-full">
+                        <Icon name="Star" size={14} className="fill-amber-400 text-amber-400" />
                         <span className="font-semibold">{Number(school.rating).toFixed(1)}</span>
                         {school.reviews_count > 0 && (
-                          <span className="text-gray-500">({school.reviews_count})</span>
+                          <span className="text-amber-600">({school.reviews_count})</span>
                         )}
                       </div>
                     )}
                   </div>
 
-                  {/* Дополнительная информация */}
-                  <div className="mt-4 pt-4 border-t border-gray-100 flex gap-4 text-xs text-gray-500">
+                  {/* Статистика */}
+                  <div className="pt-4 border-t border-border flex gap-6 text-sm text-muted-foreground">
                     {school.students_count > 0 && (
-                      <div className="flex items-center gap-1">
-                        <Icon name="Users" size={14} />
-                        <span>{school.students_count}+ студентов</span>
+                      <div className="flex items-center gap-2">
+                        <Icon name="Users" size={16} className="text-primary" />
+                        <span className="font-medium">{school.students_count}+</span>
                       </div>
                     )}
                     {school.founded_year && (
-                      <div className="flex items-center gap-1">
-                        <Icon name="Calendar" size={14} />
-                        <span>с {school.founded_year}</span>
+                      <div className="flex items-center gap-2">
+                        <Icon name="Calendar" size={16} className="text-primary" />
+                        <span className="font-medium">с {school.founded_year}</span>
                       </div>
                     )}
                   </div>
 
-                  {/* Кнопка "Подробнее" */}
-                  <div className="mt-4">
-                    <div className="flex items-center justify-between text-blue-600 font-semibold group-hover:gap-2 transition-all">
-                      <span>Подробнее</span>
-                      <Icon name="ArrowRight" size={18} className="group-hover:translate-x-1 transition-transform" />
+                  {/* Кнопка */}
+                  <div className="mt-6 pt-4 border-t border-border">
+                    <div className="flex items-center justify-between text-primary font-semibold group-hover:gap-2 transition-all">
+                      <span>Подробнее о школе</span>
+                      <Icon name="ArrowRight" size={20} className="group-hover:translate-x-2 transition-transform duration-300" />
                     </div>
                   </div>
                 </div>
