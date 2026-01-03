@@ -18,6 +18,8 @@ import SchoolDashboard from "./pages/SchoolDashboard";
 import CoursesCatalog from "./pages/CoursesCatalog";
 import CoursePage from "./pages/CoursePage";
 import MastermindPage from "./pages/MastermindPage";
+import CourseLandingEditor from "./pages/CourseLandingEditor";
+import CourseLandingPublic from "./pages/CourseLandingPublic";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,6 +45,9 @@ const App = () => (
           <Route path="/courses" element={<CoursesCatalog />} />
           <Route path="/course/:id" element={<CoursePage />} />
           <Route path="/mastermind/:id" element={<MastermindPage />} />
+          <Route path="/school/landing/new" element={<CourseLandingEditor />} />
+          <Route path="/school/landing/:id" element={<CourseLandingEditor />} />
+          <Route path="/landing/:slug" element={<CourseLandingPublic />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

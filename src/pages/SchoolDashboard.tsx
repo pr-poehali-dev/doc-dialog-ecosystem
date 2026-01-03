@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
@@ -23,8 +24,9 @@ import { useOfflineTrainingHandlers } from './SchoolDashboard/useOfflineTraining
 import { useSpecialistHandlers } from './SchoolDashboard/useSpecialistHandlers';
 
 export default function SchoolDashboard() {
+  const navigate = useNavigate();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<'courses' | 'masterminds' | 'offline-training' | 'specialists'>('courses');
+  const [activeTab, setActiveTab] = useState<'courses' | 'masterminds' | 'offline-training' | 'specialists' | 'landings'>('courses');
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingCourseId, setEditingCourseId] = useState<number | null>(null);
   const [editingMastermindId, setEditingMastermindId] = useState<number | null>(null);
@@ -35,6 +37,7 @@ export default function SchoolDashboard() {
   const [masterminds, setMasterminds] = useState<Mastermind[]>([]);
   const [offlineTrainings, setOfflineTrainings] = useState<any[]>([]);
   const [specialists, setSpecialists] = useState<SpecialistRequest[]>([]);
+  const [landings, setLandings] = useState<any[]>([]);
   
   const schoolId = 1;
   
@@ -75,6 +78,17 @@ export default function SchoolDashboard() {
         const response = await fetch(`${COURSE_API_URL}?action=specialists&school_id=${schoolId}&status=all`);
         const data = await response.json();
         setSpecialists(data);
+      } else if (activeTab === 'landings') {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`https://functions.poehali.dev/428c2825-cfd3-4c2c-9666-df1320295ced?school_id=${schoolId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setLandings(Array.isArray(data) ? data : []);
+        } else {
+          setLandings([]);
+        }
       }
     } catch (error) {
       console.error('Load error:', error);
@@ -208,16 +222,30 @@ export default function SchoolDashboard() {
             <Icon name="Search" size={18} className="inline mr-2" />
             Найти специалиста
           </button>
+          <button
+            onClick={() => { setActiveTab('landings'); setShowAddForm(false); }}
+            className={`px-4 py-2 font-medium transition-colors ${activeTab === 'landings' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+          >
+            <Icon name="Layout" size={18} className="inline mr-2" />
+            Лендинги курсов
+          </button>
         </div>
 
         <div className="mb-6">
-          <Button onClick={() => setShowAddForm(!showAddForm)}>
-            <Icon name="Plus" size={18} className="mr-2" />
-            {activeTab === 'courses' && 'Добавить курс'}
-            {activeTab === 'masterminds' && 'Добавить мастермайнд'}
-            {activeTab === 'offline-training' && 'Добавить очное обучение'}
-            {activeTab === 'specialists' && 'Найти специалиста'}
-          </Button>
+          {activeTab === 'landings' ? (
+            <Button onClick={() => navigate('/school/landing/new')}>
+              <Icon name="Plus" size={18} className="mr-2" />
+              Создать лендинг курса
+            </Button>
+          ) : (
+            <Button onClick={() => setShowAddForm(!showAddForm)}>
+              <Icon name="Plus" size={18} className="mr-2" />
+              {activeTab === 'courses' && 'Добавить курс'}
+              {activeTab === 'masterminds' && 'Добавить мастермайнд'}
+              {activeTab === 'offline-training' && 'Добавить очное обучение'}
+              {activeTab === 'specialists' && 'Найти специалиста'}
+            </Button>
+          )}
         </div>
 
         {showAddForm && activeTab === 'courses' && (
@@ -276,7 +304,7 @@ export default function SchoolDashboard() {
           />
         )}
 
-        {!showAddForm && (
+        {!showAddForm && activeTab !== 'landings' && (
           <ItemsList
             activeTab={activeTab}
             courses={courses}
@@ -293,6 +321,89 @@ export default function SchoolDashboard() {
             onEditSpecialist={handleEditSpecialist}
             onDeleteSpecialist={handleDeleteSpecialist}
           />
+        )}
+
+        {activeTab === 'landings' && (
+          <div className="space-y-4">
+            {landings.length === 0 ? (
+              <div className="text-center py-12 bg-card rounded-lg">
+                <Icon name="Layout" size={48} className="mx-auto mb-4 text-muted-foreground" />
+                <h3 className="text-lg font-semibold mb-2">Нет лендингов</h3>
+                <p className="text-muted-foreground">Создайте первый лендинг для вашего курса</p>
+              </div>
+            ) : (
+              landings.map((landing) => (
+                <div key={landing.id} className="bg-card rounded-lg p-6 flex items-start justify-between">
+                  <div className="flex gap-4 flex-1">
+                    {landing.cover_url && (
+                      <img
+                        src={landing.cover_url}
+                        alt={landing.title}
+                        className="w-24 h-24 object-cover rounded"
+                      />
+                    )}
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold mb-1">{landing.title}</h3>
+                      <p className="text-sm text-muted-foreground mb-2">{landing.short_description}</p>
+                      <div className="flex gap-2 items-center">
+                        <span className={`px-2 py-1 rounded text-xs font-medium ${
+                          landing.status === 'published' ? 'bg-green-100 text-green-800' :
+                          landing.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {landing.status === 'published' ? 'Опубликован' : 
+                           landing.status === 'draft' ? 'Черновик' : 'Скрыт'}
+                        </span>
+                        <span className="text-xs text-muted-foreground">{landing.format}</span>
+                        {landing.slug && (
+                          <a
+                            href={`/landing/${landing.slug}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-primary hover:underline"
+                          >
+                            Открыть →
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => navigate(`/school/landing/${landing.id}`)}
+                    >
+                      <Icon name="Pencil" size={16} />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={async () => {
+                        if (confirm('Удалить лендинг?')) {
+                          try {
+                            const token = localStorage.getItem('token');
+                            const response = await fetch(`https://functions.poehali.dev/428c2825-cfd3-4c2c-9666-df1320295ced?id=${landing.id}`, {
+                              method: 'DELETE',
+                              headers: { Authorization: `Bearer ${token}` }
+                            });
+                            if (response.ok) {
+                              toast({ title: 'Успех', description: 'Лендинг удалён' });
+                              loadData();
+                            }
+                          } catch (error) {
+                            toast({ title: 'Ошибка', description: 'Не удалось удалить', variant: 'destructive' });
+                          }
+                        }
+                      }}
+                    >
+                      <Icon name="Trash2" size={16} />
+                    </Button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         )}
       </div>
     </div>
