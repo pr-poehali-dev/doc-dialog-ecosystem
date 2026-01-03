@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -47,10 +47,14 @@ interface LandingData {
   };
 }
 
+const SCHOOL_API_URL = 'https://functions.poehali.dev/6ac6b552-624e-4960-a4f1-94f540394c86';
+
 export default function SchoolLandingBuilder() {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   const [step, setStep] = useState(1);
   const [preview, setPreview] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [data, setData] = useState<LandingData>({
     name: '',
@@ -77,6 +81,60 @@ export default function SchoolLandingBuilder() {
       rating: '5.0'
     }
   });
+
+  useEffect(() => {
+    if (id) {
+      loadSchoolData();
+    }
+  }, [id]);
+
+  const loadSchoolData = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userId');
+      const response = await fetch(`${SCHOOL_API_URL}/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'X-User-Id': userId || ''
+        }
+      });
+
+      if (response.ok) {
+        const schoolData = await response.json();
+        // Преобразуем данные школы в формат лендинга
+        setData({
+          name: schoolData.name || '',
+          shortDescription: schoolData.short_description || '',
+          heroTitle: schoolData.name || '',
+          heroSubtitle: schoolData.short_description || '',
+          aboutText: schoolData.description || '',
+          advantages: ['', '', '', ''],
+          courses: [{ title: '', duration: '', price: '', description: '' }],
+          teachers: [],
+          gallery: [],
+          contacts: {
+            city: schoolData.city || '',
+            address: schoolData.address || '',
+            phone: schoolData.phone || '',
+            email: schoolData.email || '',
+            website: schoolData.website || ''
+          },
+          testimonials: [],
+          stats: {
+            studentsCount: schoolData.students_count?.toString() || '',
+            yearsExperience: schoolData.founded_year ? (new Date().getFullYear() - schoolData.founded_year).toString() : '',
+            coursesCount: '',
+            rating: schoolData.rating?.toString() || '5.0'
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Ошибка загрузки школы:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const updateField = (path: string, value: any) => {
     const keys = path.split('.');
@@ -116,10 +174,45 @@ export default function SchoolLandingBuilder() {
     setPreview(true);
   };
 
-  const handleSave = () => {
-    alert('Лендинг сохранён! (функционал подключения к БД будет добавлен)');
-    navigate('/schools');
+  const handleSave = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userId');
+      const url = id ? `${SCHOOL_API_URL}/${id}` : SCHOOL_API_URL;
+      const method = id ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'X-User-Id': userId || '',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        alert('Лендинг школы сохранён!');
+        navigate('/school/dashboard');
+      } else {
+        alert('Ошибка сохранения лендинга');
+      }
+    } catch (error) {
+      console.error('Ошибка сохранения:', error);
+      alert('Ошибка сохранения лендинга');
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <Icon name="Loader2" size={48} className="animate-spin text-blue-600" />
+      </div>
+    );
+  }
 
   if (preview) {
     return (

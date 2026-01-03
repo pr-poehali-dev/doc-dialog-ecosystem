@@ -52,13 +52,13 @@ const App = () => (
           <Route path="/courses" element={<CoursesCatalog />} />
           <Route path="/course/:id" element={<CoursePage />} />
           <Route path="/mastermind/:id" element={<MastermindPage />} />
-          <Route path="/school/landing/:id" element={<CourseLandingEditor />} />
+          <Route path="/school/landing/builder" element={<SchoolLandingBuilder />} />
+          <Route path="/school/landing/:id" element={<SchoolLandingBuilder />} />
           <Route path="/landing/:slug" element={<CourseLandingPublic />} />
           <Route path="/course/landing/builder" element={<CourseLandingBuilder />} />
           <Route path="/course/landing/:slug" element={<CoursePublicLanding />} />
           <Route path="/schools" element={<SchoolCatalog />} />
           <Route path="/school/:slug" element={<SchoolLanding />} />
-          <Route path="/school/landing/builder" element={<SchoolLandingBuilder />} />
           <Route path="/salon/cabinet" element={<SalonCabinet />} />
           <Route path="/salons" element={<SalonsCatalog />} />
           <Route path="*" element={<NotFound />} />
