@@ -231,13 +231,8 @@ export default function SchoolDashboard() {
           </button>
         </div>
 
-        <div className="mb-6">
-          {activeTab === 'landings' ? (
-            <Button onClick={() => navigate('/school/landing/builder')} className="bg-blue-600 hover:bg-blue-700">
-              <Icon name="Plus" size={18} className="mr-2" />
-              Добавить лендинг школы
-            </Button>
-          ) : (
+        {activeTab !== 'landings' && (
+          <div className="mb-6">
             <Button onClick={() => setShowAddForm(!showAddForm)}>
               <Icon name="Plus" size={18} className="mr-2" />
               {activeTab === 'courses' && 'Добавить курс'}
@@ -245,8 +240,8 @@ export default function SchoolDashboard() {
               {activeTab === 'offline-training' && 'Добавить очное обучение'}
               {activeTab === 'specialists' && 'Найти специалиста'}
             </Button>
-          )}
-        </div>
+          </div>
+        )}
 
         {showAddForm && activeTab === 'courses' && (
           <CourseForm
