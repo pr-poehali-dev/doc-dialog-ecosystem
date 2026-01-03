@@ -552,6 +552,13 @@ def handler(event: dict, context) -> dict:
                     conn.close()
                     return response(403, {'error': 'Нет прав для удаления этой школы'})
                 
+                # Удаляем связанные данные в правильном порядке
+                cur.execute("DELETE FROM t_p46047379_doc_dialog_ecosystem.school_reviews WHERE school_id = %s", (int(school_id),))
+                cur.execute("DELETE FROM t_p46047379_doc_dialog_ecosystem.school_gallery WHERE school_id = %s", (int(school_id),))
+                cur.execute("DELETE FROM t_p46047379_doc_dialog_ecosystem.school_teachers WHERE school_id = %s", (int(school_id),))
+                cur.execute("DELETE FROM t_p46047379_doc_dialog_ecosystem.school_achievements WHERE school_id = %s", (int(school_id),))
+                cur.execute("UPDATE t_p46047379_doc_dialog_ecosystem.courses SET school_id = NULL WHERE school_id = %s", (int(school_id),))
+                
                 # Удаляем школу
                 cur.execute("""
                     DELETE FROM t_p46047379_doc_dialog_ecosystem.schools WHERE id = %s
