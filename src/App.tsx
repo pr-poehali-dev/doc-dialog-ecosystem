@@ -9,6 +9,7 @@ import About from "./pages/About";
 import Pricing from "./pages/Pricing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import RegisterSchool from "./pages/RegisterSchool";
 import Dashboard from "./pages/Dashboard";
 import MasseursDirectory from "./pages/MasseursDirectory";
 import MasseurProfile from "./pages/MasseurProfile";
@@ -43,6 +44,7 @@ const App = () => (
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/register/school" element={<RegisterSchool />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/masseurs" element={<MasseursDirectory />} />
           <Route path="/masseurs/:id" element={<MasseurProfile />} />

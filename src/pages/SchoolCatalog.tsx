@@ -65,7 +65,7 @@ export default function SchoolCatalog() {
               Найдите лучшие школы и курсы массажа в вашем городе
             </p>
             <div className="flex gap-4 justify-center flex-wrap">
-              <Link to="/register">
+              <Link to="/register/school">
                 <Button size="lg" className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70">
                   <Icon name="Plus" size={20} className="mr-2" />
                   Стать партнером
@@ -209,7 +209,7 @@ export default function SchoolCatalog() {
               Присоединяйтесь к нашей платформе и получите доступ к тысячам потенциальных студентов
             </p>
             <div className="flex gap-4 justify-center flex-wrap">
-              <Link to="/register">
+              <Link to="/register/school">
                 <Button size="lg" className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70">
                   <Icon name="Plus" size={20} className="mr-2" />
                   Зарегистрировать школу
