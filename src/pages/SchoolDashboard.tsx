@@ -227,15 +227,15 @@ export default function SchoolDashboard() {
             className={`px-4 py-2 font-medium transition-colors ${activeTab === 'landings' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
           >
             <Icon name="Layout" size={18} className="inline mr-2" />
-            Лендинги курсов
+            Лендинг школы
           </button>
         </div>
 
         <div className="mb-6">
           {activeTab === 'landings' ? (
-            <Button onClick={() => navigate('/school/landing/new')}>
+            <Button onClick={() => navigate('/school/landing/builder')} className="bg-blue-600 hover:bg-blue-700">
               <Icon name="Plus" size={18} className="mr-2" />
-              Создать лендинг курса
+              Добавить лендинг школы
             </Button>
           ) : (
             <Button onClick={() => setShowAddForm(!showAddForm)}>
@@ -328,8 +328,12 @@ export default function SchoolDashboard() {
             {landings.length === 0 ? (
               <div className="text-center py-12 bg-card rounded-lg">
                 <Icon name="Layout" size={48} className="mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-lg font-semibold mb-2">Нет лендингов</h3>
-                <p className="text-muted-foreground">Создайте первый лендинг для вашего курса</p>
+                <h3 className="text-lg font-semibold mb-2">Нет лендинга школы</h3>
+                <p className="text-muted-foreground mb-4">Создайте профессиональный лендинг для вашей школы</p>
+                <Button onClick={() => navigate('/school/landing/builder')} className="bg-blue-600 hover:bg-blue-700">
+                  <Icon name="Plus" size={18} className="mr-2" />
+                  Создать лендинг школы
+                </Button>
               </div>
             ) : (
               landings.map((landing) => (
