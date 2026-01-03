@@ -29,7 +29,8 @@ def response(status_code: int, body: Any) -> dict:
     return {
         'statusCode': status_code,
         'headers': cors_headers(),
-        'body': json.dumps(body, ensure_ascii=False, default=str)
+        'body': json.dumps(body, ensure_ascii=False, default=str),
+        'isBase64Encoded': False
     }
 
 
@@ -337,7 +338,8 @@ def handler(event: dict, context) -> dict:
         return {
             'statusCode': 200,
             'headers': cors_headers(),
-            'body': ''
+            'body': '',
+            'isBase64Encoded': False
         }
     
     try:
@@ -488,4 +490,11 @@ def handler(event: dict, context) -> dict:
         return response(405, {'error': 'Метод не поддерживается'})
         
     except Exception as e:
-        return response(500, {'error': str(e)})
+        import traceback
+        error_details = {
+            'error': str(e),
+            'traceback': traceback.format_exc(),
+            'event': event
+        }
+        print(f"ERROR: {error_details}")
+        return response(500, {'error': str(e), 'details': traceback.format_exc()})
