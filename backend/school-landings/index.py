@@ -115,6 +115,58 @@ def get_catalog(conn, city: str = None, limit: int = 50) -> list:
         return cur.fetchall()
 
 
+def create_school(conn, user_id: int, data: dict) -> dict:
+    """Создание новой школы"""
+    with conn.cursor() as cur:
+        # Генерируем slug из названия
+        import re
+        slug = re.sub(r'[^a-zA-Z0-9а-яА-Я\-]', '-', data['name'].lower()).strip('-')
+        slug = re.sub(r'-+', '-', slug)
+        
+        # Проверяем уникальность slug
+        base_slug = slug
+        counter = 1
+        while True:
+            cur.execute("""
+                SELECT id FROM t_p46047379_doc_dialog_ecosystem.schools WHERE slug = %s
+            """, (slug,))
+            if not cur.fetchone():
+                break
+            slug = f"{base_slug}-{counter}"
+            counter += 1
+        
+        # Создаем школу
+        cur.execute("""
+            INSERT INTO t_p46047379_doc_dialog_ecosystem.schools (
+                user_id, name, short_description, description, logo_url, cover_url,
+                slug, learning_direction, format, city, phone, email, website,
+                is_verified, created_at
+            ) VALUES (
+                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, false, NOW()
+            ) RETURNING id, slug
+        """, (
+            user_id, data['name'], data.get('short_description', ''), data.get('description', ''),
+            data.get('logo_url', ''), data.get('cover_url', ''),
+            slug, data.get('learning_direction', ''), data.get('format', 'hybrid'),
+            data.get('city', ''), data.get('phone', ''), data.get('email', ''), data.get('website', '')
+        ))
+        result = cur.fetchone()
+        conn.commit()
+        return {'id': result['id'], 'slug': result['slug']}
+
+
+def get_user_schools(conn, user_id: int) -> list:
+    """Получение списка школ пользователя"""
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT id, name, logo_url, slug, is_verified, created_at
+            FROM t_p46047379_doc_dialog_ecosystem.schools
+            WHERE user_id = %s
+            ORDER BY created_at DESC
+        """, (user_id,))
+        return cur.fetchall()
+
+
 def get_school_for_edit(conn, school_id: int, user_id: int) -> dict:
     """Получение данных школы для редактирования в админке"""
     with conn.cursor() as cur:
@@ -179,7 +231,7 @@ def update_school_landing(conn, school_id: int, user_id: int, data: dict) -> boo
                 license_number = %s, is_author_school = %s, founded_year = %s,
                 students_count = %s, teachers_count = %s, mission = %s,
                 about_school = %s, why_choose_us = %s, cta_button_text = %s, cta_button_url = %s,
-                seo_title = %s, seo_description = %s
+                seo_title = %s, seo_description = %s, learning_direction = %s, format = %s
             WHERE id = %s
         """, (
             data.get('name'), data.get('short_description'), data.get('description'), data.get('slug'),
@@ -191,8 +243,17 @@ def update_school_landing(conn, school_id: int, user_id: int, data: dict) -> boo
             data.get('about_school'), data.get('why_choose_us'),
             data.get('cta_button_text', 'Оставить заявку'), data.get('cta_button_url'),
             data.get('seo_title'), data.get('seo_description'),
+            data.get('learning_direction', ''), data.get('format', 'hybrid'),
             school_id
         ))
+        
+        # Обновляем курсы этой школы (автопривязка логотипа и названия)
+        if data.get('logo_url') or data.get('name'):
+            cur.execute("""
+                UPDATE t_p46047379_doc_dialog_ecosystem.courses
+                SET school_name = %s, school_logo_url = %s
+                WHERE school_id = %s
+            """, (data.get('name'), data.get('logo_url'), school_id))
         
         # Обновляем достижения (удаляем старые, добавляем новые)
         if 'achievements' in data:
@@ -289,6 +350,28 @@ def handler(event: dict, context) -> dict:
             schools = get_catalog(conn, city, limit)
             conn.close()
             return response(200, {'schools': schools})
+        
+        # GET /?action=my_schools - список школ пользователя
+        if method == 'GET' and event.get('queryStringParameters', {}).get('action') == 'my_schools':
+            user_id = event.get('headers', {}).get('X-User-Id')
+            if not user_id:
+                conn.close()
+                return response(401, {'error': 'Требуется авторизация'})
+            schools = get_user_schools(conn, int(user_id))
+            conn.close()
+            return response(200, {'schools': schools})
+        
+        # POST / - создание новой школы
+        if method == 'POST':
+            user_id = event.get('headers', {}).get('X-User-Id')
+            if not user_id:
+                conn.close()
+                return response(401, {'error': 'Требуется авторизация'})
+            
+            data = json.loads(event.get('body', '{}'))
+            result = create_school(conn, int(user_id), data)
+            conn.close()
+            return response(201, result)
         
         # GET /slug/:slug - публичный лендинг школы
         if method == 'GET' and event.get('pathParams', {}).get('slug'):

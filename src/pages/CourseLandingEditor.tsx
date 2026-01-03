@@ -98,8 +98,32 @@ export default function CourseLandingEditor() {
   useEffect(() => {
     if (id) {
       loadLanding();
+    } else {
+      loadUserSchool();
     }
   }, [id]);
+
+  const loadUserSchool = async () => {
+    try {
+      const userId = localStorage.getItem('userId');
+      const response = await fetch(`https://functions.poehali.dev/6ac6b552-624e-4960-a4f1-94f540394c86?action=my_schools`, {
+        headers: { 'X-User-Id': userId || '' }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.schools && data.schools.length > 0) {
+          const school = data.schools[0];
+          setForm(prev => ({
+            ...prev,
+            school_id: school.id
+          }));
+        }
+      }
+    } catch (error) {
+      console.log('Не удалось загрузить школу');
+    }
+  };
 
   const loadLanding = async () => {
     try {
