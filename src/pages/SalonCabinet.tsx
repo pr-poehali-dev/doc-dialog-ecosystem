@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import Icon from '@/components/ui/icon';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import VacancyForm from '@/components/VacancyForm';
 
 interface Salon {
   id: number;
@@ -21,11 +22,35 @@ interface Salon {
   email: string;
   city: string;
   address: string;
+  photos: string[];
   is_verified: boolean;
   subscription_type: string;
   subscription_expires_at?: string;
   created_at: string;
 }
+
+interface Vacancy {
+  id?: number;
+  specializations: string[];
+  schedule: string;
+  salary_from: number | null;
+  salary_to: number | null;
+  salary_currency: string;
+  requirements: string;
+  requires_partner_courses: boolean;
+  is_active?: boolean;
+}
+
+const MASSAGE_SPECIALIZATIONS = [
+  'Классический массаж',
+  'Спортивный массаж',
+  'Антицеллюлитный массаж',
+  'Лимфодренажный массаж',
+  'Лечебный массаж',
+  'SPA-процедуры',
+  'Тайский массаж',
+  'Расслабляющий массаж'
+];
 
 interface Request {
   id: number;
@@ -50,6 +75,7 @@ export default function SalonCabinet() {
   const { toast } = useToast();
   const [salon, setSalon] = useState<Salon | null>(null);
   const [requests, setRequests] = useState<Request[]>([]);
+  const [vacancies, setVacancies] = useState<Vacancy[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [creating, setCreating] = useState(false);
@@ -62,8 +88,12 @@ export default function SalonCabinet() {
     phone: '',
     email: '',
     city: '',
-    address: ''
+    address: '',
+    photos: [] as string[],
+    vacancies: [] as Vacancy[]
   });
+  
+  const [photoInput, setPhotoInput] = useState('');
 
   const token = localStorage.getItem('token');
 
@@ -91,6 +121,7 @@ export default function SalonCabinet() {
       const data = await res.json();
       if (data.salon) {
         setSalon(data.salon);
+        setVacancies(data.vacancies || []);
         setFormData({
           name: data.salon.name || '',
           description: data.salon.description || '',
@@ -99,7 +130,9 @@ export default function SalonCabinet() {
           phone: data.salon.phone || '',
           email: data.salon.email || '',
           city: data.salon.city || '',
-          address: data.salon.address || ''
+          address: data.salon.address || '',
+          photos: data.salon.photos || [],
+          vacancies: data.vacancies || []
         });
       }
     } catch (error) {
@@ -262,6 +295,51 @@ export default function SalonCabinet() {
                   placeholder="https://example.com"
                 />
               </div>
+              
+              <div className="space-y-2">
+                <Label>Фото салона</Label>
+                <div className="flex gap-2">
+                  <Input
+                    value={photoInput}
+                    onChange={(e) => setPhotoInput(e.target.value)}
+                    placeholder="Ссылка на фото"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      if (photoInput.trim()) {
+                        setFormData({ ...formData, photos: [...formData.photos, photoInput.trim()] });
+                        setPhotoInput('');
+                      }
+                    }}
+                  >
+                    <Icon name="Plus" size={16} />
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {formData.photos.map((photo, idx) => (
+                    <div key={idx} className="relative group">
+                      <img src={photo} alt="" className="w-20 h-20 object-cover rounded" />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setFormData({ ...formData, photos: formData.photos.filter((_, i) => i !== idx) })
+                        }
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <Icon name="X" size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <VacancyForm
+                vacancies={formData.vacancies}
+                onChange={(vacancies) => setFormData({ ...formData, vacancies })}
+              />
+
               <Button onClick={handleCreateSalon} className="w-full">
                 Создать профиль
               </Button>
@@ -377,6 +455,51 @@ export default function SalonCabinet() {
                         onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                       />
                     </div>
+
+                    <div className="space-y-2">
+                      <Label>Фото салона</Label>
+                      <div className="flex gap-2">
+                        <Input
+                          value={photoInput}
+                          onChange={(e) => setPhotoInput(e.target.value)}
+                          placeholder="Ссылка на фото"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => {
+                            if (photoInput.trim()) {
+                              setFormData({ ...formData, photos: [...formData.photos, photoInput.trim()] });
+                              setPhotoInput('');
+                            }
+                          }}
+                        >
+                          <Icon name="Plus" size={16} />
+                        </Button>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {formData.photos.map((photo, idx) => (
+                          <div key={idx} className="relative group">
+                            <img src={photo} alt="" className="w-20 h-20 object-cover rounded" />
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setFormData({ ...formData, photos: formData.photos.filter((_, i) => i !== idx) })
+                              }
+                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <Icon name="X" size={12} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <VacancyForm
+                      vacancies={formData.vacancies}
+                      onChange={(vacancies) => setFormData({ ...formData, vacancies })}
+                    />
+
                     <div className="flex gap-2">
                       <Button onClick={handleUpdateSalon}>Сохранить</Button>
                       <Button variant="outline" onClick={() => setEditing(false)}>
@@ -385,7 +508,7 @@ export default function SalonCabinet() {
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     <div className="grid grid-cols-2 gap-6">
                       <div>
                         <p className="text-sm text-muted-foreground">Описание</p>
@@ -412,6 +535,64 @@ export default function SalonCabinet() {
                         <p className="mt-1">{salon?.website || 'Не указан'}</p>
                       </div>
                     </div>
+
+                    {salon?.photos && salon.photos.length > 0 && (
+                      <div>
+                        <p className="text-sm text-muted-foreground mb-2">Фото салона</p>
+                        <div className="flex flex-wrap gap-2">
+                          {salon.photos.map((photo, idx) => (
+                            <img
+                              key={idx}
+                              src={photo}
+                              alt={`Фото ${idx + 1}`}
+                              className="w-32 h-32 object-cover rounded"
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {vacancies.length > 0 && (
+                      <div>
+                        <p className="text-sm text-muted-foreground mb-3">Вакансии ({vacancies.length})</p>
+                        <div className="space-y-3">
+                          {vacancies.map((vac, idx) => (
+                            <Card key={idx}>
+                              <CardContent className="pt-4">
+                                <div className="flex flex-wrap gap-2 mb-2">
+                                  {vac.specializations.map((spec) => (
+                                    <Badge key={spec} variant="secondary">
+                                      {spec}
+                                    </Badge>
+                                  ))}
+                                </div>
+                                <div className="text-sm space-y-1">
+                                  {vac.schedule && (
+                                    <p>
+                                      <span className="text-muted-foreground">График:</span> {vac.schedule}
+                                    </p>
+                                  )}
+                                  {(vac.salary_from || vac.salary_to) && (
+                                    <p>
+                                      <span className="text-muted-foreground">ЗП:</span>{' '}
+                                      {vac.salary_from?.toLocaleString()} - {vac.salary_to?.toLocaleString()}{' '}
+                                      {vac.salary_currency}
+                                    </p>
+                                  )}
+                                  {vac.requires_partner_courses && (
+                                    <Badge variant="outline" className="mt-1">
+                                      <Icon name="GraduationCap" size={12} className="mr-1" />
+                                      Требуется обучение в школах-партнерах
+                                    </Badge>
+                                  )}
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     <Button onClick={() => setEditing(true)}>
                       <Icon name="Edit" size={16} className="mr-2" />
                       Редактировать

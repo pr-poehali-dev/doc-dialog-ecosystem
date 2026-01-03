@@ -57,7 +57,7 @@ def handler(event: dict, context) -> dict:
                     cur.execute("""
                         SELECT id, user_id, name, description, logo_url, website, phone, email, 
                                city, address, is_verified, subscription_type, subscription_expires_at, 
-                               created_at
+                               photos, created_at
                         FROM t_p46047379_doc_dialog_ecosystem.salons
                         WHERE user_id = %s
                     """, (user_id,))
@@ -67,8 +67,20 @@ def handler(event: dict, context) -> dict:
                         conn.close()
                         return response(404, {'error': 'Салон не найден'})
                     
+                    cur.execute("""
+                        SELECT id, specializations, schedule, salary_from, salary_to, 
+                               salary_currency, requirements, requires_partner_courses, 
+                               is_active, created_at
+                        FROM t_p46047379_doc_dialog_ecosystem.salon_vacancies
+                        WHERE salon_id = %s AND is_active = true
+                    """, (salon['id'],))
+                    vacancies = cur.fetchall()
+                    
                     conn.close()
-                    return response(200, {'salon': dict(salon)})
+                    return response(200, {
+                        'salon': dict(salon),
+                        'vacancies': [dict(v) for v in vacancies]
+                    })
             except jwt.InvalidTokenError:
                 conn.close()
                 return response(401, {'error': 'Неверный токен'})
@@ -93,6 +105,8 @@ def handler(event: dict, context) -> dict:
                 email = body.get('email', '')
                 city = body.get('city', '')
                 address = body.get('address', '')
+                photos = body.get('photos', [])
+                vacancies = body.get('vacancies', [])
                 
                 if not name:
                     conn.close()
@@ -112,13 +126,32 @@ def handler(event: dict, context) -> dict:
                     cur.execute("""
                         INSERT INTO t_p46047379_doc_dialog_ecosystem.salons 
                         (user_id, name, description, logo_url, website, phone, email, city, address, 
-                         is_verified, subscription_type, created_at)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, false, 'free', NOW())
+                         photos, is_verified, subscription_type, created_at)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, false, 'free', NOW())
                         RETURNING id, user_id, name, description, logo_url, website, phone, email, 
-                                  city, address, is_verified, subscription_type, created_at
-                    """, (user_id, name, description, logo_url, website, phone, email, city, address))
+                                  city, address, photos, is_verified, subscription_type, created_at
+                    """, (user_id, name, description, logo_url, website, phone, email, city, address, photos))
                     
                     salon = cur.fetchone()
+                    salon_id = salon['id']
+                    
+                    for vac in vacancies:
+                        cur.execute("""
+                            INSERT INTO t_p46047379_doc_dialog_ecosystem.salon_vacancies
+                            (salon_id, specializations, schedule, salary_from, salary_to, 
+                             salary_currency, requirements, requires_partner_courses, is_active)
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, true)
+                        """, (
+                            salon_id,
+                            vac.get('specializations', []),
+                            vac.get('schedule', ''),
+                            vac.get('salary_from'),
+                            vac.get('salary_to'),
+                            vac.get('salary_currency', 'RUB'),
+                            vac.get('requirements', ''),
+                            vac.get('requires_partner_courses', True)
+                        ))
+                    
                     conn.commit()
                     conn.close()
                     return response(201, {'salon': dict(salon)})
@@ -178,24 +211,58 @@ def handler(event: dict, context) -> dict:
                     if 'address' in body:
                         update_fields.append('address = %s')
                         values.append(body['address'])
+                    if 'photos' in body:
+                        update_fields.append('photos = %s')
+                        values.append(body['photos'])
                     
-                    if not update_fields:
-                        conn.close()
-                        return response(400, {'error': 'Нет данных для обновления'})
+                    salon_id = salon['id']
                     
-                    values.append(user_id)
+                    if update_fields:
+                        values.append(user_id)
+                        query = f"""
+                            UPDATE t_p46047379_doc_dialog_ecosystem.salons 
+                            SET {', '.join(update_fields)}
+                            WHERE user_id = %s
+                            RETURNING id, user_id, name, description, logo_url, website, phone, email, 
+                                      city, address, photos, is_verified, subscription_type, 
+                                      subscription_expires_at, created_at
+                        """
+                        cur.execute(query, values)
+                        updated_salon = cur.fetchone()
+                    else:
+                        cur.execute("""
+                            SELECT id, user_id, name, description, logo_url, website, phone, email, 
+                                   city, address, photos, is_verified, subscription_type, 
+                                   subscription_expires_at, created_at
+                            FROM t_p46047379_doc_dialog_ecosystem.salons
+                            WHERE user_id = %s
+                        """, (user_id,))
+                        updated_salon = cur.fetchone()
                     
-                    query = f"""
-                        UPDATE t_p46047379_doc_dialog_ecosystem.salons 
-                        SET {', '.join(update_fields)}
-                        WHERE user_id = %s
-                        RETURNING id, user_id, name, description, logo_url, website, phone, email, 
-                                  city, address, is_verified, subscription_type, subscription_expires_at, 
-                                  created_at
-                    """
+                    if 'vacancies' in body:
+                        cur.execute("""
+                            UPDATE t_p46047379_doc_dialog_ecosystem.salon_vacancies
+                            SET is_active = false
+                            WHERE salon_id = %s
+                        """, (salon_id,))
+                        
+                        for vac in body['vacancies']:
+                            cur.execute("""
+                                INSERT INTO t_p46047379_doc_dialog_ecosystem.salon_vacancies
+                                (salon_id, specializations, schedule, salary_from, salary_to, 
+                                 salary_currency, requirements, requires_partner_courses, is_active)
+                                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, true)
+                            """, (
+                                salon_id,
+                                vac.get('specializations', []),
+                                vac.get('schedule', ''),
+                                vac.get('salary_from'),
+                                vac.get('salary_to'),
+                                vac.get('salary_currency', 'RUB'),
+                                vac.get('requirements', ''),
+                                vac.get('requires_partner_courses', True)
+                            ))
                     
-                    cur.execute(query, values)
-                    updated_salon = cur.fetchone()
                     conn.commit()
                     conn.close()
                     return response(200, {'salon': dict(updated_salon)})
