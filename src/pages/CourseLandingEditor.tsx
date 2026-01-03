@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import Icon from '@/components/ui/icon';
+import { EditorSidebar } from '@/components/landing-editor/EditorSidebar';
+import { EditorSectionMain } from '@/components/landing-editor/EditorSectionMain';
+import { EditorSectionContent } from '@/components/landing-editor/EditorSectionContent';
+import { EditorSectionMeta } from '@/components/landing-editor/EditorSectionMeta';
 
 const LANDING_API_URL = 'https://functions.poehali.dev/428c2825-cfd3-4c2c-9666-df1320295ced';
 
@@ -149,6 +151,10 @@ export default function CourseLandingEditor() {
     }
   };
 
+  const handleFormChange = (updates: Partial<LandingFormData>) => {
+    setForm({ ...form, ...updates });
+  };
+
   const addTargetAudience = () => {
     setForm({
       ...form,
@@ -206,503 +212,35 @@ export default function CourseLandingEditor() {
         </div>
 
         <div className="grid grid-cols-12 gap-6">
-          {/* Навигация по секциям */}
           <div className="col-span-3">
-            <div className="bg-card rounded-lg p-4 sticky top-4">
-              <h3 className="font-semibold mb-3">Разделы</h3>
-              <div className="space-y-1">
-                {sections.map((s) => (
-                  <button
-                    key={s.id}
-                    onClick={() => setSection(s.id as any)}
-                    className={`w-full text-left px-3 py-2 rounded-md flex items-center gap-2 transition-colors ${
-                      section === s.id ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
-                    }`}
-                  >
-                    <Icon name={s.icon as any} size={16} />
-                    <span className="text-sm">{s.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
+            <EditorSidebar
+              sections={sections}
+              currentSection={section}
+              onSectionChange={(sectionId) => setSection(sectionId as any)}
+            />
           </div>
 
-          {/* Контент секций */}
           <div className="col-span-9">
             <div className="bg-card rounded-lg p-6">
-              {section === 'main' && (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold mb-4">Основная информация</h2>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Название курса *</label>
-                    <Input
-                      value={form.title}
-                      onChange={(e) => setForm({ ...form, title: e.target.value })}
-                      placeholder="Например: Профессиональный массаж за 2 месяца"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Краткое описание</label>
-                    <Textarea
-                      value={form.short_description}
-                      onChange={(e) => setForm({ ...form, short_description: e.target.value })}
-                      placeholder="Краткое описание курса"
-                      rows={3}
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-1">Формат</label>
-                      <select
-                        value={form.format}
-                        onChange={(e) => setForm({ ...form, format: e.target.value })}
-                        className="w-full px-3 py-2 border rounded-md"
-                      >
-                        <option value="онлайн">Онлайн</option>
-                        <option value="офлайн">Офлайн</option>
-                        <option value="гибрид">Гибрид</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-1">Направление</label>
-                      <Input
-                        value={form.category}
-                        onChange={(e) => setForm({ ...form, category: e.target.value })}
-                        placeholder="Например: Массаж"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Ссылка на обложку</label>
-                    <Input
-                      value={form.cover_url}
-                      onChange={(e) => setForm({ ...form, cover_url: e.target.value })}
-                      placeholder="https://..."
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Текст кнопки CTA</label>
-                    <Input
-                      value={form.cta_button_text}
-                      onChange={(e) => setForm({ ...form, cta_button_text: e.target.value })}
-                      placeholder="Записаться на курс"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {section === 'author' && (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold mb-4">Автор курса</h2>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-1">Имя и фамилия</label>
-                      <Input
-                        value={form.author_name}
-                        onChange={(e) => setForm({ ...form, author_name: e.target.value })}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-1">Должность</label>
-                      <Input
-                        value={form.author_position}
-                        onChange={(e) => setForm({ ...form, author_position: e.target.value })}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Фото автора (URL)</label>
-                    <Input
-                      value={form.author_photo_url}
-                      onChange={(e) => setForm({ ...form, author_photo_url: e.target.value })}
-                      placeholder="https://..."
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Описание автора</label>
-                    <Textarea
-                      value={form.author_description}
-                      onChange={(e) => setForm({ ...form, author_description: e.target.value })}
-                      rows={3}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Опыт</label>
-                    <Textarea
-                      value={form.author_experience}
-                      onChange={(e) => setForm({ ...form, author_experience: e.target.value })}
-                      rows={2}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {section === 'audience' && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-semibold">Для кого курс</h2>
-                    <Button size="sm" onClick={addTargetAudience}>
-                      <Icon name="Plus" className="mr-2" size={16} />
-                      Добавить
-                    </Button>
-                  </div>
-                  {form.target_audience.map((item, idx) => (
-                    <div key={idx} className="p-4 border rounded-lg space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">Блок {idx + 1}</span>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => setForm({ ...form, target_audience: form.target_audience.filter((_, i) => i !== idx) })}
-                        >
-                          <Icon name="Trash2" size={16} />
-                        </Button>
-                      </div>
-                      <Input
-                        value={item.title}
-                        onChange={(e) => {
-                          const updated = [...form.target_audience];
-                          updated[idx].title = e.target.value;
-                          setForm({ ...form, target_audience: updated });
-                        }}
-                        placeholder="Заголовок"
-                      />
-                      <Textarea
-                        value={item.description}
-                        onChange={(e) => {
-                          const updated = [...form.target_audience];
-                          updated[idx].description = e.target.value;
-                          setForm({ ...form, target_audience: updated });
-                        }}
-                        placeholder="Описание"
-                        rows={2}
-                      />
-                      <Input
-                        value={item.icon_url}
-                        onChange={(e) => {
-                          const updated = [...form.target_audience];
-                          updated[idx].icon_url = e.target.value;
-                          setForm({ ...form, target_audience: updated });
-                        }}
-                        placeholder="Ссылка на иконку"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {section === 'results' && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-semibold">Результаты обучения</h2>
-                    <Button size="sm" onClick={addResult}>
-                      <Icon name="Plus" className="mr-2" size={16} />
-                      Добавить
-                    </Button>
-                  </div>
-                  {form.results.map((result, idx) => (
-                    <div key={idx} className="flex gap-2">
-                      <Input
-                        value={result}
-                        onChange={(e) => {
-                          const updated = [...form.results];
-                          updated[idx] = e.target.value;
-                          setForm({ ...form, results: updated });
-                        }}
-                        placeholder={`Результат ${idx + 1}`}
-                      />
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => setForm({ ...form, results: form.results.filter((_, i) => i !== idx) })}
-                      >
-                        <Icon name="Trash2" size={16} />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {section === 'program' && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-semibold">Программа курса</h2>
-                    <Button size="sm" onClick={addProgramModule}>
-                      <Icon name="Plus" className="mr-2" size={16} />
-                      Добавить модуль
-                    </Button>
-                  </div>
-                  {form.program.map((module, idx) => (
-                    <div key={idx} className="p-4 border rounded-lg space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">Модуль {idx + 1}</span>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => setForm({ ...form, program: form.program.filter((_, i) => i !== idx) })}
-                        >
-                          <Icon name="Trash2" size={16} />
-                        </Button>
-                      </div>
-                      <Input
-                        value={module.module_name}
-                        onChange={(e) => {
-                          const updated = [...form.program];
-                          updated[idx].module_name = e.target.value;
-                          setForm({ ...form, program: updated });
-                        }}
-                        placeholder="Название модуля"
-                      />
-                      <Textarea
-                        value={module.description}
-                        onChange={(e) => {
-                          const updated = [...form.program];
-                          updated[idx].description = e.target.value;
-                          setForm({ ...form, program: updated });
-                        }}
-                        placeholder="Описание"
-                        rows={2}
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {section === 'format' && (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold mb-4">Формат обучения</h2>
-                  {(form.format === 'онлайн' || form.format === 'гибрид') && (
-                    <>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium mb-1">Длительность</label>
-                          <Input
-                            value={form.duration}
-                            onChange={(e) => setForm({ ...form, duration: e.target.value })}
-                            placeholder="Например: 8 недель"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium mb-1">Срок доступа</label>
-                          <Input
-                            value={form.access_period}
-                            onChange={(e) => setForm({ ...form, access_period: e.target.value })}
-                            placeholder="Например: 6 месяцев"
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Формат уроков</label>
-                        <Textarea
-                          value={form.lesson_format}
-                          onChange={(e) => setForm({ ...form, lesson_format: e.target.value })}
-                          rows={2}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Поддержка</label>
-                        <Textarea
-                          value={form.support_info}
-                          onChange={(e) => setForm({ ...form, support_info: e.target.value })}
-                          rows={2}
-                        />
-                      </div>
-                    </>
-                  )}
-                  {(form.format === 'офлайн' || form.format === 'гибрид') && (
-                    <>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium mb-1">Город</label>
-                          <Input
-                            value={form.city}
-                            onChange={(e) => setForm({ ...form, city: e.target.value })}
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium mb-1">Количество дней</label>
-                          <Input
-                            type="number"
-                            value={form.days_count || ''}
-                            onChange={(e) => setForm({ ...form, days_count: Number(e.target.value) || null })}
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Место проведения</label>
-                        <Input
-                          value={form.location}
-                          onChange={(e) => setForm({ ...form, location: e.target.value })}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Даты</label>
-                        <Input
-                          value={form.event_dates}
-                          onChange={(e) => setForm({ ...form, event_dates: e.target.value })}
-                          placeholder="Например: 15-17 марта 2024"
-                        />
-                      </div>
-                    </>
-                  )}
-                </div>
-              )}
-
-              {section === 'bonuses' && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-semibold">Бонусы</h2>
-                    <Button size="sm" onClick={addBonus}>
-                      <Icon name="Plus" className="mr-2" size={16} />
-                      Добавить
-                    </Button>
-                  </div>
-                  {form.bonuses.map((bonus, idx) => (
-                    <div key={idx} className="p-4 border rounded-lg space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">Бонус {idx + 1}</span>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => setForm({ ...form, bonuses: form.bonuses.filter((_, i) => i !== idx) })}
-                        >
-                          <Icon name="Trash2" size={16} />
-                        </Button>
-                      </div>
-                      <Input
-                        value={bonus.bonus_name}
-                        onChange={(e) => {
-                          const updated = [...form.bonuses];
-                          updated[idx].bonus_name = e.target.value;
-                          setForm({ ...form, bonuses: updated });
-                        }}
-                        placeholder="Название бонуса"
-                      />
-                      <Textarea
-                        value={bonus.description}
-                        onChange={(e) => {
-                          const updated = [...form.bonuses];
-                          updated[idx].description = e.target.value;
-                          setForm({ ...form, bonuses: updated });
-                        }}
-                        placeholder="Описание"
-                        rows={2}
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {section === 'pricing' && (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold mb-4">Стоимость и условия</h2>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Цена (текст)</label>
-                    <Input
-                      value={form.price_text}
-                      onChange={(e) => setForm({ ...form, price_text: e.target.value })}
-                      placeholder="Например: 50 000 ₽"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Формат оплаты</label>
-                    <Textarea
-                      value={form.payment_format}
-                      onChange={(e) => setForm({ ...form, payment_format: e.target.value })}
-                      placeholder="Например: Рассрочка 0-0-12"
-                      rows={2}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Информация о скидках</label>
-                    <Textarea
-                      value={form.discount_info}
-                      onChange={(e) => setForm({ ...form, discount_info: e.target.value })}
-                      rows={2}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Партнёрская ссылка (необязательно)</label>
-                    <Input
-                      value={form.partner_link}
-                      onChange={(e) => setForm({ ...form, partner_link: e.target.value })}
-                      placeholder="https://..."
-                    />
-                  </div>
-                </div>
-              )}
-
-              {section === 'promo' && (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold mb-4">Промокод</h2>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Описание механики</label>
-                    <Textarea
-                      value={form.promo_description}
-                      onChange={(e) => setForm({ ...form, promo_description: e.target.value })}
-                      rows={3}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Email для уведомлений</label>
-                    <Input
-                      type="email"
-                      value={form.notification_email}
-                      onChange={(e) => setForm({ ...form, notification_email: e.target.value })}
-                      placeholder="school@example.com"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Текст письма</label>
-                    <Textarea
-                      value={form.notification_text}
-                      onChange={(e) => setForm({ ...form, notification_text: e.target.value })}
-                      rows={4}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {section === 'seo' && (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold mb-4">SEO и публикация</h2>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">SEO Title</label>
-                    <Input
-                      value={form.seo_title}
-                      onChange={(e) => setForm({ ...form, seo_title: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">SEO Description</label>
-                    <Textarea
-                      value={form.seo_description}
-                      onChange={(e) => setForm({ ...form, seo_description: e.target.value })}
-                      rows={3}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">URL (slug) *</label>
-                    <Input
-                      value={form.slug}
-                      onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-') })}
-                      placeholder="professional-massage-course"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Статус публикации</label>
-                    <select
-                      value={form.status}
-                      onChange={(e) => setForm({ ...form, status: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-md"
-                    >
-                      <option value="draft">Черновик</option>
-                      <option value="published">Опубликован</option>
-                      <option value="hidden">Скрыт</option>
-                    </select>
-                  </div>
-                </div>
-              )}
+              <EditorSectionMain
+                section={section}
+                form={form}
+                onFormChange={handleFormChange}
+              />
+              <EditorSectionContent
+                section={section}
+                form={form}
+                onFormChange={handleFormChange}
+                onAddTargetAudience={addTargetAudience}
+                onAddResult={addResult}
+                onAddProgramModule={addProgramModule}
+                onAddBonus={addBonus}
+              />
+              <EditorSectionMeta
+                section={section}
+                form={form}
+                onFormChange={handleFormChange}
+              />
             </div>
           </div>
         </div>
