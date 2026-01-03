@@ -31,6 +31,65 @@ def handler(event: dict, context) -> dict:
     action = query_params.get('action', '')
     entity_type = query_params.get('type', 'courses')
     course_id = query_params.get('id')
+    slug = query_params.get('slug')
+    
+    # GET /courses?slug=X - Get course by slug with full landing data
+    if method == 'GET' and slug and not action:
+        cur.execute(f"""
+            SELECT id, slug, title, short_description, hero_title, hero_subtitle, 
+                   category, type, price, duration_text, about_course, 
+                   what_you_learn, program_modules, author_name, author_position, 
+                   author_bio, author_photo, author_experience, benefits, 
+                   testimonials, faq, cta_button_text, cta_button_url
+            FROM {schema}.courses
+            WHERE slug = '{slug}' AND status = 'approved'
+        """)
+        course = cur.fetchone()
+        
+        if not course:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Course not found'}),
+                'isBase64Encoded': False
+            }
+        
+        result = {
+            'id': course[0],
+            'slug': course[1],
+            'title': course[2],
+            'short_description': course[3],
+            'hero_title': course[4],
+            'hero_subtitle': course[5],
+            'category': course[6],
+            'type': course[7],
+            'price': float(course[8]) if course[8] else None,
+            'duration_text': course[9],
+            'about_course': course[10],
+            'what_you_learn': course[11] if course[11] else [],
+            'program_modules': course[12] if course[12] else [],
+            'author_name': course[13],
+            'author_position': course[14],
+            'author_bio': course[15],
+            'author_photo': course[16],
+            'author_experience': course[17],
+            'benefits': course[18] if course[18] else [],
+            'testimonials': course[19] if course[19] else [],
+            'faq': course[20] if course[20] else [],
+            'cta_button_text': course[21],
+            'cta_button_url': course[22]
+        }
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps(result),
+            'isBase64Encoded': False
+        }
     
     # GET /courses?id=X - Get single course with full details + increment view counter
     if method == 'GET' and course_id and not action:
@@ -97,7 +156,7 @@ def handler(event: dict, context) -> dict:
         status_filter = query_params.get('status', 'approved')
         category = query_params.get('category')
         
-        query = f"SELECT id, school_id, title, description, category, course_type, price, currency, duration_hours, image_url, external_url, status, moderation_comment, original_price, discount_price, view_count, created_at FROM {schema}.courses WHERE 1=1"
+        query = f"SELECT id, school_id, title, description, category, course_type, price, currency, duration_hours, image_url, external_url, status, moderation_comment, original_price, discount_price, view_count, created_at, slug FROM {schema}.courses WHERE 1=1"
         
         if school_id:
             query += f" AND school_id = {school_id}"
@@ -128,7 +187,8 @@ def handler(event: dict, context) -> dict:
             'original_price': float(c[13]) if c[13] else None,
             'discount_price': float(c[14]) if c[14] else None,
             'view_count': c[15] or 0,
-            'created_at': c[16].isoformat() if c[16] else None
+            'created_at': c[16].isoformat() if c[16] else None,
+            'slug': c[17]
         } for c in courses]
         
         cur.close()

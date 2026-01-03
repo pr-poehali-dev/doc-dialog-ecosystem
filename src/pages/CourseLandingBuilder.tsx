@@ -152,8 +152,8 @@ export default function CourseLandingBuilder() {
 
       if (response.ok) {
         const result = await response.json();
-        alert(`Лендинг курса успешно создан и опубликован!\nСлаг: ${result.slug}`);
-        navigate('/courses');
+        alert(`Лендинг курса успешно создан и опубликован!`);
+        navigate(`/course/landing/${result.slug}`);
       } else {
         const error = await response.text();
         console.error('Server error:', error);

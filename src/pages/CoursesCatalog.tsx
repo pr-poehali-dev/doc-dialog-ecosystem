@@ -26,6 +26,7 @@ interface Course {
   created_at: string;
   rating?: number;
   review_count?: number;
+  slug?: string;
 }
 
 interface Mastermind {
@@ -335,8 +336,13 @@ export default function CoursesCatalog() {
                         )}
                       </div>
                       <Button size="sm" onClick={() => {
-                        const url = item.itemType === 'mastermind' ? `/mastermind/${item.id}` : `/course/${item.id}`;
-                        window.location.href = url;
+                        if (item.itemType === 'mastermind') {
+                          window.location.href = `/mastermind/${item.id}`;
+                        } else if ('slug' in item && item.slug) {
+                          window.location.href = `/course/landing/${item.slug}`;
+                        } else {
+                          window.location.href = `/course/${item.id}`;
+                        }
                       }}>
                         Подробнее
                         <Icon name="ArrowRight" size={16} className="ml-2" />
