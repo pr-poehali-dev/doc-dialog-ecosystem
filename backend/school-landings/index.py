@@ -426,6 +426,28 @@ def handler(event: dict, context) -> dict:
             conn.close()
             return response(201, result)
         
+        # GET /?school_id=X - список лендингов школы для дашборда
+        if method == 'GET' and event.get('queryStringParameters', {}).get('school_id'):
+            school_id = event.get('queryStringParameters', {}).get('school_id')
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT id, name as title, slug, short_description, cover_url, is_verified as status, 
+                           format, created_at
+                    FROM t_p46047379_doc_dialog_ecosystem.schools
+                    WHERE id = %s
+                """, (int(school_id),))
+                school = cur.fetchone()
+                
+                if school:
+                    # Преобразуем для совместимости с дашбордом
+                    school_dict = dict(school)
+                    school_dict['status'] = 'published' if school_dict['status'] else 'draft'
+                    conn.close()
+                    return response(200, [school_dict])  # Возвращаем массив для совместимости
+                else:
+                    conn.close()
+                    return response(200, [])
+        
         # GET /slug/:slug - публичный лендинг школы
         if method == 'GET' and event.get('pathParams', {}).get('slug'):
             slug = event['pathParams']['slug']

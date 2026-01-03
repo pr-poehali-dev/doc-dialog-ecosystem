@@ -80,7 +80,7 @@ export default function SchoolDashboard() {
         setSpecialists(data);
       } else if (activeTab === 'landings') {
         const token = localStorage.getItem('token');
-        const response = await fetch(`https://functions.poehali.dev/428c2825-cfd3-4c2c-9666-df1320295ced?school_id=${schoolId}`, {
+        const response = await fetch(`https://functions.poehali.dev/6ac6b552-624e-4960-a4f1-94f540394c86?school_id=${schoolId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (response.ok) {
@@ -388,7 +388,7 @@ export default function SchoolDashboard() {
                         if (confirm('Удалить лендинг?')) {
                           try {
                             const token = localStorage.getItem('token');
-                            const response = await fetch(`https://functions.poehali.dev/428c2825-cfd3-4c2c-9666-df1320295ced?id=${landing.id}`, {
+                            const response = await fetch(`https://functions.poehali.dev/6ac6b552-624e-4960-a4f1-94f540394c86?id=${landing.id}`, {
                               method: 'DELETE',
                               headers: { Authorization: `Bearer ${token}` }
                             });
