@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { getUserId } from '@/utils/auth';
 import Icon from '@/components/ui/icon';
 import { EditorSidebar } from '@/components/landing-editor/EditorSidebar';
 import { EditorSectionMain } from '@/components/landing-editor/EditorSectionMain';
@@ -105,9 +106,9 @@ export default function CourseLandingEditor() {
 
   const loadUserSchool = async () => {
     try {
-      const userId = localStorage.getItem('userId');
+      const userId = getUserId();
       const response = await fetch(`https://functions.poehali.dev/6ac6b552-624e-4960-a4f1-94f540394c86?action=my_schools`, {
-        headers: { 'X-User-Id': userId || '' }
+        headers: { 'X-User-Id': userId }
       });
       
       if (response.ok) {
@@ -128,11 +129,11 @@ export default function CourseLandingEditor() {
   const loadLanding = async () => {
     try {
       const token = localStorage.getItem('token');
-      const userId = localStorage.getItem('userId');
+      const userId = getUserId();
       const response = await fetch(`${LANDING_API_URL}/${id}`, {
         headers: { 
           Authorization: `Bearer ${token}`,
-          'X-User-Id': userId || ''
+          'X-User-Id': userId
         }
       });
       
@@ -156,7 +157,7 @@ export default function CourseLandingEditor() {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const userId = localStorage.getItem('userId');
+      const userId = getUserId();
       const url = id ? `${LANDING_API_URL}/${id}` : LANDING_API_URL;
       const method = id ? 'PUT' : 'POST';
 
@@ -164,7 +165,7 @@ export default function CourseLandingEditor() {
         method,
         headers: {
           Authorization: `Bearer ${token}`,
-          'X-User-Id': userId || '',
+          'X-User-Id': userId,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(form)
