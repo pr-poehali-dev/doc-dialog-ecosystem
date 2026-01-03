@@ -385,7 +385,7 @@ export default function SchoolDashboard() {
                       size="sm"
                       variant="destructive"
                       onClick={async () => {
-                        if (confirm('Удалить лендинг?')) {
+                        if (confirm('Вы уверены, что хотите удалить лендинг школы?\n\nБудут удалены:\n• Все преподаватели\n• Все достижения\n• Галерея фотографий\n• Отзывы\n\nКурсы останутся, но будут отвязаны от школы.\n\nЭто действие нельзя отменить!')) {
                           try {
                             const token = localStorage.getItem('token');
                             
