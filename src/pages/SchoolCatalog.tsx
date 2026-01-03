@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
 
 const SCHOOLS_API_URL = 'https://functions.poehali.dev/6ac6b552-624e-4960-a4f1-94f540394c86';
@@ -18,6 +19,7 @@ interface School {
 }
 
 export default function SchoolCatalog() {
+  const navigate = useNavigate();
   const [schools, setSchools] = useState<School[]>([]);
   const [loading, setLoading] = useState(true);
   const [cityFilter, setCityFilter] = useState<string>('');
@@ -53,8 +55,19 @@ export default function SchoolCatalog() {
       {/* Шапка */}
       <header className="bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">Каталог школ массажа</h1>
-          <p className="text-gray-600 mt-2">Найдите лучшие школы и курсы массажа в вашем городе</p>
+          <div className="flex justify-between items-start">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Каталог школ массажа</h1>
+              <p className="text-gray-600 mt-2">Найдите лучшие школы и курсы массажа в вашем городе</p>
+            </div>
+            <Button 
+              onClick={() => navigate('/school/landing/builder')}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              <Icon name="Plus" size={18} className="mr-2" />
+              Создать лендинг
+            </Button>
+          </div>
         </div>
       </header>
 

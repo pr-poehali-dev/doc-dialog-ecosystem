@@ -22,8 +22,6 @@ import CourseLandingEditor from "./pages/CourseLandingEditor";
 import CourseLandingPublic from "./pages/CourseLandingPublic";
 import SchoolCatalog from "./pages/SchoolCatalog";
 import SchoolLanding from "./pages/SchoolLanding";
-import SchoolLandingEditor from "./pages/SchoolLandingEditor";
-import AddSchool from "./pages/AddSchool";
 import SchoolLandingBuilder from "./pages/SchoolLandingBuilder";
 import SalonCabinet from "./pages/SalonCabinet";
 import SalonsCatalog from "./pages/SalonsCatalog";
@@ -52,12 +50,10 @@ const App = () => (
           <Route path="/courses" element={<CoursesCatalog />} />
           <Route path="/course/:id" element={<CoursePage />} />
           <Route path="/mastermind/:id" element={<MastermindPage />} />
-          <Route path="/school/landing/new" element={<AddSchool />} />
           <Route path="/school/landing/:id" element={<CourseLandingEditor />} />
           <Route path="/landing/:slug" element={<CourseLandingPublic />} />
           <Route path="/schools" element={<SchoolCatalog />} />
           <Route path="/school/:slug" element={<SchoolLanding />} />
-          <Route path="/school/landing/edit/:id" element={<SchoolLandingEditor />} />
           <Route path="/school/landing/builder" element={<SchoolLandingBuilder />} />
           <Route path="/salon/cabinet" element={<SalonCabinet />} />
           <Route path="/salons" element={<SalonsCatalog />} />
