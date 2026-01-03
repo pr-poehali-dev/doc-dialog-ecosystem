@@ -363,7 +363,10 @@ def handler(event: dict, context) -> dict:
         
         # GET /?action=all_schools - все школы для админов
         if method == 'GET' and event.get('queryStringParameters', {}).get('action') == 'all_schools':
-            token = event.get('headers', {}).get('X-Authorization', '').replace('Bearer ', '')
+            headers = event.get('headers', {})
+            auth_header = headers.get('X-Authorization') or headers.get('Authorization', '')
+            token = auth_header.replace('Bearer ', '').strip()
+            
             if not token:
                 conn.close()
                 return response(401, {'error': 'Требуется авторизация'})
@@ -454,7 +457,9 @@ def handler(event: dict, context) -> dict:
         # DELETE /:id - удаление школы (для админов)
         if method == 'DELETE':
             school_id = event.get('queryStringParameters', {}).get('id')
-            token = event.get('headers', {}).get('X-Authorization', '').replace('Bearer ', '')
+            headers = event.get('headers', {})
+            auth_header = headers.get('X-Authorization') or headers.get('Authorization', '')
+            token = auth_header.replace('Bearer ', '').strip()
             
             if not token or not school_id:
                 conn.close()
