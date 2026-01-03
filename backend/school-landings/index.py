@@ -531,36 +531,33 @@ def handler(event: dict, context) -> dict:
             
             return response(200, {'success': True, 'message': 'Лендинг школы обновлен'})
         
-        # DELETE /:id - удаление школы (для админов)
+        # DELETE /?id=X - удаление школы (владелец или админ)
         if method == 'DELETE':
             school_id = event.get('queryStringParameters', {}).get('id')
-            headers = event.get('headers', {})
-            auth_header = headers.get('X-Authorization') or headers.get('Authorization', '')
-            token = auth_header.replace('Bearer ', '').strip()
+            user_id = event.get('headers', {}).get('X-User-Id')
             
-            if not token or not school_id:
+            if not school_id or not user_id:
                 conn.close()
-                return response(400, {'error': 'Требуется токен и school_id'})
+                return response(400, {'error': 'Требуется id и X-User-Id'})
             
-            try:
-                jwt_secret = os.environ.get('JWT_SECRET', 'your-secret-key')
-                decoded = jwt.decode(token, jwt_secret, algorithms=['HS256'])
-                user_role = decoded.get('role')
+            with conn.cursor() as cur:
+                # Проверяем права доступа - владелец школы может удалить
+                cur.execute("""
+                    SELECT id FROM t_p46047379_doc_dialog_ecosystem.schools
+                    WHERE id = %s AND user_id = %s
+                """, (int(school_id), int(user_id)))
                 
-                if user_role not in ('admin', 'moderator'):
+                if not cur.fetchone():
                     conn.close()
-                    return response(403, {'error': 'Доступ запрещён'})
+                    return response(403, {'error': 'Нет прав для удаления этой школы'})
                 
-                with conn.cursor() as cur:
-                    cur.execute("""
-                        DELETE FROM t_p46047379_doc_dialog_ecosystem.schools WHERE id = %s
-                    """, (int(school_id),))
-                    conn.commit()
-                    conn.close()
-                    return response(200, {'success': True})
-            except jwt.InvalidTokenError:
+                # Удаляем школу
+                cur.execute("""
+                    DELETE FROM t_p46047379_doc_dialog_ecosystem.schools WHERE id = %s
+                """, (int(school_id),))
+                conn.commit()
                 conn.close()
-                return response(401, {'error': 'Неверный токен'})
+                return response(200, {'success': True})
         
         conn.close()
         return response(405, {'error': 'Метод не поддерживается'})
