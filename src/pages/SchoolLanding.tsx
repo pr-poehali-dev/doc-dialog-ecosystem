@@ -324,24 +324,7 @@ export default function SchoolLanding() {
             )}
           </div>
           
-          {/* Соцсети */}
-          <div className="flex gap-4 mt-6">
-            {school.whatsapp && (
-              <a href={`https://wa.me/${school.whatsapp}`} target="_blank" rel="noopener noreferrer" className="text-green-600 hover:text-green-700">
-                <Icon name="MessageCircle" size={28} />
-              </a>
-            )}
-            {school.telegram && (
-              <a href={school.telegram} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600">
-                <Icon name="Send" size={28} />
-              </a>
-            )}
-            {school.instagram && (
-              <a href={school.instagram} target="_blank" rel="noopener noreferrer" className="text-pink-600 hover:text-pink-700">
-                <Icon name="Instagram" size={28} />
-              </a>
-            )}
-          </div>
+
         </section>
       </div>
     </div>
