@@ -38,8 +38,7 @@ export default function SchoolDashboard() {
   const [offlineTrainings, setOfflineTrainings] = useState<any[]>([]);
   const [specialists, setSpecialists] = useState<SpecialistRequest[]>([]);
   const [landings, setLandings] = useState<any[]>([]);
-  
-  const schoolId = 1;
+  const [schoolId, setSchoolId] = useState<number | null>(null);
   
   const [courseForm, setCourseForm] = useState(INITIAL_COURSE_FORM);
   const [mastermindForm, setMastermindForm] = useState(INITIAL_MASTERMIND_FORM);
@@ -47,10 +46,58 @@ export default function SchoolDashboard() {
   const [specialistForm, setSpecialistForm] = useState(INITIAL_SPECIALIST_FORM);
 
   useEffect(() => {
-    loadData();
-  }, [activeTab]);
+    loadUserSchool();
+  }, []);
+
+  useEffect(() => {
+    if (schoolId) {
+      loadData();
+    }
+  }, [activeTab, schoolId]);
+
+  const loadUserSchool = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      let userId = '';
+      const userStr = localStorage.getItem('user');
+      if (userStr && userStr !== 'null') {
+        const user = JSON.parse(userStr);
+        userId = user?.id?.toString() || '';
+      }
+      
+      if (!userId && token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          userId = payload.user_id?.toString() || '';
+        } catch (e) {
+          console.error('Failed to parse JWT:', e);
+        }
+      }
+
+      if (!userId) {
+        toast({ title: 'Требуется авторизация', variant: 'destructive' });
+        navigate('/login');
+        return;
+      }
+
+      const response = await fetch('https://functions.poehali.dev/6ac6b552-624e-4960-a4f1-94f540394c86?action=my_schools', {
+        headers: { 'X-User-Id': userId }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.schools && data.schools.length > 0) {
+          setSchoolId(data.schools[0].id);
+        }
+      }
+    } catch (error) {
+      console.error('Load school error:', error);
+    }
+  };
 
   const loadData = async () => {
+    if (!schoolId) return;
+    
     try {
       if (activeTab === 'courses') {
         const response = await fetch(`${COURSE_API_URL}?school_id=${schoolId}&status=all`);
@@ -80,12 +127,28 @@ export default function SchoolDashboard() {
         setSpecialists(data);
       } else if (activeTab === 'landings') {
         const token = localStorage.getItem('token');
-        const response = await fetch(`https://functions.poehali.dev/6ac6b552-624e-4960-a4f1-94f540394c86?school_id=${schoolId}`, {
-          headers: { Authorization: `Bearer ${token}` }
+        let userId = '';
+        const userStr = localStorage.getItem('user');
+        if (userStr && userStr !== 'null') {
+          const user = JSON.parse(userStr);
+          userId = user?.id?.toString() || '';
+        }
+        
+        if (!userId && token) {
+          try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            userId = payload.user_id?.toString() || '';
+          } catch (e) {
+            console.error('Failed to parse JWT:', e);
+          }
+        }
+
+        const response = await fetch(`https://functions.poehali.dev/6ac6b552-624e-4960-a4f1-94f540394c86?action=my_schools`, {
+          headers: { 'X-User-Id': userId }
         });
         if (response.ok) {
           const data = await response.json();
-          setLandings(Array.isArray(data) ? data : []);
+          setLandings(data.schools || []);
         } else {
           setLandings([]);
         }
@@ -340,26 +403,25 @@ export default function SchoolDashboard() {
               landings.map((landing) => (
                 <div key={landing.id} className="bg-card rounded-lg p-6 flex items-start justify-between">
                   <div className="flex gap-4 flex-1">
-                    {landing.cover_url && (
+                    {landing.logo_url && (
                       <img
-                        src={landing.cover_url}
-                        alt={landing.title}
+                        src={landing.logo_url}
+                        alt={landing.name}
                         className="w-24 h-24 object-cover rounded"
                       />
                     )}
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold mb-1">{landing.title}</h3>
-                      <p className="text-sm text-muted-foreground mb-2">{landing.short_description}</p>
+                      <h3 className="text-lg font-semibold mb-1">{landing.name}</h3>
+                      {landing.short_description && (
+                        <p className="text-sm text-muted-foreground mb-2">{landing.short_description}</p>
+                      )}
                       <div className="flex gap-2 items-center">
                         <span className={`px-2 py-1 rounded text-xs font-medium ${
-                          landing.status === 'published' ? 'bg-green-100 text-green-800' :
-                          landing.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-gray-100 text-gray-800'
+                          landing.is_verified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                         }`}>
-                          {landing.status === 'published' ? 'Опубликован' : 
-                           landing.status === 'draft' ? 'Черновик' : 'Скрыт'}
+                          {landing.is_verified ? 'Опубликован' : 'На модерации'}
                         </span>
-                        <span className="text-xs text-muted-foreground">{landing.format}</span>
+                        {landing.city && <span className="text-xs text-muted-foreground">{landing.city}</span>}
                         {landing.slug && (
                           <a
                             href={`/school/${landing.slug}`}
