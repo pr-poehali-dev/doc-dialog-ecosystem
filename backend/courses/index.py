@@ -288,22 +288,53 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
-    # POST /courses - Create new course
+    # POST /courses - Create new course with full landing data
     if method == 'POST' and entity_type == 'courses':
         body = json.loads(event.get('body', '{}'))
         
-        school_id = body.get('school_id')
+        school_id = body.get('school_id', 1)
         title = body.get('title')
         description = body.get('description', '')
         category = body.get('category')
-        course_type = body.get('course_type')
-        price = body.get('price')
-        currency = body.get('currency', 'RUB')
-        duration_hours = body.get('duration_hours')
-        image_url = body.get('image_url')
-        external_url = body.get('external_url')
+        course_type = body.get('type', 'online')
+        price_str = body.get('price', '').replace('₽', '').replace(' ', '').strip()
+        price = float(price_str) if price_str and price_str.replace('.', '').isdigit() else None
+        currency = 'RUB'
+        short_description = body.get('shortDescription', '')
         
-        if not all([school_id, title, category, course_type, external_url]):
+        # Новые поля лендинга
+        hero_title = body.get('heroTitle', '')
+        hero_subtitle = body.get('heroSubtitle', '')
+        about_course = body.get('aboutCourse', '')
+        what_you_learn = json.dumps(body.get('whatYouLearn', []))
+        program_modules = json.dumps(body.get('programModules', []))
+        author_data = body.get('author', {})
+        author_name = author_data.get('name', '')
+        author_photo = author_data.get('photo', '')
+        author_bio = author_data.get('bio', '')
+        author_experience = author_data.get('experience', '')
+        author_position = author_data.get('position', '')
+        benefits = json.dumps(body.get('benefits', []))
+        testimonials = json.dumps(body.get('testimonials', []))
+        faq = json.dumps(body.get('faq', []))
+        cta_button_text = body.get('ctaButtonText', 'Записаться на курс')
+        cta_button_url = body.get('ctaButtonUrl', '')
+        duration_text = body.get('duration', '')
+        
+        # Генерация slug
+        import re
+        slug = re.sub(r'[^a-zA-Z0-9а-яА-Я\-]', '-', title.lower()).strip('-')
+        slug = re.sub(r'-+', '-', slug)
+        base_slug = slug
+        counter = 1
+        while True:
+            cur.execute(f"SELECT id FROM {schema}.courses WHERE slug = '{slug}'")
+            if not cur.fetchone():
+                break
+            slug = f"{base_slug}-{counter}"
+            counter += 1
+        
+        if not all([title, category, cta_button_url]):
             cur.close()
             conn.close()
             return {
@@ -313,17 +344,29 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
-        original_price = body.get('original_price')
-        discount_price = body.get('discount_price')
-        author_name = body.get('author_name', '')
-        author_photo = body.get('author_photo')
-        course_content = body.get('course_content', '')
-        school_name = body.get('school_name', '')
-        
         cur.execute(f"""
-            INSERT INTO {schema}.courses (school_id, title, description, category, course_type, price, currency, duration_hours, image_url, external_url, original_price, discount_price, author_name, author_photo, course_content, school_name, status)
-            VALUES ({school_id}, '{title.replace("'", "''")}', '{description.replace("'", "''")}', '{category}', '{course_type}', {price if price else 'NULL'}, '{currency}', {duration_hours if duration_hours else 'NULL'}, {f"'{image_url}'" if image_url else 'NULL'}, '{external_url}', {original_price if original_price else 'NULL'}, {discount_price if discount_price else 'NULL'}, '{author_name.replace("'", "''")}', {f"'{author_photo}'" if author_photo else 'NULL'}, '{course_content.replace("'", "''")}', '{school_name.replace("'", "''")}', 'pending')
-            RETURNING id, title, status, created_at
+            INSERT INTO {schema}.courses (
+                school_id, title, description, short_description, category, course_type, type,
+                price, currency, duration_text, external_url, slug,
+                hero_title, hero_subtitle, about_course,
+                what_you_learn, program_modules, benefits, testimonials, faq,
+                author_name, author_photo, author_bio, author_experience, author_position,
+                cta_button_text, cta_button_url, status
+            )
+            VALUES (
+                {school_id}, '{title.replace("'", "''")}', '{description.replace("'", "''")}',
+                '{short_description.replace("'", "''")}', '{category}', '{course_type}', '{course_type}',
+                {price if price else 'NULL'}, '{currency}', '{duration_text.replace("'", "''")}',
+                '{cta_button_url}', '{slug}',
+                '{hero_title.replace("'", "''")}', '{hero_subtitle.replace("'", "''")}',
+                '{about_course.replace("'", "''")}', '{what_you_learn}', '{program_modules}',
+                '{benefits}', '{testimonials}', '{faq}',
+                '{author_name.replace("'", "''")}', {f"'{author_photo}'" if author_photo else 'NULL'},
+                '{author_bio.replace("'", "''")}', '{author_experience.replace("'", "''")}',
+                '{author_position.replace("'", "''")}',
+                '{cta_button_text.replace("'", "''")}', '{cta_button_url}', 'approved'
+            )
+            RETURNING id, title, slug, status, created_at
         """)
         
         new_course = cur.fetchone()
@@ -331,8 +374,9 @@ def handler(event: dict, context) -> dict:
         result = {
             'id': new_course[0],
             'title': new_course[1],
-            'status': new_course[2],
-            'created_at': new_course[3].isoformat() if new_course[3] else None
+            'slug': new_course[2],
+            'status': new_course[3],
+            'created_at': new_course[4].isoformat() if new_course[4] else None
         }
         
         cur.close()
