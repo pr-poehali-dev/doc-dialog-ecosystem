@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
@@ -30,6 +30,7 @@ import { useSpecialistHandlers } from './SchoolDashboard/useSpecialistHandlers';
 
 export default function SchoolDashboard() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<'courses' | 'masterminds' | 'offline-training' | 'specialists' | 'landings'>('courses');
   const [showAddForm, setShowAddForm] = useState(false);
@@ -56,6 +57,17 @@ export default function SchoolDashboard() {
 
   useEffect(() => {
     loadUserSchool();
+    
+    // Показываем сообщение об успешной отправке курса на модерацию
+    if (location.state?.successMessage) {
+      toast({
+        title: "✅ Успешно!",
+        description: location.state.successMessage,
+        duration: 5000
+      });
+      // Очищаем state после показа
+      window.history.replaceState({}, document.title);
+    }
   }, []);
 
   useEffect(() => {

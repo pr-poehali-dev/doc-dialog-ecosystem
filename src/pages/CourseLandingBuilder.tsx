@@ -204,8 +204,11 @@ export default function CourseLandingBuilder() {
 
       if (response.ok) {
         const result = await response.json();
-        alert(`Лендинг курса успешно создан и отправлен на модерацию!`);
-        navigate(`/course/landing/${result.slug}?preview=true`);
+        navigate('/school/dashboard', { 
+          state: { 
+            successMessage: 'Курс успешно отправлен на модерацию! Мы проверим его в течение 24 часов.' 
+          } 
+        });
       } else {
         const error = await response.json();
         console.error('Server error:', error);
