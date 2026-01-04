@@ -130,21 +130,36 @@ def handler(event: dict, context) -> dict:
                     'isBase64Encoded': False
                 }
             
-            # Проверяем что курс принадлежит школе
+            # Проверяем что курс/мастермайнд/очное обучение принадлежит школе
+            # Сначала ищем в courses
             cur.execute("SELECT category FROM courses WHERE id = %s AND school_id = %s", (course_id, school_id))
             course_row = cur.fetchone()
             
-            if not course_row:
-                cur.close()
-                conn.close()
-                return {
-                    'statusCode': 403,
-                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                    'body': json.dumps({'error': 'Курс не найден или не принадлежит школе'}),
-                    'isBase64Encoded': False
-                }
-            
-            category = course_row[0]
+            if course_row:
+                category = course_row[0]
+            else:
+                # Ищем в masterminds
+                cur.execute("SELECT 'Офлайн мероприятия' FROM masterminds WHERE id = %s AND school_id = %s", (course_id, school_id))
+                mastermind_row = cur.fetchone()
+                
+                if mastermind_row:
+                    category = 'Офлайн мероприятия'
+                else:
+                    # Ищем в offline_training
+                    cur.execute("SELECT 'Офлайн мероприятия' FROM offline_training WHERE id = %s AND school_id = %s", (course_id, school_id))
+                    training_row = cur.fetchone()
+                    
+                    if training_row:
+                        category = 'Офлайн мероприятия'
+                    else:
+                        cur.close()
+                        conn.close()
+                        return {
+                            'statusCode': 403,
+                            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                            'body': json.dumps({'error': 'Курс не найден или не принадлежит школе'}),
+                            'isBase64Encoded': False
+                        }
             price = PROMOTION_PRICES[promotion_type][days]
             
             # Проверяем баланс
