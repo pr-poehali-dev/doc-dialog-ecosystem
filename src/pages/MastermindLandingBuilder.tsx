@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -17,6 +17,7 @@ interface MastermindLandingData {
   eventDate: string;
   location: string;
   maxParticipants: string;
+  currentParticipants: string;
   price: string;
   originalPrice: string;
   aboutEvent: string;
@@ -57,9 +58,12 @@ interface MastermindLandingData {
 export default function MastermindLandingBuilder() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get('id');
   const [step, setStep] = useState(1);
   const [preview, setPreview] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(!!editId);
 
   const [data, setData] = useState<MastermindLandingData>({
     title: 'Мастермайнд по развитию массажного бизнеса',
@@ -69,6 +73,7 @@ export default function MastermindLandingBuilder() {
     eventDate: '2026-03-15',
     location: 'Москва, отель Метрополь',
     maxParticipants: '20',
+    currentParticipants: '0',
     price: '150000',
     originalPrice: '200000',
     aboutEvent: 'Мастермайнд — это уникальный формат закрытой встречи успешных владельцев массажных школ и практик, где мы обмениваемся опытом, решаем бизнес-задачи и выстраиваем стратегии роста.\n\nЗа два дня интенсивной работы вы получите конкретные решения ваших задач, новые связи с коллегами по индустрии и четкий план действий на ближайший год.',
@@ -143,6 +148,50 @@ export default function MastermindLandingBuilder() {
     }));
   };
 
+  useEffect(() => {
+    if (editId) {
+      loadMastermind();
+    }
+  }, [editId]);
+
+  const loadMastermind = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?action=masterminds&id=${editId}`);
+      if (response.ok) {
+        const mm = await response.json();
+        setData({
+          title: mm.title || '',
+          shortDescription: mm.description || '',
+          heroTitle: mm.hero_title || '',
+          heroSubtitle: mm.hero_subtitle || '',
+          eventDate: mm.event_date ? new Date(mm.event_date).toISOString().split('T')[0] : '',
+          location: mm.location || '',
+          maxParticipants: mm.max_participants?.toString() || '',
+          currentParticipants: mm.current_participants?.toString() || '0',
+          price: mm.discount_price?.toString() || mm.price?.toString() || '',
+          originalPrice: mm.original_price?.toString() || '',
+          aboutEvent: mm.about_event || '',
+          whatYouGet: mm.what_you_get || [],
+          eventProgram: mm.event_program || [],
+          host: mm.host || { name: '', position: '', bio: '', photo: '', experience: '' },
+          coHosts: mm.co_hosts || [],
+          benefits: mm.benefits || [],
+          testimonials: mm.testimonials || [],
+          gallery: mm.gallery || [],
+          faq: mm.faq || [],
+          ctaButtonText: mm.cta_button_text || 'Зарегистрироваться',
+          ctaButtonUrl: mm.external_url || ''
+        });
+      }
+    } catch (error) {
+      console.error('Load error:', error);
+      toast({ title: 'Ошибка', description: 'Не удалось загрузить данные', variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSave = async () => {
     setSaving(true);
     try {
@@ -170,9 +219,13 @@ export default function MastermindLandingBuilder() {
         return;
       }
 
-      // Создаем мастермайнд
-      const response = await fetch('https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?type=masterminds', {
-        method: 'POST',
+      // Создаем или обновляем мастермайнд
+      const url = editId 
+        ? `https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?type=masterminds&id=${editId}`
+        : 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?type=masterminds';
+      
+      const response = await fetch(url, {
+        method: editId ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           school_id: schoolId,
@@ -181,6 +234,7 @@ export default function MastermindLandingBuilder() {
           event_date: new Date(data.eventDate).toISOString(),
           location: data.location,
           max_participants: parseInt(data.maxParticipants) || null,
+          current_participants: parseInt(data.currentParticipants) || 0,
           price: parseFloat(data.price) || null,
           currency: 'RUB',
           external_url: data.ctaButtonUrl,
@@ -204,10 +258,13 @@ export default function MastermindLandingBuilder() {
       });
 
       if (!response.ok) {
-        throw new Error('Не удалось создать мастермайнд');
+        throw new Error(editId ? 'Не удалось обновить мастермайнд' : 'Не удалось создать мастермайнд');
       }
 
-      toast({ title: 'Успешно!', description: 'Мастермайнд отправлен на модерацию' });
+      toast({ 
+        title: 'Успешно!', 
+        description: editId ? 'Мастермайнд обновлен' : 'Мастермайнд отправлен на модерацию' 
+      });
       navigate('/school/dashboard');
     } catch (error) {
       console.error('Save error:', error);
@@ -261,9 +318,15 @@ export default function MastermindLandingBuilder() {
                   <Label>Старая цена (₽)</Label>
                   <Input type="number" value={data.originalPrice} onChange={(e) => handleInputChange('originalPrice', e.target.value)} />
                 </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Макс. участников</Label>
                   <Input type="number" value={data.maxParticipants} onChange={(e) => handleInputChange('maxParticipants', e.target.value)} />
+                </div>
+                <div>
+                  <Label>Текущее количество участников</Label>
+                  <Input type="number" value={data.currentParticipants} onChange={(e) => handleInputChange('currentParticipants', e.target.value)} />
                 </div>
               </div>
             </CardContent>
@@ -472,13 +535,21 @@ export default function MastermindLandingBuilder() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background to-secondary/5 flex items-center justify-center">
+        <Icon name="Loader2" size={48} className="animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/5">
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-3xl font-bold mb-2">Создание мастермайнда</h1>
+              <h1 className="text-3xl font-bold mb-2">{editId ? 'Редактирование мастермайнда' : 'Создание мастермайнда'}</h1>
               <p className="text-muted-foreground">Шаг {step} из 5</p>
             </div>
             <Button variant="outline" onClick={() => navigate('/school/dashboard')}>

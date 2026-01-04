@@ -679,6 +679,120 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
+    # PUT /courses?action=masterminds&id=X - Update mastermind
+    if method == 'PUT' and action == 'masterminds':
+        mastermind_id = query_params.get('id')
+        
+        if not mastermind_id:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Missing mastermind id'}),
+                'isBase64Encoded': False
+            }
+        
+        body = json.loads(event.get('body', '{}'))
+        
+        title = body.get('title')
+        description = body.get('description', '')
+        event_date = body.get('event_date')
+        location = body.get('location')
+        max_participants = body.get('max_participants')
+        current_participants = body.get('current_participants', 0)
+        price = body.get('price')
+        currency = body.get('currency', 'RUB')
+        external_url = body.get('external_url')
+        original_price = body.get('original_price')
+        discount_price = body.get('discount_price')
+        author_name = body.get('author_name', '')
+        author_photo = body.get('author_photo')
+        author_position = body.get('author_position', '')
+        event_content = body.get('event_content', '')
+        
+        # Landing page fields
+        hero_title = body.get('hero_title', '')
+        hero_subtitle = body.get('hero_subtitle', '')
+        what_you_get = json.dumps(body.get('what_you_get', []))
+        event_program = json.dumps(body.get('event_program', []))
+        host = json.dumps(body.get('host', {}))
+        co_hosts = json.dumps(body.get('co_hosts', []))
+        benefits = json.dumps(body.get('benefits', []))
+        testimonials = json.dumps(body.get('testimonials', []))
+        faq = json.dumps(body.get('faq', []))
+        cta_button_text = body.get('cta_button_text', 'Зарегистрироваться')
+        
+        if not all([title, event_date, external_url]):
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Missing required fields'}),
+                'isBase64Encoded': False
+            }
+        
+        cur.execute(f"""
+            UPDATE {schema}.masterminds
+            SET title = '{title.replace("'", "''")}',
+                description = '{description.replace("'", "''")}',
+                event_date = '{event_date}',
+                location = {f"'{location}'" if location else 'NULL'},
+                max_participants = {max_participants if max_participants else 'NULL'},
+                current_participants = {current_participants},
+                price = {price if price else 'NULL'},
+                currency = '{currency}',
+                external_url = '{external_url}',
+                original_price = {original_price if original_price else 'NULL'},
+                discount_price = {discount_price if discount_price else 'NULL'},
+                author_name = '{author_name.replace("'", "''")}',
+                author_photo = {f"'{author_photo}'" if author_photo else 'NULL'},
+                author_position = '{author_position.replace("'", "''")}',
+                event_content = '{event_content.replace("'", "''")}',
+                hero_title = '{hero_title.replace("'", "''")}',
+                hero_subtitle = '{hero_subtitle.replace("'", "''")}',
+                what_you_get = '{what_you_get}',
+                event_program = '{event_program}',
+                host = '{host}',
+                co_authors = '{co_hosts}',
+                benefits = '{benefits}',
+                testimonials = '{testimonials}',
+                faq = '{faq}',
+                cta_button_text = '{cta_button_text.replace("'", "''")}'
+            WHERE id = {mastermind_id}
+            RETURNING id, title, slug, status, updated_at
+        """)
+        
+        updated_mastermind = cur.fetchone()
+        
+        if not updated_mastermind:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Mastermind not found'}),
+                'isBase64Encoded': False
+            }
+        
+        result = {
+            'id': updated_mastermind[0],
+            'title': updated_mastermind[1],
+            'slug': updated_mastermind[2],
+            'status': updated_mastermind[3],
+            'updated_at': updated_mastermind[4].isoformat() if updated_mastermind[4] else None
+        }
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps(result),
+            'isBase64Encoded': False
+        }
+    
     # POST /courses?type=specialists - Create specialist request
     if method == 'POST' and entity_type == 'specialists':
         body = json.loads(event.get('body', '{}'))
