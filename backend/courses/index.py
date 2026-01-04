@@ -323,7 +323,8 @@ def handler(event: dict, context) -> dict:
                    c.view_count, c.created_at, c.slug,
                    cp.promoted_until, cp.promotion_type
             FROM {schema}.courses c
-            LEFT JOIN {schema}.course_promotions cp ON c.id = cp.course_id 
+            LEFT JOIN {schema}.item_promotions cp ON c.id = cp.item_id 
+                AND cp.item_type = 'course'
                 AND cp.promoted_until > NOW()
         """
         
