@@ -105,51 +105,53 @@ export default function SchoolLanding() {
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/50 to-black/30" />
         
-        <div className="relative max-w-7xl mx-auto px-4 h-full flex flex-col justify-end pb-16">
-          <div className="flex items-center gap-4 mb-6">
+        <div className="relative max-w-7xl mx-auto px-4 h-full flex flex-col justify-end pb-8 md:pb-16">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
             {school.logo_url && (
               <img
                 src={school.logo_url}
                 alt={school.name}
-                className="w-24 h-24 rounded-xl bg-white p-2 shadow-lg"
+                className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-xl bg-white p-2 shadow-lg flex-shrink-0"
               />
             )}
-            <div className="text-white">
-              <h1 className="text-5xl font-bold mb-2">{school.name}</h1>
+            <div className="text-white text-left">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2 drop-shadow-lg">{school.name}</h1>
               {school.short_description && (
-                <p className="text-xl opacity-90">{school.short_description}</p>
+                <p className="text-base sm:text-lg md:text-xl opacity-90 drop-shadow-md">{school.short_description}</p>
               )}
             </div>
           </div>
           
           {/* Рейтинг и контакты */}
-          <div className="flex flex-wrap gap-4 items-center text-white">
+          <div className="flex flex-wrap gap-2 sm:gap-4 items-center text-white">
             {school.rating > 0 && (
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
-                <Icon name="Star" size={20} className="text-amber-400" />
+              <div className="flex items-center gap-1 sm:gap-2 bg-white/20 backdrop-blur-sm px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base">
+                <Icon name="Star" size={16} className="text-amber-400 sm:w-5 sm:h-5" />
                 <span className="font-semibold">{Number(school.rating).toFixed(1)}</span>
-                <span className="opacity-80">({school.reviews_count} отзывов)</span>
+                <span className="opacity-80 hidden sm:inline">({school.reviews_count} отзывов)</span>
               </div>
             )}
             
             {school.city && (
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
-                <Icon name="MapPin" size={20} />
+              <div className="flex items-center gap-1 sm:gap-2 bg-white/20 backdrop-blur-sm px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base">
+                <Icon name="MapPin" size={16} className="sm:w-5 sm:h-5" />
                 <span>{school.city}</span>
               </div>
             )}
             
             {!school.is_author_school && school.license_number && (
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
-                <Icon name="ShieldCheck" size={20} />
-                <span>Лицензия {school.license_number}</span>
+              <div className="flex items-center gap-1 sm:gap-2 bg-white/20 backdrop-blur-sm px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base">
+                <Icon name="ShieldCheck" size={16} className="sm:w-5 sm:h-5" />
+                <span className="hidden sm:inline">Лицензия {school.license_number}</span>
+                <span className="sm:hidden">{school.license_number}</span>
               </div>
             )}
             
             {school.is_author_school && (
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
-                <Icon name="Award" size={20} />
-                <span>Авторская школа</span>
+              <div className="flex items-center gap-1 sm:gap-2 bg-white/20 backdrop-blur-sm px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base">
+                <Icon name="Award" size={16} className="sm:w-5 sm:h-5" />
+                <span className="hidden sm:inline">Авторская школа</span>
+                <span className="sm:hidden">Авторская</span>
               </div>
             )}
           </div>

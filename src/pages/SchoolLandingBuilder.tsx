@@ -326,7 +326,7 @@ export default function SchoolLandingBuilder() {
 
         {/* Hero секция */}
         <section 
-          className="relative h-[600px] flex items-center justify-center text-white"
+          className="relative min-h-[400px] sm:h-[500px] md:h-[600px] flex items-center justify-center text-white"
           style={{
             backgroundImage: data.coverUrl ? `url(${data.coverUrl})` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             backgroundSize: 'cover',
@@ -334,17 +334,17 @@ export default function SchoolLandingBuilder() {
           }}
         >
           <div className="absolute inset-0 bg-black/50"></div>
-          <div className="relative z-10 text-center px-4 max-w-4xl">
+          <div className="relative z-10 text-center px-4 py-12 max-w-4xl">
             {data.logoUrl && (
-              <img src={data.logoUrl} alt="Логотип" className="h-20 mx-auto mb-6 object-contain" />
+              <img src={data.logoUrl} alt="Логотип" className="h-12 sm:h-16 md:h-20 mx-auto mb-4 sm:mb-6 object-contain" />
             )}
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 drop-shadow-lg">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 drop-shadow-lg">
               {data.heroTitle || 'Название школы'}
             </h1>
-            <p className="text-xl md:text-2xl mb-8 drop-shadow-md">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 sm:mb-8 drop-shadow-md">
               {data.heroSubtitle || 'Подзаголовок'}
             </p>
-            <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 shadow-lg">
+            <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 shadow-lg text-sm sm:text-base">
               Записаться на курс
             </Button>
           </div>
