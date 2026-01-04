@@ -22,6 +22,7 @@ interface Stats {
   pending_moderations: number;
   pending_courses: number;
   pending_masterminds: number;
+  pending_offline_trainings: number;
 }
 
 interface User {
@@ -301,6 +302,9 @@ export default function AdminPanel() {
             >
               <Icon name="GraduationCap" size={18} className="mr-2" />
               Очное обучение
+              {stats && stats.pending_offline_trainings > 0 && (
+                <Badge className="ml-2" variant="destructive">{stats.pending_offline_trainings}</Badge>
+              )}
             </Button>
             <Button 
               variant={activeTab === 'reviews' ? 'default' : 'outline'}

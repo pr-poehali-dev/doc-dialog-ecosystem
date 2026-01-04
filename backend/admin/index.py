@@ -71,7 +71,8 @@ def handler(event: dict, context) -> dict:
                 (SELECT COUNT(*) FROM {schema}.reviews WHERE moderation_status = 'pending') as pending_reviews,
                 (SELECT COUNT(*) FROM {schema}.moderation_logs WHERE status = 'pending') as pending_moderations,
                 (SELECT COUNT(*) FROM {schema}.courses WHERE status = 'pending') as pending_courses,
-                (SELECT COUNT(*) FROM {schema}.masterminds WHERE status = 'pending') as pending_masterminds
+                (SELECT COUNT(*) FROM {schema}.masterminds WHERE status = 'pending') as pending_masterminds,
+                (SELECT COUNT(*) FROM {schema}.offline_training WHERE status = 'pending') as pending_offline_trainings
         """)
         stats = cur.fetchone()
         
@@ -82,7 +83,8 @@ def handler(event: dict, context) -> dict:
             'pending_reviews': stats[3],
             'pending_moderations': stats[4],
             'pending_courses': stats[5],
-            'pending_masterminds': stats[6]
+            'pending_masterminds': stats[6],
+            'pending_offline_trainings': stats[7]
         }
         
         cur.close()

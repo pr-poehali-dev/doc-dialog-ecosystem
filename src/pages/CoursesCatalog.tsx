@@ -51,7 +51,29 @@ interface Mastermind {
   slug?: string;
 }
 
-type CatalogItem = (Course & { itemType: 'course' }) | (Mastermind & { itemType: 'mastermind'; category: string; course_type: string });
+interface OfflineTraining {
+  id: number;
+  school_id: number;
+  title: string;
+  description: string;
+  event_date: string;
+  location: string | null;
+  max_participants: number | null;
+  price: number | null;
+  currency: string;
+  image_url: string | null;
+  external_url: string;
+  status: string;
+  original_price?: number | null;
+  discount_price?: number | null;
+  view_count?: number;
+  created_at: string;
+  rating?: number;
+  review_count?: number;
+  slug?: string;
+}
+
+type CatalogItem = (Course & { itemType: 'course' }) | (Mastermind & { itemType: 'mastermind'; category: string; course_type: string }) | (OfflineTraining & { itemType: 'offline_training'; category: string; course_type: string });
 
 const COURSE_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f';
 const REVIEWS_API_URL = 'https://functions.poehali.dev/dacb9e9b-c76e-4430-8ed9-362ffc8b9566';
@@ -88,19 +110,28 @@ export default function CoursesCatalog() {
     try {
       setLoading(true);
       
-      const [coursesResponse, mastermindsResponse] = await Promise.all([
+      const [coursesResponse, mastermindsResponse, offlineTrainingsResponse] = await Promise.all([
         fetch(`${COURSE_API_URL}?status=approved`),
-        fetch(`${COURSE_API_URL}?action=masterminds&status=approved`)
+        fetch(`${COURSE_API_URL}?action=masterminds&status=approved`),
+        fetch(`${COURSE_API_URL}?action=offline_trainings&status=approved`)
       ]);
       
       const coursesData: Course[] = await coursesResponse.json();
       const mastermindsData: Mastermind[] = await mastermindsResponse.json();
+      const offlineTrainingsData: OfflineTraining[] = await offlineTrainingsResponse.json();
       
       const allItemsWithoutRatings: CatalogItem[] = [
         ...coursesData.map(c => ({ ...c, itemType: 'course' as const })),
         ...mastermindsData.map(m => ({ 
           ...m, 
           itemType: 'mastermind' as const,
+          category: 'Офлайн мероприятия',
+          course_type: 'offline',
+          duration_hours: null
+        })),
+        ...offlineTrainingsData.map(t => ({ 
+          ...t, 
+          itemType: 'offline_training' as const,
           category: 'Офлайн мероприятия',
           course_type: 'offline',
           duration_hours: null
@@ -266,7 +297,7 @@ export default function CoursesCatalog() {
                     />
                     <div className="absolute top-4 right-4">
                       <Badge className={getCourseTypeColor(item.course_type) + ' shadow-lg'}>
-                        {item.itemType === 'mastermind' ? 'Мастермайнд' : getCourseTypeLabel(item.course_type)}
+                        {item.itemType === 'mastermind' ? 'Мастермайнд' : item.itemType === 'offline_training' ? 'Очное обучение' : getCourseTypeLabel(item.course_type)}
                       </Badge>
                     </div>
                   </div>
@@ -287,7 +318,7 @@ export default function CoursesCatalog() {
                         <Icon name="Tag" size={14} className="text-blue-600 dark:text-blue-400 flex-shrink-0" />
                         <span className="text-blue-700 dark:text-blue-300 truncate">{item.category}</span>
                       </div>
-                      {item.itemType === 'mastermind' ? (
+                      {item.itemType === 'mastermind' || item.itemType === 'offline_training' ? (
                         <div className="flex items-center gap-1.5 bg-purple-50 dark:bg-purple-950 px-2 py-1.5 rounded-lg">
                           <Icon name="Calendar" size={14} className="text-purple-600 dark:text-purple-400 flex-shrink-0" />
                           <span className="text-purple-700 dark:text-purple-300 truncate">
@@ -307,7 +338,7 @@ export default function CoursesCatalog() {
                       )}
                     </div>
                     
-                    {item.itemType === 'mastermind' && item.location && (
+                    {(item.itemType === 'mastermind' || item.itemType === 'offline_training') && item.location && (
                       <div className="flex items-center gap-2 text-xs bg-amber-50 dark:bg-amber-950 px-2 py-1.5 rounded-lg">
                         <Icon name="MapPin" size={14} className="text-amber-600 dark:text-amber-400 flex-shrink-0" />
                         <span className="text-amber-700 dark:text-amber-300 truncate">{item.location}</span>
@@ -342,6 +373,10 @@ export default function CoursesCatalog() {
                               window.location.href = `/mastermind/landing/${item.slug}`;
                             } else {
                               window.location.href = `/mastermind/${item.id}`;
+                            }
+                          } else if (item.itemType === 'offline_training') {
+                            if ('slug' in item && item.slug) {
+                              window.location.href = `/offline-training/${item.slug}`;
                             }
                           } else if ('slug' in item && item.slug) {
                             window.location.href = `/course/landing/${item.slug}`;

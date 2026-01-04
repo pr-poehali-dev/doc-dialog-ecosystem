@@ -42,7 +42,7 @@ export default function OfflineTrainingModerationTab({ onModerationComplete }: O
   const loadTrainings = async () => {
     setLoading(true);
     try {
-      const response = await fetch('https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?action=offline_trainings&status=all');
+      const response = await fetch('https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?action=offline_trainings&status=pending');
       
       if (response.ok) {
         const data = await response.json();
@@ -111,20 +111,17 @@ export default function OfflineTrainingModerationTab({ onModerationComplete }: O
     }
   };
 
-  const pendingTrainings = trainings.filter(t => t.status === 'pending');
-  const approvedTrainings = trainings.filter(t => t.status === 'approved');
-
   if (loading) {
     return <div className="text-center py-8">Загрузка...</div>;
   }
 
   return (
     <div className="space-y-8">
-      {pendingTrainings.length > 0 && (
+      {trainings.length > 0 && (
         <div>
-          <h2 className="text-2xl font-bold mb-4">На модерации ({pendingTrainings.length})</h2>
+          <h2 className="text-2xl font-bold mb-4">На модерации ({trainings.length})</h2>
           <div className="space-y-4">
-            {pendingTrainings.map((training) => (
+            {trainings.map((training) => (
               <Card key={training.id}>
                 <CardHeader>
                   <div className="flex justify-between items-start">
@@ -165,57 +162,6 @@ export default function OfflineTrainingModerationTab({ onModerationComplete }: O
                     </Button>
                     <Button onClick={() => deleteTraining(training.id)} variant="destructive" size="sm">
                       <Icon name="X" size={16} className="mr-2" />
-                      Удалить
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {approvedTrainings.length > 0 && (
-        <div>
-          <h2 className="text-2xl font-bold mb-4">Одобренные ({approvedTrainings.length})</h2>
-          <div className="space-y-4">
-            {approvedTrainings.map((training) => (
-              <Card key={training.id}>
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle>{training.title}</CardTitle>
-                      <p className="text-sm text-muted-foreground mt-1">{training.school_name}</p>
-                    </div>
-                    <Badge variant="default">Одобрено</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid md:grid-cols-2 gap-4 mb-4">
-                    {training.image_url && (
-                      <img src={training.image_url} alt={training.title} className="w-full h-48 object-cover rounded-lg" />
-                    )}
-                    <div className="space-y-2">
-                      <p className="text-sm"><strong>Описание:</strong> {training.description}</p>
-                      <p className="text-sm"><strong>Дата:</strong> {new Date(training.event_date).toLocaleString('ru-RU')}</p>
-                      <p className="text-sm"><strong>Место:</strong> {training.location}</p>
-                      <p className="text-sm"><strong>Макс. участников:</strong> {training.max_participants}</p>
-                      <p className="text-sm"><strong>Цена:</strong> {training.price} ₽</p>
-                      {training.external_url && (
-                        <a href={training.external_url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline flex items-center gap-1">
-                          <Icon name="ExternalLink" size={14} />
-                          Ссылка на регистрацию
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button onClick={() => window.open(`/offline-training/${training.slug}?preview=true`, '_blank')} variant="outline" size="sm">
-                      <Icon name="Eye" size={16} className="mr-2" />
-                      Просмотреть
-                    </Button>
-                    <Button onClick={() => deleteTraining(training.id)} variant="outline" size="sm">
-                      <Icon name="Trash2" size={16} className="mr-2" />
                       Удалить
                     </Button>
                   </div>
