@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
+import { getUserId } from '@/utils/auth';
 
 interface CourseLandingData {
   title: string;
@@ -146,21 +147,31 @@ export default function CourseLandingBuilder() {
 
   const handleSubmit = async () => {
     try {
-      const userDataStr = localStorage.getItem('user');
-      if (!userDataStr) {
+      const userId = getUserId();
+      if (!userId) {
         alert('Необходимо войти в систему');
         navigate('/login');
         return;
       }
 
-      const userData = JSON.parse(userDataStr);
-      const schoolId = userData.school_id;
+      // Получаем школу пользователя через API
+      const schoolResponse = await fetch('https://functions.poehali.dev/6ac6b552-624e-4960-a4f1-94f540394c86?action=my_schools', {
+        headers: { 'X-User-Id': userId }
+      });
 
-      if (!schoolId) {
+      if (!schoolResponse.ok) {
+        alert('Ошибка при получении данных школы');
+        return;
+      }
+
+      const schoolData = await schoolResponse.json();
+      if (!schoolData.schools || schoolData.schools.length === 0) {
         alert('У вас нет привязанной школы. Обратитесь в поддержку.');
         navigate('/school/dashboard');
         return;
       }
+
+      const schoolId = schoolData.schools[0].id;
 
       // Генерация slug из названия
       const generateSlug = (title: string) => {
@@ -174,7 +185,7 @@ export default function CourseLandingBuilder() {
 
       const slug = generateSlug(data.title) + `-${Date.now()}`;
 
-      const response = await fetch('https://functions.poehali.dev/a81dd7cd-c267-4f44-85f5-0da8353dc741?type=courses', {
+      const response = await fetch('https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?type=courses', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -182,23 +193,24 @@ export default function CourseLandingBuilder() {
         body: JSON.stringify({
           school_id: schoolId,
           title: data.title,
-          short_description: data.shortDescription,
+          shortDescription: data.shortDescription,
+          heroTitle: data.heroTitle,
+          heroSubtitle: data.heroSubtitle,
           type: data.type,
           category: data.category,
-          cover_url: data.coverUrl,
+          price: data.price,
           duration: data.duration,
-          price_text: data.price,
-          author_name: data.author.name,
-          author_position: data.author.position,
-          author_description: data.author.bio,
-          author_photo_url: data.author.photo,
-          author_experience: data.author.experience,
-          cta_button_text: data.ctaButtonText,
-          partner_link: data.ctaButtonUrl || 'https://example.com',
-          slug: slug,
-          status: 'moderation',
-          seo_title: data.heroTitle,
-          seo_description: data.shortDescription
+          aboutCourse: data.aboutCourse,
+          whatYouLearn: data.whatYouLearn,
+          programModules: data.programModules,
+          author: data.author,
+          benefits: data.benefits,
+          testimonials: data.testimonials,
+          faq: data.faq,
+          ctaButtonText: data.ctaButtonText,
+          ctaButtonUrl: data.ctaButtonUrl || 'https://example.com',
+          coverUrl: data.coverUrl,
+          schoolLogoUrl: data.schoolLogoUrl
         })
       });
 
