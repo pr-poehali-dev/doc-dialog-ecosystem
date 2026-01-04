@@ -41,12 +41,7 @@ export default function OfflineTrainingModerationTab({ onModerationComplete }: O
   const loadTrainings = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?action=offline_trainings&status=all', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await fetch('https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?action=offline_trainings&status=all');
       
       if (response.ok) {
         const data = await response.json();
@@ -65,11 +60,9 @@ export default function OfflineTrainingModerationTab({ onModerationComplete }: O
 
   const approveTraining = async (trainingId: number) => {
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch(`https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?type=offline_trainings&id=${trainingId}`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ status: 'approved' })
@@ -96,12 +89,8 @@ export default function OfflineTrainingModerationTab({ onModerationComplete }: O
     if (!confirm('Вы уверены, что хотите удалить это обучение?')) return;
     
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch(`https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?type=offline_trainings&id=${trainingId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        method: 'DELETE'
       });
       
       if (response.ok) {
