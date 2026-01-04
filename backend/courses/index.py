@@ -1413,6 +1413,10 @@ def handler(event: dict, context) -> dict:
             return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'id': updated[0], 'title': updated[1], 'status': updated[2]}), 'isBase64Encoded': False}
         
         # Full update
+        print(f"[OFFLINE_TRAINING PUT] training_id={training_id}")
+        print(f"[OFFLINE_TRAINING PUT] body keys: {list(body.keys())}")
+        print(f"[OFFLINE_TRAINING PUT] coverUrl={body.get('coverUrl')}, schoolLogoUrl={body.get('schoolLogoUrl')}")
+        
         title = body.get('title')
         description = body.get('description', '')
         event_date = body.get('event_date')
@@ -1440,6 +1444,8 @@ def handler(event: dict, context) -> dict:
         cta_button_text = body.get('cta_button_text', 'Записаться на обучение')
         cover_url = body.get('coverUrl', '')
         school_logo_url = body.get('schoolLogoUrl', '')
+        
+        print(f"[OFFLINE_TRAINING PUT] cover_url={cover_url}, school_logo_url={school_logo_url}")
         
         if not all([title, event_date, external_url]):
             cur.close()
