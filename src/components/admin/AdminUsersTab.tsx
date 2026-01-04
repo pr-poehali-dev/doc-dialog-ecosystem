@@ -46,6 +46,18 @@ export default function AdminUsersTab({ users, loading, onUpdateUserRole }: Admi
     
     localStorage.setItem('user', JSON.stringify(impersonatedUser));
     
+    // Создаем временный токен для подмененного пользователя
+    // Формат: header.payload.signature (упрощенный, без реальной подписи)
+    const payload = {
+      user_id: user.id,
+      email: user.email,
+      role: user.role,
+      exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60), // 24 часа
+      is_impersonating: true
+    };
+    const fakeToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' + btoa(JSON.stringify(payload)) + '.impersonated';
+    localStorage.setItem('token', fakeToken);
+    
     // Переход в кабинет пользователя
     switch (user.role) {
       case 'school':
