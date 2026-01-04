@@ -31,9 +31,11 @@ def handler(event: dict, context) -> dict:
         course_id = query_params.get('id')
         slug = query_params.get('slug')
         school_id = query_params.get('school_id')
+        preview = query_params.get('preview', 'false').lower() == 'true'
         
-        # GET /course-landings?slug=X - Публичный просмотр курса-лендинга
+        # GET /course-landings?slug=X - Публичный просмотр курса-лендинга (preview для непроверенных)
         if method == 'GET' and slug:
+            status_filter = "" if preview else "AND c.status = 'published'"
             cur.execute(f"""
                 SELECT c.id, c.school_id, c.title, c.short_description, c.type, c.category, c.cover_url, 
                        c.cta_button_text, c.author_name, c.author_photo, c.author_position, 
@@ -45,7 +47,7 @@ def handler(event: dict, context) -> dict:
                        s.name, s.logo_url, s.description, s.students_count
                 FROM {schema}.courses c
                 LEFT JOIN {schema}.schools s ON c.school_id = s.id
-                WHERE c.slug = '{slug}' AND c.status = 'published'
+                WHERE c.slug = '{slug}' {status_filter}
             """)
             
             course = cur.fetchone()

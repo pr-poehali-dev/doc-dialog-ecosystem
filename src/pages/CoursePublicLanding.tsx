@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
@@ -47,10 +47,11 @@ interface CourseData {
   cta_button_url: string;
 }
 
-const COURSE_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f';
+const COURSE_API_URL = 'https://functions.poehali.dev/a81dd7cd-c267-4f44-85f5-0da8353dc741';
 
 export default function CoursePublicLanding() {
   const { slug } = useParams<{ slug: string }>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [course, setCourse] = useState<CourseData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -64,7 +65,9 @@ export default function CoursePublicLanding() {
   const loadCourse = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${COURSE_API_URL}?slug=${slug}&type=courses`);
+      const isPreview = searchParams.get('preview') === 'true';
+      const previewParam = isPreview ? '&preview=true' : '';
+      const response = await fetch(`${COURSE_API_URL}?slug=${slug}&type=courses${previewParam}`);
       if (response.ok) {
         const data = await response.json();
         setCourse(data);

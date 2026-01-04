@@ -162,7 +162,7 @@ export default function CourseLandingBuilder() {
         return;
       }
 
-      const response = await fetch('https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?type=courses', {
+      const response = await fetch('https://functions.poehali.dev/a81dd7cd-c267-4f44-85f5-0da8353dc741?type=courses', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
