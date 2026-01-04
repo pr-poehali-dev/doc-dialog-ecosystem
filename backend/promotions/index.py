@@ -36,18 +36,55 @@ def handler(event: dict, context) -> dict:
         }
     
     try:
+        conn = psycopg2.connect(os.environ['DATABASE_URL'])
+        cur = conn.cursor()
+        
+        if method == 'GET':
+            action = event.get('queryStringParameters', {}).get('action', 'prices')
+            
+            # active_all не требует авторизации
+            if action == 'active_all':
+                cur.execute("""
+                    SELECT id, course_id, promotion_type, category, promoted_until, created_at
+                    FROM course_promotions
+                    WHERE promoted_until > NOW()
+                    ORDER BY promoted_until DESC
+                """)
+                
+                promotions = []
+                for row in cur.fetchall():
+                    promotions.append({
+                        'id': row[0],
+                        'course_id': row[1],
+                        'promotion_type': row[2],
+                        'category': row[3],
+                        'promoted_until': row[4].isoformat() if row[4] else None,
+                        'created_at': row[5].isoformat() if row[5] else None
+                    })
+                
+                result = {'promotions': promotions}
+                
+                cur.close()
+                conn.close()
+                return {
+                    'statusCode': 200,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps(result, ensure_ascii=False),
+                    'isBase64Encoded': False
+                }
+        
+        # Для остальных действий требуется авторизация
         user_id = event.get('headers', {}).get('X-User-Id') or event.get('headers', {}).get('x-user-id')
         
         if not user_id:
+            cur.close()
+            conn.close()
             return {
                 'statusCode': 401,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
                 'body': json.dumps({'error': 'Требуется авторизация'}),
                 'isBase64Encoded': False
             }
-        
-        conn = psycopg2.connect(os.environ['DATABASE_URL'])
-        cur = conn.cursor()
         
         # Получаем school_id пользователя
         cur.execute("SELECT id FROM schools WHERE user_id = %s LIMIT 1", (int(user_id),))
@@ -133,26 +170,34 @@ def handler(event: dict, context) -> dict:
             # Проверяем что курс/мастермайнд/очное обучение принадлежит школе
             category = None
             
-            # Сначала ищем в courses (используется новая таблица course_landings)
-            cur.execute("SELECT category FROM public.course_landings WHERE id = %s AND school_id = %s", (course_id, school_id))
-            course_row = cur.fetchone()
-            
-            if course_row:
-                category = course_row[0]
+            # Сначала ищем в course_landings
+            try:
+                cur.execute("SELECT category FROM course_landings WHERE id = %s AND school_id = %s", (course_id, school_id))
+                course_row = cur.fetchone()
+                if course_row:
+                    category = course_row[0]
+            except:
+                pass
             
             # Если не найден, ищем в masterminds
             if not category:
-                cur.execute("SELECT id FROM public.masterminds WHERE id = %s AND school_id = %s", (course_id, school_id))
-                mastermind_row = cur.fetchone()
-                if mastermind_row:
-                    category = 'Офлайн мероприятия'
+                try:
+                    cur.execute("SELECT id FROM masterminds WHERE id = %s AND school_id = %s", (course_id, school_id))
+                    mastermind_row = cur.fetchone()
+                    if mastermind_row:
+                        category = 'Офлайн мероприятия'
+                except:
+                    pass
             
             # Если не найден, ищем в offline_training
             if not category:
-                cur.execute("SELECT id FROM public.offline_training WHERE id = %s AND school_id = %s", (course_id, school_id))
-                training_row = cur.fetchone()
-                if training_row:
-                    category = 'Офлайн мероприятия'
+                try:
+                    cur.execute("SELECT id FROM offline_training WHERE id = %s AND school_id = %s", (course_id, school_id))
+                    training_row = cur.fetchone()
+                    if training_row:
+                        category = 'Офлайн мероприятия'
+                except:
+                    pass
             
             # Если ничего не найдено
             if not category:

@@ -78,6 +78,7 @@ type CatalogItem = (Course & { itemType: 'course' }) | (Mastermind & { itemType:
 const COURSE_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f';
 const COURSE_LANDINGS_API_URL = 'https://functions.poehali.dev/a81dd7cd-c267-4f44-85f5-0da8353dc741';
 const REVIEWS_API_URL = 'https://functions.poehali.dev/dacb9e9b-c76e-4430-8ed9-362ffc8b9566';
+const PROMOTIONS_API_URL = 'https://functions.poehali.dev/2ea3a11a-0b11-4f52-9c5e-29fe60c40675';
 
 const CATEGORIES = [
   'Все категории',
@@ -168,6 +169,18 @@ export default function CoursesCatalog() {
         }))
       ];
       
+      // Загружаем активные промо для всех курсов/мастермайндов/обучений
+      let activePromotions: any[] = [];
+      try {
+        const promoResponse = await fetch(`${PROMOTIONS_API_URL}?action=active_all`);
+        if (promoResponse.ok) {
+          const promoData = await promoResponse.json();
+          activePromotions = promoData.promotions || [];
+        }
+      } catch (error) {
+        console.error('Failed to load promotions:', error);
+      }
+      
       const itemsWithRatings = await Promise.all(
         allItemsWithoutRatings.map(async (item) => {
           try {
@@ -188,7 +201,28 @@ export default function CoursesCatalog() {
         })
       );
       
-      setItems(itemsWithRatings);
+      // Добавляем информацию о промо и сортируем
+      const itemsWithPromo = itemsWithRatings.map(item => {
+        const promo = activePromotions.find(p => p.course_id === item.id);
+        return {
+          ...item,
+          has_promotion: !!promo,
+          promoted_until: promo?.promoted_until || null,
+          promotion_type: promo?.promotion_type || null
+        };
+      });
+      
+      // Сортируем: сначала с промо (по дате окончания), потом без промо (по дате создания)
+      itemsWithPromo.sort((a, b) => {
+        if (a.has_promotion && !b.has_promotion) return -1;
+        if (!a.has_promotion && b.has_promotion) return 1;
+        if (a.has_promotion && b.has_promotion) {
+          return new Date(b.promoted_until).getTime() - new Date(a.promoted_until).getTime();
+        }
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      });
+      
+      setItems(itemsWithPromo);
     } catch (error) {
       console.error('Load error:', error);
     } finally {
