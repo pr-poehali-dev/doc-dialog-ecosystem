@@ -1282,6 +1282,17 @@ def handler(event: dict, context) -> dict:
             conn.close()
             return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Missing required fields'}), 'isBase64Encoded': False}
         
+        # Get school name and user_id
+        cur.execute(f"SELECT name, user_id FROM {schema}.schools WHERE id = {school_id}")
+        school_data = cur.fetchone()
+        if not school_data:
+            cur.close()
+            conn.close()
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'School not found'}), 'isBase64Encoded': False}
+        
+        school_name = school_data[0]
+        user_id = school_data[1]
+        
         import re
         slug = re.sub(r'[^a-zA-Z0-9а-яА-Я\-]', '-', title.lower()).strip('-')
         slug = re.sub(r'-+', '-', slug)
@@ -1298,14 +1309,14 @@ def handler(event: dict, context) -> dict:
         
         cur.execute(f"""
             INSERT INTO {schema}.offline_training (
-                school_id, title, description, event_date, location, max_participants,
+                user_id, school_id, school_name, title, description, event_date, location, max_participants,
                 price, currency, external_url, original_price, discount_price,
                 author_name, author_photo, image_url, hero_title, hero_subtitle, about_training,
                 what_you_get, training_program, instructor, co_instructors, benefits,
                 testimonials, faq, cta_button_text, slug, status
             )
             VALUES (
-                {school_id}, '{title.replace("'", "''")}', '{description.replace("'", "''")}',
+                {user_id}, {school_id}, '{school_name.replace("'", "''")}', '{title.replace("'", "''")}', '{description.replace("'", "''")}',
                 '{event_date}', {f"'{location}'" if location else 'NULL'},
                 {max_participants if max_participants else 'NULL'},
                 {price if price else 'NULL'}, '{currency}', '{external_url}',
