@@ -241,7 +241,7 @@ def get_school_for_edit(conn, school_id: int, user_id: int) -> dict:
         return dict(school)
 
 
-def update_school_landing(conn, school_id: int, user_id: int, data: dict) -> bool:
+def update_school_landing(conn, school_id: int, user_id: int, data: dict) -> dict:
     """Обновление лендинга школы (админ может редактировать все школы)"""
     with conn.cursor() as cur:
         # Проверяем права (админ может редактировать все школы)
@@ -257,7 +257,7 @@ def update_school_landing(conn, school_id: int, user_id: int, data: dict) -> boo
             """, (school_id, user_id))
         
         if not cur.fetchone():
-            return False
+            return None
         
         # Обновляем основную информацию
         cur.execute("""
@@ -270,6 +270,7 @@ def update_school_landing(conn, school_id: int, user_id: int, data: dict) -> boo
                 about_school = %s, why_choose_us = %s, cta_button_text = %s, cta_button_url = %s,
                 seo_title = %s, seo_description = %s, learning_direction = %s, format = %s
             WHERE id = %s
+            RETURNING slug
         """, (
             data.get('name'), data.get('short_description'), data.get('description'), data.get('slug'),
             data.get('logo_url'), data.get('cover_url'), data.get('city'), data.get('address'),
@@ -283,6 +284,7 @@ def update_school_landing(conn, school_id: int, user_id: int, data: dict) -> boo
             data.get('learning_direction', ''), data.get('format', 'hybrid'),
             school_id
         ))
+        result = cur.fetchone()
         
         # Обновляем курсы этой школы (автопривязка логотипа и названия)
         if data.get('logo_url') or data.get('name'):
@@ -362,7 +364,7 @@ def update_school_landing(conn, school_id: int, user_id: int, data: dict) -> boo
                     """, (school_id, img['image_url'], img.get('caption'), idx))
         
         conn.commit()
-        return True
+        return {'slug': result['slug']}
 
 
 def handler(event: dict, context) -> dict:
@@ -539,13 +541,13 @@ def handler(event: dict, context) -> dict:
             
             data = json.loads(event.get('body', '{}'))
             
-            success = update_school_landing(conn, int(school_id), int(user_id), data)
+            result = update_school_landing(conn, int(school_id), int(user_id), data)
             conn.close()
             
-            if not success:
+            if not result:
                 return response(404, {'error': 'Школа не найдена или нет прав доступа'})
             
-            return response(200, {'success': True, 'message': 'Лендинг школы обновлен'})
+            return response(200, {'success': True, 'slug': result['slug'], 'message': 'Лендинг школы обновлен'})
         
         # PUT /:id - обновление лендинга школы (старый формат для совместимости)
         if method == 'PUT':
@@ -558,13 +560,13 @@ def handler(event: dict, context) -> dict:
             
             data = json.loads(event.get('body', '{}'))
             
-            success = update_school_landing(conn, int(school_id), int(user_id), data)
+            result = update_school_landing(conn, int(school_id), int(user_id), data)
             conn.close()
             
-            if not success:
+            if not result:
                 return response(404, {'error': 'Школа не найдена или нет прав доступа'})
             
-            return response(200, {'success': True, 'message': 'Лендинг школы обновлен'})
+            return response(200, {'success': True, 'slug': result['slug'], 'message': 'Лендинг школы обновлен'})
         
         # DELETE /?id=X - удаление школы (владелец или админ)
         if method == 'DELETE':

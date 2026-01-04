@@ -14,6 +14,8 @@ interface LandingData {
   heroTitle: string;
   heroSubtitle: string;
   aboutText: string;
+  logoUrl: string;
+  coverUrl: string;
   advantages: string[];
   courses: Array<{
     title: string;
@@ -66,6 +68,8 @@ export default function SchoolLandingBuilder() {
     heroTitle: '',
     heroSubtitle: '',
     aboutText: '',
+    logoUrl: '',
+    coverUrl: '',
     advantages: ['', '', '', ''],
     courses: [{ title: '', duration: '', price: '', description: '' }],
     teachers: [{ name: '', specialization: '', experience: '', photo: '' }],
@@ -146,6 +150,8 @@ export default function SchoolLandingBuilder() {
           heroTitle: schoolData.name || '',
           heroSubtitle: schoolData.short_description || '',
           aboutText: schoolData.about_school || schoolData.description || '',
+          logoUrl: schoolData.logo_url || '',
+          coverUrl: schoolData.cover_url || '',
           advantages,
           courses: [{ title: '', duration: '', price: '', description: '' }],
           teachers,
@@ -231,11 +237,24 @@ export default function SchoolLandingBuilder() {
       const url = id ? `${SCHOOL_API_URL}?action=update&id=${id}` : SCHOOL_API_URL;
       const method = id ? 'PUT' : 'POST';
 
+      // Генерируем slug из названия
+      const generateSlug = (name: string) => {
+        return name
+          .toLowerCase()
+          .replace(/[^а-яa-z0-9\s-]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-')
+          .trim();
+      };
+
       // Преобразуем данные в формат, который ожидает backend
       const schoolData = {
         name: data.name,
+        slug: generateSlug(data.name),
         short_description: data.shortDescription,
         description: data.aboutText,
+        logo_url: data.logoUrl || null,
+        cover_url: data.coverUrl || null,
         city: data.contacts.city,
         address: data.contacts.address,
         phone: data.contacts.phone,
@@ -259,8 +278,14 @@ export default function SchoolLandingBuilder() {
       });
 
       if (response.ok) {
+        const result = await response.json();
         alert('Лендинг школы сохранён!');
-        navigate('/school/dashboard');
+        // Переходим на публичный лендинг школы
+        if (result.slug) {
+          navigate(`/school/${result.slug}`);
+        } else {
+          navigate('/school/dashboard');
+        }
       } else {
         const error = await response.text();
         console.error('Server error:', error);
@@ -300,16 +325,26 @@ export default function SchoolLandingBuilder() {
         </div>
 
         {/* Hero секция */}
-        <section className="relative h-[600px] flex items-center justify-center bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 text-white">
-          <div className="absolute inset-0 bg-black/30"></div>
+        <section 
+          className="relative h-[600px] flex items-center justify-center text-white"
+          style={{
+            backgroundImage: data.coverUrl ? `url(${data.coverUrl})` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        >
+          <div className="absolute inset-0 bg-black/50"></div>
           <div className="relative z-10 text-center px-4 max-w-4xl">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">
+            {data.logoUrl && (
+              <img src={data.logoUrl} alt="Логотип" className="h-20 mx-auto mb-6 object-contain" />
+            )}
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 drop-shadow-lg">
               {data.heroTitle || 'Название школы'}
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-white/90">
+            <p className="text-xl md:text-2xl mb-8 drop-shadow-md">
               {data.heroSubtitle || 'Подзаголовок'}
             </p>
-            <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
+            <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 shadow-lg">
               Записаться на курс
             </Button>
           </div>
@@ -594,6 +629,26 @@ export default function SchoolLandingBuilder() {
                   onChange={(e) => updateField('heroSubtitle', e.target.value)}
                   placeholder="Обучение с нуля до трудоустройства за 3 месяца"
                 />
+              </div>
+              <div>
+                <Label>Ссылка на логотип школы</Label>
+                <Input
+                  value={data.logoUrl}
+                  onChange={(e) => updateField('logoUrl', e.target.value)}
+                  placeholder="https://example.com/logo.png"
+                  type="url"
+                />
+                <p className="text-xs text-muted-foreground mt-1">Используется в шапке лендинга</p>
+              </div>
+              <div>
+                <Label>Ссылка на фото для шапки</Label>
+                <Input
+                  value={data.coverUrl}
+                  onChange={(e) => updateField('coverUrl', e.target.value)}
+                  placeholder="https://example.com/cover.jpg"
+                  type="url"
+                />
+                <p className="text-xs text-muted-foreground mt-1">Фон первого экрана (рекомендуем 1920x800px)</p>
               </div>
               <div>
                 <Label>О школе (подробное описание)</Label>

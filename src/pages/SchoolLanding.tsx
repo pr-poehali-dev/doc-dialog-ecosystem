@@ -100,10 +100,10 @@ export default function SchoolLanding() {
           <img
             src={school.cover_url}
             alt={school.name}
-            className="absolute inset-0 w-full h-full object-cover opacity-20"
+            className="absolute inset-0 w-full h-full object-cover"
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/50 to-black/30" />
         
         <div className="relative max-w-7xl mx-auto px-4 h-full flex flex-col justify-end pb-16">
           <div className="flex items-center gap-4 mb-6">
