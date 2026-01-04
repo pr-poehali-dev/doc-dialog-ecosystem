@@ -18,6 +18,7 @@ interface MastermindDetails {
   id: number;
   school_id: number;
   school_name: string;
+  school_slug?: string;
   title: string;
   description: string;
   event_date: string;
@@ -277,11 +278,23 @@ export default function MastermindPage() {
                   <Button 
                     size="lg" 
                     className="w-full text-lg py-6"
-                    onClick={() => window.open(mastermind.external_url, '_blank')}
+                    onClick={() => {
+                      if (mastermind.school_slug) {
+                        window.open(`/school/${mastermind.school_slug}`, '_blank');
+                      } else {
+                        window.open(mastermind.external_url, '_blank');
+                      }
+                    }}
                   >
                     <Icon name="Calendar" size={20} className="mr-2" />
                     Записаться
                   </Button>
+
+                  {mastermind.school_slug && (
+                    <p className="text-xs text-center text-muted-foreground mt-2">
+                      Вы перейдете на страницу школы {mastermind.school_name}
+                    </p>
+                  )}
 
                   {mastermind.view_count !== undefined && (
                     <div className="pt-4 border-t text-center">

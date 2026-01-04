@@ -36,13 +36,15 @@ def handler(event: dict, context) -> dict:
     # GET /courses?action=masterminds&slug=X - Get mastermind by slug with full landing data
     if method == 'GET' and slug and action == 'masterminds':
         cur.execute(f"""
-            SELECT id, slug, title, description, hero_title, hero_subtitle,
-                   event_date, location, max_participants, current_participants,
-                   price, original_price, discount_price, currency, image_url, external_url,
-                   about_event, what_you_get, event_program, host, co_authors as co_hosts,
-                   benefits, testimonials, faq, cta_button_text, status
-            FROM {schema}.masterminds
-            WHERE slug = '{slug}' AND status = 'approved'
+            SELECT m.id, m.slug, m.title, m.description, m.hero_title, m.hero_subtitle,
+                   m.event_date, m.location, m.max_participants, m.current_participants,
+                   m.price, m.original_price, m.discount_price, m.currency, m.image_url, m.external_url,
+                   m.about_event, m.what_you_get, m.event_program, m.host, m.co_authors as co_hosts,
+                   m.benefits, m.testimonials, m.faq, m.cta_button_text, m.status,
+                   s.slug as school_slug, s.name as school_name
+            FROM {schema}.masterminds m
+            LEFT JOIN {schema}.schools s ON m.school_id = s.id
+            WHERE m.slug = '{slug}' AND m.status = 'approved'
         """)
         mastermind = cur.fetchone()
         
@@ -81,7 +83,9 @@ def handler(event: dict, context) -> dict:
             'benefits': mastermind[21] if mastermind[21] else [],
             'testimonials': mastermind[22] if mastermind[22] else [],
             'faq': mastermind[23] if mastermind[23] else [],
-            'cta_button_text': mastermind[24] or 'Зарегистрироваться'
+            'cta_button_text': mastermind[24] or 'Зарегистрироваться',
+            'school_slug': mastermind[26],
+            'school_name': mastermind[27]
         }
         
         cur.close()
@@ -313,7 +317,8 @@ def handler(event: dict, context) -> dict:
                    m.event_date, m.location, m.max_participants, m.current_participants,
                    m.price, m.currency, m.image_url, m.external_url, m.status,
                    m.original_price, m.discount_price, m.author_name, m.author_photo,
-                   m.event_content, m.view_count, m.author_position, m.co_authors, m.created_at
+                   m.event_content, m.view_count, m.author_position, m.co_authors, m.created_at,
+                   s.slug as school_slug
             FROM {schema}.masterminds m
             LEFT JOIN {schema}.schools s ON m.school_id = s.id
             WHERE m.id = {course_id} {status_filter}
@@ -357,7 +362,8 @@ def handler(event: dict, context) -> dict:
             'view_count': mastermind[19],
             'author_position': mastermind[20],
             'co_authors': mastermind[21],
-            'created_at': mastermind[22].isoformat() if mastermind[22] else None
+            'created_at': mastermind[22].isoformat() if mastermind[22] else None,
+            'school_slug': mastermind[23]
         }
         
         cur.close()

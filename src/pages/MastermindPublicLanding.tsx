@@ -54,6 +54,8 @@ interface MastermindData {
   cta_button_text: string;
   external_url: string;
   image_url: string;
+  school_slug?: string;
+  school_name?: string;
 }
 
 const MASTERMIND_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f';
@@ -166,7 +168,13 @@ export default function MastermindPublicLanding() {
           <Button 
             size="lg" 
             className="bg-white text-purple-600 hover:bg-gray-100"
-            onClick={() => window.open(mastermind.external_url, '_blank')}
+            onClick={() => {
+              if (mastermind.school_slug) {
+                window.open(`/school/${mastermind.school_slug}`, '_blank');
+              } else {
+                window.open(mastermind.external_url, '_blank');
+              }
+            }}
           >
             {mastermind.cta_button_text}
           </Button>
@@ -393,7 +401,13 @@ export default function MastermindPublicLanding() {
           <Button 
             size="lg" 
             className="bg-white text-purple-600 hover:bg-gray-100"
-            onClick={() => window.open(mastermind.external_url, '_blank')}
+            onClick={() => {
+              if (mastermind.school_slug) {
+                window.open(`/school/${mastermind.school_slug}`, '_blank');
+              } else {
+                window.open(mastermind.external_url, '_blank');
+              }
+            }}
           >
             {mastermind.cta_button_text}
           </Button>
