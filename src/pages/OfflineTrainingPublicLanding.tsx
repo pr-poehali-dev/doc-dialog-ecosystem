@@ -123,12 +123,25 @@ export default function OfflineTrainingPublicLanding() {
   return (
     <div className="min-h-screen bg-white">
       <section className="relative h-[600px] flex items-center justify-center bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white">
-        <div className="absolute inset-0 bg-black/30"></div>
+        {training.cover_url && (
+          <div 
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${training.cover_url})` }}
+          />
+        )}
+        <div className="absolute inset-0 bg-black/50"></div>
         <div className="relative z-10 text-center px-4 max-w-4xl">
+          {training.school_logo_url && (
+            <img 
+              src={training.school_logo_url} 
+              alt="Логотип школы" 
+              className="mx-auto mb-6 h-12 md:h-16 lg:h-20 w-auto object-contain drop-shadow-lg"
+            />
+          )}
           <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm mb-4">
             Очное обучение • Старт {formatDate(training.event_date)}
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold mb-6">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 drop-shadow-lg">
             {training.hero_title || training.title}
           </h1>
           <p className="text-xl md:text-2xl mb-8 text-white/90">

@@ -126,12 +126,25 @@ export default function MastermindPublicLanding() {
     <div className="min-h-screen bg-white">
       {/* Hero секция */}
       <section className="relative h-[600px] flex items-center justify-center bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 text-white">
-        <div className="absolute inset-0 bg-black/30"></div>
+        {mastermind.cover_url && (
+          <div 
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${mastermind.cover_url})` }}
+          />
+        )}
+        <div className="absolute inset-0 bg-black/50"></div>
         <div className="relative z-10 text-center px-4 max-w-4xl">
+          {mastermind.school_logo_url && (
+            <img 
+              src={mastermind.school_logo_url} 
+              alt="Логотип школы" 
+              className="mx-auto mb-6 h-12 md:h-16 lg:h-20 w-auto object-contain drop-shadow-lg"
+            />
+          )}
           <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm mb-4">
             Мастермайнд • {formatDate(mastermind.event_date)}
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold mb-6">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 drop-shadow-lg">
             {mastermind.hero_title || mastermind.title}
           </h1>
           <div className="flex justify-center mb-6">
