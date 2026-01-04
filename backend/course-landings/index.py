@@ -35,7 +35,7 @@ def handler(event: dict, context) -> dict:
         
         # GET /course-landings?slug=X - Публичный просмотр курса-лендинга (preview для непроверенных)
         if method == 'GET' and slug:
-            status_filter = "" if preview else "AND c.status IN ('published', 'approved')"
+            status_filter = "" if preview else "AND c.status IN ('published', 'approved', 'active')"
             cur.execute(f"""
                 SELECT c.id, c.school_id, c.title, c.short_description, c.type, c.category, c.cover_url, 
                        c.cta_button_text, c.author_name, c.author_photo, c.author_position, 
