@@ -318,7 +318,9 @@ def handler(event: dict, context) -> dict:
                    m.price, m.currency, m.image_url, m.external_url, m.status,
                    m.original_price, m.discount_price, m.author_name, m.author_photo,
                    m.event_content, m.view_count, m.author_position, m.co_authors, m.created_at,
-                   s.slug as school_slug
+                   s.slug as school_slug, m.hero_title, m.hero_subtitle, m.about_event,
+                   m.what_you_get, m.event_program, m.host, m.benefits, m.testimonials,
+                   m.faq, m.cta_button_text
             FROM {schema}.masterminds m
             LEFT JOIN {schema}.schools s ON m.school_id = s.id
             WHERE m.id = {course_id} {status_filter}
@@ -348,7 +350,7 @@ def handler(event: dict, context) -> dict:
             'event_date': mastermind[5].isoformat() if mastermind[5] else None,
             'location': mastermind[6],
             'max_participants': mastermind[7],
-            'current_participants': mastermind[8],
+            'current_participants': mastermind[8] or 0,
             'price': float(mastermind[9]) if mastermind[9] else None,
             'currency': mastermind[10],
             'image_url': mastermind[11],
@@ -363,7 +365,17 @@ def handler(event: dict, context) -> dict:
             'author_position': mastermind[20],
             'co_authors': mastermind[21],
             'created_at': mastermind[22].isoformat() if mastermind[22] else None,
-            'school_slug': mastermind[23]
+            'school_slug': mastermind[23],
+            'hero_title': mastermind[24],
+            'hero_subtitle': mastermind[25],
+            'about_event': mastermind[26],
+            'what_you_get': mastermind[27] if mastermind[27] else [],
+            'event_program': mastermind[28] if mastermind[28] else [],
+            'host': mastermind[29] if mastermind[29] else {},
+            'benefits': mastermind[30] if mastermind[30] else [],
+            'testimonials': mastermind[31] if mastermind[31] else [],
+            'faq': mastermind[32] if mastermind[32] else [],
+            'cta_button_text': mastermind[33] or 'Зарегистрироваться'
         }
         
         cur.close()
