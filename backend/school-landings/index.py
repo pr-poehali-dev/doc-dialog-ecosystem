@@ -48,18 +48,19 @@ def response(status_code: int, body: Any) -> dict:
     }
 
 
-def get_school_by_slug(conn, slug: str) -> dict:
+def get_school_by_slug(conn, slug: str, preview: bool = False) -> dict:
     """Получение полного лендинга школы по slug для публичного отображения"""
     with conn.cursor() as cur:
         # Основная информация о школе
-        cur.execute("""
+        verification_filter = "" if preview else "AND is_verified = true"
+        cur.execute(f"""
             SELECT id, name, short_description, description, logo_url, cover_url,
                    city, address, phone, email, website, whatsapp, vk, max_url,
                    license_number, is_author_school, founded_year, students_count, teachers_count,
                    mission, about_school, why_choose_us, cta_button_text, cta_button_url,
                    rating, reviews_count, seo_title, seo_description, is_verified
             FROM t_p46047379_doc_dialog_ecosystem.schools
-            WHERE slug = %s AND is_verified = true
+            WHERE slug = %s {verification_filter}
         """, (slug,))
         school = cur.fetchone()
         
@@ -394,11 +395,12 @@ def handler(event: dict, context) -> dict:
         # GET /?action=school&slug=X - публичный лендинг школы по slug
         if method == 'GET' and event.get('queryStringParameters', {}).get('action') == 'school':
             slug = event.get('queryStringParameters', {}).get('slug')
+            preview = event.get('queryStringParameters', {}).get('preview', 'false').lower() == 'true'
             if not slug:
                 conn.close()
                 return response(400, {'error': 'Требуется параметр slug'})
             
-            school = get_school_by_slug(conn, slug)
+            school = get_school_by_slug(conn, slug, preview)
             conn.close()
             
             if not school:

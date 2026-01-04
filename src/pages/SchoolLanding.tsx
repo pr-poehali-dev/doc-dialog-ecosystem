@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import Icon from '@/components/ui/icon';
 
 const SCHOOLS_API_URL = 'https://functions.poehali.dev/6ac6b552-624e-4960-a4f1-94f540394c86';
@@ -41,6 +41,7 @@ interface SchoolData {
 
 export default function SchoolLanding() {
   const { slug } = useParams<{ slug: string }>();
+  const [searchParams] = useSearchParams();
   const [school, setSchool] = useState<SchoolData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -51,7 +52,9 @@ export default function SchoolLanding() {
   const fetchSchool = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${SCHOOLS_API_URL}?action=school&slug=${slug}`);
+      const isPreview = searchParams.get('preview') === 'true';
+      const previewParam = isPreview ? '&preview=true' : '';
+      const response = await fetch(`${SCHOOLS_API_URL}?action=school&slug=${slug}${previewParam}`);
       if (!response.ok) throw new Error('Школа не найдена');
       const data = await response.json();
       setSchool(data);

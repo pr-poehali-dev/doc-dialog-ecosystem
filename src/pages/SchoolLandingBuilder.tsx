@@ -280,9 +280,9 @@ export default function SchoolLandingBuilder() {
       if (response.ok) {
         const result = await response.json();
         alert('Лендинг школы сохранён!');
-        // Переходим на публичный лендинг школы
+        // Переходим на публичный лендинг школы с режимом preview
         if (result.slug) {
-          navigate(`/school/${result.slug}`);
+          navigate(`/school/${result.slug}?preview=true`);
         } else {
           navigate('/school/dashboard');
         }
