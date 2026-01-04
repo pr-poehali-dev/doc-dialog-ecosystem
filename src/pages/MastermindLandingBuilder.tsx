@@ -169,6 +169,8 @@ export default function MastermindLandingBuilder() {
           shortDescription: mm.description || '',
           heroTitle: mm.hero_title || '',
           heroSubtitle: mm.hero_subtitle || '',
+          coverUrl: mm.cover_url || '',
+          schoolLogoUrl: mm.school_logo_url || '',
           eventDate: mm.event_date ? new Date(mm.event_date).toISOString().split('T')[0] : '',
           location: mm.location || '',
           maxParticipants: mm.max_participants?.toString() || '',

@@ -164,6 +164,8 @@ export default function OfflineTrainingLandingBuilder() {
           shortDescription: training.description || '',
           heroTitle: training.hero_title || '',
           heroSubtitle: training.hero_subtitle || '',
+          coverUrl: training.cover_url || '',
+          schoolLogoUrl: training.school_logo_url || '',
           eventDate: training.event_date ? new Date(training.event_date).toISOString().split('T')[0] : '',
           location: training.location || '',
           maxParticipants: training.max_participants?.toString() || '',
