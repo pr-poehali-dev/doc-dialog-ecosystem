@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +20,25 @@ interface AdminUsersTabProps {
 }
 
 export default function AdminUsersTab({ users, loading, onUpdateUserRole }: AdminUsersTabProps) {
+  const navigate = useNavigate();
+
+  const handleLoginAsUser = (user: User) => {
+    // Переход в кабинет пользователя в зависимости от роли
+    switch (user.role) {
+      case 'school':
+        navigate('/school/dashboard');
+        break;
+      case 'salon':
+        navigate('/salon/cabinet');
+        break;
+      case 'masseur':
+        navigate('/dashboard');
+        break;
+      default:
+        navigate('/dashboard');
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -54,7 +74,15 @@ export default function AdminUsersTab({ users, loading, onUpdateUserRole }: Admi
               </div>
             </CardHeader>
             <CardContent>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => handleLoginAsUser(user)}
+                >
+                  <Icon name="LogIn" size={16} className="mr-2" />
+                  Войти в кабинет
+                </Button>
                 <Button
                   size="sm"
                   variant={user.is_admin ? "default" : "outline"}
