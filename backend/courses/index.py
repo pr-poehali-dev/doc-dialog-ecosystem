@@ -1424,7 +1424,8 @@ def handler(event: dict, context) -> dict:
                 benefits = '{benefits}',
                 testimonials = '{testimonials}',
                 faq = '{faq}',
-                cta_button_text = '{cta_button_text.replace("'", "''")}'            WHERE id = {training_id}
+                cta_button_text = '{cta_button_text.replace("'", "''")}'
+            WHERE id = {training_id}
             RETURNING id, title, slug, status, updated_at
         """)
         
