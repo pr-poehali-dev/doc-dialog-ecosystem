@@ -146,22 +146,41 @@ export default function CourseLandingBuilder() {
 
   const handleSubmit = async () => {
     try {
+      const userDataStr = localStorage.getItem('user');
+      if (!userDataStr) {
+        alert('Необходимо войти в систему');
+        navigate('/login');
+        return;
+      }
+
+      const userData = JSON.parse(userDataStr);
+      const schoolId = userData.school_id;
+
+      if (!schoolId) {
+        alert('У вас нет привязанной школы. Создайте школу в профиле.');
+        navigate('/profile');
+        return;
+      }
+
       const response = await fetch('https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?type=courses', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify({
+          school_id: schoolId,
+          ...data
+        })
       });
 
       if (response.ok) {
         const result = await response.json();
-        alert(`Лендинг курса успешно создан и опубликован!`);
-        navigate(`/course/landing/${result.slug}`);
+        alert(`Лендинг курса успешно создан и отправлен на модерацию!`);
+        navigate(`/course/landing/${result.slug}?preview=true`);
       } else {
-        const error = await response.text();
+        const error = await response.json();
         console.error('Server error:', error);
-        alert('Ошибка при создании лендинга курса');
+        alert(`Ошибка: ${error.error || 'Не удалось создать курс'}`);
       }
     } catch (error) {
       console.error('Error:', error);
