@@ -168,13 +168,7 @@ export default function MastermindPublicLanding() {
           <Button 
             size="lg" 
             className="bg-white text-purple-600 hover:bg-gray-100"
-            onClick={() => {
-              if (mastermind.school_slug) {
-                window.open(`/school/${mastermind.school_slug}`, '_blank');
-              } else {
-                window.open(mastermind.external_url, '_blank');
-              }
-            }}
+            onClick={() => window.open(mastermind.external_url, '_blank')}
           >
             {mastermind.cta_button_text}
           </Button>
@@ -401,13 +395,7 @@ export default function MastermindPublicLanding() {
           <Button 
             size="lg" 
             className="bg-white text-purple-600 hover:bg-gray-100"
-            onClick={() => {
-              if (mastermind.school_slug) {
-                window.open(`/school/${mastermind.school_slug}`, '_blank');
-              } else {
-                window.open(mastermind.external_url, '_blank');
-              }
-            }}
+            onClick={() => window.open(mastermind.external_url, '_blank')}
           >
             {mastermind.cta_button_text}
           </Button>
