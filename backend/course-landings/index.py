@@ -98,10 +98,10 @@ def handler(event: dict, context) -> dict:
                 'id': course[0],
                 'school': {
                     'id': course[1],
-                    'name': course[30],
-                    'logo': course[31],
-                    'description': course[32],
-                    'students_count': course[33]
+                    'name': course[31],
+                    'logo': course[32],
+                    'description': course[33],
+                    'students_count': course[34]
                 },
                 'title': course[2],
                 'short_description': course[3],
