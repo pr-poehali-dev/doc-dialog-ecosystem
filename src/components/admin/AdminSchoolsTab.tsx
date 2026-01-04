@@ -91,12 +91,23 @@ export default function AdminSchoolsTab() {
       const token = localStorage.getItem('token');
       const userId = getUserId();
       
-      console.log('[MODERATE] Sending request:', {
-        schoolId,
-        isVerified,
-        token: token ? 'present' : 'missing',
-        userId: userId || 'missing'
-      });
+      if (!token) {
+        toast({
+          title: "Ошибка авторизации",
+          description: "Токен не найден. Пожалуйста, войдите снова.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      if (!userId) {
+        toast({
+          title: "Ошибка авторизации",
+          description: "User ID не найден. Пожалуйста, войдите снова.",
+          variant: "destructive"
+        });
+        return;
+      }
       
       const response = await fetch(`https://functions.poehali.dev/6ac6b552-624e-4960-a4f1-94f540394c86?action=moderate&id=${schoolId}`, {
         method: 'PUT',
@@ -108,8 +119,6 @@ export default function AdminSchoolsTab() {
         body: JSON.stringify({ is_verified: isVerified })
       });
       
-      console.log('[MODERATE] Response status:', response.status);
-      
       if (response.ok) {
         toast({ 
           title: "Успех", 
@@ -118,11 +127,9 @@ export default function AdminSchoolsTab() {
         loadSchools();
       } else {
         const errorData = await response.json().catch(() => ({}));
-        console.log('[MODERATE] Error response:', errorData);
         throw new Error(errorData.error || `HTTP ${response.status}`);
       }
     } catch (error) {
-      console.error('[MODERATE] Exception:', error);
       toast({
         title: "Ошибка",
         description: error instanceof Error ? error.message : "Не удалось изменить статус школы",
