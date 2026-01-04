@@ -130,9 +130,10 @@ def register_user(data: dict) -> dict:
             )
         elif role == 'school':
             cursor.execute(
-                "INSERT INTO schools (user_id, name, phone, email, city) VALUES (%s, %s, %s, %s, %s)",
+                "INSERT INTO schools (user_id, name, phone, email, city) VALUES (%s, %s, %s, %s, %s) RETURNING id",
                 (user_id, profile_data.get('name'), profile_data.get('phone'), email, profile_data.get('city'))
             )
+            school_id = cursor.fetchone()['id']
         elif role == 'salon':
             cursor.execute(
                 "INSERT INTO salons (user_id, name, phone, email, city) VALUES (%s, %s, %s, %s, %s)",
@@ -143,16 +144,21 @@ def register_user(data: dict) -> dict:
         
         token = generate_token(user_id, email, role)
         
+        user_response = {
+            'id': user_id,
+            'email': email,
+            'role': role
+        }
+        
+        if role == 'school' and 'school_id' in locals():
+            user_response['school_id'] = school_id
+        
         return {
             'statusCode': 201,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
                 'token': token,
-                'user': {
-                    'id': user_id,
-                    'email': email,
-                    'role': role
-                }
+                'user': user_response
             }),
             'isBase64Encoded': False
         }
@@ -199,10 +205,19 @@ def login_user(data: dict) -> dict:
         
         token = generate_token(user['id'], email, user['role'])
         
+        user_response = {'id': user['id'], 'email': email, 'role': user['role']}
+        
+        # Добавляем school_id для школ
+        if user['role'] == 'school':
+            cursor.execute("SELECT id FROM schools WHERE user_id = %s", (user['id'],))
+            school = cursor.fetchone()
+            if school:
+                user_response['school_id'] = school['id']
+        
         return {
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'token': token, 'user': {'id': user['id'], 'email': email, 'role': user['role']}}),
+            'body': json.dumps({'token': token, 'user': user_response}),
             'isBase64Encoded': False
         }
     
