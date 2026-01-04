@@ -12,6 +12,8 @@ interface CourseLandingData {
   shortDescription: string;
   heroTitle: string;
   heroSubtitle: string;
+  coverUrl: string;
+  schoolLogoUrl: string;
   category: string;
   type: string;
   price: string;
@@ -56,6 +58,8 @@ export default function CourseLandingBuilder() {
     shortDescription: 'Научитесь делать профессиональный массаж всего тела за 3 месяца',
     heroTitle: 'Станьте профессиональным массажистом',
     heroSubtitle: 'Полный курс обучения классическому массажу с нуля до первых клиентов',
+    coverUrl: '',
+    schoolLogoUrl: '',
     category: 'Классический массаж',
     type: 'online',
     price: '45 000 ₽',
@@ -183,16 +187,26 @@ export default function CourseLandingBuilder() {
         </div>
 
         {/* Hero секция */}
-        <section className="relative h-[600px] flex items-center justify-center bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 text-white">
-          <div className="absolute inset-0 bg-black/30"></div>
-          <div className="relative z-10 text-center px-4 max-w-4xl">
+        <section 
+          className="relative min-h-[400px] sm:h-[500px] md:h-[600px] flex items-center justify-center text-white"
+          style={{
+            backgroundImage: data.coverUrl ? `url(${data.coverUrl})` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        >
+          <div className="absolute inset-0 bg-black/50"></div>
+          <div className="relative z-10 text-center px-4 py-12 max-w-4xl">
+            {data.schoolLogoUrl && (
+              <img src={data.schoolLogoUrl} alt="Логотип школы" className="h-12 sm:h-16 md:h-20 mx-auto mb-4 object-contain" />
+            )}
             <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm mb-4">
               {data.category} • {data.type === 'online' ? 'Онлайн' : 'Офлайн'}
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 drop-shadow-lg">
               {data.heroTitle || data.title || 'Название курса'}
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-white/90">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 sm:mb-8 drop-shadow-md">
               {data.heroSubtitle || data.shortDescription || 'Описание курса'}
             </p>
             <div className="flex flex-wrap gap-4 justify-center items-center mb-8">
@@ -516,6 +530,26 @@ export default function CourseLandingBuilder() {
                   rows={6}
                   placeholder="Расскажите о курсе, его целях, для кого он подходит..."
                 />
+              </div>
+              <div>
+                <Label>Ссылка на фото для шапки</Label>
+                <Input
+                  value={data.coverUrl}
+                  onChange={(e) => updateField('coverUrl', e.target.value)}
+                  placeholder="https://example.com/cover.jpg"
+                  type="url"
+                />
+                <p className="text-xs text-muted-foreground mt-1">Фон первого экрана (рекомендуем 1920x800px)</p>
+              </div>
+              <div>
+                <Label>Ссылка на логотип школы</Label>
+                <Input
+                  value={data.schoolLogoUrl}
+                  onChange={(e) => updateField('schoolLogoUrl', e.target.value)}
+                  placeholder="https://example.com/logo.png"
+                  type="url"
+                />
+                <p className="text-xs text-muted-foreground mt-1">Отображается над заголовком</p>
               </div>
               <div>
                 <Label>Текст кнопки записи</Label>

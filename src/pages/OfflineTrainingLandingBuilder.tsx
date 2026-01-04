@@ -14,6 +14,8 @@ interface OfflineTrainingLandingData {
   shortDescription: string;
   heroTitle: string;
   heroSubtitle: string;
+  coverUrl: string;
+  schoolLogoUrl: string;
   eventDate: string;
   location: string;
   maxParticipants: string;
@@ -68,6 +70,8 @@ export default function OfflineTrainingLandingBuilder() {
     shortDescription: 'Практическое обучение техникам классического массажа с получением сертификата',
     heroTitle: 'Освойте профессию массажиста за 2 недели',
     heroSubtitle: 'Интенсивное очное обучение с практикой на реальных клиентах и гарантией трудоустройства',
+    coverUrl: '',
+    schoolLogoUrl: '',
     eventDate: '2026-04-01',
     location: 'Москва, ул. Тверская, 10',
     maxParticipants: '12',
@@ -289,6 +293,16 @@ export default function OfflineTrainingLandingBuilder() {
               <div>
                 <Label>Подзаголовок на главном экране</Label>
                 <Textarea value={data.heroSubtitle} onChange={(e) => handleInputChange('heroSubtitle', e.target.value)} rows={2} />
+              </div>
+              <div>
+                <Label>Ссылка на фото для шапки</Label>
+                <Input value={data.coverUrl} onChange={(e) => handleInputChange('coverUrl', e.target.value)} placeholder="https://example.com/cover.jpg" type="url" />
+                <p className="text-xs text-muted-foreground mt-1">Фон первого экрана (рекомендуем 1920x800px)</p>
+              </div>
+              <div>
+                <Label>Ссылка на логотип школы</Label>
+                <Input value={data.schoolLogoUrl} onChange={(e) => handleInputChange('schoolLogoUrl', e.target.value)} placeholder="https://example.com/logo.png" type="url" />
+                <p className="text-xs text-muted-foreground mt-1">Отображается над заголовком</p>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
