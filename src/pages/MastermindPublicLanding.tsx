@@ -135,11 +135,13 @@ export default function MastermindPublicLanding() {
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="relative z-10 text-center px-4 max-w-4xl">
           {mastermind.school_logo_url && (
-            <img 
-              src={mastermind.school_logo_url} 
-              alt="Логотип школы" 
-              className="mx-auto mb-6 h-12 md:h-16 lg:h-20 w-auto object-contain drop-shadow-lg"
-            />
+            <div className="mb-6">
+              <img 
+                src={mastermind.school_logo_url} 
+                alt="Логотип школы" 
+                className="mx-auto h-10 w-auto object-contain drop-shadow-lg opacity-90"
+              />
+            </div>
           )}
           <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm mb-4">
             Мастермайнд • {formatDate(mastermind.event_date)}
