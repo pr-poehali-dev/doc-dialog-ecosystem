@@ -144,12 +144,8 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
     if (!confirm('Вы уверены, что хотите удалить это обучение?')) return;
     
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch(`${TRAINING_API_URL}?type=offline_trainings&id=${trainingId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        method: 'DELETE'
       });
       
       if (response.ok) {
