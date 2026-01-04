@@ -54,7 +54,7 @@ def get_school_by_slug(conn, slug: str) -> dict:
         # Основная информация о школе
         cur.execute("""
             SELECT id, name, short_description, description, logo_url, cover_url,
-                   city, address, phone, email, website, whatsapp, telegram, vk, instagram,
+                   city, address, phone, email, website, whatsapp, vk, max_url,
                    license_number, is_author_school, founded_year, students_count, teachers_count,
                    mission, about_school, why_choose_us, cta_button_text, cta_button_url,
                    rating, reviews_count, seo_title, seo_description, is_verified
@@ -264,7 +264,7 @@ def update_school_landing(conn, school_id: int, user_id: int, data: dict) -> boo
             UPDATE t_p46047379_doc_dialog_ecosystem.schools
             SET name = %s, short_description = %s, description = %s, slug = %s,
                 logo_url = %s, cover_url = %s, city = %s, address = %s,
-                phone = %s, email = %s, website = %s, whatsapp = %s, telegram = %s, vk = %s, instagram = %s,
+                phone = %s, email = %s, website = %s, whatsapp = %s, vk = %s, max_url = %s,
                 license_number = %s, is_author_school = %s, founded_year = %s,
                 students_count = %s, teachers_count = %s, mission = %s,
                 about_school = %s, why_choose_us = %s, cta_button_text = %s, cta_button_url = %s,
@@ -274,7 +274,7 @@ def update_school_landing(conn, school_id: int, user_id: int, data: dict) -> boo
             data.get('name'), data.get('short_description'), data.get('description'), data.get('slug'),
             data.get('logo_url'), data.get('cover_url'), data.get('city'), data.get('address'),
             data.get('phone'), data.get('email'), data.get('website'),
-            data.get('whatsapp'), data.get('telegram'), data.get('vk'), data.get('instagram'),
+            data.get('whatsapp'), data.get('vk'), data.get('max_url'),
             data.get('license_number'), data.get('is_author_school', False), data.get('founded_year'),
             data.get('students_count'), data.get('teachers_count'), data.get('mission'),
             data.get('about_school'), data.get('why_choose_us'),

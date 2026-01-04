@@ -34,6 +34,9 @@ interface LandingData {
     phone: string;
     email: string;
     website: string;
+    whatsapp: string;
+    vk: string;
+    max_url: string;
   };
   testimonials: Array<{
     name: string;
@@ -72,7 +75,10 @@ export default function SchoolLandingBuilder() {
       address: '',
       phone: '',
       email: '',
-      website: ''
+      website: '',
+      whatsapp: '',
+      vk: '',
+      max_url: ''
     },
     testimonials: [{ name: '', text: '', rating: 5 }],
     stats: {
@@ -149,7 +155,10 @@ export default function SchoolLandingBuilder() {
             address: schoolData.address || '',
             phone: schoolData.phone || '',
             email: schoolData.email || '',
-            website: schoolData.website || ''
+            website: schoolData.website || '',
+            whatsapp: schoolData.whatsapp || '',
+            vk: schoolData.vk || '',
+            max_url: schoolData.max_url || ''
           },
           testimonials,
           stats: {
@@ -225,6 +234,9 @@ export default function SchoolLandingBuilder() {
         phone: data.contacts.phone,
         email: data.contacts.email,
         website: data.contacts.website,
+        whatsapp: data.contacts.whatsapp,
+        vk: data.contacts.vk,
+        max_url: data.contacts.max_url,
         students_count: parseInt(data.stats.studentsCount) || null,
         founded_year: data.stats.yearsExperience ? new Date().getFullYear() - parseInt(data.stats.yearsExperience) : null
       };
@@ -863,6 +875,36 @@ export default function SchoolLandingBuilder() {
                     onChange={(e) => updateField('contacts.website', e.target.value)}
                     placeholder="Сайт: https://school.ru"
                   />
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-3">Социальные сети</h3>
+                <div className="space-y-3">
+                  <div>
+                    <Label>WhatsApp (номер телефона)</Label>
+                    <Input
+                      value={data.contacts.whatsapp}
+                      onChange={(e) => updateField('contacts.whatsapp', e.target.value)}
+                      placeholder="+79991234567"
+                    />
+                  </div>
+                  <div>
+                    <Label>VK (ссылка на группу или профиль)</Label>
+                    <Input
+                      value={data.contacts.vk}
+                      onChange={(e) => updateField('contacts.vk', e.target.value)}
+                      placeholder="https://vk.com/yourschool"
+                    />
+                  </div>
+                  <div>
+                    <Label>МАКС (ссылка на профиль)</Label>
+                    <Input
+                      value={data.contacts.max_url}
+                      onChange={(e) => updateField('contacts.max_url', e.target.value)}
+                      placeholder="https://max.ru/yourschool"
+                    />
+                  </div>
                 </div>
               </div>
 

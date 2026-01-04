@@ -17,9 +17,8 @@ interface SchoolData {
   email: string;
   website: string;
   whatsapp: string;
-  telegram: string;
   vk: string;
-  instagram: string;
+  max_url: string;
   license_number: string;
   is_author_school: boolean;
   founded_year: number;
@@ -367,28 +366,25 @@ export default function SchoolLanding() {
           </div>
           
           {/* Социальные сети */}
-          {(school.whatsapp || school.telegram || school.vk || school.instagram) && (
+          {(school.whatsapp || school.vk || school.max_url) && (
             <div className="mt-8 pt-8 border-t border-gray-200">
               <h3 className="text-lg font-bold text-gray-900 mb-4 text-center">Мы в социальных сетях</h3>
               <div className="flex justify-center gap-4">
                 {school.whatsapp && (
-                  <a href={`https://wa.me/${school.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center transition-colors">
+                  <a href={`https://wa.me/${school.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center transition-colors shadow-lg hover:shadow-xl">
                     <Icon name="MessageCircle" size={24} />
                   </a>
                 )}
-                {school.telegram && (
-                  <a href={`https://t.me/${school.telegram}`} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center transition-colors">
-                    <Icon name="Send" size={24} />
-                  </a>
-                )}
                 {school.vk && (
-                  <a href={school.vk} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex items-center justify-center transition-colors">
-                    <Icon name="Users" size={24} />
+                  <a href={school.vk} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex items-center justify-center transition-colors shadow-lg hover:shadow-xl" title="VK">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                      <path d="M15.07 2H8.93C3.33 2 2 3.33 2 8.93v6.14C2 20.67 3.33 22 8.93 22h6.14c5.6 0 6.93-1.33 6.93-6.93V8.93C22 3.33 20.67 2 15.07 2zm3.83 14.44h-1.8c-.66 0-.86-.52-2.05-1.71-1.03-1.01-1.49-1.15-1.75-1.15-.36 0-.46.1-.46.58v1.56c0 .42-.14.67-1.23.67-1.81 0-3.82-1.08-5.24-3.09C4.81 10.34 4.3 8.21 4.3 7.75c0-.26.1-.5.58-.5h1.8c.43 0 .6.2.76.66.85 2.37 2.27 4.44 2.85 4.44.22 0 .32-.1.32-.65V9.6c-.07-1.14-.67-1.24-.67-1.65 0-.2.17-.41.44-.41h2.83c.36 0 .49.19.49.61v3.28c0 .36.16.49.26.49.22 0 .4-.13.82-.54 1.27-1.42 2.18-3.62 2.18-3.62.12-.25.31-.5.78-.5h1.8c.54 0 .66.28.54.66-.21.94-2.37 3.88-2.37 3.88-.18.29-.25.42 0 .75.19.25.8.78 1.21 1.25.75.84 1.33 1.54 1.49 2.03.15.49-.08.74-.58.74z"/>
+                    </svg>
                   </a>
                 )}
-                {school.instagram && (
-                  <a href={school.instagram} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-gradient-to-tr from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-full flex items-center justify-center transition-colors">
-                    <Icon name="Instagram" size={24} />
+                {school.max_url && (
+                  <a href={school.max_url} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white rounded-full flex items-center justify-center transition-colors shadow-lg hover:shadow-xl" title="МАКС">
+                    <span className="font-bold text-lg">М</span>
                   </a>
                 )}
               </div>
