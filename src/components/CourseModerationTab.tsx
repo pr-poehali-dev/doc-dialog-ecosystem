@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import Icon from '@/components/ui/icon';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface Course {
   id: number;
@@ -20,6 +21,20 @@ interface Course {
   external_url: string;
   status: string;
   created_at: string;
+  short_description?: string;
+  hero_title?: string;
+  hero_subtitle?: string;
+  about_course?: string;
+  what_you_learn?: string[];
+  program_modules?: any[];
+  author_name?: string;
+  author_position?: string;
+  author_bio?: string;
+  author_experience?: string;
+  benefits?: string[];
+  testimonials?: any[];
+  faq?: any[];
+  duration_text?: string;
 }
 
 const COURSE_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f';
@@ -36,6 +51,8 @@ export default function CourseModerationTab({ onModerationComplete }: CourseMode
   const [courses, setCourses] = useState<Course[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
   const [moderationComment, setModerationComment] = useState('');
+  const [viewDetailsId, setViewDetailsId] = useState<number | null>(null);
+  const [detailsCourse, setDetailsCourse] = useState<Course | null>(null);
 
   useEffect(() => {
     loadPendingCourses();
@@ -144,6 +161,21 @@ export default function CourseModerationTab({ onModerationComplete }: CourseMode
     return labels[type] || type;
   };
 
+  const loadCourseDetails = async (courseId: number) => {
+    try {
+      const response = await fetch(`${COURSE_API_URL}?id=${courseId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setDetailsCourse(data);
+        setViewDetailsId(courseId);
+      } else {
+        toast({ title: 'Ошибка', description: 'Не удалось загрузить детали курса', variant: 'destructive' });
+      }
+    } catch (error) {
+      toast({ title: 'Ошибка', description: 'Не удалось загрузить детали курса', variant: 'destructive' });
+    }
+  };
+
   return (
     <div className="space-y-4">
       {loading ? (
@@ -221,7 +253,15 @@ export default function CourseModerationTab({ onModerationComplete }: CourseMode
                 </div>
               )}
 
-              <div className="flex gap-2 pt-2 border-t">
+              <div className="flex gap-2 pt-2 border-t flex-wrap">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => loadCourseDetails(course.id)}
+                >
+                  <Icon name="Eye" size={16} className="mr-2" />
+                  Посмотреть детали
+                </Button>
                 {selectedCourse === course.id ? (
                   <>
                     <Button onClick={() => approveCourse(course.id)} className="bg-green-600 hover:bg-green-700">
@@ -253,6 +293,159 @@ export default function CourseModerationTab({ onModerationComplete }: CourseMode
           </Card>
         ))
       )}
+
+      <Dialog open={viewDetailsId !== null} onOpenChange={(open) => !open && setViewDetailsId(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{detailsCourse?.title}</DialogTitle>
+            <DialogDescription>Полная информация о курсе для модерации</DialogDescription>
+          </DialogHeader>
+
+          {detailsCourse && (
+            <div className="space-y-6">
+              {/* Герой секция */}
+              {(detailsCourse.hero_title || detailsCourse.hero_subtitle) && (
+                <div className="border-l-4 border-primary pl-4">
+                  <h3 className="font-semibold mb-1">Герой-секция</h3>
+                  {detailsCourse.hero_title && <p className="text-lg font-bold">{detailsCourse.hero_title}</p>}
+                  {detailsCourse.hero_subtitle && <p className="text-muted-foreground">{detailsCourse.hero_subtitle}</p>}
+                </div>
+              )}
+
+              {/* Краткое описание */}
+              {detailsCourse.short_description && (
+                <div>
+                  <h3 className="font-semibold mb-2">Краткое описание</h3>
+                  <p className="text-sm">{detailsCourse.short_description}</p>
+                </div>
+              )}
+
+              {/* О курсе */}
+              {detailsCourse.about_course && (
+                <div>
+                  <h3 className="font-semibold mb-2">О курсе</h3>
+                  <p className="text-sm whitespace-pre-wrap">{detailsCourse.about_course}</p>
+                </div>
+              )}
+
+              {/* Что изучите */}
+              {detailsCourse.what_you_learn && detailsCourse.what_you_learn.length > 0 && (
+                <div>
+                  <h3 className="font-semibold mb-2">Что вы изучите</h3>
+                  <ul className="list-disc list-inside space-y-1">
+                    {detailsCourse.what_you_learn.map((item, idx) => (
+                      <li key={idx} className="text-sm">{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Программа курса */}
+              {detailsCourse.program_modules && detailsCourse.program_modules.length > 0 && (
+                <div>
+                  <h3 className="font-semibold mb-2">Программа курса</h3>
+                  <div className="space-y-3">
+                    {detailsCourse.program_modules.map((module, idx) => (
+                      <div key={idx} className="border rounded-lg p-3 bg-secondary/20">
+                        <h4 className="font-medium">{module.title}</h4>
+                        {module.duration && <p className="text-xs text-muted-foreground mb-2">Длительность: {module.duration}</p>}
+                        {module.topics && module.topics.length > 0 && (
+                          <ul className="list-disc list-inside text-sm space-y-1 mt-2">
+                            {module.topics.map((topic: string, topicIdx: number) => (
+                              <li key={topicIdx}>{topic}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Преподаватель */}
+              {(detailsCourse.author_name || detailsCourse.author_bio) && (
+                <div className="border rounded-lg p-4 bg-secondary/10">
+                  <h3 className="font-semibold mb-2">Преподаватель</h3>
+                  {detailsCourse.author_name && <p className="font-medium">{detailsCourse.author_name}</p>}
+                  {detailsCourse.author_position && <p className="text-sm text-muted-foreground">{detailsCourse.author_position}</p>}
+                  {detailsCourse.author_bio && <p className="text-sm mt-2">{detailsCourse.author_bio}</p>}
+                  {detailsCourse.author_experience && <p className="text-sm text-muted-foreground mt-1">Опыт: {detailsCourse.author_experience}</p>}
+                </div>
+              )}
+
+              {/* Преимущества */}
+              {detailsCourse.benefits && detailsCourse.benefits.length > 0 && (
+                <div>
+                  <h3 className="font-semibold mb-2">Что вы получите</h3>
+                  <ul className="grid grid-cols-2 gap-2">
+                    {detailsCourse.benefits.map((benefit, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-sm">
+                        <Icon name="CheckCircle2" size={16} className="text-green-500 mt-0.5 flex-shrink-0" />
+                        <span>{benefit}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Отзывы */}
+              {detailsCourse.testimonials && detailsCourse.testimonials.length > 0 && (
+                <div>
+                  <h3 className="font-semibold mb-2">Отзывы студентов</h3>
+                  <div className="space-y-2">
+                    {detailsCourse.testimonials.map((testimonial, idx) => (
+                      <div key={idx} className="border rounded p-3 bg-secondary/5">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-medium text-sm">{testimonial.author}</span>
+                          {testimonial.rating && (
+                            <div className="flex">
+                              {[...Array(testimonial.rating)].map((_, i) => (
+                                <Icon key={i} name="Star" size={12} className="text-yellow-500 fill-yellow-500" />
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground">{testimonial.text}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* FAQ */}
+              {detailsCourse.faq && detailsCourse.faq.length > 0 && (
+                <div>
+                  <h3 className="font-semibold mb-2">Часто задаваемые вопросы</h3>
+                  <div className="space-y-3">
+                    {detailsCourse.faq.map((item, idx) => (
+                      <div key={idx} className="border-l-2 pl-3">
+                        <p className="font-medium text-sm">{item.question}</p>
+                        <p className="text-sm text-muted-foreground mt-1">{item.answer}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Цена и длительность */}
+              <div className="border-t pt-4 flex gap-4 flex-wrap">
+                {detailsCourse.price && (
+                  <div>
+                    <span className="text-sm text-muted-foreground">Цена:</span>
+                    <p className="font-semibold">{detailsCourse.price.toLocaleString()} {detailsCourse.currency}</p>
+                  </div>
+                )}
+                {detailsCourse.duration_text && (
+                  <div>
+                    <span className="text-sm text-muted-foreground">Длительность:</span>
+                    <p className="font-semibold">{detailsCourse.duration_text}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
