@@ -450,7 +450,7 @@ def handler(event: dict, context) -> dict:
                 '{author_name.replace("'", "''")}', {f"'{author_photo}'" if author_photo else 'NULL'},
                 '{author_bio.replace("'", "''")}', '{author_experience.replace("'", "''")}',
                 '{author_position.replace("'", "''")}',
-                '{cta_button_text.replace("'", "''")}', '{cta_button_url}', 'approved'
+                '{cta_button_text.replace("'", "''")}', '{cta_button_url}', 'pending'
             )
             RETURNING id, title, slug, status, created_at
         """)
