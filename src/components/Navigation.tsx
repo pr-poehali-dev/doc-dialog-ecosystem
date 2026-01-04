@@ -9,6 +9,29 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
   const isLoggedIn = !!localStorage.getItem('token');
+  
+  // Проверяем, вошли ли мы от имени другого пользователя
+  const userStr = localStorage.getItem('user');
+  const isImpersonating = userStr ? JSON.parse(userStr).is_impersonating : false;
+  const originalAdminEmail = userStr ? JSON.parse(userStr).original_admin_email : null;
+
+  const handleReturnToAdmin = () => {
+    // Восстанавливаем данные админа
+    const adminUser = localStorage.getItem('admin_backup_user');
+    const adminToken = localStorage.getItem('admin_backup_token');
+    
+    if (adminUser) {
+      localStorage.setItem('user', adminUser);
+      localStorage.removeItem('admin_backup_user');
+    }
+    if (adminToken) {
+      localStorage.setItem('token', adminToken);
+      localStorage.removeItem('admin_backup_token');
+    }
+    
+    // Переходим в админку
+    window.location.href = '/admin';
+  };
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -57,6 +80,16 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
             )}
           </div>
           <div className="flex items-center gap-2">
+            {isImpersonating && (
+              <Button 
+                variant="destructive" 
+                size="sm"
+                onClick={handleReturnToAdmin}
+                className="mr-2"
+              >
+                ← Вернуться в админку ({originalAdminEmail})
+              </Button>
+            )}
             {isLoggedIn ? (
               <Link to="/dashboard">
                 <Button>Личный кабинет</Button>
