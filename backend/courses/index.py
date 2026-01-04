@@ -51,7 +51,8 @@ def handler(event: dict, context) -> dict:
                    event_date, location, max_participants, current_participants,
                    price, original_price, discount_price, currency, image_url, external_url,
                    about_training, what_you_get, training_program, instructor, co_instructors,
-                   benefits, testimonials, faq, cta_button_text, status
+                   benefits, testimonials, faq, cta_button_text, status,
+                   cover_url, school_logo_url
             FROM {schema}.offline_training
             WHERE slug = '{slug}' {status_filter}
         """)
@@ -84,7 +85,9 @@ def handler(event: dict, context) -> dict:
             'benefits': training[21] if training[21] else [],
             'testimonials': training[22] if training[22] else [],
             'faq': training[23] if training[23] else [],
-            'cta_button_text': training[24] or 'Записаться на обучение'
+            'cta_button_text': training[24] or 'Записаться на обучение',
+            'cover_url': training[26],
+            'school_logo_url': training[27]
         }
         
         cur.close()
@@ -104,7 +107,8 @@ def handler(event: dict, context) -> dict:
                    m.price, m.original_price, m.discount_price, m.currency, m.image_url, m.external_url,
                    m.about_event, m.what_you_get, m.event_program, m.host, m.co_authors as co_hosts,
                    m.benefits, m.testimonials, m.faq, m.cta_button_text, m.status,
-                   s.slug as school_slug, s.name as school_name
+                   s.slug as school_slug, s.name as school_name,
+                   m.cover_url, m.school_logo_url
             FROM {schema}.masterminds m
             LEFT JOIN {schema}.schools s ON m.school_id = s.id
             WHERE m.slug = '{slug}' AND m.status = 'approved'
@@ -148,7 +152,9 @@ def handler(event: dict, context) -> dict:
             'faq': mastermind[23] if mastermind[23] else [],
             'cta_button_text': mastermind[24] or 'Зарегистрироваться',
             'school_slug': mastermind[26],
-            'school_name': mastermind[27]
+            'school_name': mastermind[27],
+            'cover_url': mastermind[28],
+            'school_logo_url': mastermind[29]
         }
         
         cur.close()
@@ -167,7 +173,8 @@ def handler(event: dict, context) -> dict:
                    category, type, price, duration_text, about_course, for_whom, expectations,
                    what_you_learn, program_modules, author_name, author_position, 
                    author_bio, author_photo, author_experience, benefits, 
-                   testimonials, faq, cta_button_text, cta_button_url
+                   testimonials, faq, cta_button_text, cta_button_url,
+                   cover_url, school_logo_url
             FROM {schema}.courses
             WHERE slug = '{slug}' AND status = 'approved'
         """)
@@ -208,7 +215,9 @@ def handler(event: dict, context) -> dict:
             'testimonials': course[21] if course[21] else [],
             'faq': course[22] if course[22] else [],
             'cta_button_text': course[23],
-            'cta_button_url': course[24]
+            'cta_button_url': course[24],
+            'cover_url': course[25],
+            'school_logo_url': course[26]
         }
         
         cur.close()
@@ -602,6 +611,9 @@ def handler(event: dict, context) -> dict:
             ON CONFLICT (school_id) DO NOTHING
         """)
         
+        cover_url = body.get('coverUrl', '')
+        school_logo_url = body.get('schoolLogoUrl', '')
+        
         cur.execute(f"""
             INSERT INTO {schema}.courses (
                 school_id, title, description, short_description, category, course_type, type,
@@ -609,7 +621,7 @@ def handler(event: dict, context) -> dict:
                 hero_title, hero_subtitle, about_course,
                 what_you_learn, program_modules, benefits, testimonials, faq,
                 author_name, author_photo, author_bio, author_experience, author_position,
-                cta_button_text, cta_button_url, status
+                cta_button_text, cta_button_url, cover_url, school_logo_url, status
             )
             VALUES (
                 {school_id}, '{title.replace("'", "''")}', '{description.replace("'", "''")}',
@@ -622,7 +634,10 @@ def handler(event: dict, context) -> dict:
                 '{author_name.replace("'", "''")}', {f"'{author_photo}'" if author_photo else 'NULL'},
                 '{author_bio.replace("'", "''")}', '{author_experience.replace("'", "''")}',
                 '{author_position.replace("'", "''")}',
-                '{cta_button_text.replace("'", "''")}', '{cta_button_url}', 'pending'
+                '{cta_button_text.replace("'", "''")}', '{cta_button_url}',
+                {f"'{cover_url}'" if cover_url else 'NULL'},
+                {f"'{school_logo_url}'" if school_logo_url else 'NULL'},
+                'pending'
             )
             RETURNING id, title, slug, status, created_at
         """)
@@ -680,6 +695,8 @@ def handler(event: dict, context) -> dict:
         faq = json.dumps(body.get('faq', []))
         cta_button_text = body.get('cta_button_text', 'Зарегистрироваться')
         gallery = json.dumps(body.get('gallery', []))
+        cover_url = body.get('coverUrl', '')
+        school_logo_url = body.get('schoolLogoUrl', '')
         
         if not all([school_id, title, event_date, external_url]):
             cur.close()
@@ -710,7 +727,8 @@ def handler(event: dict, context) -> dict:
                 price, currency, image_url, external_url, original_price, discount_price, 
                 author_name, author_photo, author_position, event_content, school_name, 
                 hero_title, hero_subtitle, about_event, what_you_get, event_program, 
-                host, benefits, testimonials, faq, cta_button_text, slug, gallery, status
+                host, benefits, testimonials, faq, cta_button_text, slug, gallery,
+                cover_url, school_logo_url, status
             )
             VALUES (
                 {school_id}, '{title.replace("'", "''")}', '{description.replace("'", "''")}', 
@@ -731,7 +749,10 @@ def handler(event: dict, context) -> dict:
                 '{what_you_get}', '{event_program}', '{host}', 
                 '{benefits}', '{testimonials}', '{faq}', 
                 '{cta_button_text.replace("'", "''")}', 
-                '{slug}', '{gallery}', 'pending'
+                '{slug}', '{gallery}',
+                {f"'{cover_url}'" if cover_url else 'NULL'},
+                {f"'{school_logo_url}'" if school_logo_url else 'NULL'},
+                'pending'
             )
             RETURNING id, title, slug, status, created_at
         """)
@@ -1291,6 +1312,8 @@ def handler(event: dict, context) -> dict:
         testimonials = json.dumps(body.get('testimonials', []))
         faq = json.dumps(body.get('faq', []))
         cta_button_text = body.get('cta_button_text', 'Записаться на обучение')
+        cover_url = body.get('coverUrl', '')
+        school_logo_url = body.get('schoolLogoUrl', '')
         
         if not all([school_id, title, event_date, external_url]):
             cur.close()
@@ -1328,7 +1351,7 @@ def handler(event: dict, context) -> dict:
                 price, currency, external_url, original_price, discount_price,
                 author_name, author_photo, image_url, hero_title, hero_subtitle, about_training,
                 what_you_get, training_program, instructor, co_instructors, benefits,
-                testimonials, faq, cta_button_text, slug, status
+                testimonials, faq, cta_button_text, slug, cover_url, school_logo_url, status
             )
             VALUES (
                 {user_id}, {school_id}, '{school_name.replace("'", "''")}', '{title.replace("'", "''")}', '{description.replace("'", "''")}',
@@ -1343,7 +1366,10 @@ def handler(event: dict, context) -> dict:
                 '{hero_title.replace("'", "''")}', '{hero_subtitle.replace("'", "''")}',
                 '{about_training.replace("'", "''")}', '{what_you_get}', '{training_program}',
                 '{instructor}', '{co_instructors}', '{benefits}', '{testimonials}',
-                '{faq}', '{cta_button_text.replace("'", "''")}', '{slug}', 'pending'
+                '{faq}', '{cta_button_text.replace("'", "''")}', '{slug}',
+                {f"'{cover_url}'" if cover_url else 'NULL'},
+                {f"'{school_logo_url}'" if school_logo_url else 'NULL'},
+                'pending'
             )
             RETURNING id, title, slug, status, created_at
         """)

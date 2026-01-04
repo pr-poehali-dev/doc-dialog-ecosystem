@@ -248,7 +248,9 @@ export default function OfflineTrainingLandingBuilder() {
           benefits: data.benefits,
           testimonials: data.testimonials,
           faq: data.faq,
-          cta_button_text: data.ctaButtonText
+          cta_button_text: data.ctaButtonText,
+          coverUrl: data.coverUrl,
+          schoolLogoUrl: data.schoolLogoUrl
         })
       });
 
