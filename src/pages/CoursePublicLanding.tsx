@@ -45,9 +45,11 @@ interface CourseData {
   }>;
   cta_button_text: string;
   cta_button_url: string;
+  cover_url?: string;
+  school_logo_url?: string;
 }
 
-const COURSE_API_URL = 'https://functions.poehali.dev/a81dd7cd-c267-4f44-85f5-0da8353dc741';
+const COURSE_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f';
 
 export default function CoursePublicLanding() {
   const { slug } = useParams<{ slug: string }>();
@@ -65,47 +67,11 @@ export default function CoursePublicLanding() {
   const loadCourse = async () => {
     try {
       setLoading(true);
-      const isPreview = searchParams.get('preview') === 'true';
-      const previewParam = isPreview ? '&preview=true' : '';
-      const response = await fetch(`${COURSE_API_URL}?slug=${slug}${previewParam}`);
+      const response = await fetch(`${COURSE_API_URL}?slug=${slug}`);
       
       if (response.ok) {
         const data = await response.json();
-        
-        // Маппинг данных из бэкенда в формат компонента
-        const mappedCourse = {
-          id: data.id,
-          slug: data.seo?.slug || slug,
-          title: data.title,
-          short_description: data.short_description,
-          hero_title: data.seo?.title || data.title,
-          hero_subtitle: data.short_description,
-          category: data.category,
-          type: data.type,
-          price: data.pricing?.price_text ? parseFloat(data.pricing.price_text.replace(/[^0-9.]/g, '')) || null : null,
-          duration_text: data.learning_format?.duration || '',
-          about_course: data.promo?.description || '',
-          what_you_learn: data.results || [],
-          program_modules: (data.program || []).map((p: any) => ({
-            title: p.module_name,
-            description: p.description,
-            duration: ''
-          })),
-          author_name: data.author?.name || '',
-          author_position: data.author?.position || '',
-          author_bio: data.author?.description || '',
-          author_photo: data.author?.photo_url || '',
-          author_experience: data.author?.experience || '',
-          benefits: data.bonuses ? data.bonuses.map((b: any) => b.bonus_name) : [],
-          testimonials: [],
-          faq: [],
-          cta_button_text: data.cta_button_text || 'Записаться',
-          cta_button_url: data.pricing?.partner_link || '#',
-          cover_url: data.cover_url,
-          school_logo_url: data.school?.logo
-        };
-        
-        setCourse(mappedCourse as any);
+        setCourse(data);
       } else {
         console.error('Course not found, status:', response.status);
         setCourse(null);
