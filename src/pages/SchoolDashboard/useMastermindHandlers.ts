@@ -51,12 +51,12 @@ export function useMastermindHandlers({
     }
   };
 
-  const handleEditMastermind = (mastermind: Mastermind) => {
+  const handleEditMastermind = (mastermind: any) => {
     setMastermindForm({
-      school_name: '',
+      school_name: mastermind.school_name || '',
       title: mastermind.title,
       description: mastermind.description,
-      event_date: mastermind.event_date,
+      event_date: mastermind.event_date?.slice(0, 16) || '',
       location: mastermind.location || '',
       max_participants: mastermind.max_participants?.toString() || '',
       price: mastermind.price?.toString() || '',
@@ -64,9 +64,9 @@ export function useMastermindHandlers({
       external_url: mastermind.external_url,
       original_price: mastermind.original_price?.toString() || '',
       discount_price: mastermind.discount_price?.toString() || '',
-      author_name: '',
-      author_photo: '',
-      event_content: ''
+      author_name: mastermind.author_name || '',
+      author_photo: mastermind.author_photo || '',
+      event_content: mastermind.event_content || ''
     });
     setEditingMastermindId(mastermind.id);
     setShowAddForm(true);
