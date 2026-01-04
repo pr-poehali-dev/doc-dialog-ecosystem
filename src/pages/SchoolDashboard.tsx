@@ -243,6 +243,8 @@ export default function SchoolDashboard() {
             <Button onClick={() => {
               if (activeTab === 'courses') {
                 navigate('/course/landing/builder');
+              } else if (activeTab === 'masterminds') {
+                navigate('/mastermind/landing/builder');
               } else {
                 setShowAddForm(!showAddForm);
               }

@@ -33,6 +33,66 @@ def handler(event: dict, context) -> dict:
     course_id = query_params.get('id')
     slug = query_params.get('slug')
     
+    # GET /courses?action=masterminds&slug=X - Get mastermind by slug with full landing data
+    if method == 'GET' and slug and action == 'masterminds':
+        cur.execute(f"""
+            SELECT id, slug, title, description, hero_title, hero_subtitle,
+                   event_date, location, max_participants, current_participants,
+                   price, original_price, discount_price, currency, image_url, external_url,
+                   about_event, what_you_get, event_program, host, co_authors as co_hosts,
+                   benefits, testimonials, faq, cta_button_text, status
+            FROM {schema}.masterminds
+            WHERE slug = '{slug}' AND status = 'approved'
+        """)
+        mastermind = cur.fetchone()
+        
+        if not mastermind:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Mastermind not found'}),
+                'isBase64Encoded': False
+            }
+        
+        result = {
+            'id': mastermind[0],
+            'slug': mastermind[1],
+            'title': mastermind[2],
+            'description': mastermind[3],
+            'hero_title': mastermind[4],
+            'hero_subtitle': mastermind[5],
+            'event_date': mastermind[6].isoformat() if mastermind[6] else None,
+            'location': mastermind[7],
+            'max_participants': mastermind[8],
+            'current_participants': mastermind[9] or 0,
+            'price': float(mastermind[10]) if mastermind[10] else None,
+            'original_price': float(mastermind[11]) if mastermind[11] else None,
+            'discount_price': float(mastermind[12]) if mastermind[12] else None,
+            'currency': mastermind[13] or 'RUB',
+            'image_url': mastermind[14],
+            'external_url': mastermind[15],
+            'about_event': mastermind[16],
+            'what_you_get': mastermind[17] if mastermind[17] else [],
+            'event_program': mastermind[18] if mastermind[18] else [],
+            'host': mastermind[19] if mastermind[19] else {},
+            'co_hosts': mastermind[20] if mastermind[20] else [],
+            'benefits': mastermind[21] if mastermind[21] else [],
+            'testimonials': mastermind[22] if mastermind[22] else [],
+            'faq': mastermind[23] if mastermind[23] else [],
+            'cta_button_text': mastermind[24] or 'Зарегистрироваться'
+        }
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps(result),
+            'isBase64Encoded': False
+        }
+    
     # GET /courses?slug=X - Get course by slug with full landing data
     if method == 'GET' and slug and not action:
         cur.execute(f"""
@@ -314,7 +374,7 @@ def handler(event: dict, context) -> dict:
         school_id = query_params.get('school_id')
         status_filter = query_params.get('status', 'approved')
         
-        query = f"SELECT id, school_id, title, description, event_date, location, max_participants, current_participants, price, currency, image_url, external_url, status, original_price, discount_price, view_count, created_at FROM {schema}.masterminds WHERE 1=1"
+        query = f"SELECT id, school_id, title, description, event_date, location, max_participants, current_participants, price, currency, image_url, external_url, status, original_price, discount_price, view_count, created_at, slug FROM {schema}.masterminds WHERE 1=1"
         
         if school_id:
             query += f" AND school_id = {school_id}"
@@ -343,7 +403,8 @@ def handler(event: dict, context) -> dict:
             'original_price': float(m[13]) if m[13] else None,
             'discount_price': float(m[14]) if m[14] else None,
             'view_count': m[15] or 0,
-            'created_at': m[16].isoformat() if m[16] else None
+            'created_at': m[16].isoformat() if m[16] else None,
+            'slug': m[17]
         } for m in masterminds]
         
         cur.close()
@@ -521,8 +582,22 @@ def handler(event: dict, context) -> dict:
         discount_price = body.get('discount_price')
         author_name = body.get('author_name', '')
         author_photo = body.get('author_photo')
+        author_position = body.get('author_position', '')
         event_content = body.get('event_content', '')
         school_name = body.get('school_name', '')
+        
+        # Нові поля лендінгу
+        hero_title = body.get('hero_title', '')
+        hero_subtitle = body.get('hero_subtitle', '')
+        about_event = body.get('about_event', '')
+        what_you_get = json.dumps(body.get('what_you_get', []))
+        event_program = json.dumps(body.get('event_program', []))
+        host = json.dumps(body.get('host', {}))
+        benefits = json.dumps(body.get('benefits', []))
+        testimonials = json.dumps(body.get('testimonials', []))
+        faq = json.dumps(body.get('faq', []))
+        cta_button_text = body.get('cta_button_text', 'Зарегистрироваться')
+        gallery = json.dumps(body.get('gallery', []))
         
         if not all([school_id, title, event_date, external_url]):
             cur.close()
@@ -534,10 +609,49 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
+        # Генерація slug
+        import re
+        slug = re.sub(r'[^a-zA-Z0-9а-яА-Я\-]', '-', title.lower()).strip('-')
+        slug = re.sub(r'-+', '-', slug)
+        base_slug = slug
+        counter = 1
+        while True:
+            cur.execute(f"SELECT id FROM {schema}.masterminds WHERE slug = '{slug}'")
+            if not cur.fetchone():
+                break
+            slug = f"{base_slug}-{counter}"
+            counter += 1
+        
         cur.execute(f"""
-            INSERT INTO {schema}.masterminds (school_id, title, description, event_date, location, max_participants, price, currency, image_url, external_url, original_price, discount_price, author_name, author_photo, event_content, school_name, status)
-            VALUES ({school_id}, '{title.replace("'", "''")}', '{description.replace("'", "''")}', '{event_date}', {f"'{location}'" if location else 'NULL'}, {max_participants if max_participants else 'NULL'}, {price if price else 'NULL'}, '{currency}', {f"'{image_url}'" if image_url else 'NULL'}, '{external_url}', {original_price if original_price else 'NULL'}, {discount_price if discount_price else 'NULL'}, '{author_name.replace("'", "''")}', {f"'{author_photo}'" if author_photo else 'NULL'}, '{event_content.replace("'", "''")}', '{school_name.replace("'", "''")}', 'pending')
-            RETURNING id, title, status, created_at
+            INSERT INTO {schema}.masterminds (
+                school_id, title, description, event_date, location, max_participants, 
+                price, currency, image_url, external_url, original_price, discount_price, 
+                author_name, author_photo, author_position, event_content, school_name, 
+                hero_title, hero_subtitle, about_event, what_you_get, event_program, 
+                host, benefits, testimonials, faq, cta_button_text, slug, gallery, status
+            )
+            VALUES (
+                {school_id}, '{title.replace("'", "''")}', '{description.replace("'", "''")}', 
+                '{event_date}', {f"'{location}'" if location else 'NULL'}, 
+                {max_participants if max_participants else 'NULL'}, 
+                {price if price else 'NULL'}, '{currency}', 
+                {f"'{image_url}'" if image_url else 'NULL'}, '{external_url}', 
+                {original_price if original_price else 'NULL'}, 
+                {discount_price if discount_price else 'NULL'}, 
+                '{author_name.replace("'", "''")}', 
+                {f"'{author_photo}'" if author_photo else 'NULL'}, 
+                '{author_position.replace("'", "''")}', 
+                '{event_content.replace("'", "''")}', 
+                '{school_name.replace("'", "''")}',
+                '{hero_title.replace("'", "''")}', 
+                '{hero_subtitle.replace("'", "''")}', 
+                '{about_event.replace("'", "''")}', 
+                '{what_you_get}', '{event_program}', '{host}', 
+                '{benefits}', '{testimonials}', '{faq}', 
+                '{cta_button_text.replace("'", "''")}', 
+                '{slug}', '{gallery}', 'pending'
+            )
+            RETURNING id, title, slug, status, created_at
         """)
         
         new_mastermind = cur.fetchone()
@@ -545,8 +659,9 @@ def handler(event: dict, context) -> dict:
         result = {
             'id': new_mastermind[0],
             'title': new_mastermind[1],
-            'status': new_mastermind[2],
-            'created_at': new_mastermind[3].isoformat() if new_mastermind[3] else None
+            'slug': new_mastermind[2],
+            'status': new_mastermind[3],
+            'created_at': new_mastermind[4].isoformat() if new_mastermind[4] else None
         }
         
         cur.close()

@@ -16,6 +16,7 @@ interface Course {
   moderation_comment?: string;
   original_price?: number | null;
   discount_price?: number | null;
+  slug?: string;
   created_at: string;
 }
 
@@ -35,6 +36,7 @@ interface Mastermind {
   original_price?: number | null;
   discount_price?: number | null;
   view_count?: number;
+  slug?: string;
   created_at: string;
 }
 
@@ -130,6 +132,17 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
                 )}
               </div>
               <div className="space-y-2 mt-4 pt-4 border-t">
+                {course.status === 'approved' && course.slug && (
+                  <a
+                    href={`/course/landing/${course.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors font-medium"
+                  >
+                    <Icon name="ExternalLink" size={16} />
+                    Открыть лендинг
+                  </a>
+                )}
                 {course.status === 'approved' && (
                   <button
                     onClick={() => onPromoteCourse?.(course.id, course.title, course.category)}
@@ -211,20 +224,33 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
                   </div>
                 )}
               </div>
-              <div className="flex gap-2 mt-4 pt-4 border-t">
-                <button
-                  onClick={() => onEditMastermind?.(mm)}
-                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-                >
-                  <Icon name="Pencil" size={16} />
-                  Редактировать
-                </button>
-                <button
-                  onClick={() => onDeleteMastermind?.(mm.id)}
-                  className="flex items-center justify-center gap-2 px-3 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
-                >
-                  <Icon name="Trash2" size={16} />
-                </button>
+              <div className="space-y-2 mt-4 pt-4 border-t">
+                {mm.status === 'approved' && mm.slug && (
+                  <a
+                    href={`/mastermind/landing/${mm.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors font-medium"
+                  >
+                    <Icon name="ExternalLink" size={16} />
+                    Открыть лендинг
+                  </a>
+                )}
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => onEditMastermind?.(mm)}
+                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                  >
+                    <Icon name="Pencil" size={16} />
+                    Редактировать
+                  </button>
+                  <button
+                    onClick={() => onDeleteMastermind?.(mm.id)}
+                    className="flex items-center justify-center gap-2 px-3 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
+                  >
+                    <Icon name="Trash2" size={16} />
+                  </button>
+                </div>
               </div>
             </CardContent>
           </Card>
