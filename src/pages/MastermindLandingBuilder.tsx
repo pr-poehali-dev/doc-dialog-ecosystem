@@ -221,7 +221,7 @@ export default function MastermindLandingBuilder() {
 
       // Создаем или обновляем мастермайнд
       const url = editId 
-        ? `https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?type=masterminds&id=${editId}`
+        ? `https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?action=masterminds&id=${editId}`
         : 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?type=masterminds';
       
       const response = await fetch(url, {
