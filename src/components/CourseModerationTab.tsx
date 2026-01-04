@@ -163,7 +163,8 @@ export default function CourseModerationTab({ onModerationComplete }: CourseMode
 
   const loadCourseDetails = async (courseId: number) => {
     try {
-      const response = await fetch(`${COURSE_API_URL}?id=${courseId}`);
+      // Добавляем skip_status_check=true для загрузки курсов на модерации
+      const response = await fetch(`${COURSE_API_URL}?id=${courseId}&skip_status_check=true`);
       if (response.ok) {
         const data = await response.json();
         setDetailsCourse(data);

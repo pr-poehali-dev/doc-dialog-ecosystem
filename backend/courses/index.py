@@ -95,14 +95,22 @@ def handler(event: dict, context) -> dict:
     
     # GET /courses?id=X - Get single course with full details + increment view counter
     if method == 'GET' and course_id and not action:
+        # Для модерации (skip_status_check=true) возвращаем курс с любым статусом
+        skip_status = query_params.get('skip_status_check', 'false').lower() == 'true'
+        
+        status_filter = "" if skip_status else "AND c.status = 'approved'"
+        
         cur.execute(f"""
             SELECT c.id, c.school_id, COALESCE(c.school_name, s.name) as school_name, c.title, c.description, 
                    c.category, c.course_type, c.price, c.currency, c.duration_hours, 
                    c.image_url, c.external_url, c.status, c.original_price, c.discount_price,
-                   c.author_name, c.author_photo, c.course_content, c.view_count, c.author_position, c.co_authors, c.created_at
+                   c.author_name, c.author_photo, c.course_content, c.view_count, c.author_position, c.co_authors, c.created_at,
+                   c.short_description, c.hero_title, c.hero_subtitle, c.about_course, c.duration_text,
+                   c.what_you_learn, c.program_modules, c.benefits, c.testimonials, c.faq,
+                   c.author_bio, c.author_experience
             FROM {schema}.courses c
             LEFT JOIN {schema}.schools s ON c.school_id = s.id
-            WHERE c.id = {course_id} AND c.status = 'approved'
+            WHERE c.id = {course_id} {status_filter}
         """)
         course = cur.fetchone()
         
@@ -116,7 +124,9 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
-        cur.execute(f"UPDATE {schema}.courses SET view_count = view_count + 1 WHERE id = {course_id}")
+        # Не увеличиваем счетчик просмотров для модерации
+        if not skip_status:
+            cur.execute(f"UPDATE {schema}.courses SET view_count = view_count + 1 WHERE id = {course_id}")
         
         result = {
             'id': course[0],
@@ -140,7 +150,19 @@ def handler(event: dict, context) -> dict:
             'view_count': course[18],
             'author_position': course[19],
             'co_authors': course[20],
-            'created_at': course[21].isoformat() if course[21] else None
+            'created_at': course[21].isoformat() if course[21] else None,
+            'short_description': course[22],
+            'hero_title': course[23],
+            'hero_subtitle': course[24],
+            'about_course': course[25],
+            'duration_text': course[26],
+            'what_you_learn': course[27] if course[27] else [],
+            'program_modules': course[28] if course[28] else [],
+            'benefits': course[29] if course[29] else [],
+            'testimonials': course[30] if course[30] else [],
+            'faq': course[31] if course[31] else [],
+            'author_bio': course[32],
+            'author_experience': course[33]
         }
         
         cur.close()
