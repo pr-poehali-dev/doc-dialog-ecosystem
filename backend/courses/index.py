@@ -1218,7 +1218,7 @@ def handler(event: dict, context) -> dict:
         school_id = query_params.get('school_id')
         status_filter = query_params.get('status', 'approved')
         
-        query = f"SELECT id, school_id, title, description, event_date, location, max_participants, current_participants, price, currency, image_url, external_url, status, original_price, discount_price, view_count, created_at, slug FROM {schema}.offline_training WHERE 1=1"
+        query = f"SELECT id, school_id, school_name, title, description, event_date, location, max_participants, current_participants, price, currency, image_url, external_url, status, original_price, discount_price, view_count, created_at, slug FROM {schema}.offline_training WHERE 1=1"
         
         if school_id:
             query += f" AND school_id = {school_id}"
@@ -1231,16 +1231,16 @@ def handler(event: dict, context) -> dict:
         trainings = cur.fetchall()
         
         result = [{
-            'id': t[0], 'school_id': t[1], 'title': t[2], 'description': t[3],
-            'event_date': t[4].isoformat() if t[4] else None, 'location': t[5],
-            'max_participants': t[6], 'current_participants': t[7],
-            'price': float(t[8]) if t[8] else None, 'currency': t[9],
-            'image_url': t[10], 'external_url': t[11], 'status': t[12],
-            'original_price': float(t[13]) if t[13] else None,
-            'discount_price': float(t[14]) if t[14] else None,
-            'view_count': t[15] or 0,
-            'created_at': t[16].isoformat() if t[16] else None,
-            'slug': t[17]
+            'id': t[0], 'school_id': t[1], 'school_name': t[2], 'title': t[3], 'description': t[4],
+            'event_date': t[5].isoformat() if t[5] else None, 'location': t[6],
+            'max_participants': t[7], 'current_participants': t[8],
+            'price': float(t[9]) if t[9] else None, 'currency': t[10],
+            'image_url': t[11], 'external_url': t[12], 'status': t[13],
+            'original_price': float(t[14]) if t[14] else None,
+            'discount_price': float(t[15]) if t[15] else None,
+            'view_count': t[16] or 0,
+            'created_at': t[17].isoformat() if t[17] else None,
+            'slug': t[18]
         } for t in trainings]
         
         cur.close()
@@ -1343,8 +1343,8 @@ def handler(event: dict, context) -> dict:
         conn.close()
         return {'statusCode': 201, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps(result), 'isBase64Encoded': False}
     
-    # PUT /courses?action=offline_trainings&id=X - Update offline training
-    if method == 'PUT' and action == 'offline_trainings':
+    # PUT /courses?type=offline_trainings&id=X - Update offline training (moderation)
+    if method == 'PUT' and entity_type == 'offline_trainings':
         training_id = query_params.get('id')
         
         if not training_id:
@@ -1354,6 +1354,20 @@ def handler(event: dict, context) -> dict:
         
         body = json.loads(event.get('body', '{}'))
         
+        # Check if this is a status-only update (moderation)
+        if 'status' in body and len(body) == 1:
+            new_status = body.get('status')
+            cur.execute(f"UPDATE {schema}.offline_training SET status = '{new_status}' WHERE id = {training_id} RETURNING id, title, status")
+            updated = cur.fetchone()
+            if not updated:
+                cur.close()
+                conn.close()
+                return {'statusCode': 404, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Training not found'}), 'isBase64Encoded': False}
+            cur.close()
+            conn.close()
+            return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'id': updated[0], 'title': updated[1], 'status': updated[2]}), 'isBase64Encoded': False}
+        
+        # Full update
         title = body.get('title')
         description = body.get('description', '')
         event_date = body.get('event_date')
@@ -1410,8 +1424,7 @@ def handler(event: dict, context) -> dict:
                 benefits = '{benefits}',
                 testimonials = '{testimonials}',
                 faq = '{faq}',
-                cta_button_text = '{cta_button_text.replace("'", "''")}'
-            WHERE id = {training_id}
+                cta_button_text = '{cta_button_text.replace("'", "''")}'            WHERE id = {training_id}
             RETURNING id, title, slug, status, updated_at
         """)
         
@@ -1430,6 +1443,25 @@ def handler(event: dict, context) -> dict:
         cur.close()
         conn.close()
         return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps(result), 'isBase64Encoded': False}
+    
+    # DELETE /courses?type=offline_trainings&id=X - Delete offline training
+    if method == 'DELETE' and entity_type == 'offline_trainings':
+        training_id = query_params.get('id')
+        if not training_id:
+            cur.close()
+            conn.close()
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Missing training id'}), 'isBase64Encoded': False}
+        
+        cur.execute(f"DELETE FROM {schema}.offline_training WHERE id = {training_id} RETURNING id")
+        deleted = cur.fetchone()
+        if not deleted:
+            cur.close()
+            conn.close()
+            return {'statusCode': 404, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Training not found'}), 'isBase64Encoded': False}
+        
+        cur.close()
+        conn.close()
+        return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'message': 'Training deleted'}), 'isBase64Encoded': False}
     
     cur.close()
     conn.close()

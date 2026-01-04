@@ -16,7 +16,7 @@ interface OfflineTraining {
   price: number;
   image_url: string;
   external_url: string;
-  is_moderated: boolean;
+  status: string;
   created_at: string;
   original_price?: number;
   discount_price?: number;
@@ -42,7 +42,7 @@ export default function OfflineTrainingModerationTab({ onModerationComplete }: O
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('https://functions.poehali.dev/3dbad6d0-7948-4c83-ac47-fa9e9e92bf26', {
+      const response = await fetch('https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?action=offline_trainings&status=all', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -66,13 +66,13 @@ export default function OfflineTrainingModerationTab({ onModerationComplete }: O
   const approveTraining = async (trainingId: number) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`https://functions.poehali.dev/77d43ca5-9faf-4cfa-b5a7-e13e3bdb58cf?id=${trainingId}`, {
+      const response = await fetch(`https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?type=offline_trainings&id=${trainingId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ is_moderated: true })
+        body: JSON.stringify({ status: 'approved' })
       });
       
       if (response.ok) {
@@ -97,7 +97,7 @@ export default function OfflineTrainingModerationTab({ onModerationComplete }: O
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`https://functions.poehali.dev/77d43ca5-9faf-4cfa-b5a7-e13e3bdb58cf?id=${trainingId}`, {
+      const response = await fetch(`https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?type=offline_trainings&id=${trainingId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -121,8 +121,8 @@ export default function OfflineTrainingModerationTab({ onModerationComplete }: O
     }
   };
 
-  const pendingTrainings = trainings.filter(t => !t.is_moderated);
-  const approvedTrainings = trainings.filter(t => t.is_moderated);
+  const pendingTrainings = trainings.filter(t => t.status === 'pending');
+  const approvedTrainings = trainings.filter(t => t.status === 'approved');
 
   if (loading) {
     return <div className="text-center py-8">Загрузка...</div>;
