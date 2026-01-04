@@ -155,7 +155,7 @@ export default function OfflineTrainingModerationTab({ onModerationComplete }: O
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button onClick={() => window.open(`/offline-training/${training.slug}`, '_blank')} variant="outline" size="sm">
+                    <Button onClick={() => window.open(`/offline-training/${training.slug}?preview=true`, '_blank')} variant="outline" size="sm">
                       <Icon name="Eye" size={16} className="mr-2" />
                       Просмотреть
                     </Button>
@@ -210,7 +210,7 @@ export default function OfflineTrainingModerationTab({ onModerationComplete }: O
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button onClick={() => window.open(`/offline-training/${training.slug}`, '_blank')} variant="outline" size="sm">
+                    <Button onClick={() => window.open(`/offline-training/${training.slug}?preview=true`, '_blank')} variant="outline" size="sm">
                       <Icon name="Eye" size={16} className="mr-2" />
                       Просмотреть
                     </Button>
