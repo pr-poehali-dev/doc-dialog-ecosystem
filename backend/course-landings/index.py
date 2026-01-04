@@ -373,13 +373,18 @@ def handler(event: dict, context) -> dict:
                     """)
             
             conn.commit()
+            
+            # Получаем slug созданного курса
+            cur.execute(f"SELECT slug FROM {schema}.courses WHERE id = {course_id}")
+            course_slug = cur.fetchone()[0]
+            
             cur.close()
             conn.close()
             
             return {
                 'statusCode': 201,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'id': course_id, 'message': 'Course created successfully'}),
+                'body': json.dumps({'id': course_id, 'slug': course_slug, 'message': 'Course created successfully'}),
                 'isBase64Encoded': False
             }
         
