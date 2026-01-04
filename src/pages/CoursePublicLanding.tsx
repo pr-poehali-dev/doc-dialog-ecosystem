@@ -68,6 +68,7 @@ export default function CoursePublicLanding() {
       const isPreview = searchParams.get('preview') === 'true';
       const previewParam = isPreview ? '&preview=true' : '';
       const response = await fetch(`${COURSE_API_URL}?slug=${slug}${previewParam}`);
+      
       if (response.ok) {
         const data = await response.json();
         
@@ -105,9 +106,13 @@ export default function CoursePublicLanding() {
         };
         
         setCourse(mappedCourse as any);
+      } else {
+        console.error('Course not found, status:', response.status);
+        setCourse(null);
       }
     } catch (error) {
       console.error('Load error:', error);
+      setCourse(null);
     } finally {
       setLoading(false);
     }
