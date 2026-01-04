@@ -18,6 +18,7 @@ interface OfflineTraining {
   external_url: string;
   status: string;
   created_at: string;
+  slug: string;
   original_price?: number;
   discount_price?: number;
   author_name?: string;
@@ -154,6 +155,10 @@ export default function OfflineTrainingModerationTab({ onModerationComplete }: O
                     </div>
                   </div>
                   <div className="flex gap-2">
+                    <Button onClick={() => window.open(`/offline-training/${training.slug}`, '_blank')} variant="outline" size="sm">
+                      <Icon name="Eye" size={16} className="mr-2" />
+                      Просмотреть
+                    </Button>
                     <Button onClick={() => approveTraining(training.id)} size="sm">
                       <Icon name="Check" size={16} className="mr-2" />
                       Одобрить
@@ -204,10 +209,16 @@ export default function OfflineTrainingModerationTab({ onModerationComplete }: O
                       )}
                     </div>
                   </div>
-                  <Button onClick={() => deleteTraining(training.id)} variant="outline" size="sm">
-                    <Icon name="Trash2" size={16} className="mr-2" />
-                    Удалить
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button onClick={() => window.open(`/offline-training/${training.slug}`, '_blank')} variant="outline" size="sm">
+                      <Icon name="Eye" size={16} className="mr-2" />
+                      Просмотреть
+                    </Button>
+                    <Button onClick={() => deleteTraining(training.id)} variant="outline" size="sm">
+                      <Icon name="Trash2" size={16} className="mr-2" />
+                      Удалить
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}
