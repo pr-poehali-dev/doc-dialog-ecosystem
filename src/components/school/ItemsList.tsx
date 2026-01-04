@@ -333,7 +333,8 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
                     className="flex items-center justify-center gap-2 px-3 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
                   >
                     <Icon name="Trash2" size={16} />
-                </button>
+                  </button>
+                </div>
               </div>
             </CardContent>
           </Card>
