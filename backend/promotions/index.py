@@ -45,8 +45,8 @@ def handler(event: dict, context) -> dict:
             # active_all не требует авторизации
             if action == 'active_all':
                 cur.execute("""
-                    SELECT id, course_id, promotion_type, category, promoted_until, created_at
-                    FROM course_promotions
+                    SELECT id, item_id, promotion_type, category, promoted_until, created_at
+                    FROM item_promotions
                     WHERE promoted_until > NOW()
                     ORDER BY promoted_until DESC
                 """)
@@ -118,12 +118,11 @@ def handler(event: dict, context) -> dict:
             elif action == 'active':
                 # Получаем активные промо курсов школы
                 cur.execute("""
-                    SELECT cp.id, cp.course_id, c.title, cp.promotion_type, 
-                           cp.category, cp.price_paid, cp.promoted_until, cp.created_at
-                    FROM course_promotions cp
-                    JOIN courses c ON cp.course_id = c.id
-                    WHERE cp.school_id = %s AND cp.promoted_until > NOW()
-                    ORDER BY cp.promoted_until DESC
+                    SELECT id, item_id, item_type, promotion_type, 
+                           category, price_paid, promoted_until, created_at
+                    FROM item_promotions
+                    WHERE school_id = %s AND promoted_until > NOW()
+                    ORDER BY promoted_until DESC
                 """, (school_id,))
                 
                 promotions = []
@@ -131,7 +130,7 @@ def handler(event: dict, context) -> dict:
                     promotions.append({
                         'id': row[0],
                         'course_id': row[1],
-                        'course_title': row[2],
+                        'item_type': row[2],
                         'promotion_type': row[3],
                         'category': row[4],
                         'price_paid': float(row[5]),
@@ -169,6 +168,7 @@ def handler(event: dict, context) -> dict:
             
             # Проверяем что курс/мастермайнд/очное обучение принадлежит школе
             category = None
+            item_type = None
             
             # Сначала ищем в course_landings
             try:
@@ -176,6 +176,7 @@ def handler(event: dict, context) -> dict:
                 course_row = cur.fetchone()
                 if course_row:
                     category = course_row[0]
+                    item_type = 'course_landing'
             except:
                 pass
             
@@ -186,6 +187,7 @@ def handler(event: dict, context) -> dict:
                     mastermind_row = cur.fetchone()
                     if mastermind_row:
                         category = 'Офлайн мероприятия'
+                        item_type = 'mastermind'
                 except:
                     pass
             
@@ -196,6 +198,7 @@ def handler(event: dict, context) -> dict:
                     training_row = cur.fetchone()
                     if training_row:
                         category = 'Офлайн мероприятия'
+                        item_type = 'offline_training'
                 except:
                     pass
             
@@ -239,11 +242,11 @@ def handler(event: dict, context) -> dict:
             promoted_until = datetime.now() + timedelta(days=days)
             
             cur.execute("""
-                INSERT INTO course_promotions 
-                (course_id, school_id, promotion_type, category, price_paid, promoted_until)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                INSERT INTO item_promotions 
+                (item_id, item_type, school_id, promotion_type, category, price_paid, promoted_until)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
                 RETURNING id
-            """, (course_id, school_id, promotion_type, category, price, promoted_until))
+            """, (course_id, item_type, school_id, promotion_type, category, price, promoted_until))
             
             promotion_id = cur.fetchone()[0]
             
