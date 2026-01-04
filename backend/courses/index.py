@@ -6,32 +6,40 @@ from datetime import datetime
 def handler(event: dict, context) -> dict:
     """API для управления курсами, мастермайндами и запросами на специалистов от школ"""
     
-    method = event.get('httpMethod', 'GET')
-    
-    if method == 'OPTIONS':
+    try:
+        method = event.get('httpMethod', 'GET')
+        
+        if method == 'OPTIONS':
+            return {
+                'statusCode': 200,
+                'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                    'Access-Control-Allow-Headers': 'Content-Type, X-Authorization'
+                },
+                'body': '',
+                'isBase64Encoded': False
+            }
+        
+        dsn = os.environ.get('DATABASE_URL')
+        schema = 't_p46047379_doc_dialog_ecosystem'
+        
+        conn = psycopg2.connect(dsn)
+        conn.autocommit = True
+        cur = conn.cursor()
+        
+        query_params = event.get('queryStringParameters', {}) or {}
+        action = query_params.get('action', '')
+        entity_type = query_params.get('type', 'courses')
+        course_id = query_params.get('id')
+        slug = query_params.get('slug')
+    except Exception as e:
         return {
-            'statusCode': 200,
-            'headers': {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type, X-Authorization'
-            },
-            'body': '',
+            'statusCode': 500,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': f'Init error: {str(e)}'}),
             'isBase64Encoded': False
         }
-    
-    dsn = os.environ.get('DATABASE_URL')
-    schema = 't_p46047379_doc_dialog_ecosystem'
-    
-    conn = psycopg2.connect(dsn)
-    conn.autocommit = True
-    cur = conn.cursor()
-    
-    query_params = event.get('queryStringParameters', {}) or {}
-    action = query_params.get('action', '')
-    entity_type = query_params.get('type', 'courses')
-    course_id = query_params.get('id')
-    slug = query_params.get('slug')
     
     # GET /courses?action=offline_trainings&slug=X - Get offline training by slug
     if method == 'GET' and slug and action == 'offline_trainings':
@@ -1248,6 +1256,9 @@ def handler(event: dict, context) -> dict:
         return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps(result), 'isBase64Encoded': False}
     
     # POST /courses?type=offline_trainings - Create offline training
+    if method == 'POST':
+        print(f"DEBUG POST: entity_type={entity_type}, action={action}, query_params={query_params}")
+    
     if method == 'POST' and entity_type == 'offline_trainings':
         body = json.loads(event.get('body', '{}'))
         
