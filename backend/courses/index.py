@@ -464,7 +464,7 @@ def handler(event: dict, context) -> dict:
         school_id = query_params.get('school_id')
         status_filter = query_params.get('status', 'approved')
         
-        query = f"SELECT id, school_id, title, description, event_date, location, max_participants, current_participants, price, currency, image_url, external_url, status, original_price, discount_price, view_count, created_at, slug, moderation_comment FROM {schema}.masterminds WHERE 1=1"
+        query = f"SELECT id, school_id, title, description, event_date, location, max_participants, current_participants, price, currency, image_url, external_url, status, original_price, discount_price, view_count, created_at, slug, moderation_comment, cover_url FROM {schema}.masterminds WHERE 1=1"
         
         if school_id:
             query += f" AND school_id = {school_id}"
@@ -495,7 +495,8 @@ def handler(event: dict, context) -> dict:
             'view_count': m[15] or 0,
             'created_at': m[16].isoformat() if m[16] else None,
             'slug': m[17],
-            'moderation_comment': m[18]
+            'moderation_comment': m[18],
+            'cover_url': m[19]
         } for m in masterminds]
         
         cur.close()
@@ -1255,7 +1256,7 @@ def handler(event: dict, context) -> dict:
         school_id = query_params.get('school_id')
         status_filter = query_params.get('status', 'approved')
         
-        query = f"SELECT id, school_id, school_name, title, description, event_date, location, max_participants, current_participants, price, currency, image_url, external_url, status, original_price, discount_price, view_count, created_at, slug, moderation_comment FROM {schema}.offline_training WHERE 1=1"
+        query = f"SELECT id, school_id, school_name, title, description, event_date, location, max_participants, current_participants, price, currency, image_url, external_url, status, original_price, discount_price, view_count, created_at, slug, moderation_comment, cover_url FROM {schema}.offline_training WHERE 1=1"
         
         if school_id:
             query += f" AND school_id = {school_id}"
@@ -1278,7 +1279,8 @@ def handler(event: dict, context) -> dict:
             'view_count': t[16] or 0,
             'created_at': t[17].isoformat() if t[17] else None,
             'slug': t[18],
-            'moderation_comment': t[19]
+            'moderation_comment': t[19],
+            'cover_url': t[20]
         } for t in trainings]
         
         cur.close()

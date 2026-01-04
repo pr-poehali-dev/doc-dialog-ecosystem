@@ -139,16 +139,27 @@ export default function CoursesCatalog() {
         })
       );
       
+      // Для мастермайндов и очного обучения используем cover_url из API если есть
+      const mastermindsWithCovers = mastermindsData.map(m => ({
+        ...m,
+        image_url: (m as any).cover_url || m.image_url
+      }));
+      
+      const trainingsWithCovers = offlineTrainingsData.map(t => ({
+        ...t,
+        image_url: (t as any).cover_url || t.image_url
+      }));
+      
       const allItemsWithoutRatings: CatalogItem[] = [
         ...coursesWithCovers.map(c => ({ ...c, itemType: 'course' as const })),
-        ...mastermindsData.map(m => ({ 
+        ...mastermindsWithCovers.map(m => ({ 
           ...m, 
           itemType: 'mastermind' as const,
           category: 'Офлайн мероприятия',
           course_type: 'offline',
           duration_hours: null
         })),
-        ...offlineTrainingsData.map(t => ({ 
+        ...trainingsWithCovers.map(t => ({ 
           ...t, 
           itemType: 'offline_training' as const,
           category: 'Офлайн мероприятия',
