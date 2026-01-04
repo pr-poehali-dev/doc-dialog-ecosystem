@@ -23,6 +23,32 @@
       "expectedStatus": 200,
       "expectedBody": [],
       "bodyMatcher": "type"
+    },
+    {
+      "name": "Create mastermind",
+      "method": "POST",
+      "path": "/?type=masterminds",
+      "body": {
+        "school_id": 5,
+        "title": "Test Mastermind",
+        "description": "Test description",
+        "event_date": "2026-02-15T14:00:00",
+        "location": "Moscow",
+        "max_participants": 15,
+        "price": 5000,
+        "currency": "RUB",
+        "external_url": "https://example.com/test",
+        "author_name": "Test Author",
+        "event_content": "Test content",
+        "school_name": "Test School"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "id": "number",
+        "title": "string",
+        "status": "string"
+      },
+      "bodyMatcher": "partial"
     }
   ]
 }
