@@ -27,6 +27,9 @@ interface Course {
   rating?: number;
   review_count?: number;
   slug?: string;
+  has_promotion?: boolean;
+  promoted_until?: string | null;
+  promotion_type?: string | null;
 }
 
 interface Mastermind {
@@ -49,6 +52,9 @@ interface Mastermind {
   rating?: number;
   review_count?: number;
   slug?: string;
+  has_promotion?: boolean;
+  promoted_until?: string | null;
+  promotion_type?: string | null;
 }
 
 interface OfflineTraining {
@@ -71,6 +77,9 @@ interface OfflineTraining {
   rating?: number;
   review_count?: number;
   slug?: string;
+  has_promotion?: boolean;
+  promoted_until?: string | null;
+  promotion_type?: string | null;
 }
 
 type CatalogItem = (Course & { itemType: 'course' }) | (Mastermind & { itemType: 'mastermind'; category: string; course_type: string }) | (OfflineTraining & { itemType: 'offline_training'; category: string; course_type: string });
@@ -347,9 +356,27 @@ export default function CoursesCatalog() {
         ) : (
           <>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-              {filteredItems.map((item) => (
-                <Card key={`${item.itemType}-${item.id}`} className="hover:shadow-xl transition-all duration-300 flex flex-col group overflow-hidden">
-                  <div className="w-full h-56 overflow-hidden relative">
+              {filteredItems.map((item) => {
+                const isPromoted = item.has_promotion && item.promoted_until && new Date(item.promoted_until) > new Date();
+                
+                return (
+                <Card 
+                  key={`${item.itemType}-${item.id}`} 
+                  className={`hover:shadow-xl transition-all duration-300 flex flex-col group overflow-visible ${ 
+                    isPromoted 
+                      ? 'ring-4 ring-amber-400 shadow-2xl shadow-amber-200/50 relative' 
+                      : 'overflow-hidden'
+                  }`}
+                >
+                  {isPromoted && (
+                    <div className="absolute -top-3 -right-3 z-20">
+                      <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg flex items-center gap-1.5 animate-pulse">
+                        <Icon name="Crown" size={16} />
+                        ТОП
+                      </div>
+                    </div>
+                  )}
+                  <div className={`w-full h-56 overflow-hidden relative ${isPromoted ? 'ring-2 ring-amber-300' : ''}`}>
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 opacity-90"></div>
                     <img 
                       src={item.image_url || 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800'} 
@@ -366,6 +393,14 @@ export default function CoursesCatalog() {
                     </div>
                   </div>
                   <CardHeader className="flex-1 pb-3">
+                    {isPromoted && (
+                      <div className="mb-3 px-3 py-1.5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 rounded-lg text-xs text-amber-800 font-semibold flex items-center gap-1.5 shadow-sm">
+                        <Icon name="TrendingUp" size={14} />
+                        <span>
+                          {item.promotion_type === 'all_categories' ? 'Продвигается во всех категориях' : 'Продвигается в категории'}
+                        </span>
+                      </div>
+                    )}
                     <CardTitle className="text-xl mb-3 line-clamp-2 group-hover:text-primary transition-colors">{item.title}</CardTitle>
                     <div className="mb-3">
                       <RatingDisplay 
@@ -455,7 +490,8 @@ export default function CoursesCatalog() {
                     </div>
                   </CardContent>
                 </Card>
-              ))}
+              );
+              })}
             </div>
 
             {filteredItems.length === 0 && (
