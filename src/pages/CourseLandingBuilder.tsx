@@ -162,6 +162,18 @@ export default function CourseLandingBuilder() {
         return;
       }
 
+      // Генерация slug из названия
+      const generateSlug = (title: string) => {
+        return title
+          .toLowerCase()
+          .replace(/[^а-яa-z0-9\s-]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-')
+          .trim();
+      };
+
+      const slug = generateSlug(data.title) + `-${Date.now()}`;
+
       const response = await fetch('https://functions.poehali.dev/a81dd7cd-c267-4f44-85f5-0da8353dc741?type=courses', {
         method: 'POST',
         headers: {
@@ -169,7 +181,24 @@ export default function CourseLandingBuilder() {
         },
         body: JSON.stringify({
           school_id: schoolId,
-          ...data
+          title: data.title,
+          short_description: data.shortDescription,
+          type: data.type,
+          category: data.category,
+          cover_url: data.coverUrl,
+          duration: data.duration,
+          price_text: data.price,
+          author_name: data.author.name,
+          author_position: data.author.position,
+          author_description: data.author.bio,
+          author_photo_url: data.author.photo,
+          author_experience: data.author.experience,
+          cta_button_text: data.ctaButtonText,
+          partner_link: data.ctaButtonUrl || 'https://example.com',
+          slug: slug,
+          status: 'moderation',
+          seo_title: data.heroTitle,
+          seo_description: data.shortDescription
         })
       });
 
