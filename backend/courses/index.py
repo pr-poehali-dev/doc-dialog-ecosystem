@@ -696,7 +696,7 @@ def handler(event: dict, context) -> dict:
         faq = json.dumps(body.get('faq', []))
         cta_button_text = body.get('cta_button_text', 'Зарегистрироваться')
         gallery = json.dumps(body.get('gallery', []))
-        cover_url = body.get('coverUrl', '')
+        cover_url = body.get('coverUrl', '') or image_url or ''
         school_logo_url = body.get('schoolLogoUrl', '')
         
         if not all([school_id, title, event_date, external_url]):
@@ -1104,6 +1104,7 @@ def handler(event: dict, context) -> dict:
             SET title = '{title.replace("'", "''")}', description = '{description.replace("'", "''")}', event_date = '{event_date}', 
                 location = {f"'{location}'" if location else 'NULL'}, max_participants = {max_participants if max_participants else 'NULL'}, 
                 price = {price if price else 'NULL'}, currency = '{currency}', image_url = {f"'{image_url}'" if image_url else 'NULL'}, 
+                cover_url = {f"'{image_url}'" if image_url else 'NULL'},
                 external_url = '{external_url}', original_price = {original_price if original_price else 'NULL'}, 
                 discount_price = {discount_price if discount_price else 'NULL'}, author_name = '{author_name.replace("'", "''")}', 
                 author_photo = {f"'{author_photo}'" if author_photo else 'NULL'}, event_content = '{event_content.replace("'", "''")}', 
@@ -1318,7 +1319,8 @@ def handler(event: dict, context) -> dict:
         testimonials = json.dumps(body.get('testimonials', []))
         faq = json.dumps(body.get('faq', []))
         cta_button_text = body.get('cta_button_text', 'Записаться на обучение')
-        cover_url = body.get('coverUrl', '')
+        image_url = body.get('image_url')
+        cover_url = body.get('coverUrl', '') or image_url or ''
         school_logo_url = body.get('schoolLogoUrl', '')
         
         if not all([school_id, title, event_date, external_url]):
@@ -1348,8 +1350,6 @@ def handler(event: dict, context) -> dict:
                 break
             slug = f"{base_slug}-{counter}"
             counter += 1
-        
-        image_url = body.get('image_url')
         
         cur.execute(f"""
             INSERT INTO {schema}.offline_training (
@@ -1432,6 +1432,7 @@ def handler(event: dict, context) -> dict:
         discount_price = body.get('discount_price')
         author_name = body.get('author_name', '')
         author_photo = body.get('author_photo')
+        image_url = body.get('image_url')
         
         hero_title = body.get('hero_title', '')
         hero_subtitle = body.get('hero_subtitle', '')
@@ -1444,7 +1445,7 @@ def handler(event: dict, context) -> dict:
         testimonials = json.dumps(body.get('testimonials', []))
         faq = json.dumps(body.get('faq', []))
         cta_button_text = body.get('cta_button_text', 'Записаться на обучение')
-        cover_url = body.get('coverUrl', '')
+        cover_url = body.get('coverUrl', '') or image_url or ''
         school_logo_url = body.get('schoolLogoUrl', '')
         
         print(f"[OFFLINE_TRAINING PUT] cover_url={cover_url}, school_logo_url={school_logo_url}")
@@ -1469,6 +1470,7 @@ def handler(event: dict, context) -> dict:
                 discount_price = {discount_price if discount_price else 'NULL'},
                 author_name = '{author_name.replace("'", "''")}',
                 author_photo = {f"'{author_photo}'" if author_photo else 'NULL'},
+                image_url = {f"'{image_url}'" if image_url else 'NULL'},
                 hero_title = '{hero_title.replace("'", "''")}',
                 hero_subtitle = '{hero_subtitle.replace("'", "''")}',
                 about_training = '{about_training.replace("'", "''")}',
