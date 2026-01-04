@@ -157,7 +157,7 @@ export default function MastermindLandingBuilder() {
   const loadMastermind = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?action=masterminds&id=${editId}`);
+      const response = await fetch(`https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?action=masterminds&id=${editId}&skip_status_check=true`);
       if (response.ok) {
         const mm = await response.json();
         setData({
@@ -246,6 +246,7 @@ export default function MastermindLandingBuilder() {
           event_content: data.aboutEvent,
           hero_title: data.heroTitle,
           hero_subtitle: data.heroSubtitle,
+          about_event: data.aboutEvent,
           what_you_get: data.whatYouGet,
           event_program: data.eventProgram,
           host: data.host,
