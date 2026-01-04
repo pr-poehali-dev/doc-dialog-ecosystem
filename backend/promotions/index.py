@@ -131,35 +131,39 @@ def handler(event: dict, context) -> dict:
                 }
             
             # Проверяем что курс/мастермайнд/очное обучение принадлежит школе
-            # Сначала ищем в courses
-            cur.execute("SELECT category FROM courses WHERE id = %s AND school_id = %s", (course_id, school_id))
+            category = None
+            
+            # Сначала ищем в courses (используется новая таблица course_landings)
+            cur.execute("SELECT category FROM public.course_landings WHERE id = %s AND school_id = %s", (course_id, school_id))
             course_row = cur.fetchone()
             
             if course_row:
                 category = course_row[0]
-            else:
-                # Ищем в masterminds
-                cur.execute("SELECT 'Офлайн мероприятия' FROM masterminds WHERE id = %s AND school_id = %s", (course_id, school_id))
+            
+            # Если не найден, ищем в masterminds
+            if not category:
+                cur.execute("SELECT id FROM public.masterminds WHERE id = %s AND school_id = %s", (course_id, school_id))
                 mastermind_row = cur.fetchone()
-                
                 if mastermind_row:
                     category = 'Офлайн мероприятия'
-                else:
-                    # Ищем в offline_training
-                    cur.execute("SELECT 'Офлайн мероприятия' FROM offline_training WHERE id = %s AND school_id = %s", (course_id, school_id))
-                    training_row = cur.fetchone()
-                    
-                    if training_row:
-                        category = 'Офлайн мероприятия'
-                    else:
-                        cur.close()
-                        conn.close()
-                        return {
-                            'statusCode': 403,
-                            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                            'body': json.dumps({'error': 'Курс не найден или не принадлежит школе'}),
-                            'isBase64Encoded': False
-                        }
+            
+            # Если не найден, ищем в offline_training
+            if not category:
+                cur.execute("SELECT id FROM public.offline_training WHERE id = %s AND school_id = %s", (course_id, school_id))
+                training_row = cur.fetchone()
+                if training_row:
+                    category = 'Офлайн мероприятия'
+            
+            # Если ничего не найдено
+            if not category:
+                cur.close()
+                conn.close()
+                return {
+                    'statusCode': 403,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'Курс не найден или не принадлежит школе'}),
+                    'isBase64Encoded': False
+                }
             price = PROMOTION_PRICES[promotion_type][days]
             
             # Проверяем баланс
