@@ -18,6 +18,18 @@ def response(status_code: int, body: dict) -> dict:
         'isBase64Encoded': False
     }
 
+def is_admin_user(conn, user_id: int) -> bool:
+    """Проверка является ли пользователь администратором"""
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT role, is_admin FROM t_p46047379_doc_dialog_ecosystem.users
+            WHERE id = %s
+        """, (user_id,))
+        user = cur.fetchone()
+        if user:
+            return user[0] == 'admin' or user[1] is True
+        return False
+
 def handler(event: dict, context) -> dict:
     '''API личного кабинета для салонов красоты - управление профилем и заявками'''
     
@@ -54,14 +66,26 @@ def handler(event: dict, context) -> dict:
                 user_id = decoded.get('user_id')
                 
                 with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                    cur.execute("""
-                        SELECT id, user_id, name, description, logo_url, website, phone, email, 
-                               city, address, is_verified, subscription_type, subscription_expires_at, 
-                               photos, created_at
-                        FROM t_p46047379_doc_dialog_ecosystem.salons
-                        WHERE user_id = %s
-                    """, (user_id,))
-                    salon = cur.fetchone()
+                    # Админ видит все салоны, обычный пользователь - только свой
+                    if is_admin_user(conn, user_id):
+                        cur.execute("""
+                            SELECT id, user_id, name, description, logo_url, website, phone, email, 
+                                   city, address, is_verified, subscription_type, subscription_expires_at, 
+                                   photos, created_at
+                            FROM t_p46047379_doc_dialog_ecosystem.salons
+                            ORDER BY created_at DESC
+                        """)
+                        salons = cur.fetchall()
+                        salon = salons[0] if salons else None
+                    else:
+                        cur.execute("""
+                            SELECT id, user_id, name, description, logo_url, website, phone, email, 
+                                   city, address, is_verified, subscription_type, subscription_expires_at, 
+                                   photos, created_at
+                            FROM t_p46047379_doc_dialog_ecosystem.salons
+                            WHERE user_id = %s
+                        """, (user_id,))
+                        salon = cur.fetchone()
                     
                     if not salon:
                         conn.close()
@@ -173,10 +197,23 @@ def handler(event: dict, context) -> dict:
                 body = json.loads(event.get('body', '{}'))
                 
                 with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                    # Получаем текущий салон
-                    cur.execute("""
-                        SELECT id FROM t_p46047379_doc_dialog_ecosystem.salons WHERE user_id = %s
-                    """, (user_id,))
+                    # Получаем текущий салон (админ может редактировать любой салон)
+                    if is_admin_user(conn, user_id):
+                        # Для админа - берем первый салон или салон из параметра
+                        salon_id = body.get('salon_id')
+                        if salon_id:
+                            cur.execute("""
+                                SELECT id FROM t_p46047379_doc_dialog_ecosystem.salons WHERE id = %s
+                            """, (salon_id,))
+                        else:
+                            cur.execute("""
+                                SELECT id FROM t_p46047379_doc_dialog_ecosystem.salons ORDER BY created_at DESC LIMIT 1
+                            """)
+                    else:
+                        cur.execute("""
+                            SELECT id FROM t_p46047379_doc_dialog_ecosystem.salons WHERE user_id = %s
+                        """, (user_id,))
+                    
                     salon = cur.fetchone()
                     
                     if not salon:

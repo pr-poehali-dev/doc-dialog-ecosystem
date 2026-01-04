@@ -15,6 +15,19 @@ def get_db_connection():
     return psycopg2.connect(dsn, cursor_factory=RealDictCursor)
 
 
+def is_admin_user(conn, user_id: int) -> bool:
+    """Проверка является ли пользователь администратором"""
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT role, is_admin FROM t_p46047379_doc_dialog_ecosystem.users
+            WHERE id = %s
+        """, (user_id,))
+        user = cur.fetchone()
+        if user:
+            return user.get('role') == 'admin' or user.get('is_admin') is True
+        return False
+
+
 def cors_headers():
     """Базовые CORS заголовки"""
     return {
@@ -158,25 +171,41 @@ def create_school(conn, user_id: int, data: dict) -> dict:
 
 
 def get_user_schools(conn, user_id: int) -> list:
-    """Получение списка школ пользователя"""
+    """Получение списка школ пользователя (админ видит все школы)"""
     with conn.cursor() as cur:
-        cur.execute("""
-            SELECT id, name, logo_url, slug, is_verified, created_at
-            FROM t_p46047379_doc_dialog_ecosystem.schools
-            WHERE user_id = %s
-            ORDER BY created_at DESC
-        """, (user_id,))
+        # Админ видит все школы
+        if is_admin_user(conn, user_id):
+            cur.execute("""
+                SELECT id, name, logo_url, slug, is_verified, created_at, user_id,
+                       short_description, city
+                FROM t_p46047379_doc_dialog_ecosystem.schools
+                ORDER BY created_at DESC
+            """)
+        else:
+            cur.execute("""
+                SELECT id, name, logo_url, slug, is_verified, created_at, user_id,
+                       short_description, city
+                FROM t_p46047379_doc_dialog_ecosystem.schools
+                WHERE user_id = %s
+                ORDER BY created_at DESC
+            """, (user_id,))
         return cur.fetchall()
 
 
 def get_school_for_edit(conn, school_id: int, user_id: int) -> dict:
-    """Получение данных школы для редактирования в админке"""
+    """Получение данных школы для редактирования в админке (админ имеет доступ ко всем)"""
     with conn.cursor() as cur:
-        # Проверяем права доступа
-        cur.execute("""
-            SELECT * FROM t_p46047379_doc_dialog_ecosystem.schools
-            WHERE id = %s AND user_id = %s
-        """, (school_id, user_id))
+        # Проверяем права доступа (админ имеет доступ ко всем школам)
+        if is_admin_user(conn, user_id):
+            cur.execute("""
+                SELECT * FROM t_p46047379_doc_dialog_ecosystem.schools
+                WHERE id = %s
+            """, (school_id,))
+        else:
+            cur.execute("""
+                SELECT * FROM t_p46047379_doc_dialog_ecosystem.schools
+                WHERE id = %s AND user_id = %s
+            """, (school_id, user_id))
         school = cur.fetchone()
         
         if not school:
@@ -213,13 +242,19 @@ def get_school_for_edit(conn, school_id: int, user_id: int) -> dict:
 
 
 def update_school_landing(conn, school_id: int, user_id: int, data: dict) -> bool:
-    """Обновление лендинга школы"""
+    """Обновление лендинга школы (админ может редактировать все школы)"""
     with conn.cursor() as cur:
-        # Проверяем права
-        cur.execute("""
-            SELECT id FROM t_p46047379_doc_dialog_ecosystem.schools
-            WHERE id = %s AND user_id = %s
-        """, (school_id, user_id))
+        # Проверяем права (админ может редактировать все школы)
+        if is_admin_user(conn, user_id):
+            cur.execute("""
+                SELECT id FROM t_p46047379_doc_dialog_ecosystem.schools
+                WHERE id = %s
+            """, (school_id,))
+        else:
+            cur.execute("""
+                SELECT id FROM t_p46047379_doc_dialog_ecosystem.schools
+                WHERE id = %s AND user_id = %s
+            """, (school_id, user_id))
         
         if not cur.fetchone():
             return False

@@ -49,3 +49,35 @@ export function isAuthenticated(): boolean {
 export function getUserRole(): string | null {
   return localStorage.getItem('userRole');
 }
+
+/**
+ * Проверяет, является ли пользователь администратором
+ */
+export function isAdmin(): boolean {
+  const userStr = localStorage.getItem('user');
+  if (userStr && userStr !== 'null') {
+    try {
+      const user = JSON.parse(userStr);
+      return user?.role === 'admin' || user?.is_admin === true;
+    } catch (e) {
+      console.error('Failed to parse user from localStorage:', e);
+    }
+  }
+  return false;
+}
+
+/**
+ * Получает email пользователя
+ */
+export function getUserEmail(): string {
+  const userStr = localStorage.getItem('user');
+  if (userStr && userStr !== 'null') {
+    try {
+      const user = JSON.parse(userStr);
+      return user?.email || '';
+    } catch (e) {
+      console.error('Failed to parse user from localStorage:', e);
+    }
+  }
+  return '';
+}
