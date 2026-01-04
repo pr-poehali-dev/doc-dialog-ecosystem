@@ -141,8 +141,20 @@ export default function OfflineTrainingPublicLanding() {
             </div>
             <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
               <Icon name="Users" size={20} />
-              <span>До {training.max_participants} человек</span>
+              <span>{training.current_participants} / {training.max_participants} участников</span>
             </div>
+            {training.max_participants - training.current_participants > 0 && (
+              <div className="flex items-center gap-2 bg-green-500/30 backdrop-blur-sm px-4 py-2 rounded-lg border border-green-300/30">
+                <Icon name="Check" size={20} />
+                <span>Осталось {training.max_participants - training.current_participants} {training.max_participants - training.current_participants === 1 ? 'место' : training.max_participants - training.current_participants < 5 ? 'места' : 'мест'}</span>
+              </div>
+            )}
+            {training.max_participants - training.current_participants === 0 && (
+              <div className="flex items-center gap-2 bg-red-500/30 backdrop-blur-sm px-4 py-2 rounded-lg border border-red-300/30">
+                <Icon name="AlertCircle" size={20} />
+                <span>Мест не осталось</span>
+              </div>
+            )}
             {displayPrice && (
               <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
                 <Icon name="Coins" size={20} />
