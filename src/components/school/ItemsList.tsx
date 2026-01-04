@@ -133,15 +133,15 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
                 )}
               </div>
               <div className="space-y-2 mt-4 pt-4 border-t">
-                {course.status === 'approved' && course.slug && (
+                {(course.status === 'approved' || course.status === 'moderation') && course.slug && (
                   <a
-                    href={`/course/landing/${course.slug}`}
+                    href={`/course/landing/${course.slug}?preview=true`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors font-medium"
                   >
                     <Icon name="ExternalLink" size={16} />
-                    Открыть лендинг
+                    {course.status === 'moderation' ? 'Предпросмотр' : 'Открыть лендинг'}
                   </a>
                 )}
                 {course.status === 'approved' && (
