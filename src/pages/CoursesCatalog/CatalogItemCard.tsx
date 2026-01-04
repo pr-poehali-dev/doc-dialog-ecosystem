@@ -83,7 +83,7 @@ export default function CatalogItemCard({ item }: CatalogItemCardProps) {
       <CardHeader className="flex-1 pb-3">
         {isPromoted && (
           <div className="mb-3 px-3 py-1.5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 rounded-lg text-xs text-amber-800 font-semibold flex items-center gap-1.5 shadow-sm">
-            <Icon name="TrendingUp" size={14} />
+            <Icon name="Award" size={14} />
             <span>
               Рекомендуем
             </span>
