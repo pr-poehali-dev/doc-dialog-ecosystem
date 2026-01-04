@@ -157,8 +157,8 @@ export default function CourseLandingBuilder() {
       const schoolId = userData.school_id;
 
       if (!schoolId) {
-        alert('У вас нет привязанной школы. Создайте школу в профиле.');
-        navigate('/profile');
+        alert('У вас нет привязанной школы. Обратитесь в поддержку.');
+        navigate('/school/dashboard');
         return;
       }
 
