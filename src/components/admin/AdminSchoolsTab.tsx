@@ -105,12 +105,13 @@ export default function AdminSchoolsTab() {
         });
         loadSchools();
       } else {
-        throw new Error('Failed to moderate');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}`);
       }
     } catch (error) {
       toast({
         title: "Ошибка",
-        description: "Не удалось изменить статус школы",
+        description: error instanceof Error ? error.message : "Не удалось изменить статус школы",
         variant: "destructive"
       });
     }

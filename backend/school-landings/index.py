@@ -573,6 +573,11 @@ def handler(event: dict, context) -> dict:
         # PUT /?action=moderate&id=X - модерация школы (только админ)
         if method == 'PUT' and event.get('queryStringParameters', {}).get('action') == 'moderate':
             school_id = event.get('queryStringParameters', {}).get('id')
+            
+            if not school_id:
+                conn.close()
+                return response(400, {'error': 'Требуется параметр id'})
+            
             headers = event.get('headers', {})
             auth_header = headers.get('X-Authorization') or headers.get('Authorization', '')
             token = auth_header.replace('Bearer ', '').strip()
@@ -586,9 +591,13 @@ def handler(event: dict, context) -> dict:
                 decoded = jwt.decode(token, jwt_secret, algorithms=['HS256'])
                 user_id = decoded.get('user_id')
                 
+                if not user_id:
+                    conn.close()
+                    return response(401, {'error': 'Неверный токен: отсутствует user_id'})
+                
                 if not is_admin_user(conn, user_id):
                     conn.close()
-                    return response(403, {'error': 'Доступ запрещён'})
+                    return response(403, {'error': 'Доступ запрещён: требуется роль администратора'})
                 
                 data = json.loads(event.get('body', '{}'))
                 is_verified = data.get('is_verified', False)
@@ -614,9 +623,9 @@ def handler(event: dict, context) -> dict:
                         'slug': result['slug'],
                         'is_verified': result['is_verified']
                     })
-            except jwt.InvalidTokenError:
+            except jwt.InvalidTokenError as e:
                 conn.close()
-                return response(401, {'error': 'Неверный токен'})
+                return response(401, {'error': f'Неверный токен: {str(e)}'})
         
         # DELETE /?id=X - удаление школы (владелец или админ)
         if method == 'DELETE':
