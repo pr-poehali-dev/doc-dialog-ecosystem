@@ -65,6 +65,8 @@ interface ItemsListProps {
   onEditCourse?: (course: Course) => void;
   onDeleteCourse?: (courseId: number) => void;
   onPromoteCourse?: (courseId: number, title: string, category: string) => void;
+  onPromoteMastermind?: (mastermindId: number, title: string) => void;
+  onPromoteTraining?: (trainingId: number, title: string) => void;
   onEditMastermind?: (mastermind: Mastermind) => void;
   onDeleteMastermind?: (mastermindId: number) => void;
   onEditTraining?: (training: any) => void;
@@ -73,7 +75,7 @@ interface ItemsListProps {
   onDeleteSpecialist?: (specialistId: number) => void;
 }
 
-export default function ItemsList({ activeTab, courses, masterminds, offlineTrainings = [], specialists, getStatusBadge, onEditCourse, onDeleteCourse, onPromoteCourse, onEditMastermind, onDeleteMastermind, onEditTraining, onDeleteTraining, onEditSpecialist, onDeleteSpecialist }: ItemsListProps) {
+export default function ItemsList({ activeTab, courses, masterminds, offlineTrainings = [], specialists, getStatusBadge, onEditCourse, onDeleteCourse, onPromoteCourse, onPromoteMastermind, onPromoteTraining, onEditMastermind, onDeleteMastermind, onEditTraining, onDeleteTraining, onEditSpecialist, onDeleteSpecialist }: ItemsListProps) {
   return (
     <>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -242,6 +244,15 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
                     Открыть лендинг
                   </a>
                 )}
+                {mm.status === 'approved' && (
+                  <button
+                    onClick={() => onPromoteMastermind?.(mm.id, mm.title)}
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-md hover:from-amber-600 hover:to-orange-600 transition-colors font-medium"
+                  >
+                    <Icon name="TrendingUp" size={16} />
+                    Поднять в топ
+                  </button>
+                )}
                 <div className="flex gap-2">
                   <a
                     href={`/mastermind/landing/builder?id=${mm.id}`}
@@ -330,6 +341,15 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
                     <Icon name="ExternalLink" size={16} />
                     Открыть лендинг
                   </a>
+                )}
+                {training.status === 'approved' && (
+                  <button
+                    onClick={() => onPromoteTraining?.(training.id, training.title)}
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-md hover:from-amber-600 hover:to-orange-600 transition-colors font-medium"
+                  >
+                    <Icon name="TrendingUp" size={16} />
+                    Поднять в топ
+                  </button>
                 )}
                 <div className="flex gap-2">
                   <a

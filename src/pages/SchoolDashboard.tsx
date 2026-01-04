@@ -54,6 +54,12 @@ export default function SchoolDashboard() {
   const [promoteCourseId, setPromoteCourseId] = useState<number | null>(null);
   const [promoteCourseTitle, setPromoteCourseTitle] = useState('');
   const [promoteCourseCategory, setPromoteCourseCategory] = useState('');
+  
+  const [promoteMastermindId, setPromoteMastermindId] = useState<number | null>(null);
+  const [promoteMastermindTitle, setPromoteMastermindTitle] = useState('');
+  
+  const [promoteTrainingId, setPromoteTrainingId] = useState<number | null>(null);
+  const [promoteTrainingTitle, setPromoteTrainingTitle] = useState('');
 
   useEffect(() => {
     loadUserSchool();
@@ -357,6 +363,14 @@ export default function SchoolDashboard() {
               setPromoteCourseCategory(category);
             }}
             onDeleteCourse={handleDeleteCourse}
+            onPromoteMastermind={(id, title) => {
+              setPromoteMastermindId(id);
+              setPromoteMastermindTitle(title);
+            }}
+            onPromoteTraining={(id, title) => {
+              setPromoteTrainingId(id);
+              setPromoteTrainingTitle(title);
+            }}
             onEditMastermind={handleEditMastermind}
             onDeleteMastermind={handleDeleteMastermind}
             onEditTraining={handleEditTraining}
@@ -383,6 +397,38 @@ export default function SchoolDashboard() {
         courseId={promoteCourseId || 0}
         courseTitle={promoteCourseTitle}
         courseCategory={promoteCourseCategory}
+        onSuccess={() => {
+          loadData();
+        }}
+      />
+      
+      <PromoteCourseDialog
+        open={promoteMastermindId !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setPromoteMastermindId(null);
+            setPromoteMastermindTitle('');
+          }
+        }}
+        courseId={promoteMastermindId || 0}
+        courseTitle={promoteMastermindTitle}
+        courseCategory="Офлайн мероприятия"
+        onSuccess={() => {
+          loadData();
+        }}
+      />
+      
+      <PromoteCourseDialog
+        open={promoteTrainingId !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setPromoteTrainingId(null);
+            setPromoteTrainingTitle('');
+          }
+        }}
+        courseId={promoteTrainingId || 0}
+        courseTitle={promoteTrainingTitle}
+        courseCategory="Офлайн мероприятия"
         onSuccess={() => {
           loadData();
         }}
