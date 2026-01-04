@@ -102,13 +102,7 @@ export default function SchoolDashboard() {
         const data = await response.json();
         setMasterminds(data);
       } else if (activeTab === 'offline-training') {
-        const token = localStorage.getItem('token');
-        const response = await fetch('https://functions.poehali.dev/3dbad6d0-7948-4c83-ac47-fa9e9e92bf26', {
-          headers: { 
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
+        const response = await fetch(`${COURSE_API_URL}?action=offline_trainings&school_id=${schoolId}&status=all`);
         if (response.ok) {
           const data = await response.json();
           setOfflineTrainings(Array.isArray(data) ? data : []);
@@ -245,6 +239,8 @@ export default function SchoolDashboard() {
                 navigate('/course/landing/builder');
               } else if (activeTab === 'masterminds') {
                 navigate('/mastermind/landing/builder');
+              } else if (activeTab === 'offline-training') {
+                navigate('/offline-training/landing/builder');
               } else {
                 setShowAddForm(!showAddForm);
               }

@@ -261,9 +261,7 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
             <CardHeader>
               <div className="flex justify-between items-start mb-2">
                 <CardTitle className="text-lg">{training.title}</CardTitle>
-                <span className={`px-2 py-1 rounded text-xs font-medium ${training.is_moderated ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                  {training.is_moderated ? 'Одобрено' : 'На модерации'}
-                </span>
+                {getStatusBadge(training.status)}
               </div>
               <p className="text-sm text-muted-foreground line-clamp-2">{training.description}</p>
             </CardHeader>
@@ -271,7 +269,7 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
               <div className="space-y-2 text-sm">
                 <div className="flex items-center gap-2">
                   <Icon name="Calendar" size={16} className="text-primary" />
-                  <span>{new Date(training.event_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                  <span>{new Date(training.event_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
                 </div>
                 {training.location && (
                   <div className="flex items-center gap-2">
@@ -303,20 +301,38 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
                     <span>{training.price.toLocaleString()} ₽</span>
                   </div>
                 ) : null}
+                {training.view_count !== undefined && (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Icon name="Eye" size={16} className="text-primary" />
+                    <span>{training.view_count} просмотров</span>
+                  </div>
+                )}
               </div>
-              <div className="flex gap-2 mt-4 pt-4 border-t">
-                <button
-                  onClick={() => onEditTraining?.(training)}
-                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-                >
-                  <Icon name="Pencil" size={16} />
-                  Редактировать
-                </button>
-                <button
-                  onClick={() => onDeleteTraining?.(training.id)}
-                  className="flex items-center justify-center gap-2 px-3 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
-                >
-                  <Icon name="Trash2" size={16} />
+              <div className="space-y-2 mt-4 pt-4 border-t">
+                {training.status === 'approved' && training.slug && (
+                  <a
+                    href={`/offline-training/landing/${training.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors font-medium"
+                  >
+                    <Icon name="ExternalLink" size={16} />
+                    Открыть лендинг
+                  </a>
+                )}
+                <div className="flex gap-2">
+                  <a
+                    href={`/offline-training/landing/builder?id=${training.id}`}
+                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                  >
+                    <Icon name="Pencil" size={16} />
+                    Редактировать
+                  </a>
+                  <button
+                    onClick={() => onDeleteTraining?.(training.id)}
+                    className="flex items-center justify-center gap-2 px-3 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
+                  >
+                    <Icon name="Trash2" size={16} />
                 </button>
               </div>
             </CardContent>

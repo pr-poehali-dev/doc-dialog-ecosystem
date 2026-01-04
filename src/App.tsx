@@ -25,6 +25,8 @@ import CourseLandingBuilder from "./pages/CourseLandingBuilder";
 import CoursePublicLanding from "./pages/CoursePublicLanding";
 import MastermindLandingBuilder from "./pages/MastermindLandingBuilder";
 import MastermindPublicLanding from "./pages/MastermindPublicLanding";
+import OfflineTrainingLandingBuilder from "./pages/OfflineTrainingLandingBuilder";
+import OfflineTrainingPublicLanding from "./pages/OfflineTrainingPublicLanding";
 import SchoolCatalog from "./pages/SchoolCatalog";
 import SchoolLanding from "./pages/SchoolLanding";
 import SchoolLandingBuilder from "./pages/SchoolLandingBuilder";
@@ -63,6 +65,8 @@ const App = () => (
           <Route path="/course/landing/:slug" element={<CoursePublicLanding />} />
           <Route path="/mastermind/landing/builder" element={<MastermindLandingBuilder />} />
           <Route path="/mastermind/landing/:slug" element={<MastermindPublicLanding />} />
+          <Route path="/offline-training/landing/builder" element={<OfflineTrainingLandingBuilder />} />
+          <Route path="/offline-training/landing/:slug" element={<OfflineTrainingPublicLanding />} />
           <Route path="/schools" element={<SchoolCatalog />} />
           <Route path="/school/:slug" element={<SchoolLanding />} />
           <Route path="/salon/cabinet" element={<SalonCabinet />} />

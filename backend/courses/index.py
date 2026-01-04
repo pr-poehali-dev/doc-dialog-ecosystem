@@ -33,6 +33,58 @@ def handler(event: dict, context) -> dict:
     course_id = query_params.get('id')
     slug = query_params.get('slug')
     
+    # GET /courses?action=offline_trainings&slug=X - Get offline training by slug
+    if method == 'GET' and slug and action == 'offline_trainings':
+        cur.execute(f"""
+            SELECT id, slug, title, description, hero_title, hero_subtitle,
+                   event_date, location, max_participants, current_participants,
+                   price, original_price, discount_price, currency, image_url, external_url,
+                   about_training, what_you_get, training_program, instructor, co_instructors,
+                   benefits, testimonials, faq, cta_button_text, status
+            FROM {schema}.offline_training
+            WHERE slug = '{slug}' AND status = 'approved'
+        """)
+        training = cur.fetchone()
+        
+        if not training:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Training not found'}),
+                'isBase64Encoded': False
+            }
+        
+        result = {
+            'id': training[0], 'slug': training[1], 'title': training[2], 'description': training[3],
+            'hero_title': training[4], 'hero_subtitle': training[5],
+            'event_date': training[6].isoformat() if training[6] else None, 'location': training[7],
+            'max_participants': training[8], 'current_participants': training[9] or 0,
+            'price': float(training[10]) if training[10] else None,
+            'original_price': float(training[11]) if training[11] else None,
+            'discount_price': float(training[12]) if training[12] else None,
+            'currency': training[13] or 'RUB', 'image_url': training[14], 'external_url': training[15],
+            'about_training': training[16],
+            'what_you_get': training[17] if training[17] else [],
+            'training_program': training[18] if training[18] else [],
+            'instructor': training[19] if training[19] else {},
+            'co_instructors': training[20] if training[20] else [],
+            'benefits': training[21] if training[21] else [],
+            'testimonials': training[22] if training[22] else [],
+            'faq': training[23] if training[23] else [],
+            'cta_button_text': training[24] or 'Записаться на обучение'
+        }
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps(result),
+            'isBase64Encoded': False
+        }
+    
     # GET /courses?action=masterminds&slug=X - Get mastermind by slug with full landing data
     if method == 'GET' and slug and action == 'masterminds':
         cur.execute(f"""
@@ -1109,6 +1161,261 @@ def handler(event: dict, context) -> dict:
         cur.close()
         conn.close()
         return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'message': 'Specialist request deleted'}), 'isBase64Encoded': False}
+    
+    # GET /courses?action=offline_trainings&id=X - Get single offline training
+    if method == 'GET' and action == 'offline_trainings' and course_id:
+        skip_status = query_params.get('skip_status_check', 'false').lower() == 'true'
+        status_filter = "" if skip_status else "AND status = 'approved'"
+        
+        cur.execute(f"""
+            SELECT id, school_id, title, description, event_date, location, max_participants, 
+                   current_participants, price, currency, image_url, external_url, status,
+                   original_price, discount_price, author_name, author_photo, view_count, 
+                   hero_title, hero_subtitle, about_training, what_you_get, training_program,
+                   instructor, co_instructors, benefits, testimonials, faq, cta_button_text,
+                   created_at, updated_at, slug
+            FROM {schema}.offline_training
+            WHERE id = {course_id} {status_filter}
+        """)
+        training = cur.fetchone()
+        
+        if not training:
+            cur.close()
+            conn.close()
+            return {'statusCode': 404, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Training not found'}), 'isBase64Encoded': False}
+        
+        if not skip_status:
+            cur.execute(f"UPDATE {schema}.offline_training SET view_count = view_count + 1 WHERE id = {course_id}")
+        
+        result = {
+            'id': training[0], 'school_id': training[1], 'title': training[2], 'description': training[3],
+            'event_date': training[4].isoformat() if training[4] else None, 'location': training[5],
+            'max_participants': training[6], 'current_participants': training[7] or 0,
+            'price': float(training[8]) if training[8] else None, 'currency': training[9],
+            'image_url': training[10], 'external_url': training[11], 'status': training[12],
+            'original_price': float(training[13]) if training[13] else None,
+            'discount_price': float(training[14]) if training[14] else None,
+            'author_name': training[15], 'author_photo': training[16], 'view_count': training[17],
+            'hero_title': training[18], 'hero_subtitle': training[19], 'about_training': training[20],
+            'what_you_get': training[21] if training[21] else [],
+            'training_program': training[22] if training[22] else [],
+            'instructor': training[23] if training[23] else {},
+            'co_instructors': training[24] if training[24] else [],
+            'benefits': training[25] if training[25] else [],
+            'testimonials': training[26] if training[26] else [],
+            'faq': training[27] if training[27] else [],
+            'cta_button_text': training[28] or 'Записаться на обучение',
+            'created_at': training[29].isoformat() if training[29] else None,
+            'slug': training[31]
+        }
+        
+        cur.close()
+        conn.close()
+        return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps(result), 'isBase64Encoded': False}
+    
+    # GET /courses?action=offline_trainings - List offline trainings
+    if method == 'GET' and action == 'offline_trainings':
+        school_id = query_params.get('school_id')
+        status_filter = query_params.get('status', 'approved')
+        
+        query = f"SELECT id, school_id, title, description, event_date, location, max_participants, current_participants, price, currency, image_url, external_url, status, original_price, discount_price, view_count, created_at, slug FROM {schema}.offline_training WHERE 1=1"
+        
+        if school_id:
+            query += f" AND school_id = {school_id}"
+        if status_filter and status_filter != 'all':
+            query += f" AND status = '{status_filter}'"
+        
+        query += " ORDER BY event_date ASC"
+        
+        cur.execute(query)
+        trainings = cur.fetchall()
+        
+        result = [{
+            'id': t[0], 'school_id': t[1], 'title': t[2], 'description': t[3],
+            'event_date': t[4].isoformat() if t[4] else None, 'location': t[5],
+            'max_participants': t[6], 'current_participants': t[7],
+            'price': float(t[8]) if t[8] else None, 'currency': t[9],
+            'image_url': t[10], 'external_url': t[11], 'status': t[12],
+            'original_price': float(t[13]) if t[13] else None,
+            'discount_price': float(t[14]) if t[14] else None,
+            'view_count': t[15] or 0,
+            'created_at': t[16].isoformat() if t[16] else None,
+            'slug': t[17]
+        } for t in trainings]
+        
+        cur.close()
+        conn.close()
+        return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps(result), 'isBase64Encoded': False}
+    
+    # POST /courses?type=offline_trainings - Create offline training
+    if method == 'POST' and entity_type == 'offline_trainings':
+        body = json.loads(event.get('body', '{}'))
+        
+        school_id = body.get('school_id')
+        title = body.get('title')
+        description = body.get('description', '')
+        event_date = body.get('event_date')
+        location = body.get('location')
+        max_participants = body.get('max_participants')
+        price = body.get('price')
+        currency = body.get('currency', 'RUB')
+        external_url = body.get('external_url')
+        original_price = body.get('original_price')
+        discount_price = body.get('discount_price')
+        author_name = body.get('author_name', '')
+        author_photo = body.get('author_photo')
+        
+        hero_title = body.get('hero_title', '')
+        hero_subtitle = body.get('hero_subtitle', '')
+        about_training = body.get('about_training', '')
+        what_you_get = json.dumps(body.get('what_you_get', []))
+        training_program = json.dumps(body.get('training_program', []))
+        instructor = json.dumps(body.get('instructor', {}))
+        co_instructors = json.dumps(body.get('co_instructors', []))
+        benefits = json.dumps(body.get('benefits', []))
+        testimonials = json.dumps(body.get('testimonials', []))
+        faq = json.dumps(body.get('faq', []))
+        cta_button_text = body.get('cta_button_text', 'Записаться на обучение')
+        
+        if not all([school_id, title, event_date, external_url]):
+            cur.close()
+            conn.close()
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Missing required fields'}), 'isBase64Encoded': False}
+        
+        import re
+        slug = re.sub(r'[^a-zA-Z0-9а-яА-Я\-]', '-', title.lower()).strip('-')
+        slug = re.sub(r'-+', '-', slug)
+        base_slug = slug
+        counter = 1
+        while True:
+            cur.execute(f"SELECT id FROM {schema}.offline_training WHERE slug = '{slug}'")
+            if not cur.fetchone():
+                break
+            slug = f"{base_slug}-{counter}"
+            counter += 1
+        
+        cur.execute(f"""
+            INSERT INTO {schema}.offline_training (
+                school_id, title, description, event_date, location, max_participants,
+                price, currency, external_url, original_price, discount_price,
+                author_name, author_photo, hero_title, hero_subtitle, about_training,
+                what_you_get, training_program, instructor, co_instructors, benefits,
+                testimonials, faq, cta_button_text, slug, status
+            )
+            VALUES (
+                {school_id}, '{title.replace("'", "''")}', '{description.replace("'", "''")}',
+                '{event_date}', {f"'{location}'" if location else 'NULL'},
+                {max_participants if max_participants else 'NULL'},
+                {price if price else 'NULL'}, '{currency}', '{external_url}',
+                {original_price if original_price else 'NULL'},
+                {discount_price if discount_price else 'NULL'},
+                '{author_name.replace("'", "''")}',
+                {f"'{author_photo}'" if author_photo else 'NULL'},
+                '{hero_title.replace("'", "''")}', '{hero_subtitle.replace("'", "''")}',
+                '{about_training.replace("'", "''")}', '{what_you_get}', '{training_program}',
+                '{instructor}', '{co_instructors}', '{benefits}', '{testimonials}',
+                '{faq}', '{cta_button_text.replace("'", "''")}', '{slug}', 'pending'
+            )
+            RETURNING id, title, slug, status, created_at
+        """)
+        
+        new_training = cur.fetchone()
+        result = {
+            'id': new_training[0], 'title': new_training[1], 'slug': new_training[2],
+            'status': new_training[3], 'created_at': new_training[4].isoformat() if new_training[4] else None
+        }
+        
+        cur.close()
+        conn.close()
+        return {'statusCode': 201, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps(result), 'isBase64Encoded': False}
+    
+    # PUT /courses?action=offline_trainings&id=X - Update offline training
+    if method == 'PUT' and action == 'offline_trainings':
+        training_id = query_params.get('id')
+        
+        if not training_id:
+            cur.close()
+            conn.close()
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Missing training id'}), 'isBase64Encoded': False}
+        
+        body = json.loads(event.get('body', '{}'))
+        
+        title = body.get('title')
+        description = body.get('description', '')
+        event_date = body.get('event_date')
+        location = body.get('location')
+        max_participants = body.get('max_participants')
+        current_participants = body.get('current_participants', 0)
+        price = body.get('price')
+        currency = body.get('currency', 'RUB')
+        external_url = body.get('external_url')
+        original_price = body.get('original_price')
+        discount_price = body.get('discount_price')
+        author_name = body.get('author_name', '')
+        author_photo = body.get('author_photo')
+        
+        hero_title = body.get('hero_title', '')
+        hero_subtitle = body.get('hero_subtitle', '')
+        about_training = body.get('about_training', '')
+        what_you_get = json.dumps(body.get('what_you_get', []))
+        training_program = json.dumps(body.get('training_program', []))
+        instructor = json.dumps(body.get('instructor', {}))
+        co_instructors = json.dumps(body.get('co_instructors', []))
+        benefits = json.dumps(body.get('benefits', []))
+        testimonials = json.dumps(body.get('testimonials', []))
+        faq = json.dumps(body.get('faq', []))
+        cta_button_text = body.get('cta_button_text', 'Записаться на обучение')
+        
+        if not all([title, event_date, external_url]):
+            cur.close()
+            conn.close()
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Missing required fields'}), 'isBase64Encoded': False}
+        
+        cur.execute(f"""
+            UPDATE {schema}.offline_training
+            SET title = '{title.replace("'", "''")}',
+                description = '{description.replace("'", "''")}',
+                event_date = '{event_date}',
+                location = {f"'{location}'" if location else 'NULL'},
+                max_participants = {max_participants if max_participants else 'NULL'},
+                current_participants = {current_participants},
+                price = {price if price else 'NULL'},
+                currency = '{currency}',
+                external_url = '{external_url}',
+                original_price = {original_price if original_price else 'NULL'},
+                discount_price = {discount_price if discount_price else 'NULL'},
+                author_name = '{author_name.replace("'", "''")}',
+                author_photo = {f"'{author_photo}'" if author_photo else 'NULL'},
+                hero_title = '{hero_title.replace("'", "''")}',
+                hero_subtitle = '{hero_subtitle.replace("'", "''")}',
+                about_training = '{about_training.replace("'", "''")}',
+                what_you_get = '{what_you_get}',
+                training_program = '{training_program}',
+                instructor = '{instructor}',
+                co_instructors = '{co_instructors}',
+                benefits = '{benefits}',
+                testimonials = '{testimonials}',
+                faq = '{faq}',
+                cta_button_text = '{cta_button_text.replace("'", "''")}'
+            WHERE id = {training_id}
+            RETURNING id, title, slug, status, updated_at
+        """)
+        
+        updated_training = cur.fetchone()
+        
+        if not updated_training:
+            cur.close()
+            conn.close()
+            return {'statusCode': 404, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Training not found'}), 'isBase64Encoded': False}
+        
+        result = {
+            'id': updated_training[0], 'title': updated_training[1], 'slug': updated_training[2],
+            'status': updated_training[3], 'updated_at': updated_training[4].isoformat() if updated_training[4] else None
+        }
+        
+        cur.close()
+        conn.close()
+        return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps(result), 'isBase64Encoded': False}
     
     cur.close()
     conn.close()
