@@ -1294,11 +1294,13 @@ def handler(event: dict, context) -> dict:
             slug = f"{base_slug}-{counter}"
             counter += 1
         
+        image_url = body.get('image_url')
+        
         cur.execute(f"""
             INSERT INTO {schema}.offline_training (
                 school_id, title, description, event_date, location, max_participants,
                 price, currency, external_url, original_price, discount_price,
-                author_name, author_photo, hero_title, hero_subtitle, about_training,
+                author_name, author_photo, image_url, hero_title, hero_subtitle, about_training,
                 what_you_get, training_program, instructor, co_instructors, benefits,
                 testimonials, faq, cta_button_text, slug, status
             )
@@ -1311,6 +1313,7 @@ def handler(event: dict, context) -> dict:
                 {discount_price if discount_price else 'NULL'},
                 '{author_name.replace("'", "''")}',
                 {f"'{author_photo}'" if author_photo else 'NULL'},
+                {f"'{image_url}'" if image_url else 'NULL'},
                 '{hero_title.replace("'", "''")}', '{hero_subtitle.replace("'", "''")}',
                 '{about_training.replace("'", "''")}', '{what_you_get}', '{training_program}',
                 '{instructor}', '{co_instructors}', '{benefits}', '{testimonials}',
