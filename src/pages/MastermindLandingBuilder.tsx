@@ -575,12 +575,34 @@ export default function MastermindLandingBuilder() {
                 Назад
               </Button>
             )}
+            
+            {editId && (
+              <Button 
+                variant="secondary" 
+                onClick={handleSave} 
+                disabled={saving}
+                className="ml-auto"
+              >
+                {saving ? (
+                  <>
+                    <Icon name="Loader2" size={18} className="mr-2 animate-spin" />
+                    Сохранение...
+                  </>
+                ) : (
+                  <>
+                    <Icon name="Save" size={18} className="mr-2" />
+                    Сохранить изменения
+                  </>
+                )}
+              </Button>
+            )}
+            
             {step < 5 ? (
-              <Button onClick={() => setStep(step + 1)} className="ml-auto">
+              <Button onClick={() => setStep(step + 1)} className={editId ? '' : 'ml-auto'}>
                 Далее
                 <Icon name="ChevronRight" size={18} className="ml-2" />
               </Button>
-            ) : (
+            ) : !editId ? (
               <Button onClick={handleSave} disabled={saving || !data.ctaButtonUrl} className="ml-auto">
                 {saving ? (
                   <>
@@ -594,7 +616,7 @@ export default function MastermindLandingBuilder() {
                   </>
                 )}
               </Button>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
