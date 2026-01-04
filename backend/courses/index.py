@@ -243,6 +243,11 @@ def handler(event: dict, context) -> dict:
     
     # GET /courses?action=masterminds&id=X - Get single mastermind with full details + increment view counter
     if method == 'GET' and action == 'masterminds' and course_id:
+        # Для модерации (skip_status_check=true) возвращаем мастермайнд с любым статусом
+        skip_status = query_params.get('skip_status_check', 'false').lower() == 'true'
+        
+        status_filter = "" if skip_status else "AND m.status = 'approved'"
+        
         cur.execute(f"""
             SELECT m.id, m.school_id, COALESCE(m.school_name, s.name) as school_name, m.title, m.description,
                    m.event_date, m.location, m.max_participants, m.current_participants,
@@ -251,7 +256,7 @@ def handler(event: dict, context) -> dict:
                    m.event_content, m.view_count, m.author_position, m.co_authors, m.created_at
             FROM {schema}.masterminds m
             LEFT JOIN {schema}.schools s ON m.school_id = s.id
-            WHERE m.id = {course_id} AND m.status = 'approved'
+            WHERE m.id = {course_id} {status_filter}
         """)
         mastermind = cur.fetchone()
         
@@ -265,7 +270,9 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
-        cur.execute(f"UPDATE {schema}.masterminds SET view_count = view_count + 1 WHERE id = {course_id}")
+        # Не увеличиваем счетчик просмотров для модерации
+        if not skip_status:
+            cur.execute(f"UPDATE {schema}.masterminds SET view_count = view_count + 1 WHERE id = {course_id}")
         
         result = {
             'id': mastermind[0],
