@@ -3,6 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 import Icon from "@/components/ui/icon";
 
 interface OfflineTraining {
@@ -30,10 +31,15 @@ interface OfflineTrainingModerationTabProps {
   onModerationComplete?: () => void;
 }
 
+const ADMIN_API_URL = 'https://functions.poehali.dev/d9ed333b-313d-40b6-8ca2-016db5854f7c';
+const REVIEWS_API_URL = 'https://functions.poehali.dev/dacb9e9b-c76e-4430-8ed9-362ffc8b9566';
+
 export default function OfflineTrainingModerationTab({ onModerationComplete }: OfflineTrainingModerationTabProps) {
   const { toast } = useToast();
   const [trainings, setTrainings] = useState<OfflineTraining[]>([]);
   const [loading, setLoading] = useState(false);
+  const [selectedTraining, setSelectedTraining] = useState<number | null>(null);
+  const [moderationComment, setModerationComment] = useState('');
 
   useEffect(() => {
     loadTrainings();
@@ -61,21 +67,46 @@ export default function OfflineTrainingModerationTab({ onModerationComplete }: O
 
   const approveTraining = async (trainingId: number) => {
     try {
-      const response = await fetch(`https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?type=offline_trainings&id=${trainingId}`, {
-        method: 'PUT',
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${ADMIN_API_URL}?action=moderate_offline_training`, {
+        method: 'POST',
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ status: 'approved' })
+        body: JSON.stringify({
+          training_id: trainingId,
+          approve: true,
+          comment: moderationComment
+        })
       });
       
       if (response.ok) {
+        // Generate auto reviews after approval
+        try {
+          await fetch(`${REVIEWS_API_URL}?action=generate_auto`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ entity_type: 'offline_training', entity_id: trainingId })
+          });
+        } catch (err) {
+          console.error('Failed to generate auto reviews:', err);
+        }
+        
         toast({
-          title: "Успешно",
-          description: "Очное обучение одобрено"
+          title: "Очное обучение одобрено",
+          description: "Обучение опубликовано с автоматическими отзывами"
         });
+        setModerationComment('');
+        setSelectedTraining(null);
         loadTrainings();
         onModerationComplete?.();
+      } else {
+        toast({
+          title: "Ошибка",
+          description: "Не удалось одобрить обучение",
+          variant: "destructive"
+        });
       }
     } catch (error) {
       toast({
@@ -83,6 +114,41 @@ export default function OfflineTrainingModerationTab({ onModerationComplete }: O
         description: "Не удалось одобрить обучение",
         variant: "destructive"
       });
+    }
+  };
+
+  const rejectTraining = async (trainingId: number) => {
+    if (!moderationComment.trim()) {
+      toast({ title: 'Укажите причину', description: 'Необходимо указать причину отклонения', variant: 'destructive' });
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${ADMIN_API_URL}?action=moderate_offline_training`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          training_id: trainingId,
+          approve: false,
+          comment: moderationComment
+        })
+      });
+
+      if (response.ok) {
+        toast({ title: 'Очное обучение отклонено', description: 'Школа получит уведомление об отклонении' });
+        setModerationComment('');
+        setSelectedTraining(null);
+        loadTrainings();
+        onModerationComplete?.();
+      } else {
+        toast({ title: 'Ошибка', description: 'Не удалось отклонить обучение', variant: 'destructive' });
+      }
+    } catch (error) {
+      toast({ title: 'Ошибка', description: 'Не удалось отклонить обучение', variant: 'destructive' });
     }
   };
 
@@ -151,6 +217,19 @@ export default function OfflineTrainingModerationTab({ onModerationComplete }: O
                       )}
                     </div>
                   </div>
+                  
+                  {selectedTraining === training.id && (
+                    <div className="mb-4 space-y-2">
+                      <label className="text-sm font-medium">Комментарий модератора</label>
+                      <Textarea
+                        value={moderationComment}
+                        onChange={(e) => setModerationComment(e.target.value)}
+                        placeholder="Укажите причину отклонения (обязательно для отклонения)"
+                        className="min-h-[80px]"
+                      />
+                    </div>
+                  )}
+                  
                   <div className="flex gap-2">
                     <Button onClick={() => window.open(`/offline-training/${training.slug}?preview=true`, '_blank')} variant="outline" size="sm">
                       <Icon name="Eye" size={16} className="mr-2" />
@@ -160,10 +239,22 @@ export default function OfflineTrainingModerationTab({ onModerationComplete }: O
                       <Icon name="Check" size={16} className="mr-2" />
                       Одобрить
                     </Button>
-                    <Button onClick={() => deleteTraining(training.id)} variant="destructive" size="sm">
-                      <Icon name="X" size={16} className="mr-2" />
-                      Удалить
-                    </Button>
+                    {selectedTraining === training.id ? (
+                      <>
+                        <Button onClick={() => rejectTraining(training.id)} variant="destructive" size="sm">
+                          <Icon name="X" size={16} className="mr-2" />
+                          Подтвердить отклонение
+                        </Button>
+                        <Button onClick={() => { setSelectedTraining(null); setModerationComment(''); }} variant="outline" size="sm">
+                          Отмена
+                        </Button>
+                      </>
+                    ) : (
+                      <Button onClick={() => setSelectedTraining(training.id)} variant="outline" size="sm">
+                        <Icon name="X" size={16} className="mr-2" />
+                        Отклонить
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>

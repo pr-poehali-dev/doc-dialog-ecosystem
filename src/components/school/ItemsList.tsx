@@ -33,6 +33,7 @@ interface Mastermind {
   image_url: string | null;
   external_url: string;
   status: string;
+  moderation_comment?: string;
   original_price?: number | null;
   discount_price?: number | null;
   view_count?: number;
@@ -180,6 +181,11 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
                 {getStatusBadge(mm.status)}
               </div>
               <p className="text-sm text-muted-foreground line-clamp-2">{mm.description}</p>
+              {mm.status === 'rejected' && mm.moderation_comment && (
+                <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-xs text-red-800">
+                  <strong>Причина отклонения:</strong> {mm.moderation_comment}
+                </div>
+              )}
             </CardHeader>
             <CardContent>
               <div className="space-y-2 text-sm">
@@ -264,6 +270,11 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
                 {getStatusBadge(training.status)}
               </div>
               <p className="text-sm text-muted-foreground line-clamp-2">{training.description}</p>
+              {training.status === 'rejected' && training.moderation_comment && (
+                <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-xs text-red-800">
+                  <strong>Причина отклонения:</strong> {training.moderation_comment}
+                </div>
+              )}
             </CardHeader>
             <CardContent>
               <div className="space-y-2 text-sm">

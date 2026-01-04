@@ -423,6 +423,49 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
+    # POST /admin?action=moderate_offline_training - Moderate offline training
+    if method == 'POST' and action == 'moderate_offline_training':
+        body = json.loads(event.get('body', '{}'))
+        training_id = body.get('training_id')
+        approve = body.get('approve', True)
+        comment = body.get('comment', '')
+        
+        status = 'approved' if approve else 'rejected'
+        
+        cur.execute(f"""
+            UPDATE {schema}.offline_training
+            SET status = '{status}',
+                moderation_comment = '{comment.replace("'", "''")}'
+            WHERE id = {training_id}
+            RETURNING id, title, status
+        """)
+        updated_training = cur.fetchone()
+        
+        if not updated_training:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Offline training not found'}),
+                'isBase64Encoded': False
+            }
+        
+        result = {
+            'id': updated_training[0],
+            'title': updated_training[1],
+            'status': updated_training[2]
+        }
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps(result),
+            'isBase64Encoded': False
+        }
+    
     cur.close()
     conn.close()
     return {
