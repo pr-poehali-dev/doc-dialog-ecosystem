@@ -819,6 +819,8 @@ def handler(event: dict, context) -> dict:
         testimonials = json.dumps(body.get('testimonials', []))
         faq = json.dumps(body.get('faq', []))
         cta_button_text = body.get('cta_button_text', 'Зарегистрироваться')
+        cover_url = body.get('coverUrl', '')
+        school_logo_url = body.get('schoolLogoUrl', '')
         
         if not all([title, event_date, external_url]):
             cur.close()
@@ -856,7 +858,9 @@ def handler(event: dict, context) -> dict:
                 benefits = '{benefits}',
                 testimonials = '{testimonials}',
                 faq = '{faq}',
-                cta_button_text = '{cta_button_text.replace("'", "''")}'
+                cta_button_text = '{cta_button_text.replace("'", "''")}',
+                cover_url = {f"'{cover_url}'" if cover_url else 'NULL'},
+                school_logo_url = {f"'{school_logo_url}'" if school_logo_url else 'NULL'}
             WHERE id = {mastermind_id}
             RETURNING id, title, slug, status, updated_at
         """)
@@ -1434,6 +1438,8 @@ def handler(event: dict, context) -> dict:
         testimonials = json.dumps(body.get('testimonials', []))
         faq = json.dumps(body.get('faq', []))
         cta_button_text = body.get('cta_button_text', 'Записаться на обучение')
+        cover_url = body.get('coverUrl', '')
+        school_logo_url = body.get('schoolLogoUrl', '')
         
         if not all([title, event_date, external_url]):
             cur.close()
@@ -1465,7 +1471,9 @@ def handler(event: dict, context) -> dict:
                 benefits = '{benefits}',
                 testimonials = '{testimonials}',
                 faq = '{faq}',
-                cta_button_text = '{cta_button_text.replace("'", "''")}'
+                cta_button_text = '{cta_button_text.replace("'", "''")}',
+                cover_url = {f"'{cover_url}'" if cover_url else 'NULL'},
+                school_logo_url = {f"'{school_logo_url}'" if school_logo_url else 'NULL'}
             WHERE id = {training_id}
             RETURNING id, title, slug, status, updated_at
         """)
