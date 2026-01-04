@@ -220,7 +220,14 @@ export default function SchoolLandingBuilder() {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const userId = localStorage.getItem('userId');
+      const userId = getUserId();
+      
+      if (!userId) {
+        alert('Ошибка: не удалось получить ID пользователя. Пожалуйста, войдите снова.');
+        navigate('/login');
+        return;
+      }
+      
       const url = id ? `${SCHOOL_API_URL}?action=update&id=${id}` : SCHOOL_API_URL;
       const method = id ? 'PUT' : 'POST';
 
@@ -245,7 +252,7 @@ export default function SchoolLandingBuilder() {
         method,
         headers: {
           Authorization: `Bearer ${token}`,
-          'X-User-Id': userId || '',
+          'X-User-Id': userId.toString(),
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(schoolData)
