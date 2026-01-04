@@ -11,6 +11,20 @@ export default function DashboardTabs({ activeTab, onTabChange }: DashboardTabsP
   return (
     <div className="flex gap-2 mb-6 border-b">
       <button
+        onClick={() => onTabChange('landings')}
+        className={`px-4 py-2 font-medium transition-colors ${activeTab === 'landings' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+      >
+        <Icon name="Layout" size={18} className="inline mr-2" />
+        Лендинг школы
+      </button>
+      <button
+        onClick={() => onTabChange('offline-training')}
+        className={`px-4 py-2 font-medium transition-colors ${activeTab === 'offline-training' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+      >
+        <Icon name="GraduationCap" size={18} className="inline mr-2" />
+        Очное обучение
+      </button>
+      <button
         onClick={() => onTabChange('courses')}
         className={`px-4 py-2 font-medium transition-colors ${activeTab === 'courses' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
       >
@@ -23,27 +37,6 @@ export default function DashboardTabs({ activeTab, onTabChange }: DashboardTabsP
       >
         <Icon name="Users" size={18} className="inline mr-2" />
         Мастермайнды
-      </button>
-      <button
-        onClick={() => onTabChange('offline-training')}
-        className={`px-4 py-2 font-medium transition-colors ${activeTab === 'offline-training' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
-      >
-        <Icon name="GraduationCap" size={18} className="inline mr-2" />
-        Очное обучение
-      </button>
-      <button
-        onClick={() => onTabChange('specialists')}
-        className={`px-4 py-2 font-medium transition-colors ${activeTab === 'specialists' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
-      >
-        <Icon name="Search" size={18} className="inline mr-2" />
-        Найти специалиста
-      </button>
-      <button
-        onClick={() => onTabChange('landings')}
-        className={`px-4 py-2 font-medium transition-colors ${activeTab === 'landings' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
-      >
-        <Icon name="Layout" size={18} className="inline mr-2" />
-        Лендинг школы
       </button>
     </div>
   );
