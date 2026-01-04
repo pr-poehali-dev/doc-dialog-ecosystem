@@ -111,41 +111,36 @@ export default function CoursesCatalog() {
     try {
       setLoading(true);
       
-      // Получаем курсы из нового API (course-landings)
-      const coursesLandingsResponse = await fetch(`${COURSE_LANDINGS_API_URL}`);
-      const coursesLandingsData = await coursesLandingsResponse.json();
-      
-      // Фильтруем только одобренные курсы и маппим на формат Course
-      const approvedCoursesData = coursesLandingsData
-        .filter((c: any) => c.status === 'approved' || c.status === 'published' || c.status === 'active')
-        .map((c: any) => ({
-          id: c.id,
-          school_id: c.school_id || 0,
-          title: c.title,
-          description: c.short_description || '',
-          category: c.category || 'Другое',
-          course_type: c.type || 'online',
-          price: null,
-          currency: 'RUB',
-          duration_hours: null,
-          image_url: c.cover_url || null,
-          external_url: '',
-          status: c.status,
-          slug: c.slug,
-          created_at: c.created_at,
-          view_count: 0
-        }));
-      
-      const [mastermindsResponse, offlineTrainingsResponse] = await Promise.all([
+      const [coursesResponse, mastermindsResponse, offlineTrainingsResponse] = await Promise.all([
+        fetch(`${COURSE_API_URL}?status=approved`),
         fetch(`${COURSE_API_URL}?action=masterminds&status=approved`),
         fetch(`${COURSE_API_URL}?action=offline_trainings&status=approved`)
       ]);
       
+      const coursesData: Course[] = await coursesResponse.json();
       const mastermindsData: Mastermind[] = await mastermindsResponse.json();
       const offlineTrainingsData: OfflineTraining[] = await offlineTrainingsResponse.json();
       
+      // Обогащаем курсы обложками из course-landings API
+      const coursesWithCovers = await Promise.all(
+        coursesData.map(async (course) => {
+          if (course.slug) {
+            try {
+              const landingResponse = await fetch(`${COURSE_LANDINGS_API_URL}?slug=${course.slug}`);
+              if (landingResponse.ok) {
+                const landingData = await landingResponse.json();
+                return { ...course, image_url: landingData.cover_url || course.image_url };
+              }
+            } catch (error) {
+              console.error('Failed to fetch cover for course:', course.slug, error);
+            }
+          }
+          return course;
+        })
+      );
+      
       const allItemsWithoutRatings: CatalogItem[] = [
-        ...approvedCoursesData.map((c: Course) => ({ ...c, itemType: 'course' as const })),
+        ...coursesWithCovers.map(c => ({ ...c, itemType: 'course' as const })),
         ...mastermindsData.map(m => ({ 
           ...m, 
           itemType: 'mastermind' as const,
