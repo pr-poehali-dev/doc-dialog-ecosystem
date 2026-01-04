@@ -129,7 +129,7 @@ export default function CoursePublicLanding() {
             )}
             {course.price !== null && (
               <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
-                <Icon name="DollarSign" size={20} />
+                <Icon name="Coins" size={20} />
                 <span>{course.price.toLocaleString('ru-RU')} ₽</span>
               </div>
             )}

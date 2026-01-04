@@ -388,7 +388,7 @@ export default function SchoolLandingBuilder() {
                         )}
                         {course.price && (
                           <div className="flex items-center text-gray-600">
-                            <Icon name="DollarSign" size={18} className="mr-2" />
+                            <Icon name="Coins" size={18} className="mr-2" />
                             {course.price}
                           </div>
                         )}

@@ -319,7 +319,7 @@ export default function Dashboard() {
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center">
-                    <Icon name="DollarSign" className="text-green-600" size={24} />
+                    <Icon name="Coins" className="text-green-600" size={24} />
                   </div>
                   <h3 className="text-xl font-semibold">Биллинг</h3>
                 </div>

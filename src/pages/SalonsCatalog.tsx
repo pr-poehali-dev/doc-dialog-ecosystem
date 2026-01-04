@@ -249,7 +249,7 @@ export default function SalonsCatalog() {
                       <div className="pt-2 space-y-1 text-sm">
                         {salon.vacancies.some((v) => v.salary_from || v.salary_to) && (
                           <div className="flex items-center gap-2 text-muted-foreground">
-                            <Icon name="DollarSign" size={14} />
+                            <Icon name="Coins" size={14} />
                             <span>
                               от{' '}
                               {Math.min(

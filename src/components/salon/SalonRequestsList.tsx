@@ -53,7 +53,7 @@ export default function SalonRequestsList({ requests }: SalonRequestsListProps) 
             <p className="text-sm mb-4">{req.description}</p>
             <div className="flex items-center gap-6 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
-                <Icon name="DollarSign" size={16} />
+                <Icon name="Coins" size={16} />
                 <span>
                   {req.budget_from.toLocaleString()} - {req.budget_to.toLocaleString()} {req.currency}
                 </span>

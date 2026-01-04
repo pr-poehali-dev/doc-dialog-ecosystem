@@ -153,7 +153,7 @@ export default function MastermindPublicLanding() {
             </div>
             {displayPrice && (
               <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
-                <Icon name="DollarSign" size={20} />
+                <Icon name="Coins" size={20} />
                 {hasDiscount ? (
                   <div className="flex items-center gap-2">
                     <span className="line-through opacity-70">{mastermind.original_price?.toLocaleString('ru-RU')} ₽</span>

@@ -224,7 +224,7 @@ export default function CourseLandingEditor() {
     { id: 'program', label: 'Программа курса', icon: 'BookOpen' },
     { id: 'format', label: 'Формат обучения', icon: 'Calendar' },
     { id: 'bonuses', label: 'Бонусы', icon: 'Gift' },
-    { id: 'pricing', label: 'Стоимость', icon: 'DollarSign' },
+    { id: 'pricing', label: 'Стоимость', icon: 'Coins' },
     { id: 'promo', label: 'Промокод', icon: 'Tag' },
     { id: 'seo', label: 'SEO', icon: 'Search' }
   ];
