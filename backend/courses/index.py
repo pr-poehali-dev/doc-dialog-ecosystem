@@ -423,6 +423,13 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
+        # Создаём баланс для школы, если его нет
+        cur.execute(f"""
+            INSERT INTO {schema}.school_balance (school_id, balance)
+            VALUES ({school_id}, 0.00)
+            ON CONFLICT (school_id) DO NOTHING
+        """)
+        
         cur.execute(f"""
             INSERT INTO {schema}.courses (
                 school_id, title, description, short_description, category, course_type, type,
