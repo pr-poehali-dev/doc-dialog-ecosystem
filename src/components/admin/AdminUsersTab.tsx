@@ -23,7 +23,30 @@ export default function AdminUsersTab({ users, loading, onUpdateUserRole }: Admi
   const navigate = useNavigate();
 
   const handleLoginAsUser = (user: User) => {
-    // Переход в кабинет пользователя в зависимости от роли
+    // Сохраняем данные админа
+    const adminUser = localStorage.getItem('user');
+    const adminToken = localStorage.getItem('token');
+    
+    if (adminUser) {
+      localStorage.setItem('admin_backup_user', adminUser);
+    }
+    if (adminToken) {
+      localStorage.setItem('admin_backup_token', adminToken);
+    }
+    
+    // Подменяем на данные выбранного пользователя
+    const impersonatedUser = {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      is_admin: false, // Важно: убираем права админа при входе
+      is_impersonating: true, // Флаг что это вход от имени
+      original_admin_email: JSON.parse(adminUser || '{}').email
+    };
+    
+    localStorage.setItem('user', JSON.stringify(impersonatedUser));
+    
+    // Переход в кабинет пользователя
     switch (user.role) {
       case 'school':
         navigate('/school/dashboard');
@@ -37,6 +60,9 @@ export default function AdminUsersTab({ users, loading, onUpdateUserRole }: Admi
       default:
         navigate('/dashboard');
     }
+    
+    // Перезагружаем страницу чтобы применились изменения
+    window.location.href = window.location.origin + (user.role === 'school' ? '/school/dashboard' : user.role === 'salon' ? '/salon/cabinet' : '/dashboard');
   };
 
   if (loading) {
