@@ -1257,7 +1257,9 @@ def handler(event: dict, context) -> dict:
     
     # POST /courses?type=offline_trainings - Create offline training
     if method == 'POST' and entity_type == 'offline_trainings':
+        print(f"[OFFLINE_TRAINING POST] entity_type={entity_type}, query_params={query_params}")
         body = json.loads(event.get('body', '{}'))
+        print(f"[OFFLINE_TRAINING POST] body keys: {list(body.keys())}")
         
         school_id = body.get('school_id')
         title = body.get('title')
