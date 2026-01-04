@@ -696,7 +696,7 @@ def handler(event: dict, context) -> dict:
                 what_you_learn, program_modules, benefits, testimonials, faq,
                 author_name, author_photo, author_bio, author_experience, author_position,
                 cta_button_text, cta_button_url, cover_url, school_logo_url, 
-                start_date, end_date, location, max_participants, image_url,
+                start_date, end_date, location, image_url,
                 original_price, discount_price, course_content, school_name, status
             )
             VALUES (
@@ -714,8 +714,7 @@ def handler(event: dict, context) -> dict:
                 {f"'{cover_url}'" if cover_url else 'NULL'},
                 {f"'{school_logo_url}'" if school_logo_url else 'NULL'},
                 {f"'{start_date}'" if start_date else 'NULL'}, {f"'{end_date}'" if end_date else 'NULL'},
-                {f"'{location}'" if location else 'NULL'}, {max_participants if max_participants else 'NULL'},
-                {f"'{image_url}'" if image_url else 'NULL'},
+                {f"'{location}'" if location else 'NULL'}, {f"'{image_url}'" if image_url else 'NULL'},
                 {original_price if original_price else 'NULL'}, {discount_price if discount_price else 'NULL'},
                 '{course_content.replace("'", "''")}', '{school_name.replace("'", "''")}', 'pending'
             )
@@ -1644,7 +1643,6 @@ def handler(event: dict, context) -> dict:
                 duration = '{duration.replace("'", "''")}',
                 format = '{format_val.replace("'", "''")}',
                 location = {f"'{location}'" if location else 'NULL'},
-                max_participants = {max_participants if max_participants else 'NULL'},
                 price = {price if price else 'NULL'},
                 currency = '{currency}',
                 image_url = {f"'{image_url}'" if image_url else 'NULL'},
