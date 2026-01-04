@@ -551,25 +551,6 @@ def handler(event: dict, context) -> dict:
             
             return response(200, {'success': True, 'slug': result['slug'], 'message': 'Лендинг школы обновлен'})
         
-        # PUT /:id - обновление лендинга школы (старый формат для совместимости)
-        if method == 'PUT':
-            school_id = event.get('pathParams', {}).get('id')
-            user_id = event.get('headers', {}).get('X-User-Id')
-            
-            if not school_id or not user_id:
-                conn.close()
-                return response(400, {'error': 'Требуется school_id и X-User-Id'})
-            
-            data = json.loads(event.get('body', '{}'))
-            
-            result = update_school_landing(conn, int(school_id), int(user_id), data)
-            conn.close()
-            
-            if not result:
-                return response(404, {'error': 'Школа не найдена или нет прав доступа'})
-            
-            return response(200, {'success': True, 'slug': result['slug'], 'message': 'Лендинг школы обновлен'})
-        
         # PUT /?action=moderate&id=X - модерация школы (только админ)
         if method == 'PUT' and event.get('queryStringParameters', {}).get('action') == 'moderate':
             school_id = event.get('queryStringParameters', {}).get('id')
@@ -635,6 +616,25 @@ def handler(event: dict, context) -> dict:
             except jwt.InvalidTokenError as e:
                 conn.close()
                 return response(401, {'error': f'Неверный токен: {str(e)}'})
+        
+        # PUT /:id - обновление лендинга школы (только если нет action параметра)
+        if method == 'PUT' and not event.get('queryStringParameters', {}).get('action'):
+            school_id = event.get('pathParams', {}).get('id')
+            user_id = event.get('headers', {}).get('X-User-Id')
+            
+            if not school_id or not user_id:
+                conn.close()
+                return response(400, {'error': 'Требуется school_id и X-User-Id'})
+            
+            data = json.loads(event.get('body', '{}'))
+            
+            result = update_school_landing(conn, int(school_id), int(user_id), data)
+            conn.close()
+            
+            if not result:
+                return response(404, {'error': 'Школа не найдена или нет прав доступа'})
+            
+            return response(200, {'success': True, 'slug': result['slug'], 'message': 'Лендинг школы обновлен'})
         
         # DELETE /?id=X - удаление школы (владелец или админ)
         if method == 'DELETE':
