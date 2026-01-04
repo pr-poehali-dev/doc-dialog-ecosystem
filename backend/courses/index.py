@@ -43,6 +43,9 @@ def handler(event: dict, context) -> dict:
     
     # GET /courses?action=offline_trainings&slug=X - Get offline training by slug
     if method == 'GET' and slug and action == 'offline_trainings':
+        skip_status = query_params.get('skip_status_check', 'false').lower() == 'true'
+        status_filter = "" if skip_status else "AND status = 'approved'"
+        
         cur.execute(f"""
             SELECT id, slug, title, description, hero_title, hero_subtitle,
                    event_date, location, max_participants, current_participants,
@@ -50,7 +53,7 @@ def handler(event: dict, context) -> dict:
                    about_training, what_you_get, training_program, instructor, co_instructors,
                    benefits, testimonials, faq, cta_button_text, status
             FROM {schema}.offline_training
-            WHERE slug = '{slug}' AND status = 'approved'
+            WHERE slug = '{slug}' {status_filter}
         """)
         training = cur.fetchone()
         
