@@ -48,6 +48,7 @@ interface Mastermind {
   created_at: string;
   rating?: number;
   review_count?: number;
+  slug?: string;
 }
 
 type CatalogItem = (Course & { itemType: 'course' }) | (Mastermind & { itemType: 'mastermind'; category: string; course_type: string });
@@ -337,7 +338,11 @@ export default function CoursesCatalog() {
                         className="group-hover:bg-primary group-hover:shadow-lg transition-all"
                         onClick={() => {
                           if (item.itemType === 'mastermind') {
-                            window.location.href = `/mastermind/${item.id}`;
+                            if ('slug' in item && item.slug) {
+                              window.location.href = `/mastermind/landing/${item.slug}`;
+                            } else {
+                              window.location.href = `/mastermind/${item.id}`;
+                            }
                           } else if ('slug' in item && item.slug) {
                             window.location.href = `/course/landing/${item.slug}`;
                           } else {
