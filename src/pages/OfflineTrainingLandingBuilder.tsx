@@ -213,7 +213,7 @@ export default function OfflineTrainingLandingBuilder() {
       }
 
       const url = editId 
-        ? `https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?action=offline_trainings&id=${editId}`
+        ? `https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?type=offline_trainings&id=${editId}`
         : 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?type=offline_trainings';
       
       const response = await fetch(url, {
