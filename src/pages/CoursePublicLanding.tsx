@@ -111,7 +111,7 @@ export default function CoursePublicLanding() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero секция */}
-      <section className="relative h-[600px] flex items-center justify-center bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 text-white">
+      <section className="relative min-h-[500px] sm:min-h-[600px] flex items-center justify-center bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 text-white py-12 sm:py-20">
         {course.cover_url && (
           <div 
             className="absolute inset-0 bg-cover bg-center"
@@ -119,47 +119,47 @@ export default function CoursePublicLanding() {
           />
         )}
         <div className="absolute inset-0 bg-black/50"></div>
-        <div className="relative z-10 text-center px-4 max-w-4xl">
+        <div className="relative z-10 text-center px-4 sm:px-6 max-w-4xl w-full">
           {course.school_logo_url && (
-            <div className="mb-6">
+            <div className="mb-4 sm:mb-6">
               <img 
                 src={course.school_logo_url} 
                 alt="Логотип школы" 
-                className="mx-auto h-10 w-auto object-contain drop-shadow-lg opacity-90"
+                className="mx-auto h-8 sm:h-10 w-auto object-contain drop-shadow-lg opacity-90"
               />
             </div>
           )}
-          <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm mb-4">
+          <div className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-white/20 backdrop-blur-sm rounded-full text-xs sm:text-sm mb-3 sm:mb-4">
             {course.category} • {course.type === 'online' ? 'Онлайн' : 'Офлайн'}
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 drop-shadow-lg">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 drop-shadow-lg leading-tight px-2">
             {course.hero_title || course.title}
           </h1>
-          <div className="flex justify-center mb-6">
-            <div className="bg-white/20 backdrop-blur-sm px-6 py-2 rounded-full">
-              <RatingDisplay rating={rating} reviewCount={reviewCount} size="lg" className="text-white" />
+          <div className="flex justify-center mb-4 sm:mb-6">
+            <div className="bg-white/20 backdrop-blur-sm px-4 sm:px-6 py-1.5 sm:py-2 rounded-full">
+              <RatingDisplay rating={rating} reviewCount={reviewCount} size="sm" className="text-white" />
             </div>
           </div>
-          <p className="text-xl md:text-2xl mb-8 text-white/90">
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 sm:mb-8 text-white/90 px-2">
             {course.hero_subtitle || course.short_description}
           </p>
-          <div className="flex flex-wrap gap-4 justify-center items-center mb-8">
+          <div className="flex flex-wrap gap-2 sm:gap-4 justify-center items-center mb-6 sm:mb-8">
             {course.duration_text && (
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
-                <Icon name="Clock" size={20} />
+              <div className="flex items-center gap-1.5 sm:gap-2 bg-white/20 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base">
+                <Icon name="Clock" size={18} className="sm:w-5 sm:h-5" />
                 <span>{course.duration_text}</span>
               </div>
             )}
             {course.price !== null && (
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
-                <Icon name="Coins" size={20} />
+              <div className="flex items-center gap-1.5 sm:gap-2 bg-white/20 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base">
+                <Icon name="Coins" size={18} className="sm:w-5 sm:h-5" />
                 <span>{course.price.toLocaleString('ru-RU')} ₽</span>
               </div>
             )}
           </div>
           <Button 
             size="lg" 
-            className="bg-white text-blue-600 hover:bg-gray-100"
+            className="bg-white text-blue-600 hover:bg-gray-100 text-sm sm:text-base px-6 sm:px-8"
             onClick={() => window.open(course.cta_button_url, '_blank')}
           >
             {course.cta_button_text}
@@ -169,10 +169,10 @@ export default function CoursePublicLanding() {
 
       {/* О курсе */}
       {course.about_course && (
-        <section className="py-20 bg-white">
-          <div className="max-w-4xl mx-auto px-4">
-            <h2 className="text-4xl font-bold text-center mb-12">О курсе</h2>
-            <p className="text-lg text-gray-700 leading-relaxed whitespace-pre-line">
+        <section className="py-12 sm:py-16 md:py-20 bg-white">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-10 md:mb-12">О курсе</h2>
+            <p className="text-base sm:text-lg text-gray-700 leading-relaxed whitespace-pre-line">
               {course.about_course}
             </p>
           </div>
@@ -226,16 +226,16 @@ export default function CoursePublicLanding() {
 
       {/* Чему вы научитесь */}
       {course.what_you_learn && course.what_you_learn.length > 0 && (
-        <section className="py-20 bg-gradient-to-br from-blue-50 to-purple-50">
-          <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-4xl font-bold text-center mb-12">Чему вы научитесь</h2>
-            <div className="grid md:grid-cols-2 gap-6">
+        <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-blue-50 to-purple-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-10 md:mb-12">Чему вы научитесь</h2>
+            <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
               {course.what_you_learn.map((item, i) => (
-                <div key={i} className="flex items-start gap-4 bg-white p-6 rounded-xl shadow-md">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Icon name="Check" size={20} className="text-white" />
+                <div key={i} className="flex items-start gap-3 sm:gap-4 bg-white p-4 sm:p-6 rounded-xl shadow-md">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Icon name="Check" size={18} className="sm:w-5 sm:h-5 text-white" />
                   </div>
-                  <p className="text-gray-800 pt-2">{item}</p>
+                  <p className="text-gray-800 pt-1 sm:pt-2 text-sm sm:text-base">{item}</p>
                 </div>
               ))}
             </div>
@@ -245,18 +245,18 @@ export default function CoursePublicLanding() {
 
       {/* Программа курса */}
       {course.program_modules && course.program_modules.length > 0 && (
-        <section className="py-20 bg-white">
-          <div className="max-w-4xl mx-auto px-4">
-            <h2 className="text-4xl font-bold text-center mb-12">Программа курса</h2>
-            <div className="space-y-6">
+        <section className="py-12 sm:py-16 md:py-20 bg-white">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-10 md:mb-12">Программа курса</h2>
+            <div className="space-y-4 sm:space-y-6">
               {course.program_modules.map((module, i) => (
                 <Card key={i}>
                   <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
+                    <CardTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-base sm:text-lg md:text-xl">
                       <span>Модуль {i + 1}: {module.title}</span>
                       {module.duration && (
-                        <span className="text-sm font-normal text-gray-600">
-                          <Icon name="Clock" size={16} className="inline mr-1" />
+                        <span className="text-xs sm:text-sm font-normal text-gray-600">
+                          <Icon name="Clock" size={14} className="inline mr-1" />
                           {module.duration}
                         </span>
                       )}
@@ -264,7 +264,7 @@ export default function CoursePublicLanding() {
                   </CardHeader>
                   {module.description && (
                     <CardContent>
-                      <p className="text-gray-700">{module.description}</p>
+                      <p className="text-gray-700 text-sm sm:text-base">{module.description}</p>
                     </CardContent>
                   )}
                 </Card>
@@ -276,16 +276,16 @@ export default function CoursePublicLanding() {
 
       {/* Преимущества */}
       {course.benefits && course.benefits.length > 0 && (
-        <section className="py-20 bg-gradient-to-br from-purple-50 to-pink-50">
-          <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-4xl font-bold text-center mb-12">Преимущества обучения</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-purple-50 to-pink-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-10 md:mb-12">Преимущества обучения</h2>
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               {course.benefits.map((benefit, i) => (
-                <div key={i} className="bg-white p-6 rounded-xl shadow-md text-center">
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Icon name="Star" size={24} className="text-white" />
+                <div key={i} className="bg-white p-4 sm:p-6 rounded-xl shadow-md text-center">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <Icon name="Star" size={20} className="sm:w-6 sm:h-6 text-white" />
                   </div>
-                  <p className="text-gray-800 font-medium">{benefit}</p>
+                  <p className="text-gray-800 font-medium text-sm sm:text-base">{benefit}</p>
                 </div>
               ))}
             </div>
@@ -295,22 +295,22 @@ export default function CoursePublicLanding() {
 
       {/* Автор курса */}
       {course.author_name && (
-        <section className="py-20 bg-white">
-          <div className="max-w-4xl mx-auto px-4">
-            <h2 className="text-4xl font-bold text-center mb-12">Автор курса</h2>
-            <div className="flex flex-col md:flex-row gap-8 items-center">
-              <div className="w-64 h-64 rounded-full bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center overflow-hidden flex-shrink-0">
+        <section className="py-12 sm:py-16 md:py-20 bg-white">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-10 md:mb-12">Автор курса</h2>
+            <div className="flex flex-col md:flex-row gap-6 sm:gap-8 items-center">
+              <div className="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-full bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center overflow-hidden flex-shrink-0">
                 {course.author_photo ? (
                   <img src={course.author_photo} alt={course.author_name} className="w-full h-full object-cover" />
                 ) : (
-                  <Icon name="User" size={96} className="text-white" />
+                  <Icon name="User" size={72} className="sm:w-20 sm:h-20 md:w-24 md:h-24 text-white" />
                 )}
               </div>
-              <div>
-                <h3 className="text-3xl font-bold mb-2">{course.author_name}</h3>
-                {course.author_position && <p className="text-xl text-purple-600 mb-4">{course.author_position}</p>}
-                {course.author_experience && <p className="text-gray-600 mb-4">{course.author_experience}</p>}
-                {course.author_bio && <p className="text-gray-700 leading-relaxed">{course.author_bio}</p>}
+              <div className="text-center md:text-left">
+                <h3 className="text-2xl sm:text-3xl font-bold mb-2">{course.author_name}</h3>
+                {course.author_position && <p className="text-lg sm:text-xl text-purple-600 mb-3 sm:mb-4">{course.author_position}</p>}
+                {course.author_experience && <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">{course.author_experience}</p>}
+                {course.author_bio && <p className="text-sm sm:text-base text-gray-700 leading-relaxed">{course.author_bio}</p>}
               </div>
             </div>
           </div>
@@ -318,8 +318,8 @@ export default function CoursePublicLanding() {
       )}
 
       {/* Отзывы */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4">
+      <section className="py-12 sm:py-16 md:py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <ReviewsSection
             entityType="course"
             entityId={course.id}
@@ -333,18 +333,18 @@ export default function CoursePublicLanding() {
 
       {/* FAQ */}
       {course.faq && course.faq.length > 0 && (
-        <section className="py-20 bg-white">
-          <div className="max-w-4xl mx-auto px-4">
-            <h2 className="text-4xl font-bold text-center mb-12">Частые вопросы</h2>
-            <div className="space-y-4">
+        <section className="py-12 sm:py-16 md:py-20 bg-white">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-10 md:mb-12">Частые вопросы</h2>
+            <div className="space-y-3 sm:space-y-4">
               {course.faq.map((item, i) => (
                 <Card key={i}>
                   <CardHeader>
-                    <CardTitle className="text-lg">{item.question}</CardTitle>
+                    <CardTitle className="text-base sm:text-lg">{item.question}</CardTitle>
                   </CardHeader>
                   {item.answer && (
                     <CardContent>
-                      <p className="text-gray-700">{item.answer}</p>
+                      <p className="text-sm sm:text-base text-gray-700">{item.answer}</p>
                     </CardContent>
                   )}
                 </Card>
@@ -355,15 +355,15 @@ export default function CoursePublicLanding() {
       )}
 
       {/* CTA секция */}
-      <section className="py-20 bg-gradient-to-br from-blue-600 to-purple-600 text-white">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold mb-6">Готовы начать обучение?</h2>
-          <p className="text-xl mb-8 text-white/90">
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-blue-600 to-purple-600 text-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">Готовы начать обучение?</h2>
+          <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 text-white/90">
             Запишитесь на курс прямо сейчас и начните свой путь к мастерству
           </p>
           <Button 
             size="lg" 
-            className="bg-white text-blue-600 hover:bg-gray-100"
+            className="bg-white text-blue-600 hover:bg-gray-100 text-sm sm:text-base px-6 sm:px-8"
             onClick={() => window.open(course.cta_button_url, '_blank')}
           >
             {course.cta_button_text}
