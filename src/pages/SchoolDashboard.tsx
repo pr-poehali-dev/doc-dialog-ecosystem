@@ -111,36 +111,74 @@ export default function SchoolDashboard() {
     if (!schoolId) return;
     
     try {
+      // Загружаем активные промо
+      const userId = getUserId();
+      let activePromotions: any[] = [];
+      try {
+        const promoResponse = await fetch('https://functions.poehali.dev/2ea3a11a-0b11-4f52-9c5e-29fe60c40675?action=active', {
+          headers: { 'X-User-Id': userId }
+        });
+        if (promoResponse.ok) {
+          const promoData = await promoResponse.json();
+          activePromotions = promoData.promotions || [];
+        }
+      } catch (error) {
+        console.error('Failed to load promotions:', error);
+      }
+      
       if (activeTab === 'courses') {
         const response = await fetch(`https://functions.poehali.dev/a81dd7cd-c267-4f44-85f5-0da8353dc741?school_id=${schoolId}`);
         const data = await response.json();
         // Маппинг данных из course-landings API в формат Course
-        const mappedCourses = data.map((c: any) => ({
-          id: c.id,
-          title: c.title,
-          description: c.short_description || '',
-          category: c.category || '',
-          course_type: c.type || 'online',
-          price: null,
-          currency: 'RUB',
-          duration_hours: null,
-          image_url: c.cover_url || null,
-          external_url: '',
-          status: c.status,
-          slug: c.slug,
-          created_at: c.created_at,
-          view_count: 0
-        }));
+        const mappedCourses = data.map((c: any) => {
+          const promo = activePromotions.find(p => p.course_id === c.id);
+          return {
+            id: c.id,
+            title: c.title,
+            description: c.short_description || '',
+            category: c.category || '',
+            course_type: c.type || 'online',
+            price: null,
+            currency: 'RUB',
+            duration_hours: null,
+            image_url: c.cover_url || null,
+            external_url: '',
+            status: c.status,
+            slug: c.slug,
+            created_at: c.created_at,
+            view_count: 0,
+            promoted_until: promo?.promoted_until || null,
+            promotion_type: promo?.promotion_type || null
+          };
+        });
         setCourses(mappedCourses);
       } else if (activeTab === 'masterminds') {
         const response = await fetch(`${COURSE_API_URL}?action=masterminds&school_id=${schoolId}&status=all`);
         const data = await response.json();
-        setMasterminds(data);
+        // Добавляем информацию о промо
+        const dataWithPromo = data.map((item: any) => {
+          const promo = activePromotions.find(p => p.course_id === item.id);
+          return {
+            ...item,
+            promoted_until: promo?.promoted_until || null,
+            promotion_type: promo?.promotion_type || null
+          };
+        });
+        setMasterminds(dataWithPromo);
       } else if (activeTab === 'offline-training') {
         const response = await fetch(`${COURSE_API_URL}?action=offline_trainings&school_id=${schoolId}&status=all`);
         if (response.ok) {
           const data = await response.json();
-          setOfflineTrainings(Array.isArray(data) ? data : []);
+          // Добавляем информацию о промо
+          const dataWithPromo = (Array.isArray(data) ? data : []).map((item: any) => {
+            const promo = activePromotions.find(p => p.course_id === item.id);
+            return {
+              ...item,
+              promoted_until: promo?.promoted_until || null,
+              promotion_type: promo?.promotion_type || null
+            };
+          });
+          setOfflineTrainings(dataWithPromo);
         } else {
           setOfflineTrainings([]);
         }

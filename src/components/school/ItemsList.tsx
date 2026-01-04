@@ -18,6 +18,8 @@ interface Course {
   discount_price?: number | null;
   slug?: string;
   created_at: string;
+  promoted_until?: string | null;
+  promotion_type?: string | null;
 }
 
 interface Mastermind {
@@ -39,6 +41,8 @@ interface Mastermind {
   view_count?: number;
   slug?: string;
   created_at: string;
+  promoted_until?: string | null;
+  promotion_type?: string | null;
 }
 
 interface SpecialistRequest {
@@ -87,6 +91,17 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
                 {getStatusBadge(course.status)}
               </div>
               <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
+              {course.promoted_until && new Date(course.promoted_until) > new Date() && (
+                <div className="mt-2 p-2 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 rounded text-xs">
+                  <div className="flex items-center gap-1 font-semibold text-amber-800">
+                    <Icon name="TrendingUp" size={14} />
+                    <span>В топе {course.promotion_type === 'all_categories' ? 'во всех категориях' : 'в своей категории'}</span>
+                  </div>
+                  <div className="text-amber-700 mt-1">
+                    До {new Date(course.promoted_until).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                </div>
+              )}
               {course.status === 'rejected' && course.moderation_comment && (
                 <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-xs text-red-800">
                   <strong>Причина отклонения:</strong> {course.moderation_comment}
@@ -183,6 +198,17 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
                 {getStatusBadge(mm.status)}
               </div>
               <p className="text-sm text-muted-foreground line-clamp-2">{mm.description}</p>
+              {mm.promoted_until && new Date(mm.promoted_until) > new Date() && (
+                <div className="mt-2 p-2 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 rounded text-xs">
+                  <div className="flex items-center gap-1 font-semibold text-amber-800">
+                    <Icon name="TrendingUp" size={14} />
+                    <span>В топе {mm.promotion_type === 'all_categories' ? 'во всех категориях' : 'в своей категории'}</span>
+                  </div>
+                  <div className="text-amber-700 mt-1">
+                    До {new Date(mm.promoted_until).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                </div>
+              )}
               {mm.status === 'rejected' && mm.moderation_comment && (
                 <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-xs text-red-800">
                   <strong>Причина отклонения:</strong> {mm.moderation_comment}
@@ -281,6 +307,17 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
                 {getStatusBadge(training.status)}
               </div>
               <p className="text-sm text-muted-foreground line-clamp-2">{training.description}</p>
+              {training.promoted_until && new Date(training.promoted_until) > new Date() && (
+                <div className="mt-2 p-2 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 rounded text-xs">
+                  <div className="flex items-center gap-1 font-semibold text-amber-800">
+                    <Icon name="TrendingUp" size={14} />
+                    <span>В топе {training.promotion_type === 'all_categories' ? 'во всех категориях' : 'в своей категории'}</span>
+                  </div>
+                  <div className="text-amber-700 mt-1">
+                    До {new Date(training.promoted_until).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                </div>
+              )}
               {training.status === 'rejected' && training.moderation_comment && (
                 <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-xs text-red-800">
                   <strong>Причина отклонения:</strong> {training.moderation_comment}
