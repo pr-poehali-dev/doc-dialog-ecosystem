@@ -14,6 +14,7 @@ export interface Course {
   original_price?: number | null;
   discount_price?: number | null;
   view_count?: number;
+  slug?: string;
   created_at: string;
 }
 
