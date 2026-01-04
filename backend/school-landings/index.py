@@ -573,6 +573,7 @@ def handler(event: dict, context) -> dict:
         # PUT /?action=moderate&id=X - модерация школы (только админ)
         if method == 'PUT' and event.get('queryStringParameters', {}).get('action') == 'moderate':
             school_id = event.get('queryStringParameters', {}).get('id')
+            print(f'[MODERATE] school_id={school_id}, queryParams={event.get("queryStringParameters")}')
             
             if not school_id:
                 conn.close()
@@ -581,6 +582,7 @@ def handler(event: dict, context) -> dict:
             headers = event.get('headers', {})
             auth_header = headers.get('X-Authorization') or headers.get('Authorization', '')
             token = auth_header.replace('Bearer ', '').strip()
+            print(f'[MODERATE] token_exists={bool(token)}, auth_header_key={list(headers.keys())}')
             
             if not token:
                 conn.close()
@@ -590,17 +592,24 @@ def handler(event: dict, context) -> dict:
                 jwt_secret = os.environ.get('JWT_SECRET', 'your-secret-key')
                 decoded = jwt.decode(token, jwt_secret, algorithms=['HS256'])
                 user_id = decoded.get('user_id')
+                print(f'[MODERATE] decoded_user_id={user_id}, role={decoded.get("role")}')
                 
                 if not user_id:
                     conn.close()
                     return response(401, {'error': 'Неверный токен: отсутствует user_id'})
                 
-                if not is_admin_user(conn, user_id):
+                admin_check = is_admin_user(conn, user_id)
+                print(f'[MODERATE] is_admin={admin_check}')
+                
+                if not admin_check:
                     conn.close()
                     return response(403, {'error': 'Доступ запрещён: требуется роль администратора'})
                 
-                data = json.loads(event.get('body', '{}'))
+                body_raw = event.get('body', '{}')
+                print(f'[MODERATE] body_raw={body_raw}')
+                data = json.loads(body_raw)
                 is_verified = data.get('is_verified', False)
+                print(f'[MODERATE] is_verified={is_verified}')
                 
                 with conn.cursor() as cur:
                     cur.execute("""
