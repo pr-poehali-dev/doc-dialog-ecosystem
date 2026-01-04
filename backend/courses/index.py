@@ -1256,9 +1256,6 @@ def handler(event: dict, context) -> dict:
         return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps(result), 'isBase64Encoded': False}
     
     # POST /courses?type=offline_trainings - Create offline training
-    if method == 'POST':
-        print(f"DEBUG POST: entity_type={entity_type}, action={action}, query_params={query_params}")
-    
     if method == 'POST' and entity_type == 'offline_trainings':
         body = json.loads(event.get('body', '{}'))
         

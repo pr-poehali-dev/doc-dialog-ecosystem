@@ -1,16 +1,17 @@
-export function useOfflineTrainingHandlers({ trainingForm, setTrainingForm, editingTrainingId, setEditingTrainingId, setShowAddForm, loadData, toast }: any) {
-  const TRAINING_API_URL = 'https://functions.poehali.dev/3dbad6d0-7948-4c83-ac47-fa9e9e92bf26';
+export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTrainingForm, editingTrainingId, setEditingTrainingId, setShowAddForm, loadData, toast }: any) {
+  const TRAINING_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f';
 
   const handleAddTraining = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(TRAINING_API_URL, {
+      const response = await fetch(`${TRAINING_API_URL}?type=offline_trainings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
+          school_id: schoolId,
           school_name: trainingForm.school_name,
           title: trainingForm.title,
           description: trainingForm.description,
@@ -84,7 +85,7 @@ export function useOfflineTrainingHandlers({ trainingForm, setTrainingForm, edit
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${TRAINING_API_URL}?id=${editingTrainingId}`, {
+      const response = await fetch(`${TRAINING_API_URL}?type=offline_trainings&id=${editingTrainingId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -144,7 +145,7 @@ export function useOfflineTrainingHandlers({ trainingForm, setTrainingForm, edit
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${TRAINING_API_URL}?id=${trainingId}`, {
+      const response = await fetch(`${TRAINING_API_URL}?type=offline_trainings&id=${trainingId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

@@ -169,6 +169,7 @@ export default function SchoolDashboard() {
     handleUpdateTraining,
     handleDeleteTraining
   } = useOfflineTrainingHandlers({
+    schoolId,
     trainingForm,
     setTrainingForm,
     editingTrainingId,
