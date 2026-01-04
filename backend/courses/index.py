@@ -550,38 +550,101 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
-    # POST /courses - Create new course with full landing data
+    # POST /courses - Create new course with full landing data or simple form
     if method == 'POST' and entity_type == 'courses':
         body = json.loads(event.get('body', '{}'))
+        
+        # Определяем формат данных: простая форма или лендинг
+        is_simple_form = body.get('school_name') is not None
         
         school_id = body.get('school_id', 1)
         title = body.get('title')
         description = body.get('description', '')
-        category = body.get('category')
-        course_type = body.get('type', 'online')
-        price_str = body.get('price', '').replace('₽', '').replace(' ', '').strip()
-        price = float(price_str) if price_str and price_str.replace('.', '').isdigit() else None
-        currency = 'RUB'
-        short_description = body.get('shortDescription', '')
         
-        # Новые поля лендинга
-        hero_title = body.get('heroTitle', '')
-        hero_subtitle = body.get('heroSubtitle', '')
-        about_course = body.get('aboutCourse', '')
-        what_you_learn = json.dumps(body.get('whatYouLearn', []))
-        program_modules = json.dumps(body.get('programModules', []))
-        author_data = body.get('author', {})
-        author_name = author_data.get('name', '')
-        author_photo = author_data.get('photo', '')
-        author_bio = author_data.get('bio', '')
-        author_experience = author_data.get('experience', '')
-        author_position = author_data.get('position', '')
-        benefits = json.dumps(body.get('benefits', []))
-        testimonials = json.dumps(body.get('testimonials', []))
-        faq = json.dumps(body.get('faq', []))
-        cta_button_text = body.get('ctaButtonText', 'Записаться на курс')
-        cta_button_url = body.get('ctaButtonUrl', '')
-        duration_text = body.get('duration', '')
+        if is_simple_form:
+            # Простая форма из кабинета школы
+            category = body.get('category', 'Другое')
+            course_type = body.get('course_type', 'online')
+            price = body.get('price')
+            currency = body.get('currency', 'RUB')
+            short_description = description
+            school_name = body.get('school_name', '')
+            
+            # Поля простой формы
+            start_date = body.get('start_date')
+            end_date = body.get('end_date')
+            duration = body.get('duration', '')
+            format_val = body.get('format', '')
+            location = body.get('location')
+            max_participants = body.get('max_participants')
+            image_url = body.get('image_url')
+            external_url = body.get('external_url')
+            original_price = body.get('original_price')
+            discount_price = body.get('discount_price')
+            author_name = body.get('author_name', '')
+            author_photo = body.get('author_photo')
+            course_content = body.get('course_content', '')
+            
+            # Поля лендинга оставляем пустыми
+            hero_title = ''
+            hero_subtitle = ''
+            about_course = ''
+            what_you_learn = '[]'
+            program_modules = '[]'
+            author_bio = ''
+            author_experience = ''
+            author_position = ''
+            benefits = '[]'
+            testimonials = '[]'
+            faq = '[]'
+            cta_button_text = 'Записаться на курс'
+            cta_button_url = external_url
+            duration_text = duration
+            cover_url = ''
+            school_logo_url = ''
+        else:
+            # Лендинговая форма
+            category = body.get('category')
+            course_type = body.get('type', 'online')
+            price_str = body.get('price', '').replace('₽', '').replace(' ', '').strip()
+            price = float(price_str) if price_str and price_str.replace('.', '').isdigit() else None
+            currency = 'RUB'
+            short_description = body.get('shortDescription', '')
+            
+            # Поля лендинга
+            hero_title = body.get('heroTitle', '')
+            hero_subtitle = body.get('heroSubtitle', '')
+            about_course = body.get('aboutCourse', '')
+            what_you_learn = json.dumps(body.get('whatYouLearn', []))
+            program_modules = json.dumps(body.get('programModules', []))
+            author_data = body.get('author', {})
+            author_name = author_data.get('name', '')
+            author_photo = author_data.get('photo', '')
+            author_bio = author_data.get('bio', '')
+            author_experience = author_data.get('experience', '')
+            author_position = author_data.get('position', '')
+            benefits = json.dumps(body.get('benefits', []))
+            testimonials = json.dumps(body.get('testimonials', []))
+            faq = json.dumps(body.get('faq', []))
+            cta_button_text = body.get('ctaButtonText', 'Записаться на курс')
+            cta_button_url = body.get('ctaButtonUrl', '')
+            duration_text = body.get('duration', '')
+            cover_url = body.get('coverUrl', '')
+            school_logo_url = body.get('schoolLogoUrl', '')
+            
+            # Поля простой формы (пустые для лендинга)
+            start_date = None
+            end_date = None
+            duration = ''
+            format_val = ''
+            location = None
+            max_participants = None
+            image_url = None
+            external_url = cta_button_url
+            original_price = None
+            discount_price = None
+            course_content = ''
+            school_name = ''
         
         # Генерация slug
         import re
@@ -596,15 +659,27 @@ def handler(event: dict, context) -> dict:
             slug = f"{base_slug}-{counter}"
             counter += 1
         
-        if not all([title, category, cta_button_url]):
-            cur.close()
-            conn.close()
-            return {
-                'statusCode': 400,
-                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Missing required fields'}),
-                'isBase64Encoded': False
-            }
+        # Валидация полей
+        if is_simple_form:
+            if not all([title, external_url]):
+                cur.close()
+                conn.close()
+                return {
+                    'statusCode': 400,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'Missing required fields: title, external_url'}),
+                    'isBase64Encoded': False
+                }
+        else:
+            if not all([title, category, cta_button_url]):
+                cur.close()
+                conn.close()
+                return {
+                    'statusCode': 400,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'Missing required fields'}),
+                    'isBase64Encoded': False
+                }
         
         # Создаём баланс для школы, если его нет
         cur.execute(f"""
@@ -613,23 +688,22 @@ def handler(event: dict, context) -> dict:
             ON CONFLICT (school_id) DO NOTHING
         """)
         
-        cover_url = body.get('coverUrl', '')
-        school_logo_url = body.get('schoolLogoUrl', '')
-        
         cur.execute(f"""
             INSERT INTO {schema}.courses (
                 school_id, title, description, short_description, category, course_type, type,
-                price, currency, duration_text, external_url, slug,
+                price, currency, duration_text, duration, format, external_url, slug,
                 hero_title, hero_subtitle, about_course,
                 what_you_learn, program_modules, benefits, testimonials, faq,
                 author_name, author_photo, author_bio, author_experience, author_position,
-                cta_button_text, cta_button_url, cover_url, school_logo_url, status
+                cta_button_text, cta_button_url, cover_url, school_logo_url, 
+                start_date, end_date, location, max_participants, image_url,
+                original_price, discount_price, course_content, school_name, status
             )
             VALUES (
                 {school_id}, '{title.replace("'", "''")}', '{description.replace("'", "''")}',
                 '{short_description.replace("'", "''")}', '{category}', '{course_type}', '{course_type}',
                 {price if price else 'NULL'}, '{currency}', '{duration_text.replace("'", "''")}',
-                '{cta_button_url}', '{slug}',
+                '{duration.replace("'", "''")}', '{format_val.replace("'", "''")}', '{external_url}', '{slug}',
                 '{hero_title.replace("'", "''")}', '{hero_subtitle.replace("'", "''")}',
                 '{about_course.replace("'", "''")}', '{what_you_learn}', '{program_modules}',
                 '{benefits}', '{testimonials}', '{faq}',
@@ -639,7 +713,11 @@ def handler(event: dict, context) -> dict:
                 '{cta_button_text.replace("'", "''")}', '{cta_button_url}',
                 {f"'{cover_url}'" if cover_url else 'NULL'},
                 {f"'{school_logo_url}'" if school_logo_url else 'NULL'},
-                'pending'
+                {f"'{start_date}'" if start_date else 'NULL'}, {f"'{end_date}'" if end_date else 'NULL'},
+                {f"'{location}'" if location else 'NULL'}, {max_participants if max_participants else 'NULL'},
+                {f"'{image_url}'" if image_url else 'NULL'},
+                {original_price if original_price else 'NULL'}, {discount_price if discount_price else 'NULL'},
+                '{course_content.replace("'", "''")}', '{school_name.replace("'", "''")}', 'pending'
             )
             RETURNING id, title, slug, status, created_at
         """)
@@ -1523,6 +1601,94 @@ def handler(event: dict, context) -> dict:
         cur.close()
         conn.close()
         return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'message': 'Training deleted'}), 'isBase64Encoded': False}
+    
+    # PUT /courses?type=courses&id=X - Update course via simple form
+    if method == 'PUT' and entity_type == 'courses':
+        course_id = query_params.get('id')
+        if not course_id:
+            cur.close()
+            conn.close()
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Missing course id'}), 'isBase64Encoded': False}
+        
+        body = json.loads(event.get('body', '{}'))
+        title = body.get('title')
+        description = body.get('description', '')
+        start_date = body.get('start_date')
+        end_date = body.get('end_date')
+        duration = body.get('duration', '')
+        format_val = body.get('format', '')
+        location = body.get('location')
+        max_participants = body.get('max_participants')
+        price = body.get('price')
+        currency = body.get('currency', 'RUB')
+        image_url = body.get('image_url')
+        external_url = body.get('external_url')
+        original_price = body.get('original_price')
+        discount_price = body.get('discount_price')
+        author_name = body.get('author_name', '')
+        author_photo = body.get('author_photo')
+        course_content = body.get('course_content', '')
+        school_name = body.get('school_name', '')
+        
+        if not all([title, external_url]):
+            cur.close()
+            conn.close()
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Missing required fields'}), 'isBase64Encoded': False}
+        
+        cur.execute(f"""
+            UPDATE {schema}.courses
+            SET title = '{title.replace("'", "''")}',
+                description = '{description.replace("'", "''")}',
+                start_date = {f"'{start_date}'" if start_date else 'NULL'},
+                end_date = {f"'{end_date}'" if end_date else 'NULL'},
+                duration = '{duration.replace("'", "''")}',
+                format = '{format_val.replace("'", "''")}',
+                location = {f"'{location}'" if location else 'NULL'},
+                max_participants = {max_participants if max_participants else 'NULL'},
+                price = {price if price else 'NULL'},
+                currency = '{currency}',
+                image_url = {f"'{image_url}'" if image_url else 'NULL'},
+                external_url = '{external_url}',
+                original_price = {original_price if original_price else 'NULL'},
+                discount_price = {discount_price if discount_price else 'NULL'},
+                author_name = '{author_name.replace("'", "''")}',
+                author_photo = {f"'{author_photo}'" if author_photo else 'NULL'},
+                course_content = '{course_content.replace("'", "''")}',
+                school_name = '{school_name.replace("'", "''")}',
+                status = 'pending',
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = {course_id}
+            RETURNING id, title, slug, status, updated_at
+        """)
+        updated = cur.fetchone()
+        if not updated:
+            cur.close()
+            conn.close()
+            return {'statusCode': 404, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Course not found'}), 'isBase64Encoded': False}
+        
+        result = {'id': updated[0], 'title': updated[1], 'slug': updated[2], 'status': updated[3], 'updated_at': updated[4].isoformat() if updated[4] else None}
+        cur.close()
+        conn.close()
+        return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps(result), 'isBase64Encoded': False}
+    
+    # DELETE /courses?type=courses&id=X - Delete course
+    if method == 'DELETE' and entity_type == 'courses':
+        course_id = query_params.get('id')
+        if not course_id:
+            cur.close()
+            conn.close()
+            return {'statusCode': 400, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Missing course id'}), 'isBase64Encoded': False}
+        
+        cur.execute(f"DELETE FROM {schema}.courses WHERE id = {course_id} RETURNING id")
+        deleted = cur.fetchone()
+        if not deleted:
+            cur.close()
+            conn.close()
+            return {'statusCode': 404, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Course not found'}), 'isBase64Encoded': False}
+        
+        cur.close()
+        conn.close()
+        return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'message': 'Course deleted'}), 'isBase64Encoded': False}
     
     cur.close()
     conn.close()
