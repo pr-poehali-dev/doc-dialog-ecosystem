@@ -76,6 +76,7 @@ interface OfflineTraining {
 type CatalogItem = (Course & { itemType: 'course' }) | (Mastermind & { itemType: 'mastermind'; category: string; course_type: string }) | (OfflineTraining & { itemType: 'offline_training'; category: string; course_type: string });
 
 const COURSE_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f';
+const COURSE_LANDINGS_API_URL = 'https://functions.poehali.dev/a81dd7cd-c267-4f44-85f5-0da8353dc741';
 const REVIEWS_API_URL = 'https://functions.poehali.dev/dacb9e9b-c76e-4430-8ed9-362ffc8b9566';
 
 const CATEGORIES = [
@@ -110,18 +111,41 @@ export default function CoursesCatalog() {
     try {
       setLoading(true);
       
-      const [coursesResponse, mastermindsResponse, offlineTrainingsResponse] = await Promise.all([
-        fetch(`${COURSE_API_URL}?status=approved`),
+      // Получаем курсы из нового API (course-landings)
+      const coursesLandingsResponse = await fetch(`${COURSE_LANDINGS_API_URL}`);
+      const coursesLandingsData = await coursesLandingsResponse.json();
+      
+      // Фильтруем только одобренные курсы и маппим на формат Course
+      const approvedCoursesData = coursesLandingsData
+        .filter((c: any) => c.status === 'approved' || c.status === 'published' || c.status === 'active')
+        .map((c: any) => ({
+          id: c.id,
+          school_id: c.school_id || 0,
+          title: c.title,
+          description: c.short_description || '',
+          category: c.category || 'Другое',
+          course_type: c.type || 'online',
+          price: null,
+          currency: 'RUB',
+          duration_hours: null,
+          image_url: c.cover_url || null,
+          external_url: '',
+          status: c.status,
+          slug: c.slug,
+          created_at: c.created_at,
+          view_count: 0
+        }));
+      
+      const [mastermindsResponse, offlineTrainingsResponse] = await Promise.all([
         fetch(`${COURSE_API_URL}?action=masterminds&status=approved`),
         fetch(`${COURSE_API_URL}?action=offline_trainings&status=approved`)
       ]);
       
-      const coursesData: Course[] = await coursesResponse.json();
       const mastermindsData: Mastermind[] = await mastermindsResponse.json();
       const offlineTrainingsData: OfflineTraining[] = await offlineTrainingsResponse.json();
       
       const allItemsWithoutRatings: CatalogItem[] = [
-        ...coursesData.map(c => ({ ...c, itemType: 'course' as const })),
+        ...approvedCoursesData.map((c: Course) => ({ ...c, itemType: 'course' as const })),
         ...mastermindsData.map(m => ({ 
           ...m, 
           itemType: 'mastermind' as const,
