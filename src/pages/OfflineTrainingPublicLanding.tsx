@@ -60,6 +60,8 @@ export default function OfflineTrainingPublicLanding() {
   const navigate = useNavigate();
   const [training, setTraining] = useState<OfflineTrainingData | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  const isPreview = new URLSearchParams(window.location.search).get('preview') === 'true';
 
   useEffect(() => {
     loadTraining();
@@ -68,7 +70,10 @@ export default function OfflineTrainingPublicLanding() {
   const loadTraining = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${TRAINING_API_URL}?action=offline_trainings&slug=${slug}`);
+      const url = isPreview 
+        ? `${TRAINING_API_URL}?action=offline_trainings&slug=${slug}&skip_status_check=true`
+        : `${TRAINING_API_URL}?action=offline_trainings&slug=${slug}`;
+      const response = await fetch(url);
       if (response.ok) {
         const data = await response.json();
         setTraining(data);

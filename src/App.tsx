@@ -67,6 +67,7 @@ const App = () => (
           <Route path="/mastermind/landing/:slug" element={<MastermindPublicLanding />} />
           <Route path="/offline-training/landing/builder" element={<OfflineTrainingLandingBuilder />} />
           <Route path="/offline-training/landing/:slug" element={<OfflineTrainingPublicLanding />} />
+          <Route path="/offline-training/:slug" element={<OfflineTrainingPublicLanding />} />
           <Route path="/schools" element={<SchoolCatalog />} />
           <Route path="/school/:slug" element={<SchoolLanding />} />
           <Route path="/salon/cabinet" element={<SalonCabinet />} />
