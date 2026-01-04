@@ -441,7 +441,7 @@ def handler(event: dict, context) -> dict:
                     cur.execute("""
                         SELECT s.id, s.user_id, u.email as user_email, s.name, s.slug, s.logo_url, 
                                s.description, s.students_count, s.learning_direction, s.format, 
-                               s.city, s.created_at
+                               s.city, s.created_at, s.is_verified
                         FROM t_p46047379_doc_dialog_ecosystem.schools s
                         JOIN t_p46047379_doc_dialog_ecosystem.users u ON u.id = s.user_id
                         ORDER BY s.created_at DESC
@@ -569,6 +569,54 @@ def handler(event: dict, context) -> dict:
                 return response(404, {'error': 'Школа не найдена или нет прав доступа'})
             
             return response(200, {'success': True, 'slug': result['slug'], 'message': 'Лендинг школы обновлен'})
+        
+        # PUT /?action=moderate&id=X - модерация школы (только админ)
+        if method == 'PUT' and event.get('queryStringParameters', {}).get('action') == 'moderate':
+            school_id = event.get('queryStringParameters', {}).get('id')
+            headers = event.get('headers', {})
+            auth_header = headers.get('X-Authorization') or headers.get('Authorization', '')
+            token = auth_header.replace('Bearer ', '').strip()
+            
+            if not token:
+                conn.close()
+                return response(401, {'error': 'Требуется авторизация'})
+            
+            try:
+                jwt_secret = os.environ.get('JWT_SECRET', 'your-secret-key')
+                decoded = jwt.decode(token, jwt_secret, algorithms=['HS256'])
+                user_id = decoded.get('user_id')
+                
+                if not is_admin_user(conn, user_id):
+                    conn.close()
+                    return response(403, {'error': 'Доступ запрещён'})
+                
+                data = json.loads(event.get('body', '{}'))
+                is_verified = data.get('is_verified', False)
+                
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        UPDATE t_p46047379_doc_dialog_ecosystem.schools
+                        SET is_verified = %s
+                        WHERE id = %s
+                        RETURNING id, slug, is_verified
+                    """, (is_verified, int(school_id)))
+                    result = cur.fetchone()
+                    
+                    if not result:
+                        conn.close()
+                        return response(404, {'error': 'Школа не найдена'})
+                    
+                    conn.commit()
+                    conn.close()
+                    return response(200, {
+                        'success': True, 
+                        'id': result['id'],
+                        'slug': result['slug'],
+                        'is_verified': result['is_verified']
+                    })
+            except jwt.InvalidTokenError:
+                conn.close()
+                return response(401, {'error': 'Неверный токен'})
         
         # DELETE /?id=X - удаление школы (владелец или админ)
         if method == 'DELETE':

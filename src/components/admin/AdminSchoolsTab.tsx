@@ -20,6 +20,7 @@ interface School {
   format: string | null;
   city: string | null;
   created_at: string;
+  is_verified: boolean;
 }
 
 export default function AdminSchoolsTab() {
@@ -80,6 +81,36 @@ export default function AdminSchoolsTab() {
       toast({
         title: "Ошибка",
         description: "Не удалось удалить школу",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const moderateSchool = async (schoolId: number, isVerified: boolean) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`https://functions.poehali.dev/6ac6b552-624e-4960-a4f1-94f540394c86?action=moderate&id=${schoolId}`, {
+        method: 'PUT',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ is_verified: isVerified })
+      });
+      
+      if (response.ok) {
+        toast({ 
+          title: "Успех", 
+          description: isVerified ? "Школа одобрена и опубликована в каталоге" : "Школа отклонена и скрыта из каталога"
+        });
+        loadSchools();
+      } else {
+        throw new Error('Failed to moderate');
+      }
+    } catch (error) {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось изменить статус школы",
         variant: "destructive"
       });
     }
@@ -222,19 +253,54 @@ export default function AdminSchoolsTab() {
               <div className="flex-1">
                 <div className="flex items-start justify-between mb-2">
                   <div>
-                    <h3 className="text-xl font-bold mb-1">{school.name}</h3>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-xl font-bold">{school.name}</h3>
+                      {school.is_verified ? (
+                        <Badge variant="default" className="bg-green-500">
+                          <Icon name="CheckCircle" size={12} className="mr-1" />
+                          Одобрена
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary">
+                          <Icon name="Clock" size={12} className="mr-1" />
+                          На модерации
+                        </Badge>
+                      )}
+                    </div>
                     <p className="text-sm text-muted-foreground mb-2">
                       {school.user_email} • ID: {school.id}
                     </p>
                   </div>
-                  <Button 
-                    onClick={() => deleteSchool(school.id)} 
-                    variant="destructive" 
-                    size="sm"
-                  >
-                    <Icon name="Trash2" size={16} className="mr-2" />
-                    Удалить
-                  </Button>
+                  <div className="flex gap-2">
+                    {!school.is_verified ? (
+                      <Button 
+                        onClick={() => moderateSchool(school.id, true)} 
+                        variant="default"
+                        className="bg-green-600 hover:bg-green-700"
+                        size="sm"
+                      >
+                        <Icon name="CheckCircle" size={16} className="mr-2" />
+                        Одобрить
+                      </Button>
+                    ) : (
+                      <Button 
+                        onClick={() => moderateSchool(school.id, false)} 
+                        variant="outline"
+                        size="sm"
+                      >
+                        <Icon name="XCircle" size={16} className="mr-2" />
+                        Отклонить
+                      </Button>
+                    )}
+                    <Button 
+                      onClick={() => deleteSchool(school.id)} 
+                      variant="destructive" 
+                      size="sm"
+                    >
+                      <Icon name="Trash2" size={16} className="mr-2" />
+                      Удалить
+                    </Button>
+                  </div>
                 </div>
 
                 {school.description && (
