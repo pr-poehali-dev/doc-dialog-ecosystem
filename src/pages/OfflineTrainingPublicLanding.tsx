@@ -122,7 +122,7 @@ export default function OfflineTrainingPublicLanding() {
 
   return (
     <div className="min-h-screen bg-white">
-      <section className="relative h-[600px] flex items-center justify-center bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white">
+      <section className="relative min-h-[500px] sm:min-h-[600px] flex items-center justify-center bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white py-12 sm:py-20">
         {training.cover_url && (
           <div 
             className="absolute inset-0 bg-cover bg-center"
@@ -130,52 +130,52 @@ export default function OfflineTrainingPublicLanding() {
           />
         )}
         <div className="absolute inset-0 bg-black/50"></div>
-        <div className="relative z-10 text-center px-4 max-w-4xl">
+        <div className="relative z-10 text-center px-4 sm:px-6 max-w-4xl w-full">
           {training.school_logo_url && (
-            <div className="mb-6">
+            <div className="mb-4 sm:mb-6">
               <img 
                 src={training.school_logo_url} 
                 alt="Логотип школы" 
-                className="mx-auto h-10 w-auto object-contain drop-shadow-lg opacity-90"
+                className="mx-auto h-8 sm:h-10 w-auto object-contain drop-shadow-lg opacity-90"
               />
             </div>
           )}
-          <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm mb-4">
+          <div className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-white/20 backdrop-blur-sm rounded-full text-xs sm:text-sm mb-3 sm:mb-4">
             Очное обучение • Старт {formatDate(training.event_date)}
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 drop-shadow-lg">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 drop-shadow-lg leading-tight px-2">
             {training.hero_title || training.title}
           </h1>
-          <p className="text-xl md:text-2xl mb-8 text-white/90">
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 sm:mb-8 text-white/90 px-2">
             {training.hero_subtitle || training.description}
           </p>
-          <div className="flex flex-wrap gap-4 justify-center items-center mb-8">
-            <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
-              <Icon name="MapPin" size={20} />
-              <span>{training.location}</span>
+          <div className="flex flex-wrap gap-2 sm:gap-4 justify-center items-center mb-6 sm:mb-8">
+            <div className="flex items-center gap-1.5 sm:gap-2 bg-white/20 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base">
+              <Icon name="MapPin" size={18} className="sm:w-5 sm:h-5" />
+              <span className="truncate max-w-[150px] sm:max-w-none">{training.location}</span>
             </div>
-            <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
-              <Icon name="Users" size={20} />
-              <span>{training.current_participants} / {training.max_participants} участников</span>
+            <div className="flex items-center gap-1.5 sm:gap-2 bg-white/20 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base">
+              <Icon name="Users" size={18} className="sm:w-5 sm:h-5" />
+              <span>{training.current_participants} / {training.max_participants}</span>
             </div>
             {training.max_participants - training.current_participants > 0 && (
-              <div className="flex items-center gap-2 bg-green-500/30 backdrop-blur-sm px-4 py-2 rounded-lg border border-green-300/30">
-                <Icon name="Check" size={20} />
-                <span>Осталось {training.max_participants - training.current_participants} {training.max_participants - training.current_participants === 1 ? 'место' : training.max_participants - training.current_participants < 5 ? 'места' : 'мест'}</span>
+              <div className="flex items-center gap-1.5 sm:gap-2 bg-green-500/30 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border border-green-300/30 text-sm sm:text-base">
+                <Icon name="Check" size={18} className="sm:w-5 sm:h-5" />
+                <span>Осталось {training.max_participants - training.current_participants}</span>
               </div>
             )}
             {training.max_participants - training.current_participants === 0 && (
-              <div className="flex items-center gap-2 bg-red-500/30 backdrop-blur-sm px-4 py-2 rounded-lg border border-red-300/30">
-                <Icon name="AlertCircle" size={20} />
-                <span>Мест не осталось</span>
+              <div className="flex items-center gap-1.5 sm:gap-2 bg-red-500/30 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border border-red-300/30 text-sm sm:text-base">
+                <Icon name="AlertCircle" size={18} className="sm:w-5 sm:h-5" />
+                <span>Нет мест</span>
               </div>
             )}
             {displayPrice && (
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
-                <Icon name="Coins" size={20} />
+              <div className="flex items-center gap-1.5 sm:gap-2 bg-white/20 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base">
+                <Icon name="Coins" size={18} className="sm:w-5 sm:h-5" />
                 {hasDiscount ? (
                   <div className="flex items-center gap-2">
-                    <span className="line-through opacity-70">{training.original_price?.toLocaleString('ru-RU')} ₽</span>
+                    <span className="line-through opacity-70 text-xs sm:text-sm">{training.original_price?.toLocaleString('ru-RU')} ₽</span>
                     <span className="font-bold">{displayPrice.toLocaleString('ru-RU')} ₽</span>
                   </div>
                 ) : (
@@ -195,11 +195,11 @@ export default function OfflineTrainingPublicLanding() {
       </section>
 
       {training.about_training && (
-        <section className="py-20 bg-white">
-          <div className="max-w-4xl mx-auto px-4">
-            <h2 className="text-4xl font-bold mb-8 text-center">О курсе</h2>
-            <div className="prose prose-lg max-w-none">
-              <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+        <section className="py-12 sm:py-16 md:py-20 bg-white">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-center">О курсе</h2>
+            <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none">
+              <p className="text-sm sm:text-base md:text-lg text-gray-700 whitespace-pre-wrap leading-relaxed">
                 {training.about_training}
               </p>
             </div>
@@ -208,16 +208,16 @@ export default function OfflineTrainingPublicLanding() {
       )}
 
       {training.what_you_get && training.what_you_get.length > 0 && (
-        <section className="py-20 bg-gray-50">
-          <div className="max-w-4xl mx-auto px-4">
-            <h2 className="text-4xl font-bold mb-12 text-center">Что вы получите</h2>
-            <div className="grid md:grid-cols-2 gap-6">
+        <section className="py-12 sm:py-16 md:py-20 bg-gray-50">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-10 md:mb-12 text-center">Что вы получите</h2>
+            <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
               {training.what_you_get.map((item, idx) => (
-                <div key={idx} className="flex items-start gap-4 bg-white p-6 rounded-xl shadow-sm">
-                  <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                    <Icon name="Check" size={24} className="text-blue-600" />
+                <div key={idx} className="flex items-start gap-3 sm:gap-4 bg-white p-4 sm:p-6 rounded-xl shadow-sm">
+                  <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                    <Icon name="Check" size={20} className="sm:w-6 sm:h-6 text-blue-600" />
                   </div>
-                  <p className="text-gray-800 font-medium">{item}</p>
+                  <p className="text-sm sm:text-base text-gray-800 font-medium pt-1 sm:pt-0">{item}</p>
                 </div>
               ))}
             </div>
@@ -226,21 +226,21 @@ export default function OfflineTrainingPublicLanding() {
       )}
 
       {training.training_program && training.training_program.length > 0 && (
-        <section className="py-20 bg-white">
-          <div className="max-w-4xl mx-auto px-4">
-            <h2 className="text-4xl font-bold mb-12 text-center">Программа обучения</h2>
-            <div className="space-y-6">
+        <section className="py-12 sm:py-16 md:py-20 bg-white">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-10 md:mb-12 text-center">Программа обучения</h2>
+            <div className="space-y-4 sm:space-y-6">
               {training.training_program.map((module, idx) => (
                 <Card key={idx}>
-                  <CardContent className="p-6">
-                    <div className="flex gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                        <span className="text-xl font-bold text-blue-600">{idx + 1}</span>
+                  <CardContent className="p-4 sm:p-6">
+                    <div className="flex gap-3 sm:gap-4">
+                      <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span className="text-lg sm:text-xl font-bold text-blue-600">{idx + 1}</span>
                       </div>
                       <div className="flex-1">
-                        <div className="text-sm text-gray-500 mb-1">{module.time}</div>
-                        <h3 className="text-xl font-bold mb-2">{module.title}</h3>
-                        <p className="text-gray-700">{module.description}</p>
+                        <div className="text-xs sm:text-sm text-gray-500 mb-1">{module.time}</div>
+                        <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2">{module.title}</h3>
+                        <p className="text-sm sm:text-base text-gray-700">{module.description}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -252,26 +252,26 @@ export default function OfflineTrainingPublicLanding() {
       )}
 
       {training.instructor && (
-        <section className="py-20 bg-gray-50">
-          <div className="max-w-4xl mx-auto px-4">
-            <h2 className="text-4xl font-bold mb-12 text-center">Преподаватель</h2>
+        <section className="py-12 sm:py-16 md:py-20 bg-gray-50">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-10 md:mb-12 text-center">Преподаватель</h2>
             <Card>
-              <CardContent className="p-8">
-                <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
+              <CardContent className="p-6 sm:p-8">
+                <div className="flex flex-col md:flex-row gap-6 sm:gap-8 items-center md:items-start">
                   {training.instructor.photo && (
                     <img 
                       src={training.instructor.photo} 
                       alt={training.instructor.name}
-                      className="w-48 h-48 rounded-full object-cover"
+                      className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 rounded-full object-cover"
                     />
                   )}
                   <div className="flex-1 text-center md:text-left">
-                    <h3 className="text-2xl font-bold mb-2">{training.instructor.name}</h3>
-                    <p className="text-blue-600 font-medium mb-4">{training.instructor.position}</p>
-                    <p className="text-gray-700 mb-4">{training.instructor.bio}</p>
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full">
-                      <Icon name="Award" size={18} className="text-blue-600" />
-                      <span className="text-sm text-blue-800">{training.instructor.experience}</span>
+                    <h3 className="text-xl sm:text-2xl font-bold mb-2">{training.instructor.name}</h3>
+                    <p className="text-base sm:text-lg text-blue-600 font-medium mb-3 sm:mb-4">{training.instructor.position}</p>
+                    <p className="text-sm sm:text-base text-gray-700 mb-3 sm:mb-4">{training.instructor.bio}</p>
+                    <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-50 rounded-full">
+                      <Icon name="Award" size={16} className="sm:w-[18px] sm:h-[18px] text-blue-600" />
+                      <span className="text-xs sm:text-sm text-blue-800">{training.instructor.experience}</span>
                     </div>
                   </div>
                 </div>
@@ -282,14 +282,14 @@ export default function OfflineTrainingPublicLanding() {
       )}
 
       {training.benefits && training.benefits.length > 0 && (
-        <section className="py-20 bg-white">
-          <div className="max-w-4xl mx-auto px-4">
-            <h2 className="text-4xl font-bold mb-12 text-center">Преимущества обучения</h2>
-            <div className="grid md:grid-cols-2 gap-6">
+        <section className="py-12 sm:py-16 md:py-20 bg-white">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-10 md:mb-12 text-center">Преимущества обучения</h2>
+            <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
               {training.benefits.map((benefit, idx) => (
-                <div key={idx} className="flex items-start gap-4">
-                  <Icon name="Star" size={24} className="text-yellow-500 flex-shrink-0" />
-                  <span className="text-gray-800">{benefit}</span>
+                <div key={idx} className="flex items-start gap-3 sm:gap-4">
+                  <Icon name="Star" size={20} className="sm:w-6 sm:h-6 text-yellow-500 flex-shrink-0" />
+                  <span className="text-sm sm:text-base text-gray-800">{benefit}</span>
                 </div>
               ))}
             </div>
@@ -298,36 +298,36 @@ export default function OfflineTrainingPublicLanding() {
       )}
 
       {training.testimonials && training.testimonials.length > 0 && (
-        <section className="py-20 bg-gray-50">
-          <div className="max-w-4xl mx-auto px-4">
-            <h2 className="text-4xl font-bold mb-12 text-center">Отзывы выпускников</h2>
-            <div className="grid md:grid-cols-2 gap-6">
+        <section className="py-12 sm:py-16 md:py-20 bg-gray-50">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-10 md:mb-12 text-center">Отзывы выпускников</h2>
+            <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
               {training.testimonials.map((testimonial, idx) => (
                 <Card key={idx}>
-                  <CardContent className="p-6">
-                    <div className="flex gap-4 mb-4">
+                  <CardContent className="p-4 sm:p-6">
+                    <div className="flex gap-3 sm:gap-4 mb-3 sm:mb-4">
                       {testimonial.photo && (
                         <img 
                           src={testimonial.photo} 
                           alt={testimonial.name}
-                          className="w-12 h-12 rounded-full object-cover"
+                          className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover"
                         />
                       )}
                       <div>
-                        <div className="font-semibold">{testimonial.name}</div>
-                        <div className="flex gap-1">
+                        <div className="font-semibold text-sm sm:text-base">{testimonial.name}</div>
+                        <div className="flex gap-0.5 sm:gap-1">
                           {[...Array(5)].map((_, i) => (
                             <Icon 
                               key={i} 
                               name="Star" 
-                              size={16} 
-                              className={i < testimonial.rating ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'} 
+                              size={14} 
+                              className={`sm:w-4 sm:h-4 ${i < testimonial.rating ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}`}
                             />
                           ))}
                         </div>
                       </div>
                     </div>
-                    <p className="text-gray-700">{testimonial.text}</p>
+                    <p className="text-sm sm:text-base text-gray-700">{testimonial.text}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -337,15 +337,15 @@ export default function OfflineTrainingPublicLanding() {
       )}
 
       {training.faq && training.faq.length > 0 && (
-        <section className="py-20 bg-white">
-          <div className="max-w-4xl mx-auto px-4">
-            <h2 className="text-4xl font-bold mb-12 text-center">Часто задаваемые вопросы</h2>
-            <div className="space-y-4">
+        <section className="py-12 sm:py-16 md:py-20 bg-white">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-10 md:mb-12 text-center">Часто задаваемые вопросы</h2>
+            <div className="space-y-3 sm:space-y-4">
               {training.faq.map((item, idx) => (
                 <Card key={idx}>
-                  <CardContent className="p-6">
-                    <h3 className="text-lg font-bold mb-2">{item.question}</h3>
-                    <p className="text-gray-700">{item.answer}</p>
+                  <CardContent className="p-4 sm:p-6">
+                    <h3 className="text-base sm:text-lg font-bold mb-2">{item.question}</h3>
+                    <p className="text-sm sm:text-base text-gray-700">{item.answer}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -354,10 +354,10 @@ export default function OfflineTrainingPublicLanding() {
         </section>
       )}
 
-      <section className="py-20 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold mb-6">Готовы начать обучение?</h2>
-          <p className="text-xl mb-8 text-white/90">
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">Готовы начать обучение?</h2>
+          <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 text-white/90">
             Присоединяйтесь к нашему курсу и получите профессию массажиста
           </p>
           <Button 
