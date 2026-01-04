@@ -85,7 +85,7 @@ export default function CatalogItemCard({ item }: CatalogItemCardProps) {
           <div className="mb-3 px-3 py-1.5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 rounded-lg text-xs text-amber-800 font-semibold flex items-center gap-1.5 shadow-sm">
             <Icon name="TrendingUp" size={14} />
             <span>
-              {item.promotion_type === 'all_categories' ? 'Продвигается во всех категориях' : 'Продвигается в категории'}
+              Рекомендуем
             </span>
           </div>
         )}
