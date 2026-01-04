@@ -157,25 +157,38 @@ export default function SchoolLanding() {
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 py-16">
+      <div className="max-w-7xl mx-auto px-4 py-20">
         {/* О школе */}
         {school.about_school && (
-          <section className="mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">О школе</h2>
-            <p className="text-lg text-gray-700 leading-relaxed whitespace-pre-wrap">{school.about_school}</p>
+          <section className="mb-20">
+            <h2 className="text-4xl font-bold text-gray-900 mb-8 text-center">О школе</h2>
+            <div className="max-w-4xl mx-auto">
+              <p className="text-lg text-gray-700 leading-relaxed whitespace-pre-wrap">{school.about_school}</p>
+            </div>
           </section>
         )}
 
         {/* Достижения */}
         {school.achievements.length > 0 && (
-          <section className="mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">Наши достижения</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {school.achievements.map((ach, idx) => (
-                <div key={idx} className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 text-center">
-                  {ach.icon_name && <Icon name={ach.icon_name} size={48} className="text-blue-600 mx-auto mb-4" />}
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{ach.title}</h3>
-                  {ach.description && <p className="text-gray-600">{ach.description}</p>}
+          <section className="mb-20">
+            <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">Наши достижения</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {school.achievements.filter(ach => {
+                const suspicious = /туалет|toilet|6 дюймов|inches/i.test(ach.title + ' ' + (ach.description || ''));
+                return !suspicious && ach.title && ach.title.length > 2;
+              }).map((ach, idx) => (
+                <div key={idx} className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 hover:shadow-lg transition-shadow">
+                  <div className="flex items-start gap-4">
+                    {ach.icon_name && (
+                      <div className="flex-shrink-0">
+                        <Icon name={ach.icon_name} size={40} className="text-blue-600" />
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">{ach.title}</h3>
+                      {ach.description && <p className="text-sm text-gray-600 leading-relaxed">{ach.description}</p>}
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -184,16 +197,18 @@ export default function SchoolLanding() {
 
         {/* Почему мы */}
         {school.why_choose_us && (
-          <section className="mb-16 bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-2xl p-12">
-            <h2 className="text-3xl font-bold mb-6">Почему выбирают нас</h2>
-            <p className="text-lg leading-relaxed whitespace-pre-wrap opacity-95">{school.why_choose_us}</p>
+          <section className="mb-16 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white rounded-2xl p-12 shadow-xl">
+            <h2 className="text-3xl font-bold mb-8 text-center">Почему выбирают нас</h2>
+            <div className="prose prose-lg prose-invert max-w-none">
+              <p className="text-lg leading-relaxed whitespace-pre-wrap">{school.why_choose_us}</p>
+            </div>
           </section>
         )}
 
         {/* Преподаватели */}
         {school.teachers.length > 0 && (
-          <section className="mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">Наши преподаватели</h2>
+          <section className="mb-20">
+            <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">Наши преподаватели</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {school.teachers.map((teacher, idx) => (
                 <div key={idx} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
@@ -219,19 +234,22 @@ export default function SchoolLanding() {
 
         {/* Галерея */}
         {school.gallery.length > 0 && (
-          <section className="mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">Галерея</h2>
+          <section className="mb-20">
+            <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">Галерея</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {school.gallery.map((img, idx) => (
-                <div key={idx} className="relative aspect-square rounded-lg overflow-hidden group cursor-pointer">
+              {school.gallery.filter(img => {
+                const suspicious = img.caption && /туалет|toilet|6 дюймов|inches/i.test(img.caption);
+                return !suspicious && img.image_url;
+              }).map((img, idx) => (
+                <div key={idx} className="relative aspect-square rounded-lg overflow-hidden group cursor-pointer shadow-md hover:shadow-xl transition-shadow">
                   <img
                     src={img.image_url}
                     alt={img.caption || 'Фото школы'}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                   {img.caption && (
-                    <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
-                      <p className="text-white text-center text-sm">{img.caption}</p>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                      <p className="text-white text-sm font-medium">{img.caption}</p>
                     </div>
                   )}
                 </div>
@@ -242,8 +260,8 @@ export default function SchoolLanding() {
 
         {/* Отзывы */}
         {school.reviews.length > 0 && (
-          <section className="mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">Отзывы студентов</h2>
+          <section className="mb-20">
+            <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">Отзывы студентов</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {school.reviews.map((review, idx) => (
                 <div key={idx} className="bg-gray-50 rounded-xl p-6">
@@ -281,12 +299,16 @@ export default function SchoolLanding() {
 
         {/* CTA */}
         {school.cta_button_text && school.cta_button_url && (
-          <section className="text-center py-16">
+          <section className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-2xl p-12 text-center mb-16">
+            <h2 className="text-3xl font-bold mb-4">Готовы начать обучение?</h2>
+            <p className="text-lg opacity-90 mb-8 max-w-2xl mx-auto">
+              Запишитесь на курс прямо сейчас и получите профессию массажиста
+            </p>
             <a
               href={school.cta_button_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg px-12 py-4 rounded-full transition-colors shadow-lg hover:shadow-xl"
+              className="inline-flex items-center gap-2 bg-white text-blue-600 hover:bg-gray-100 font-bold text-lg px-12 py-4 rounded-full transition-all shadow-lg hover:shadow-xl hover:scale-105"
             >
               {school.cta_button_text}
               <Icon name="ArrowRight" size={24} />
@@ -295,36 +317,83 @@ export default function SchoolLanding() {
         )}
 
         {/* Контакты */}
-        <section className="bg-gray-50 rounded-2xl p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Контакты</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <section className="bg-gray-50 rounded-2xl p-10 mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Свяжитесь с нами</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {school.phone && (
-              <a href={`tel:${school.phone}`} className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition-colors">
-                <Icon name="Phone" size={20} />
-                <span>{school.phone}</span>
+              <a href={`tel:${school.phone}`} className="flex items-center gap-4 bg-white p-4 rounded-xl hover:shadow-md transition-shadow group">
+                <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-600 transition-colors">
+                  <Icon name="Phone" size={24} className="text-blue-600 group-hover:text-white" />
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500 mb-1">Телефон</div>
+                  <div className="font-semibold text-gray-900">{school.phone}</div>
+                </div>
               </a>
             )}
             {school.email && (
-              <a href={`mailto:${school.email}`} className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition-colors">
-                <Icon name="Mail" size={20} />
-                <span>{school.email}</span>
+              <a href={`mailto:${school.email}`} className="flex items-center gap-4 bg-white p-4 rounded-xl hover:shadow-md transition-shadow group">
+                <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-600 transition-colors">
+                  <Icon name="Mail" size={24} className="text-blue-600 group-hover:text-white" />
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500 mb-1">Email</div>
+                  <div className="font-semibold text-gray-900">{school.email}</div>
+                </div>
               </a>
             )}
             {school.address && (
-              <div className="flex items-center gap-3 text-gray-700">
-                <Icon name="MapPin" size={20} />
-                <span>{school.address}</span>
+              <div className="flex items-center gap-4 bg-white p-4 rounded-xl">
+                <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <Icon name="MapPin" size={24} className="text-blue-600" />
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500 mb-1">Адрес</div>
+                  <div className="font-semibold text-gray-900">{school.address}</div>
+                </div>
               </div>
             )}
             {school.website && (
-              <a href={school.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition-colors">
-                <Icon name="Globe" size={20} />
-                <span>Сайт</span>
+              <a href={school.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 bg-white p-4 rounded-xl hover:shadow-md transition-shadow group">
+                <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-600 transition-colors">
+                  <Icon name="Globe" size={24} className="text-blue-600 group-hover:text-white" />
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500 mb-1">Веб-сайт</div>
+                  <div className="font-semibold text-gray-900">Перейти на сайт</div>
+                </div>
               </a>
             )}
           </div>
           
-
+          {/* Социальные сети */}
+          {(school.whatsapp || school.telegram || school.vk || school.instagram) && (
+            <div className="mt-8 pt-8 border-t border-gray-200">
+              <h3 className="text-lg font-bold text-gray-900 mb-4 text-center">Мы в социальных сетях</h3>
+              <div className="flex justify-center gap-4">
+                {school.whatsapp && (
+                  <a href={`https://wa.me/${school.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center transition-colors">
+                    <Icon name="MessageCircle" size={24} />
+                  </a>
+                )}
+                {school.telegram && (
+                  <a href={`https://t.me/${school.telegram}`} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center transition-colors">
+                    <Icon name="Send" size={24} />
+                  </a>
+                )}
+                {school.vk && (
+                  <a href={school.vk} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex items-center justify-center transition-colors">
+                    <Icon name="Users" size={24} />
+                  </a>
+                )}
+                {school.instagram && (
+                  <a href={school.instagram} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-gradient-to-tr from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-full flex items-center justify-center transition-colors">
+                    <Icon name="Instagram" size={24} />
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
         </section>
       </div>
     </div>
