@@ -126,15 +126,15 @@ export default function PromotionPricingTab() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-start">
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
         <div>
-          <h2 className="text-2xl font-bold mb-2">Настройка цен на продвижение</h2>
-          <p className="text-muted-foreground">
+          <h2 className="text-xl sm:text-2xl font-bold mb-2">Настройка цен на продвижение</h2>
+          <p className="text-sm text-muted-foreground">
             Управляйте ценами на поднятие в топ для разных типов контента и категорий
           </p>
         </div>
         {pricing.length > 0 && (
-          <div className="text-sm text-muted-foreground bg-muted px-3 py-2 rounded-md">
+          <div className="text-xs sm:text-sm text-muted-foreground bg-muted px-3 py-2 rounded-md whitespace-nowrap">
             Загружено: {pricing.length} цен
           </div>
         )}
@@ -150,12 +150,12 @@ export default function PromotionPricingTab() {
 
       {Object.entries(ENTITY_TYPES).map(([entityKey, entityName]) => (
         <div key={entityKey} className="space-y-4">
-          <h3 className="text-xl font-semibold flex items-center gap-2">
-            <Icon name="Tag" size={20} className="text-primary" />
+          <h3 className="text-lg sm:text-xl font-semibold flex items-center gap-2">
+            <Icon name="Tag" size={18} className="text-primary" />
             {entityName}
           </h3>
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
             {/* Своя категория */}
             {Object.entries(CATEGORIES).map(([catKey, catName]) => {
               const key = `${entityKey}_own_category`;
@@ -163,8 +163,8 @@ export default function PromotionPricingTab() {
 
               return (
                 <Card key={`${entityKey}_${catKey}`}>
-                  <CardHeader>
-                    <CardTitle className="text-base">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm sm:text-base">
                       {catName} • В своей категории
                     </CardTitle>
                   </CardHeader>
@@ -174,42 +174,44 @@ export default function PromotionPricingTab() {
                         Цены не настроены
                       </p>
                     ) : (
-                      <div className="space-y-3">
+                      <div className="space-y-2 sm:space-y-3">
                         {items
                           .sort((a, b) => a.duration_days - b.duration_days)
                           .map(item => (
-                          <div key={item.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                            <div className="flex items-center gap-2">
-                              <Icon name="Clock" size={16} className="text-primary" />
-                              <span className="font-medium">{item.duration_days} {item.duration_days === 1 ? 'день' : item.duration_days <= 4 ? 'дня' : 'дней'}</span>
+                          <div key={item.id} className="flex items-center justify-between p-2 sm:p-3 bg-muted/50 rounded-lg">
+                            <div className="flex items-center gap-1 sm:gap-2">
+                              <Icon name="Clock" size={14} className="text-primary" />
+                              <span className="text-xs sm:text-sm font-medium">{item.duration_days} {item.duration_days === 1 ? 'день' : item.duration_days <= 4 ? 'дня' : 'дней'}</span>
                             </div>
                             
                             {editingId === item.id ? (
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1 sm:gap-2">
                                 <Input
                                   type="number"
                                   value={editPrice}
                                   onChange={(e) => setEditPrice(e.target.value)}
-                                  className="w-24 h-8"
+                                  className="w-16 sm:w-24 h-7 sm:h-8 text-xs sm:text-sm"
                                   min="0"
                                 />
                                 <Button
                                   size="sm"
                                   onClick={() => updatePrice(item.id, parseInt(editPrice))}
+                                  className="h-7 sm:h-8 w-7 sm:w-8 p-0"
                                 >
-                                  <Icon name="Check" size={14} />
+                                  <Icon name="Check" size={12} />
                                 </Button>
                                 <Button
                                   size="sm"
                                   variant="outline"
                                   onClick={() => setEditingId(null)}
+                                  className="h-7 sm:h-8 w-7 sm:w-8 p-0"
                                 >
-                                  <Icon name="X" size={14} />
+                                  <Icon name="X" size={12} />
                                 </Button>
                               </div>
                             ) : (
-                              <div className="flex items-center gap-2">
-                                <span className="font-bold text-lg">{item.price_rub} ₽</span>
+                              <div className="flex items-center gap-1 sm:gap-2">
+                                <span className="font-bold text-sm sm:text-lg">{item.price_rub} ₽</span>
                                 <Button
                                   size="sm"
                                   variant="ghost"
@@ -217,8 +219,9 @@ export default function PromotionPricingTab() {
                                     setEditingId(item.id);
                                     setEditPrice(item.price_rub.toString());
                                   }}
+                                  className="h-7 sm:h-8 w-7 sm:w-8 p-0"
                                 >
-                                  <Icon name="Pencil" size={14} />
+                                  <Icon name="Pencil" size={12} />
                                 </Button>
                               </div>
                             )}
@@ -237,10 +240,10 @@ export default function PromotionPricingTab() {
               const items = groupedPricing[key]?.filter(item => item.category === null) || [];
 
               return (
-                <Card key={`${entityKey}_all`} className="md:col-span-2">
-                  <CardHeader>
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <Icon name="Globe" size={18} />
+                <Card key={`${entityKey}_all`} className="sm:col-span-2">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm sm:text-base flex items-center gap-2">
+                      <Icon name="Globe" size={16} />
                       Во всех категориях
                     </CardTitle>
                   </CardHeader>
@@ -250,42 +253,44 @@ export default function PromotionPricingTab() {
                         Цены не настроены
                       </p>
                     ) : (
-                      <div className="grid gap-3 md:grid-cols-3">
+                      <div className="grid gap-2 sm:gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                         {items
                           .sort((a, b) => a.duration_days - b.duration_days)
                           .map(item => (
-                            <div key={item.id} className="flex items-center justify-between p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                            <div className="flex items-center gap-2">
-                              <Icon name="Clock" size={16} className="text-amber-700" />
-                              <span className="font-medium">{item.duration_days} {item.duration_days === 1 ? 'день' : item.duration_days <= 4 ? 'дня' : 'дней'}</span>
+                            <div key={item.id} className="flex items-center justify-between p-2 sm:p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                            <div className="flex items-center gap-1 sm:gap-2">
+                              <Icon name="Clock" size={14} className="text-amber-700" />
+                              <span className="text-xs sm:text-sm font-medium">{item.duration_days} {item.duration_days === 1 ? 'день' : item.duration_days <= 4 ? 'дня' : 'дней'}</span>
                             </div>
                             
                             {editingId === item.id ? (
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1 sm:gap-2">
                                 <Input
                                   type="number"
                                   value={editPrice}
                                   onChange={(e) => setEditPrice(e.target.value)}
-                                  className="w-24 h-8"
+                                  className="w-16 sm:w-24 h-7 sm:h-8 text-xs sm:text-sm"
                                   min="0"
                                 />
                                 <Button
                                   size="sm"
                                   onClick={() => updatePrice(item.id, parseInt(editPrice))}
+                                  className="h-7 sm:h-8 w-7 sm:w-8 p-0"
                                 >
-                                  <Icon name="Check" size={14} />
+                                  <Icon name="Check" size={12} />
                                 </Button>
                                 <Button
                                   size="sm"
                                   variant="outline"
                                   onClick={() => setEditingId(null)}
+                                  className="h-7 sm:h-8 w-7 sm:w-8 p-0"
                                 >
-                                  <Icon name="X" size={14} />
+                                  <Icon name="X" size={12} />
                                 </Button>
                               </div>
                             ) : (
-                              <div className="flex items-center gap-2">
-                                <span className="font-bold text-lg">{item.price_rub} ₽</span>
+                              <div className="flex items-center gap-1 sm:gap-2">
+                                <span className="font-bold text-sm sm:text-lg">{item.price_rub} ₽</span>
                                 <Button
                                   size="sm"
                                   variant="ghost"
@@ -293,8 +298,9 @@ export default function PromotionPricingTab() {
                                     setEditingId(item.id);
                                     setEditPrice(item.price_rub.toString());
                                   }}
+                                  className="h-7 sm:h-8 w-7 sm:w-8 p-0"
                                 >
-                                  <Icon name="Pencil" size={14} />
+                                  <Icon name="Pencil" size={12} />
                                 </Button>
                               </div>
                             )}

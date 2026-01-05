@@ -241,100 +241,110 @@ export default function AdminPanel() {
       <Navigation />
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
             <div>
-              <h1 className="text-4xl font-bold mb-2">Панель администратора</h1>
-              <p className="text-muted-foreground">Управление пользователями и модерация контента</p>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">Панель администратора</h1>
+              <p className="text-sm sm:text-base text-muted-foreground">Управление пользователями и модерация контента</p>
             </div>
-            <Button onClick={() => navigate('/dashboard')} variant="outline">
+            <Button onClick={() => navigate('/dashboard')} variant="outline" className="w-full sm:w-auto">
               <Icon name="ArrowLeft" size={18} className="mr-2" />
               В личный кабинет
             </Button>
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-2 mb-8">
+          <div className="flex gap-2 mb-6 sm:mb-8 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
             <Button 
               variant={activeTab === 'dashboard' ? 'default' : 'outline'}
               onClick={() => setActiveTab('dashboard')}
+              className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm"
             >
-              <Icon name="LayoutDashboard" size={18} className="mr-2" />
-              Статистика
+              <Icon name="LayoutDashboard" size={16} className="sm:mr-2" />
+              <span className="hidden sm:inline">Статистика</span>
             </Button>
             <Button 
               variant={activeTab === 'users' ? 'default' : 'outline'}
               onClick={() => setActiveTab('users')}
+              className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm"
             >
-              <Icon name="Users" size={18} className="mr-2" />
-              Пользователи
+              <Icon name="Users" size={16} className="sm:mr-2" />
+              <span className="hidden sm:inline">Пользователи</span>
             </Button>
             <Button 
               variant={activeTab === 'moderation' ? 'default' : 'outline'}
               onClick={() => setActiveTab('moderation')}
+              className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm"
             >
-              <Icon name="Shield" size={18} className="mr-2" />
-              Модерация
+              <Icon name="Shield" size={16} className="sm:mr-2" />
+              <span className="hidden sm:inline">Модерация</span>
               {stats && stats.pending_moderations > 0 && (
-                <Badge className="ml-2" variant="destructive">{stats.pending_moderations}</Badge>
+                <Badge className="ml-1 sm:ml-2" variant="destructive">{stats.pending_moderations}</Badge>
               )}
             </Button>
             <Button 
               variant={activeTab === 'courses' ? 'default' : 'outline'}
               onClick={() => setActiveTab('courses')}
+              className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm"
             >
-              <Icon name="BookOpen" size={18} className="mr-2" />
-              Курсы
+              <Icon name="BookOpen" size={16} className="sm:mr-2" />
+              <span className="hidden sm:inline">Курсы</span>
               {stats && stats.pending_courses > 0 && (
-                <Badge className="ml-2" variant="destructive">{stats.pending_courses}</Badge>
+                <Badge className="ml-1 sm:ml-2" variant="destructive">{stats.pending_courses}</Badge>
               )}
             </Button>
             <Button 
               variant={activeTab === 'masterminds' ? 'default' : 'outline'}
               onClick={() => setActiveTab('masterminds')}
+              className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm"
             >
-              <Icon name="Users" size={18} className="mr-2" />
-              Мастермайнды
+              <Icon name="Users" size={16} className="sm:mr-2" />
+              <span className="hidden sm:inline">Мастермайнды</span>
               {stats && stats.pending_masterminds > 0 && (
-                <Badge className="ml-2" variant="destructive">{stats.pending_masterminds}</Badge>
+                <Badge className="ml-1 sm:ml-2" variant="destructive">{stats.pending_masterminds}</Badge>
               )}
             </Button>
             <Button 
               variant={activeTab === 'offline-training' ? 'default' : 'outline'}
               onClick={() => setActiveTab('offline-training')}
+              className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm"
             >
-              <Icon name="GraduationCap" size={18} className="mr-2" />
-              Очное обучение
+              <Icon name="GraduationCap" size={16} className="sm:mr-2" />
+              <span className="hidden sm:inline">Очное обучение</span>
               {stats && stats.pending_offline_trainings > 0 && (
-                <Badge className="ml-2" variant="destructive">{stats.pending_offline_trainings}</Badge>
+                <Badge className="ml-1 sm:ml-2" variant="destructive">{stats.pending_offline_trainings}</Badge>
               )}
             </Button>
             <Button 
               variant={activeTab === 'reviews' ? 'default' : 'outline'}
               onClick={() => setActiveTab('reviews')}
+              className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm"
             >
-              <Icon name="MessageSquare" size={18} className="mr-2" />
-              Отзывы
+              <Icon name="MessageSquare" size={16} className="sm:mr-2" />
+              <span className="hidden sm:inline">Отзывы</span>
             </Button>
             <Button 
               variant={activeTab === 'schools' ? 'default' : 'outline'}
               onClick={() => setActiveTab('schools')}
+              className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm"
             >
-              <Icon name="Building2" size={18} className="mr-2" />
-              Школы
+              <Icon name="Building2" size={16} className="sm:mr-2" />
+              <span className="hidden sm:inline">Школы</span>
             </Button>
             <Button 
               variant={activeTab === 'knowledge' ? 'default' : 'outline'}
               onClick={() => setActiveTab('knowledge')}
+              className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm"
             >
-              <Icon name="BookOpen" size={18} className="mr-2" />
-              База знаний
+              <Icon name="BookOpen" size={16} className="sm:mr-2" />
+              <span className="hidden sm:inline">База знаний</span>
             </Button>
             <Button 
               variant={activeTab === 'pricing' ? 'default' : 'outline'}
               onClick={() => setActiveTab('pricing')}
+              className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm"
             >
-              <Icon name="DollarSign" size={18} className="mr-2" />
-              Цены продвижения
+              <Icon name="DollarSign" size={16} className="sm:mr-2" />
+              <span className="hidden sm:inline">Цены продвижения</span>
             </Button>
           </div>
 
