@@ -1,26 +1,15 @@
 {
   "tests": [
     {
-      "name": "Get promotion prices",
-      "method": "GET",
-      "path": "/?action=prices",
-      "headers": {
-        "X-User-Id": "1"
-      },
-      "expectedStatus": 200,
-      "expectedBody": {
-        "prices": "object",
-        "currency": "string"
-      },
-      "bodyMatcher": "partial"
+      "name": "OPTIONS request",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200
     },
     {
-      "name": "Get active promotions",
+      "name": "Get all active promotions (no auth)",
       "method": "GET",
-      "path": "/?action=active",
-      "headers": {
-        "X-User-Id": "1"
-      },
+      "path": "/?action=active_all",
       "expectedStatus": 200,
       "expectedBody": {
         "promotions": "array"

@@ -4,42 +4,18 @@ import psycopg2
 from datetime import datetime, timedelta
 from decimal import Decimal
 
-def get_promotion_prices(cur, entity_type='course', category=None):
-    '''Получает цены на продвижение из базы данных'''
-    
-    # Получаем цены для своей категории
-    if category:
-        # Конвертируем читаемую категорию обратно в enum
-        category_reverse_map = {
-            'Массажные техники': 'technique',
-            'Бизнес и маркетинг': 'business',
-            'Общение и психология': 'soft_skills',
-            'Здоровье и безопасность': 'health',
-            'Цифровые навыки': 'digital'
-        }
-        cat_enum = category_reverse_map.get(category, 'technique')
-        
-        cur.execute("""
-            SELECT promotion_type, duration_days, price_rub
-            FROM promotion_pricing
-            WHERE entity_type = %s AND category = %s AND is_active = TRUE
-            ORDER BY duration_days
-        """, (entity_type, cat_enum))
-    else:
-        cur.execute("""
-            SELECT promotion_type, duration_days, price_rub
-            FROM promotion_pricing
-            WHERE entity_type = %s AND category IS NULL AND is_active = TRUE
-            ORDER BY duration_days
-        """, (entity_type,))
-    
-    prices = {'own_category': {}, 'all_categories': {}}
-    
-    for row in cur.fetchall():
-        promo_type, days, price = row
-        prices[promo_type][days] = Decimal(str(price))
-    
-    return prices
+PROMOTION_PRICES = {
+    'own_category': {
+        1: Decimal('100'),
+        3: Decimal('250'),
+        7: Decimal('500')
+    },
+    'all_categories': {
+        1: Decimal('300'),
+        3: Decimal('750'),
+        7: Decimal('1500')
+    }
+}
 
 def handler(event: dict, context) -> dict:
     '''API для управления промо-позициями курсов - покупка подъёма, проверка активных промо'''
@@ -129,60 +105,11 @@ def handler(event: dict, context) -> dict:
             action = event.get('queryStringParameters', {}).get('action', 'prices')
             
             if action == 'prices':
-                # Возвращаем прайс-лист из базы данных
-                course_id = event.get('queryStringParameters', {}).get('course_id')
-                
-                if not course_id:
-                    # Если курс не указан, возвращаем базовые цены
-                    pricing = get_promotion_prices(cur, 'course')
-                else:
-                    # Определяем категорию курса
-                    category = None
-                    entity_type = 'course'
-                    
-                    cur.execute("SELECT category FROM courses WHERE id = %s", (course_id,))
-                    row = cur.fetchone()
-                    if row:
-                        category = row[0]
-                    else:
-                        cur.execute("SELECT category FROM course_landings WHERE id = %s", (course_id,))
-                        row = cur.fetchone()
-                        if row:
-                            category = row[0]
-                            entity_type = 'course'
-                        else:
-                            cur.execute("SELECT category FROM masterminds WHERE id = %s", (course_id,))
-                            row = cur.fetchone()
-                            if row:
-                                category_map = {
-                                    'technique': 'Массажные техники',
-                                    'business': 'Бизнес и маркетинг',
-                                    'soft_skills': 'Общение и психология',
-                                    'health': 'Здоровье и безопасность',
-                                    'digital': 'Цифровые навыки'
-                                }
-                                category = category_map.get(row[0], 'Массажные техники')
-                                entity_type = 'mastermind'
-                            else:
-                                cur.execute("SELECT category FROM offline_training WHERE id = %s", (course_id,))
-                                row = cur.fetchone()
-                                if row:
-                                    category_map = {
-                                        'technique': 'Массажные техники',
-                                        'business': 'Бизнес и маркетинг',
-                                        'soft_skills': 'Общение и психология',
-                                        'health': 'Здоровье и безопасность',
-                                        'digital': 'Цифровые навыки'
-                                    }
-                                    category = category_map.get(row[0], 'Массажные техники')
-                                    entity_type = 'offline_training'
-                    
-                    pricing = get_promotion_prices(cur, entity_type, category)
-                
+                # Возвращаем фиксированный прайс-лист
                 result = {
                     'prices': {
-                        'own_category': {k: float(v) for k, v in pricing['own_category'].items()},
-                        'all_categories': {k: float(v) for k, v in pricing['all_categories'].items()}
+                        'own_category': {k: float(v) for k, v in PROMOTION_PRICES['own_category'].items()},
+                        'all_categories': {k: float(v) for k, v in PROMOTION_PRICES['all_categories'].items()}
                     },
                     'currency': 'RUB'
                 }

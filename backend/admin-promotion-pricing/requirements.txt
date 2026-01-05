@@ -1,2 +1,0 @@
-psycopg2cffi>=2.9.0
-PyJWT>=2.8.0

@@ -14,7 +14,6 @@ import AdminUsersTab from "@/components/admin/AdminUsersTab";
 import AdminModerationTab from "@/components/admin/AdminModerationTab";
 import AdminSchoolsTab from "@/components/admin/AdminSchoolsTab";
 import KnowledgeBaseManagement from "@/components/admin/KnowledgeBaseManagement";
-import PromotionPricingTab from "@/components/admin/PromotionPricingTab";
 
 interface Stats {
   total_users: number;
@@ -51,7 +50,7 @@ interface ModerationItem {
 export default function AdminPanel() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'moderation' | 'courses' | 'masterminds' | 'offline-training' | 'reviews' | 'schools' | 'knowledge' | 'pricing'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'moderation' | 'courses' | 'masterminds' | 'offline-training' | 'reviews' | 'schools' | 'knowledge'>('dashboard');
   const [loading, setLoading] = useState(false);
   
   const [stats, setStats] = useState<Stats | null>(null);
@@ -338,14 +337,6 @@ export default function AdminPanel() {
               <Icon name="BookOpen" size={16} className="sm:mr-2" />
               <span className="hidden sm:inline">База знаний</span>
             </Button>
-            <Button 
-              variant={activeTab === 'pricing' ? 'default' : 'outline'}
-              onClick={() => setActiveTab('pricing')}
-              className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm"
-            >
-              <Icon name="DollarSign" size={16} className="sm:mr-2" />
-              <span className="hidden sm:inline">Цены продвижения</span>
-            </Button>
           </div>
 
           {/* Dashboard Tab */}
@@ -386,9 +377,6 @@ export default function AdminPanel() {
 
           {/* Knowledge Base Tab */}
           {activeTab === 'knowledge' && <KnowledgeBaseManagement />}
-
-          {/* Pricing Tab */}
-          {activeTab === 'pricing' && <PromotionPricingTab />}
         </div>
       </div>
     </div>

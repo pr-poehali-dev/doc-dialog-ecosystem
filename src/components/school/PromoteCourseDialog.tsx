@@ -59,8 +59,8 @@ export default function PromoteCourseDialog({
         setBalance(balanceData.balance);
       }
 
-      // Загружаем прайс-лист для конкретного курса (учитывая его категорию)
-      const pricesRes = await fetch(`${PROMOTIONS_API_URL}?action=prices&course_id=${courseId}`, {
+      // Загружаем прайс-лист
+      const pricesRes = await fetch(`${PROMOTIONS_API_URL}?action=prices`, {
         headers: { 'X-User-Id': userId }
       });
       
