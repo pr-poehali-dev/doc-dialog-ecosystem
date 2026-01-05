@@ -154,13 +154,40 @@ def handler(event: dict, context) -> dict:
             })
         
         for product in products:
-            product['payments_total'] = 0
-            product['conversion_rate'] = 0
+            cur.execute(f"""
+                SELECT COALESCE(SUM(amount), 0)
+                FROM {schema}.product_payments
+                WHERE school_id = {school_id}
+                  AND product_type = '{product['product_type']}'
+                  AND product_id = {product['product_id']}
+            """)
+            payments_row = cur.fetchone()
+            product['payments_total'] = float(payments_row[0]) if payments_row else 0
+            
+            if product['views_total'] > 0:
+                product['conversion_rate'] = round((product['payments_total'] / product['views_total']) * 100, 2)
+            else:
+                product['conversion_rate'] = 0
+        
+        cur.execute(f"""
+            SELECT COALESCE(SUM(CASE WHEN type = 'credit' THEN amount ELSE 0 END), 0) as total_added,
+                   COALESCE(SUM(CASE WHEN type = 'debit' THEN amount ELSE 0 END), 0) as total_spent
+            FROM {schema}.balance_transactions
+            WHERE school_id = {school_id}
+        """)
+        balance_row = cur.fetchone()
+        
+        cur.execute(f"""
+            SELECT COALESCE(balance, 0)
+            FROM {schema}.school_balance
+            WHERE school_id = {school_id}
+        """)
+        current_balance_row = cur.fetchone()
         
         balance_stats = {
-            'total_added': 0,
-            'total_spent': 0,
-            'current_balance': 0
+            'total_added': float(balance_row[0]) if balance_row else 0,
+            'total_spent': float(balance_row[1]) if balance_row else 0,
+            'current_balance': float(current_balance_row[0]) if current_balance_row else 0
         }
         
         cur.close()
