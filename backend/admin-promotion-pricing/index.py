@@ -19,7 +19,8 @@ def handler(event: dict, context) -> dict:
                 'Access-Control-Allow-Headers': 'Content-Type, X-Authorization',
                 'Access-Control-Max-Age': '86400'
             },
-            'body': ''
+            'body': '',
+            'isBase64Encoded': False
         }
     
     token = event.get('headers', {}).get('X-Authorization', '').replace('Bearer ', '')
@@ -28,7 +29,8 @@ def handler(event: dict, context) -> dict:
         return {
             'statusCode': 401,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'error': 'Требуется авторизация'})
+            'body': json.dumps({'error': 'Требуется авторизация'}),
+            'isBase64Encoded': False
         }
     
     dsn = os.environ.get('DATABASE_URL')
@@ -43,7 +45,8 @@ def handler(event: dict, context) -> dict:
             return {
                 'statusCode': 403,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Доступ запрещен'})
+                'body': json.dumps({'error': 'Доступ запрещен'}),
+                'isBase64Encoded': False
             }
         
         if method == 'GET':
@@ -58,7 +61,8 @@ def handler(event: dict, context) -> dict:
             return {
                 'statusCode': 200,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps([dict(p) for p in pricing], default=str)
+                'body': json.dumps([dict(p) for p in pricing], default=str),
+                'isBase64Encoded': False
             }
         
         elif method == 'PUT':
@@ -70,7 +74,8 @@ def handler(event: dict, context) -> dict:
                 return {
                     'statusCode': 400,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                    'body': json.dumps({'error': 'Требуется id и price_rub'})
+                    'body': json.dumps({'error': 'Требуется id и price_rub'}),
+                    'isBase64Encoded': False
                 }
             
             cur.execute("""
@@ -83,14 +88,16 @@ def handler(event: dict, context) -> dict:
             return {
                 'statusCode': 200,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'success': True})
+                'body': json.dumps({'success': True}),
+                'isBase64Encoded': False
             }
         
         else:
             return {
                 'statusCode': 405,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Метод не поддерживается'})
+                'body': json.dumps({'error': 'Метод не поддерживается'}),
+                'isBase64Encoded': False
             }
     
     except Exception as e:
@@ -98,7 +105,8 @@ def handler(event: dict, context) -> dict:
         return {
             'statusCode': 500,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'error': str(e)})
+            'body': json.dumps({'error': str(e)}),
+            'isBase64Encoded': False
         }
     finally:
         cur.close()
