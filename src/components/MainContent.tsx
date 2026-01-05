@@ -24,7 +24,7 @@ const MainContent = ({ openDialog }: MainContentProps) => {
                 <div className="mb-4 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
                   <Icon name="Users" className="text-primary" size={24} />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">Для специалистов по телу</h3>
+                <h3 className="text-2xl font-bold mb-4">Для массажистов</h3>
                 <div className="space-y-3 mb-6">
                   <p className="text-sm font-medium text-muted-foreground">Если вы:</p>
                   <ul className="space-y-2 text-sm text-muted-foreground">
@@ -132,7 +132,7 @@ const MainContent = ({ openDialog }: MainContentProps) => {
                 <div className="mb-4 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
                   <Icon name="Building2" className="text-primary" size={24} />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">Для салонов телесных практик</h3>
+                <h3 className="text-2xl font-bold mb-4">Для салонов массажа</h3>
                 <div className="space-y-3 mb-6">
                   <p className="text-sm font-medium text-muted-foreground">Если вам важно:</p>
                   <ul className="space-y-2 text-sm text-muted-foreground">
