@@ -1,5 +1,6 @@
 import json
 import os
+import jwt
 from psycopg2cffi import compat
 compat.register()
 import psycopg2
@@ -33,21 +34,33 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
+    jwt_secret = os.environ.get('JWT_SECRET')
+    
+    try:
+        payload = jwt.decode(token, jwt_secret, algorithms=['HS256'])
+        user_id = payload.get('user_id')
+        role = payload.get('role')
+    except Exception as e:
+        return {
+            'statusCode': 401,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Неверный токен'}),
+            'isBase64Encoded': False
+        }
+    
+    if role != 'admin':
+        return {
+            'statusCode': 403,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Доступ запрещен. Требуется роль admin'}),
+            'isBase64Encoded': False
+        }
+    
     dsn = os.environ.get('DATABASE_URL')
     conn = psycopg2.connect(dsn)
     cur = conn.cursor(cursor_factory=RealDictCursor)
     
     try:
-        cur.execute("SELECT id, role FROM users WHERE token = %s", (token,))
-        user = cur.fetchone()
-        
-        if not user or user['role'] != 'admin':
-            return {
-                'statusCode': 403,
-                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Доступ запрещен'}),
-                'isBase64Encoded': False
-            }
         
         if method == 'GET':
             cur.execute("""
