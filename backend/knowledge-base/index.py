@@ -1,6 +1,7 @@
 import json
 import os
 import psycopg2
+import jwt
 
 def handler(event: dict, context) -> dict:
     """API для управления базами знаний (FAQ) для разных типов пользователей"""
@@ -48,17 +49,28 @@ def handler(event: dict, context) -> dict:
                     'isBase64Encoded': False
                 }
             
-            # Проверяем права администратора
-            cur.execute(f"SELECT role FROM {schema}.users WHERE id = (SELECT user_id FROM {schema}.auth_tokens WHERE token = '{token}' LIMIT 1)")
-            user_role = cur.fetchone()
-            
-            if not user_role or user_role[0] not in ['admin', 'moderator']:
+            # Проверяем JWT токен и права администратора
+            try:
+                jwt_secret = os.environ.get('JWT_SECRET', 'default-secret-key')
+                decoded = jwt.decode(token, jwt_secret, algorithms=['HS256'])
+                user_role = decoded.get('role')
+                
+                if user_role not in ['admin', 'moderator']:
+                    cur.close()
+                    conn.close()
+                    return {
+                        'statusCode': 403,
+                        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                        'body': json.dumps({'error': 'Доступ запрещён'}),
+                        'isBase64Encoded': False
+                    }
+            except jwt.InvalidTokenError:
                 cur.close()
                 conn.close()
                 return {
-                    'statusCode': 403,
+                    'statusCode': 401,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                    'body': json.dumps({'error': 'Доступ запрещён'}),
+                    'body': json.dumps({'error': 'Неверный токен'}),
                     'isBase64Encoded': False
                 }
             
