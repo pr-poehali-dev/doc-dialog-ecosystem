@@ -170,8 +170,8 @@ def handler(event: dict, context) -> dict:
                 product['conversion_rate'] = 0
         
         cur.execute(f"""
-            SELECT COALESCE(SUM(CASE WHEN type = 'credit' THEN amount ELSE 0 END), 0) as total_added,
-                   COALESCE(SUM(CASE WHEN type = 'debit' THEN amount ELSE 0 END), 0) as total_spent
+            SELECT COALESCE(SUM(CASE WHEN type = 'deposit' THEN amount ELSE 0 END), 0) as total_added,
+                   COALESCE(SUM(CASE WHEN type = 'withdrawal' THEN amount ELSE 0 END), 0) as total_spent
             FROM {schema}.balance_transactions
             WHERE school_id = {school_id}
         """)

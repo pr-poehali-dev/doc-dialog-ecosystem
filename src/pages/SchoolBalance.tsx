@@ -20,7 +20,7 @@ const API_URL = 'https://functions.poehali.dev/8c82911e-481f-4a63-92ff-aae203e99
 interface Transaction {
   id: number;
   amount: number;
-  type: 'credit' | 'debit';
+  type: 'deposit' | 'withdrawal';
   description: string;
   created_at: string;
   related_entity_type?: string;
@@ -295,11 +295,11 @@ export default function SchoolBalance() {
                       >
                         <div className="flex items-center gap-4">
                           <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                            transaction.type === 'credit' ? 'bg-green-100' : 'bg-red-100'
+                            transaction.type === 'deposit' ? 'bg-green-100' : 'bg-red-100'
                           }`}>
                             <Icon
-                              name={transaction.type === 'credit' ? 'ArrowDownToLine' : 'ArrowUpFromLine'}
-                              className={transaction.type === 'credit' ? 'text-green-600' : 'text-red-600'}
+                              name={transaction.type === 'deposit' ? 'ArrowDownToLine' : 'ArrowUpFromLine'}
+                              className={transaction.type === 'deposit' ? 'text-green-600' : 'text-red-600'}
                               size={20}
                             />
                           </div>
@@ -309,9 +309,9 @@ export default function SchoolBalance() {
                           </div>
                         </div>
                         <div className={`text-xl font-bold ${
-                          transaction.type === 'credit' ? 'text-green-600' : 'text-red-600'
+                          transaction.type === 'deposit' ? 'text-green-600' : 'text-red-600'
                         }`}>
-                          {transaction.type === 'credit' ? '+' : '-'}{formatMoney(transaction.amount)}
+                          {transaction.type === 'deposit' ? '+' : '-'}{formatMoney(transaction.amount)}
                         </div>
                       </div>
                     ))}

@@ -98,8 +98,8 @@ def handler(event: dict, context) -> dict:
                 current_balance = float(balance_row[0]) if balance_row else 0
                 
                 cur.execute(f"""
-                    SELECT COALESCE(SUM(CASE WHEN type = 'credit' THEN amount ELSE 0 END), 0) as total_added,
-                           COALESCE(SUM(CASE WHEN type = 'debit' THEN amount ELSE 0 END), 0) as total_spent
+                    SELECT COALESCE(SUM(CASE WHEN type = 'deposit' THEN amount ELSE 0 END), 0) as total_added,
+                           COALESCE(SUM(CASE WHEN type = 'withdrawal' THEN amount ELSE 0 END), 0) as total_spent
                     FROM {schema}.balance_transactions
                     WHERE school_id = {school_id}
                 """)
@@ -163,7 +163,7 @@ def handler(event: dict, context) -> dict:
                 cur.execute(f"""
                     INSERT INTO {schema}.balance_transactions 
                     (school_id, amount, type, description, created_at)
-                    VALUES ({school_id}, {amount}, 'credit', '{description_escaped}', NOW())
+                    VALUES ({school_id}, {amount}, 'deposit', '{description_escaped}', NOW())
                 """)
                 
                 cur.execute(f"""
