@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Dialog,
   DialogContent,
@@ -9,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import Icon from "@/components/ui/icon";
 import { useToast } from "@/hooks/use-toast";
 
@@ -37,6 +39,7 @@ const RegistrationDialog = ({ isOpen, onClose, userType, dialogContent }: Regist
     phone: '',
     city: ''
   });
+  const [agreed, setAgreed] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,6 +48,15 @@ const RegistrationDialog = ({ isOpen, onClose, userType, dialogContent }: Regist
       toast({
         title: 'Ошибка',
         description: 'Заполните все обязательные поля',
+        variant: 'destructive'
+      });
+      return;
+    }
+    
+    if (!agreed) {
+      toast({
+        title: 'Требуется согласие',
+        description: 'Пожалуйста, примите условия обработки персональных данных',
         variant: 'destructive'
       });
       return;
@@ -106,6 +118,7 @@ const RegistrationDialog = ({ isOpen, onClose, userType, dialogContent }: Regist
 
   const handleClose = () => {
     setFormData({ name: '', email: '', password: '', phone: '', city: '' });
+    setAgreed(false);
     onClose();
   };
 
@@ -178,8 +191,28 @@ const RegistrationDialog = ({ isOpen, onClose, userType, dialogContent }: Regist
               placeholder="Москва"
             />
           </div>
+          <div className="flex items-start space-x-2">
+            <Checkbox 
+              id="terms" 
+              checked={agreed} 
+              onCheckedChange={(checked) => setAgreed(checked as boolean)}
+            />
+            <label
+              htmlFor="terms"
+              className="text-sm leading-relaxed cursor-pointer"
+            >
+              Согласен с{' '}
+              <Link to="/privacy" className="text-primary hover:underline" onClick={handleClose}>
+                условиями обработки персональных данных
+              </Link>
+              {' '}и{' '}
+              <Link to="/terms" className="text-primary hover:underline" onClick={handleClose}>
+                условиями договора оферты
+              </Link>
+            </label>
+          </div>
           <div className="flex gap-3 pt-2">
-            <Button type="submit" className="flex-1" disabled={loading}>
+            <Button type="submit" className="flex-1" disabled={loading || !agreed}>
               {loading ? (
                 <>
                   <Icon name="Loader2" className="mr-2 animate-spin" size={16} />
