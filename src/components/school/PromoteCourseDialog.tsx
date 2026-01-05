@@ -59,14 +59,17 @@ export default function PromoteCourseDialog({
         setBalance(balanceData.balance);
       }
 
-      // Загружаем прайс-лист
-      const pricesRes = await fetch(`${PROMOTIONS_API_URL}?action=prices`, {
+      // Загружаем прайс-лист для конкретного курса (учитывая его категорию)
+      const pricesRes = await fetch(`${PROMOTIONS_API_URL}?action=prices&course_id=${courseId}`, {
         headers: { 'X-User-Id': userId }
       });
       
       if (pricesRes.ok) {
         const pricesData = await pricesRes.json();
+        console.log('Prices loaded:', pricesData);
         setPrices(pricesData.prices);
+      } else {
+        console.error('Failed to load prices:', await pricesRes.text());
       }
     } catch (error) {
       console.error('Load data error:', error);

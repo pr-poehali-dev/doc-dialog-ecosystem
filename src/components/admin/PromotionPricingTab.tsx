@@ -57,14 +57,18 @@ export default function PromotionPricingTab() {
 
       if (response.ok) {
         const data = await response.json();
+        console.log('Loaded pricing data:', data);
         setPricing(data);
       } else {
-        throw new Error('Failed to load pricing');
+        const errorText = await response.text();
+        console.error('Failed to load pricing:', response.status, errorText);
+        throw new Error(`Failed to load pricing: ${response.status}`);
       }
     } catch (error) {
+      console.error('Fetch error:', error);
       toast({
         title: 'Ошибка',
-        description: 'Не удалось загрузить цены',
+        description: 'Не удалось загрузить цены. Проверьте права доступа.',
         variant: 'destructive'
       });
     } finally {
@@ -122,12 +126,27 @@ export default function PromotionPricingTab() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold mb-2">Настройка цен на продвижение</h2>
-        <p className="text-muted-foreground">
-          Управляйте ценами на поднятие в топ для разных типов контента и категорий
-        </p>
+      <div className="flex justify-between items-start">
+        <div>
+          <h2 className="text-2xl font-bold mb-2">Настройка цен на продвижение</h2>
+          <p className="text-muted-foreground">
+            Управляйте ценами на поднятие в топ для разных типов контента и категорий
+          </p>
+        </div>
+        {pricing.length > 0 && (
+          <div className="text-sm text-muted-foreground bg-muted px-3 py-2 rounded-md">
+            Загружено: {pricing.length} цен
+          </div>
+        )}
       </div>
+
+      {pricing.length === 0 && !loading && (
+        <div className="text-center p-8 bg-muted/50 rounded-lg">
+          <Icon name="AlertCircle" size={48} className="mx-auto mb-4 text-muted-foreground" />
+          <p className="text-lg font-medium mb-2">Цены не найдены</p>
+          <p className="text-muted-foreground">Возможно, требуется инициализация базы данных или у вас нет прав доступа</p>
+        </div>
+      )}
 
       {Object.entries(ENTITY_TYPES).map(([entityKey, entityName]) => (
         <div key={entityKey} className="space-y-4">
@@ -150,10 +169,15 @@ export default function PromotionPricingTab() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-3">
-                      {items
-                        .sort((a, b) => a.duration_days - b.duration_days)
-                        .map(item => (
+                    {items.length === 0 ? (
+                      <p className="text-sm text-muted-foreground text-center py-4">
+                        Цены не настроены
+                      </p>
+                    ) : (
+                      <div className="space-y-3">
+                        {items
+                          .sort((a, b) => a.duration_days - b.duration_days)
+                          .map(item => (
                           <div key={item.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                             <div className="flex items-center gap-2">
                               <Icon name="Clock" size={16} className="text-primary" />
@@ -200,7 +224,8 @@ export default function PromotionPricingTab() {
                             )}
                           </div>
                         ))}
-                    </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               );
@@ -220,11 +245,16 @@ export default function PromotionPricingTab() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid gap-3 md:grid-cols-3">
-                      {items
-                        .sort((a, b) => a.duration_days - b.duration_days)
-                        .map(item => (
-                          <div key={item.id} className="flex items-center justify-between p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                    {items.length === 0 ? (
+                      <p className="text-sm text-muted-foreground text-center py-4">
+                        Цены не настроены
+                      </p>
+                    ) : (
+                      <div className="grid gap-3 md:grid-cols-3">
+                        {items
+                          .sort((a, b) => a.duration_days - b.duration_days)
+                          .map(item => (
+                            <div key={item.id} className="flex items-center justify-between p-3 bg-amber-50 border border-amber-200 rounded-lg">
                             <div className="flex items-center gap-2">
                               <Icon name="Clock" size={16} className="text-amber-700" />
                               <span className="font-medium">{item.duration_days} {item.duration_days === 1 ? 'день' : item.duration_days <= 4 ? 'дня' : 'дней'}</span>
@@ -270,7 +300,8 @@ export default function PromotionPricingTab() {
                             )}
                           </div>
                         ))}
-                    </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               );
