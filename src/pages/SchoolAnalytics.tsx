@@ -187,31 +187,46 @@ export default function SchoolAnalytics() {
         <Card className="mb-8">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>ТОП-5 продуктов по платежам</CardTitle>
+              <CardTitle>Рейтинг курсов по популярности</CardTitle>
+              <span className="text-sm text-gray-500">По количеству просмотров</span>
             </div>
           </CardHeader>
           <CardContent>
             {topProducts.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">Нет данных по платежам</p>
+              <p className="text-gray-500 text-center py-8">Нет продуктов для анализа</p>
             ) : (
-              <div className="space-y-4">
-                {topProducts.map((product, index) => (
-                  <div key={product.product_id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                        <span className="text-lg font-bold text-primary">#{index + 1}</span>
+              <div className="space-y-3">
+                {topProducts.map((product, index) => {
+                  const maxViews = topProducts[0]?.views_total || 1;
+                  const percentage = (product.views_total / maxViews) * 100;
+                  
+                  return (
+                    <div key={product.product_id} className="relative">
+                      <div className="flex items-center gap-4 relative z-10 p-4">
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${
+                          index === 0 ? 'bg-yellow-100 text-yellow-700' :
+                          index === 1 ? 'bg-gray-100 text-gray-700' :
+                          index === 2 ? 'bg-orange-100 text-orange-700' :
+                          'bg-blue-50 text-blue-600'
+                        }`}>
+                          {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
+                        </div>
+                        <div className="flex-1">
+                          <div className="font-semibold text-lg">{product.product_name}</div>
+                          <div className="text-sm text-gray-600">{getProductTypeLabel(product.product_type)}</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-2xl font-bold text-primary">{product.views_total}</div>
+                          <div className="text-sm text-gray-600">просмотров</div>
+                        </div>
                       </div>
-                      <div>
-                        <div className="font-semibold">{product.product_name}</div>
-                        <div className="text-sm text-gray-600">{getProductTypeLabel(product.product_type)}</div>
-                      </div>
+                      <div 
+                        className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary/5 to-transparent rounded-lg transition-all duration-500"
+                        style={{ width: `${percentage}%` }}
+                      />
                     </div>
-                    <div className="text-right">
-                      <div className="text-xl font-bold text-green-600">{formatMoney(product.payments_total)}</div>
-                      <div className="text-sm text-gray-600">{product.views_total} просмотров</div>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </CardContent>
