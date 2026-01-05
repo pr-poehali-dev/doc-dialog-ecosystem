@@ -234,6 +234,17 @@ export default function SalonCabinet() {
       </div>
 
       <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <div className="mb-6 flex gap-4">
+          <Button onClick={() => navigate('/dashboard/messages')} size="lg">
+            <Icon name="MessageSquare" size={20} className="mr-2" />
+            Сообщения
+          </Button>
+          <Button onClick={() => navigate('/masseurs')} variant="outline" size="lg">
+            <Icon name="Search" size={20} className="mr-2" />
+            Найти массажистов
+          </Button>
+        </div>
+
         <Tabs defaultValue="profile" className="space-y-6">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="profile">Профиль</TabsTrigger>

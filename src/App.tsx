@@ -44,6 +44,7 @@ import PageBuilder from "./pages/dashboard/PageBuilder";
 import TrustBadges from "./pages/dashboard/TrustBadges";
 import ClientEducation from "./pages/dashboard/ClientEducation";
 import Community from "./pages/dashboard/Community";
+import Messages from "./pages/dashboard/Messages";
 
 const queryClient = new QueryClient();
 
@@ -92,6 +93,7 @@ const App = () => (
           <Route path="/dashboard/badges" element={<TrustBadges />} />
           <Route path="/dashboard/education" element={<ClientEducation />} />
           <Route path="/dashboard/community" element={<Community />} />
+          <Route path="/dashboard/messages" element={<Messages />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="*" element={<NotFound />} />

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -39,9 +39,19 @@ interface Review {
 
 const MasseurProfile = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [masseur, setMasseur] = useState<Masseur | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+
+  const handleSendMessage = () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+    navigate('/dashboard/messages');
+  };
 
   useEffect(() => {
     const mockMasseur: Masseur = {
@@ -181,7 +191,7 @@ const MasseurProfile = () => {
                   )}
                 </div>
 
-                <Button className="w-full" size="lg">
+                <Button className="w-full" size="lg" onClick={handleSendMessage}>
                   <Icon name="MessageCircle" size={20} className="mr-2" />
                   Написать
                 </Button>
