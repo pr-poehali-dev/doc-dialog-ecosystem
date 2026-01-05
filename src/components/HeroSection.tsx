@@ -32,13 +32,13 @@ const HeroSection = ({ openDialog }: HeroSectionProps) => {
           </div>
 
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight bg-gradient-to-r from-slate-900 via-primary to-slate-900 bg-clip-text text-transparent">
-            Для массажистов, школ и массажных салонов
+            Для специалистов по телу, школ и салонов
           </h1>
           
           <p className="text-xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
             Обучение, инструменты, практика и карьерный рост — 
             <br className="hidden md:block" />
-            в одном пространстве для специалистов массажа
+            в одном пространстве для специалистов телесных практик
           </p>
 
           <div className="flex flex-col items-center gap-6">
@@ -48,7 +48,7 @@ const HeroSection = ({ openDialog }: HeroSectionProps) => {
                 className="text-lg px-8 shadow-lg hover:shadow-xl transition-all" 
                 onClick={() => openDialog('masseur')}
               >
-                Я массажист
+                Я специалист
               </Button>
               <Button 
                 size="lg" 
@@ -71,7 +71,7 @@ const HeroSection = ({ openDialog }: HeroSectionProps) => {
             <Link to="/masseurs">
               <Button size="lg" variant="secondary" className="text-lg px-8 bg-secondary text-white hover:bg-secondary/90 shadow-md hover:shadow-lg transition-all">
                 <Icon name="Search" size={20} className="mr-2" />
-                Найти массажиста
+                Найти специалиста
               </Button>
             </Link>
           </div>
@@ -79,7 +79,7 @@ const HeroSection = ({ openDialog }: HeroSectionProps) => {
           <div className="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto">
             <div className="text-center">
               <div className="text-3xl font-bold text-primary mb-2">1000+</div>
-              <div className="text-sm text-muted-foreground">Массажистов</div>
+              <div className="text-sm text-muted-foreground">Специалистов</div>
             </div>
             <div className="text-center border-x border-primary/10">
               <div className="text-3xl font-bold text-primary mb-2">50+</div>

@@ -24,7 +24,7 @@ const MainContent = ({ openDialog }: MainContentProps) => {
                 <div className="mb-4 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
                   <Icon name="Users" className="text-primary" size={24} />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">Для массажистов</h3>
+                <h3 className="text-2xl font-bold mb-4">Для специалистов по телу</h3>
                 <div className="space-y-3 mb-6">
                   <p className="text-sm font-medium text-muted-foreground">Если вы:</p>
                   <ul className="space-y-2 text-sm text-muted-foreground">
@@ -80,13 +80,13 @@ const MainContent = ({ openDialog }: MainContentProps) => {
                 <div className="mb-4 w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center">
                   <Icon name="GraduationCap" className="text-secondary" size={24} />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">Для школ массажа</h3>
+                <h3 className="text-2xl font-bold mb-4">Для школ телесных практик</h3>
                 <div className="space-y-3 mb-6">
                   <p className="text-sm font-medium text-muted-foreground">Если вы:</p>
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex items-start gap-2">
                       <Icon name="Check" size={16} className="text-secondary mt-0.5 flex-shrink-0" />
-                      <span>обучаете массажу онлайн или офлайн</span>
+                      <span>обучаете телесным практикам онлайн или офлайн</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <Icon name="Check" size={16} className="text-secondary mt-0.5 flex-shrink-0" />
@@ -107,7 +107,7 @@ const MainContent = ({ openDialog }: MainContentProps) => {
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-start gap-2">
                       <span className="text-secondary">•</span>
-                      <span>доступ к целевой аудитории массажистов</span>
+                      <span>доступ к целевой аудитории специалистов</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-secondary">•</span>
@@ -132,7 +132,7 @@ const MainContent = ({ openDialog }: MainContentProps) => {
                 <div className="mb-4 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
                   <Icon name="Building2" className="text-primary" size={24} />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">Для массажных салонов</h3>
+                <h3 className="text-2xl font-bold mb-4">Для салонов телесных практик</h3>
                 <div className="space-y-3 mb-6">
                   <p className="text-sm font-medium text-muted-foreground">Если вам важно:</p>
                   <ul className="space-y-2 text-sm text-muted-foreground">
@@ -163,7 +163,7 @@ const MainContent = ({ openDialog }: MainContentProps) => {
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-primary">•</span>
-                      <span>доступ к базе массажистов</span>
+                      <span>доступ к базе специалистов</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-primary">•</span>
@@ -192,10 +192,10 @@ const MainContent = ({ openDialog }: MainContentProps) => {
               Док диалог — это не просто курсы и не просто боты.
             </p>
             <p className="text-xl mb-8">
-              Это экосистема, которая объединяет обучение, практические инструменты, профессиональное сообщество и рынок работы в сфере массажа.
+              Это экосистема, которая объединяет обучение, практические инструменты, профессиональное сообщество и рынок работы в сфере телесных практик.
             </p>
             <p className="text-lg text-muted-foreground">
-              Мы создаём среду, где массажист развивается системно — от первых шагов до уверенной практики и карьеры.
+              Мы создаём среду, где специалист по телу развивается системно — от первых шагов до уверенной практики и карьеры.
             </p>
           </div>
         </div>
@@ -228,11 +228,11 @@ const MainContent = ({ openDialog }: MainContentProps) => {
                 <div className="mb-4 w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center">
                   <Icon name="Wrench" className="text-secondary" size={24} />
                 </div>
-                <h3 className="text-xl font-bold mb-3">Инструменты массажиста</h3>
+                <h3 className="text-xl font-bold mb-3">Инструменты специалиста</h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li>Чат-боты для расшифровки диагнозов</li>
                   <li>Работа с МРТ и заключениями</li>
-                  <li>Подсказки по тактике массажа</li>
+                  <li>Подсказки по тактике работы с телом</li>
                   <li>Поддержка в реальной практике</li>
                 </ul>
               </CardContent>

@@ -24,8 +24,8 @@ const Index = () => {
     switch (userType) {
       case 'masseur':
         return {
-          title: 'Регистрация массажиста',
-          description: 'Присоединяйтесь к профессиональному сообществу массажистов',
+          title: 'Регистрация специалиста',
+          description: 'Присоединяйтесь к профессиональному сообществу специалистов по телу',
           icon: 'Users'
         };
       case 'school':

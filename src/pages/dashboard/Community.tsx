@@ -109,7 +109,7 @@ export default function Community() {
               <Icon name="ArrowLeft" size={20} />
             </Button>
             <div className="flex-1">
-              <h1 className="text-3xl font-bold">Сообщество массажистов</h1>
+              <h1 className="text-3xl font-bold">Сообщество специалистов</h1>
               <p className="text-muted-foreground">Обмен опытом, взаимопомощь и рекомендации</p>
             </div>
           </div>

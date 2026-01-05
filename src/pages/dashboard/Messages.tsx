@@ -363,7 +363,7 @@ export default function Messages() {
                     </div>
                     <div className="flex items-start gap-2">
                       <Icon name="CheckCircle" className="text-green-600 flex-shrink-0 mt-0.5" size={16} />
-                      <p><strong>Коллеги:</strong> Другие массажисты из сообщества для обмена опытом и рекомендаций</p>
+                      <p><strong>Коллеги:</strong> Другие специалисты из сообщества для обмена опытом и рекомендаций</p>
                     </div>
                   </div>
                 </div>

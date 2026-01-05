@@ -37,11 +37,11 @@ export default function Dashboard() {
   const getRoleTitle = () => {
     switch (user.role) {
       case 'masseur':
-        return 'Массажист';
+        return 'Специалист по телу';
       case 'school':
-        return 'Школа массажа';
+        return 'Школа телесных практик';
       case 'salon':
-        return 'Массажный салон';
+        return 'Салон телесных практик';
       case 'admin':
         return 'Администратор';
       case 'moderator':
@@ -177,7 +177,7 @@ export default function Dashboard() {
                   <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                     <Icon name="Search" className="text-primary" size={24} />
                   </div>
-                  <h3 className="text-xl font-semibold">Каталог массажистов</h3>
+                  <h3 className="text-xl font-semibold">Каталог специалистов</h3>
                 </div>
                 <p className="text-gray-600 mb-4">Найти коллег и обменяться опытом</p>
                 <Link to="/masseurs">
@@ -327,9 +327,9 @@ export default function Dashboard() {
                   <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                     <Icon name="Users" className="text-primary" size={24} />
                   </div>
-                  <h3 className="text-xl font-semibold">Массажисты</h3>
+                  <h3 className="text-xl font-semibold">Специалисты</h3>
                 </div>
-                <p className="text-gray-600 mb-4">База массажистов платформы</p>
+                <p className="text-gray-600 mb-4">База специалистов платформы</p>
                 <Link to="/masseurs">
                   <Button className="w-full" variant="outline">Смотреть каталог</Button>
                 </Link>

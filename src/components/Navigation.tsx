@@ -53,7 +53,7 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
 
   const otherPagesMenuItems = [
     { label: "Главная", path: "/" },
-    { label: "Массажисты", path: "/masseurs" },
+    { label: "Специалисты", path: "/masseurs" },
     { label: "Школы", path: "/schools" },
     { label: "Курсы", path: "/courses" },
     { label: "Салоны", path: "/salons" },
