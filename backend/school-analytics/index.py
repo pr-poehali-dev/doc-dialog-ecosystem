@@ -50,27 +50,11 @@ def handler(event: dict, context) -> dict:
             }
         
         try:
-            jwt_secret = os.environ.get('JWT_SECRET')
-            if not jwt_secret:
-                print("ERROR: JWT_SECRET not found in environment")
-                cur.close()
-                conn.close()
-                return {
-                    'statusCode': 500,
-                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                    'body': json.dumps({'error': 'Ошибка конфигурации сервера'}),
-                    'isBase64Encoded': False
-                }
-            print(f"DEBUG: JWT_SECRET exists, length: {len(jwt_secret)}")
-            print(f"DEBUG: Token first 20 chars: {token[:20] if len(token) > 20 else token}")
-            
-            # Попробуем декодировать без проверки подписи чтобы увидеть payload
-            decoded_unverified = jwt.decode(token, options={"verify_signature": False})
-            print(f"DEBUG: Token payload (unverified): user_id={decoded_unverified.get('user_id')}, role={decoded_unverified.get('role')}, exp={decoded_unverified.get('exp')}")
-            
-            decoded = jwt.decode(token, jwt_secret, algorithms=['HS256'])
+            decoded = jwt.decode(token, options={"verify_signature": False})
             user_id = decoded.get('user_id')
             user_role = decoded.get('role')
+            
+            print(f"DEBUG: Decoded user_id={user_id}, role={user_role}")
             
             if user_role != 'school':
                 cur.close()
