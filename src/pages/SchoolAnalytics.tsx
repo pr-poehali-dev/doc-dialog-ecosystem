@@ -72,6 +72,15 @@ export default function SchoolAnalytics() {
         const data = await response.json();
         setProducts(data.products || []);
         setBalance(data.balance || null);
+      } else if (response.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        toast({
+          title: 'Сессия истекла',
+          description: 'Пожалуйста, войдите заново',
+          variant: 'destructive'
+        });
+        navigate('/login');
       } else {
         throw new Error('Failed to load analytics');
       }
