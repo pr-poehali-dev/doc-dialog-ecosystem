@@ -98,14 +98,15 @@ export default function PromoteCourseDialog({
 
     const price = prices[selectedType][selectedDays];
     
-    if (balance < price) {
-      toast({
-        title: 'Недостаточно средств',
-        description: `Необходимо ${price} ₽, доступно ${balance} ₽`,
-        variant: 'destructive'
-      });
-      return;
-    }
+    // Проверка баланса отключена - бэкенд сам проверит при запросе
+    // if (balance < price) {
+    //   toast({
+    //     title: 'Недостаточно средств',
+    //     description: `Необходимо ${price} ₽, доступно ${balance} ₽`,
+    //     variant: 'destructive'
+    //   });
+    //   return;
+    // }
 
     setLoading(true);
     try {
@@ -229,13 +230,13 @@ export default function PromoteCourseDialog({
           <Button
             className="w-full"
             onClick={handlePromote}
-            disabled={loading || balance < selectedPrice}
+            disabled={loading}
           >
             <Icon name="TrendingUp" size={16} className="mr-2" />
             {loading ? 'Обработка...' : `Поднять курс за ${selectedPrice.toLocaleString('ru-RU')} ₽`}
           </Button>
 
-          {balance < selectedPrice && (
+          {balance > 0 && balance < selectedPrice && (
             <p className="text-sm text-red-600 text-center">
               Недостаточно средств. Пополните баланс на {(selectedPrice - balance).toLocaleString('ru-RU')} ₽
             </p>
