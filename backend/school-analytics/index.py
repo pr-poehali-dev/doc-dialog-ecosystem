@@ -30,16 +30,18 @@ def handler(event: dict, context) -> dict:
         cur = conn.cursor()
         
         headers = event.get('headers', {})
-        token = headers.get('x-authorization', headers.get('authorization', '')).replace('Bearer ', '')
+        headers_lower = {k.lower(): v for k, v in headers.items()}
+        token = headers_lower.get('x-authorization', headers_lower.get('authorization', '')).replace('Bearer ', '')
         
         if not token:
-            print(f"DEBUG: Headers received: {list(headers.keys())}")
+            print(f"DEBUG: Headers: {headers}")
+            print(f"DEBUG: Token extracted: '{token}'")
             cur.close()
             conn.close()
             return {
                 'statusCode': 401,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Требуется авторизация', 'headers': list(headers.keys())}),
+                'body': json.dumps({'error': 'Требуется авторизация'}),
                 'isBase64Encoded': False
             }
         
