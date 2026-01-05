@@ -21,7 +21,7 @@ export default function ClientEducation() {
   const [courses] = useState<Course[]>([
     {
       id: 1,
-      title: 'Как говорить о телесных практиках без медицинских терминов',
+      title: 'Как говорить о массаже без медицинских терминов',
       description: 'Правильные формулировки для общения с клиентами, которые не нарушают закон',
       duration: '1 час',
       lessons: 5,
@@ -31,7 +31,7 @@ export default function ClientEducation() {
     },
     {
       id: 2,
-      title: 'Как объяснять ценность сеансов',
+      title: 'Как объяснять ценность массажа',
       description: 'Учимся донести до клиента пользу услуг и обосновать стоимость',
       duration: '2 часа',
       lessons: 8,

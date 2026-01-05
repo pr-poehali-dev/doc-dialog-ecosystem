@@ -19,20 +19,20 @@ import {
 export default function PageBuilder() {
   const { toast } = useToast();
   const [pageData, setPageData] = useState({
-    heroTitle: 'Оздоровительные практики для тела',
+    heroTitle: 'Оздоровительный массаж',
     heroSubtitle: 'Профессиональный специалист по телу с опытом 5+ лет',
     aboutTitle: 'Обо мне',
     aboutText: '',
-    servicesTitle: 'Услуги',
+    servicesTitle: 'Услуги массажа',
     services: [
-      { name: 'Сеанс релаксации', duration: '60 мин', price: '3000' },
-      { name: 'Восстановительный сеанс', duration: '90 мин', price: '4500' },
+      { name: 'Релаксационный массаж', duration: '60 мин', price: '3000' },
+      { name: 'Восстановительный массаж', duration: '90 мин', price: '4500' },
     ],
     processTitle: 'Как проходит сеанс',
     processSteps: [
       'Консультация и обсуждение пожеланий',
-      'Подбор техник работы',
-      'Сеанс в комфортной обстановке',
+      'Подбор техник массажа',
+      'Сеанс массажа в комфортной обстановке',
       'Рекомендации после сеанса',
     ],
     contactsTitle: 'Связаться со мной',

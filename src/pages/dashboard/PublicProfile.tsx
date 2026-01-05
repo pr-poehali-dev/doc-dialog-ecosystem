@@ -28,13 +28,13 @@ export default function PublicProfile() {
   });
 
   const workFormatOptions = [
-    'Релаксация',
-    'Восстановление',
-    'Профилактика',
-    'Спортивное восстановление',
-    'Антицеллюлитные практики',
-    'Выездные сеансы',
-    'Работа в салоне',
+    'Релаксационный массаж',
+    'Восстановительный массаж',
+    'Профилактический массаж',
+    'Спортивный массаж',
+    'Антицеллюлитный массаж',
+    'Выездной массаж',
+    'Массаж в салоне',
   ];
 
   const toggleWorkFormat = (format: string) => {
@@ -133,7 +133,7 @@ export default function PublicProfile() {
                 <div className="space-y-2">
                   <Label>Специализация</Label>
                   <Input
-                    placeholder="Оздоровительные практики, релаксация"
+                    placeholder="Классический массаж, релаксация"
                     value={profileData.specialization}
                     onChange={(e) => setProfileData({ ...profileData, specialization: e.target.value })}
                   />

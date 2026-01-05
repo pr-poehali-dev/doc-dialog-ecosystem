@@ -39,7 +39,7 @@ export default function Dashboard() {
       case 'masseur':
         return 'Специалист по телу';
       case 'school':
-        return 'Школа телесных практик';
+        return 'Школа массажа';
       case 'salon':
         return 'Салон телесных практик';
       case 'admin':

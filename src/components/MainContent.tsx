@@ -80,13 +80,13 @@ const MainContent = ({ openDialog }: MainContentProps) => {
                 <div className="mb-4 w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center">
                   <Icon name="GraduationCap" className="text-secondary" size={24} />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">Для школ телесных практик</h3>
+                <h3 className="text-2xl font-bold mb-4">Для школ массажа</h3>
                 <div className="space-y-3 mb-6">
                   <p className="text-sm font-medium text-muted-foreground">Если вы:</p>
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex items-start gap-2">
                       <Icon name="Check" size={16} className="text-secondary mt-0.5 flex-shrink-0" />
-                      <span>обучаете телесным практикам онлайн или офлайн</span>
+                      <span>обучаете массажу онлайн или офлайн</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <Icon name="Check" size={16} className="text-secondary mt-0.5 flex-shrink-0" />
