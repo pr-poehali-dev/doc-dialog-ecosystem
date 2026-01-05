@@ -103,6 +103,7 @@ export default function SchoolsLanding() {
               { icon: "ShieldAlert", text: "Новым школам сложно вызвать доверие" },
               { icon: "TrendingDown", text: "Скидки обесценивают продукт" },
               { icon: "Users", text: "Нет среды для долгосрочного роста" },
+              { icon: "Gauge", text: "Конкуренция только по цене, а не по качеству" },
             ].map((item, index) => (
               <Card key={index} className="animate-scale-in" style={{ animationDelay: `${index * 50}ms` }}>
                 <CardContent className="pt-6 flex items-start gap-4">
