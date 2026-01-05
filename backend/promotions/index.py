@@ -170,23 +170,43 @@ def handler(event: dict, context) -> dict:
             category = None
             item_type = None
             
-            # Сначала ищем в course_landings
+            # Сначала ищем в courses (основная таблица)
             try:
-                cur.execute("SELECT category FROM course_landings WHERE id = %s AND school_id = %s", (course_id, school_id))
+                cur.execute("SELECT category FROM courses WHERE id = %s AND school_id = %s", (course_id, school_id))
                 course_row = cur.fetchone()
                 if course_row:
                     category = course_row[0]
-                    item_type = 'course_landing'
+                    item_type = 'course'
             except:
                 pass
+            
+            # Если не найден, ищем в course_landings
+            if not category:
+                try:
+                    cur.execute("SELECT category FROM course_landings WHERE id = %s AND school_id = %s", (course_id, school_id))
+                    course_row = cur.fetchone()
+                    if course_row:
+                        category = course_row[0]
+                        item_type = 'course_landing'
+                except:
+                    pass
             
             # Если не найден, ищем в masterminds
             if not category:
                 try:
-                    cur.execute("SELECT id FROM masterminds WHERE id = %s AND school_id = %s", (course_id, school_id))
+                    cur.execute("SELECT category FROM masterminds WHERE id = %s AND school_id = %s", (course_id, school_id))
                     mastermind_row = cur.fetchone()
                     if mastermind_row:
-                        category = 'Офлайн мероприятия'
+                        # Преобразуем enum категории в читаемый формат
+                        cat_enum = mastermind_row[0]
+                        category_map = {
+                            'technique': 'Массажные техники',
+                            'business': 'Бизнес и маркетинг',
+                            'soft_skills': 'Общение и психология',
+                            'health': 'Здоровье и безопасность',
+                            'digital': 'Цифровые навыки'
+                        }
+                        category = category_map.get(cat_enum, 'Офлайн мероприятия')
                         item_type = 'mastermind'
                 except:
                     pass
@@ -194,10 +214,19 @@ def handler(event: dict, context) -> dict:
             # Если не найден, ищем в offline_training
             if not category:
                 try:
-                    cur.execute("SELECT id FROM offline_training WHERE id = %s AND school_id = %s", (course_id, school_id))
+                    cur.execute("SELECT category FROM offline_training WHERE id = %s AND school_id = %s", (course_id, school_id))
                     training_row = cur.fetchone()
                     if training_row:
-                        category = 'Офлайн мероприятия'
+                        # Преобразуем enum категории в читаемый формат
+                        cat_enum = training_row[0]
+                        category_map = {
+                            'technique': 'Массажные техники',
+                            'business': 'Бизнес и маркетинг',
+                            'soft_skills': 'Общение и психология',
+                            'health': 'Здоровье и безопасность',
+                            'digital': 'Цифровые навыки'
+                        }
+                        category = category_map.get(cat_enum, 'Офлайн мероприятия')
                         item_type = 'offline_training'
                 except:
                     pass

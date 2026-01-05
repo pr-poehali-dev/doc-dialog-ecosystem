@@ -176,6 +176,35 @@ export default function CoursesCatalog() {
       filtered = filtered.filter(item => item.course_type === selectedType);
     }
 
+    // Пересортировка с учётом типа промо и выбранной категории
+    filtered.sort((a, b) => {
+      // all_categories промо всегда первые
+      const aIsAllCategories = a.has_promotion && a.promotion_type === 'all_categories';
+      const bIsAllCategories = b.has_promotion && b.promotion_type === 'all_categories';
+      
+      if (aIsAllCategories && !bIsAllCategories) return -1;
+      if (!aIsAllCategories && bIsAllCategories) return 1;
+      
+      // own_category промо в своей категории
+      const aIsOwnCategory = a.has_promotion && 
+        a.promotion_type === 'own_category' && 
+        (selectedCategory === 'Все категории' || a.category === selectedCategory);
+      const bIsOwnCategory = b.has_promotion && 
+        b.promotion_type === 'own_category' && 
+        (selectedCategory === 'Все категории' || b.category === selectedCategory);
+      
+      if (aIsOwnCategory && !bIsOwnCategory) return -1;
+      if (!aIsOwnCategory && bIsOwnCategory) return 1;
+      
+      // Среди промо сортируем по дате окончания (позже купленные - выше)
+      if (a.has_promotion && b.has_promotion) {
+        return new Date(b.promoted_until).getTime() - new Date(a.promoted_until).getTime();
+      }
+      
+      // Без промо - по дате создания
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+
     setFilteredItems(filtered);
   };
 
