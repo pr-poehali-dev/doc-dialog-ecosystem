@@ -20,6 +20,23 @@ export default function SchoolsLanding() {
           <div className="cursor-pointer" onClick={() => navigate('/')}>
             <img src="https://cdn.poehali.dev/files/Group 7 (6).png" alt="Док диалог" className="h-10" />
           </div>
+          <div className="hidden md:flex items-center gap-6">
+            <button onClick={() => navigate('/')} className="text-sm font-medium hover:text-primary transition-colors">
+              Главная
+            </button>
+            <button onClick={() => navigate('/about')} className="text-sm font-medium hover:text-primary transition-colors">
+              О нас
+            </button>
+            <button onClick={() => navigate('/schools')} className="text-sm font-medium hover:text-primary transition-colors">
+              Школы
+            </button>
+            <button onClick={() => navigate('/courses')} className="text-sm font-medium hover:text-primary transition-colors">
+              Курсы
+            </button>
+            <button onClick={() => window.location.href = 'mailto:info@dokdialog.ru'} className="text-sm font-medium hover:text-primary transition-colors">
+              Написать нам
+            </button>
+          </div>
           <div className="flex items-center gap-4">
             <Button variant="ghost" onClick={() => navigate('/login')}>Войти</Button>
             <Button onClick={() => navigate('/register/school')}>Разместить школу</Button>
