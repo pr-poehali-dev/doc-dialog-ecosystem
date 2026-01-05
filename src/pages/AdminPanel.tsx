@@ -13,6 +13,7 @@ import AdminDashboardTab from "@/components/admin/AdminDashboardTab";
 import AdminUsersTab from "@/components/admin/AdminUsersTab";
 import AdminModerationTab from "@/components/admin/AdminModerationTab";
 import AdminSchoolsTab from "@/components/admin/AdminSchoolsTab";
+import KnowledgeBaseManagement from "@/components/admin/KnowledgeBaseManagement";
 
 interface Stats {
   total_users: number;
@@ -49,7 +50,7 @@ interface ModerationItem {
 export default function AdminPanel() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'moderation' | 'courses' | 'masterminds' | 'offline-training' | 'reviews' | 'schools'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'moderation' | 'courses' | 'masterminds' | 'offline-training' | 'reviews' | 'schools' | 'knowledge'>('dashboard');
   const [loading, setLoading] = useState(false);
   
   const [stats, setStats] = useState<Stats | null>(null);
@@ -320,6 +321,13 @@ export default function AdminPanel() {
               <Icon name="Building2" size={18} className="mr-2" />
               Школы
             </Button>
+            <Button 
+              variant={activeTab === 'knowledge' ? 'default' : 'outline'}
+              onClick={() => setActiveTab('knowledge')}
+            >
+              <Icon name="BookOpen" size={18} className="mr-2" />
+              База знаний
+            </Button>
           </div>
 
           {/* Dashboard Tab */}
@@ -357,6 +365,9 @@ export default function AdminPanel() {
 
           {/* Schools Tab */}
           {activeTab === 'schools' && <AdminSchoolsTab />}
+
+          {/* Knowledge Base Tab */}
+          {activeTab === 'knowledge' && <KnowledgeBaseManagement />}
         </div>
       </div>
     </div>

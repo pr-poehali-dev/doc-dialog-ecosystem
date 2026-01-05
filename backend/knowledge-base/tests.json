@@ -1,0 +1,24 @@
+{
+  "tests": [
+    {
+      "name": "Get FAQ items for schools",
+      "method": "GET",
+      "path": "/?target_type=school",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "items": "array"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Get settings for schools",
+      "method": "GET",
+      "path": "/?action=settings&target_type=school",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "telegram_support_url": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

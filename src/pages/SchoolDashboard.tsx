@@ -14,7 +14,7 @@ import PromoteCourseDialog from '@/components/school/PromoteCourseDialog';
 import DashboardHeader from './SchoolDashboard/DashboardHeader';
 import DashboardTabs from './SchoolDashboard/DashboardTabs';
 import LandingsTab from './SchoolDashboard/LandingsTab';
-import KnowledgeBase from '@/components/school/KnowledgeBase';
+import KnowledgeBasePublic from '@/components/school/KnowledgeBasePublic';
 import {
   Course,
   Mastermind,
@@ -427,7 +427,7 @@ export default function SchoolDashboard() {
         )}
 
         {activeTab === 'knowledge' && (
-          <KnowledgeBase />
+          <KnowledgeBasePublic targetType="school" />
         )}
       </div>
 
