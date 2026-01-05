@@ -53,7 +53,7 @@ export function useCourseHandlers({
 
   const handleEditCourse = (course: Course) => {
     setCourseForm({
-      school_name: '',
+      school_name: course.school_name || '',
       title: course.title,
       description: course.description,
       category: course.category,
@@ -61,12 +61,12 @@ export function useCourseHandlers({
       price: course.price?.toString() || '',
       duration_hours: course.duration_hours?.toString() || '',
       image_url: course.image_url || '',
-      external_url: course.external_url,
+      external_url: course.external_url || '',
       original_price: course.original_price?.toString() || '',
       discount_price: course.discount_price?.toString() || '',
-      author_name: '',
-      author_photo: '',
-      course_content: ''
+      author_name: course.author_name || '',
+      author_photo: course.author_photo || '',
+      course_content: course.course_content || ''
     });
     setEditingCourseId(course.id);
     setShowAddForm(true);
