@@ -194,6 +194,19 @@ export default function Dashboard() {
                 </Link>
               </div>
 
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center">
+                    <Icon name="Wallet" className="text-green-600" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Баланс</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Пополнение и история транзакций</p>
+                <Link to="/school/balance">
+                  <Button className="w-full" variant="outline">Управление балансом</Button>
+                </Link>
+              </div>
+
             </div>
           )}
 

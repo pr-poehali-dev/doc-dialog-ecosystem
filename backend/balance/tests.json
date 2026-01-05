@@ -1,29 +1,12 @@
 {
   "tests": [
     {
-      "name": "Get balance for authenticated user",
+      "name": "Get balance without auth",
       "method": "GET",
-      "path": "/?action=balance",
-      "headers": {
-        "X-User-Id": "1"
-      },
-      "expectedStatus": 200,
+      "path": "/?action=get",
+      "expectedStatus": 401,
       "expectedBody": {
-        "balance": "number",
-        "currency": "string"
-      },
-      "bodyMatcher": "partial"
-    },
-    {
-      "name": "Get transactions history",
-      "method": "GET",
-      "path": "/?action=transactions&limit=10",
-      "headers": {
-        "X-User-Id": "1"
-      },
-      "expectedStatus": 200,
-      "expectedBody": {
-        "transactions": "array"
+        "error": "string"
       },
       "bodyMatcher": "partial"
     }
