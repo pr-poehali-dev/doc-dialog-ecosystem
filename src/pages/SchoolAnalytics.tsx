@@ -61,10 +61,9 @@ export default function SchoolAnalytics() {
     }
 
     try {
-      const response = await fetch(`${API_URL}`, {
+      const response = await fetch(`${API_URL}?token=${encodeURIComponent(token)}`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });

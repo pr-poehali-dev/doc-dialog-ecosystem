@@ -29,11 +29,15 @@ def handler(event: dict, context) -> dict:
         conn.autocommit = True
         cur = conn.cursor()
         
-        headers = event.get('headers', {})
-        token = headers.get('X-Authorization', headers.get('Authorization', '')).replace('Bearer ', '')
+        query_params = event.get('queryStringParameters', {}) or {}
+        token = query_params.get('token', '')
         
         if not token:
-            print(f"DEBUG: All headers: {headers}")
+            headers = event.get('headers', {})
+            token = headers.get('X-Authorization', headers.get('Authorization', '')).replace('Bearer ', '')
+        
+        if not token:
+            print(f"DEBUG: Query params: {query_params}")
             print(f"DEBUG: Token: '{token}'")
             cur.close()
             conn.close()
