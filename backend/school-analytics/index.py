@@ -94,8 +94,7 @@ def handler(event: dict, context) -> dict:
         products = []
         
         cur.execute(f"""
-            SELECT id, title, views_count, 
-                   COALESCE(views_day, 0), COALESCE(views_month, 0), COALESCE(views_year, 0)
+            SELECT id, title, COALESCE(views_count, 0)
             FROM {schema}.courses 
             WHERE school_id = {school_id}
         """)
@@ -104,15 +103,14 @@ def handler(event: dict, context) -> dict:
                 'product_id': row[0],
                 'product_name': row[1],
                 'product_type': 'course',
-                'views_total': row[2] or 0,
-                'views_day': row[3],
-                'views_month': row[4],
-                'views_year': row[5]
+                'views_total': row[2],
+                'views_day': 0,
+                'views_month': 0,
+                'views_year': 0
             })
         
         cur.execute(f"""
-            SELECT id, title, views_count,
-                   COALESCE(views_day, 0), COALESCE(views_month, 0), COALESCE(views_year, 0)
+            SELECT id, title, COALESCE(views_count, 0)
             FROM {schema}.masterminds 
             WHERE school_id = {school_id}
         """)
@@ -121,15 +119,14 @@ def handler(event: dict, context) -> dict:
                 'product_id': row[0],
                 'product_name': row[1],
                 'product_type': 'mastermind',
-                'views_total': row[2] or 0,
-                'views_day': row[3],
-                'views_month': row[4],
-                'views_year': row[5]
+                'views_total': row[2],
+                'views_day': 0,
+                'views_month': 0,
+                'views_year': 0
             })
         
         cur.execute(f"""
-            SELECT id, title, views_count,
-                   COALESCE(views_day, 0), COALESCE(views_month, 0), COALESCE(views_year, 0)
+            SELECT id, title, COALESCE(views_count, 0)
             FROM {schema}.offline_training 
             WHERE school_id = {school_id}
         """)
@@ -138,43 +135,20 @@ def handler(event: dict, context) -> dict:
                 'product_id': row[0],
                 'product_name': row[1],
                 'product_type': 'offline',
-                'views_total': row[2] or 0,
-                'views_day': row[3],
-                'views_month': row[4],
-                'views_year': row[5]
+                'views_total': row[2],
+                'views_day': 0,
+                'views_month': 0,
+                'views_year': 0
             })
         
         for product in products:
-            cur.execute(f"""
-                SELECT COALESCE(SUM(amount), 0), COUNT(*)
-                FROM {schema}.product_payments
-                WHERE school_id = {school_id} 
-                  AND product_type = '{product['product_type']}'
-                  AND product_id = {product['product_id']}
-            """)
-            payment_data = cur.fetchone()
-            product['payments_total'] = float(payment_data[0]) if payment_data else 0
-            payment_count = payment_data[1] if payment_data else 0
-            
-            if product['views_total'] > 0:
-                product['conversion_rate'] = (payment_count / product['views_total']) * 100
-            else:
-                product['conversion_rate'] = 0
-        
-        cur.execute(f"""
-            SELECT 
-                COALESCE(SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END), 0) as total_added,
-                COALESCE(SUM(CASE WHEN amount < 0 THEN ABS(amount) ELSE 0 END), 0) as total_spent,
-                COALESCE(SUM(amount), 0) as current_balance
-            FROM {schema}.balance_transactions
-            WHERE school_id = {school_id}
-        """)
-        balance_row = cur.fetchone()
+            product['payments_total'] = 0
+            product['conversion_rate'] = 0
         
         balance_stats = {
-            'total_added': float(balance_row[0]) if balance_row else 0,
-            'total_spent': float(balance_row[1]) if balance_row else 0,
-            'current_balance': float(balance_row[2]) if balance_row else 0
+            'total_added': 0,
+            'total_spent': 0,
+            'current_balance': 0
         }
         
         cur.close()
