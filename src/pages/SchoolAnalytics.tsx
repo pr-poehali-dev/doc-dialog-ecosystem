@@ -253,7 +253,7 @@ export default function SchoolAnalytics() {
                       <tr key={product.product_id} className="border-b hover:bg-gray-50">
                         <td className="py-3 px-4 font-medium">{product.product_name}</td>
                         <td className="py-3 px-4 text-gray-600">{getProductTypeLabel(product.product_type)}</td>
-                        <td className="py-3 px-4 text-right font-semibold">{getViewsByPeriod(product)}</td>
+                        <td className="py-3 px-4 text-right font-semibold">{product.views_total}</td>
                         <td className="py-3 px-4 text-right text-red-600 font-medium">
                           {product.spent_total > 0 ? formatMoney(product.spent_total) : '—'}
                         </td>
