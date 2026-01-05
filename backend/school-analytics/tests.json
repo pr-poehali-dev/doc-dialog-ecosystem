@@ -1,0 +1,14 @@
+{
+  "tests": [
+    {
+      "name": "Get analytics without auth",
+      "method": "GET",
+      "path": "/?action=analytics",
+      "expectedStatus": 401,
+      "expectedBody": {
+        "error": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

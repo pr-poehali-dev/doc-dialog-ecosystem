@@ -189,7 +189,9 @@ export default function Dashboard() {
                   <h3 className="text-xl font-semibold">Аналитика</h3>
                 </div>
                 <p className="text-gray-600 mb-4">Статистика продаж и просмотров</p>
-                <Button className="w-full" variant="outline">Смотреть отчёты</Button>
+                <Link to="/school/analytics">
+                  <Button className="w-full" variant="outline">Смотреть отчёты</Button>
+                </Link>
               </div>
 
             </div>

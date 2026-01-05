@@ -30,6 +30,7 @@ import OfflineTrainingPublicLanding from "./pages/OfflineTrainingPublicLanding";
 import SchoolCatalog from "./pages/SchoolCatalog";
 import SchoolLanding from "./pages/SchoolLanding";
 import SchoolLandingBuilder from "./pages/SchoolLandingBuilder";
+import SchoolAnalytics from "./pages/SchoolAnalytics";
 import SalonCabinet from "./pages/SalonCabinet";
 import SalonsCatalog from "./pages/SalonsCatalog";
 import NotFound from "./pages/NotFound";
@@ -55,6 +56,7 @@ const App = () => (
           <Route path="/profile/edit" element={<ProfileEdit />} />
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="/school/dashboard" element={<SchoolDashboard />} />
+          <Route path="/school/analytics" element={<SchoolAnalytics />} />
           <Route path="/courses" element={<CoursesCatalog />} />
           <Route path="/course/:id" element={<CoursePage />} />
           <Route path="/mastermind/:id" element={<MastermindPage />} />
