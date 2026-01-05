@@ -46,7 +46,17 @@ def handler(event: dict, context) -> dict:
             }
         
         try:
-            jwt_secret = os.environ.get('JWT_SECRET', 'default-secret-key')
+            jwt_secret = os.environ.get('JWT_SECRET')
+            if not jwt_secret:
+                print("ERROR: JWT_SECRET not found in environment")
+                cur.close()
+                conn.close()
+                return {
+                    'statusCode': 500,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'Ошибка конфигурации сервера'}),
+                    'isBase64Encoded': False
+                }
             decoded = jwt.decode(token, jwt_secret, algorithms=['HS256'])
             user_id = decoded.get('user_id')
             user_role = decoded.get('role')
