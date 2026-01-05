@@ -20,6 +20,7 @@ interface MastermindFormProps {
     author_name: string;
     author_photo: string;
     event_content: string;
+    category: 'technique' | 'business' | 'soft_skills' | 'health' | 'digital';
   };
   setMastermindForm: React.Dispatch<React.SetStateAction<{
     school_name: string;
@@ -36,6 +37,7 @@ interface MastermindFormProps {
     author_name: string;
     author_photo: string;
     event_content: string;
+    category: 'technique' | 'business' | 'soft_skills' | 'health' | 'digital';
   }>>;
   onSubmit: () => void;
   onCancel: () => void;
@@ -53,6 +55,21 @@ export default function MastermindForm({ mastermindForm, setMastermindForm, onSu
           <Label>Название школы*</Label>
           <Input value={mastermindForm.school_name} onChange={(e) => setMastermindForm({...mastermindForm, school_name: e.target.value})} placeholder="Школа массажа 'Название'" />
           <p className="text-xs text-muted-foreground mt-1">Укажите полное название вашей школы, как оно отображается для учеников</p>
+        </div>
+        <div>
+          <Label>Категория мастермайнда*</Label>
+          <select 
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={mastermindForm.category} 
+            onChange={(e) => setMastermindForm({...mastermindForm, category: e.target.value as any})}
+          >
+            <option value="technique">Массажные техники</option>
+            <option value="business">Бизнес и маркетинг</option>
+            <option value="soft_skills">Общение и психология</option>
+            <option value="health">Здоровье и безопасность</option>
+            <option value="digital">Цифровые навыки</option>
+          </select>
+          <p className="text-xs text-muted-foreground mt-1">Выберите основную категорию мастермайнда для удобства поиска</p>
         </div>
         <div>
           <Label>Название мастермайнда*</Label>

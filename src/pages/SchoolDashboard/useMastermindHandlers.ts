@@ -66,7 +66,8 @@ export function useMastermindHandlers({
       discount_price: mastermind.discount_price?.toString() || '',
       author_name: mastermind.author_name || '',
       author_photo: mastermind.author_photo || '',
-      event_content: mastermind.event_content || ''
+      event_content: mastermind.event_content || '',
+      category: mastermind.category || 'technique'
     });
     setEditingMastermindId(mastermind.id);
     setShowAddForm(true);

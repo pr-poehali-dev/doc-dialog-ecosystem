@@ -83,6 +83,7 @@ export interface MastermindFormData {
   author_name: string;
   author_photo: string;
   event_content: string;
+  category: 'technique' | 'business' | 'soft_skills' | 'health' | 'digital';
 }
 
 export interface SpecialistFormData {
@@ -128,7 +129,8 @@ export const INITIAL_MASTERMIND_FORM: MastermindFormData = {
   discount_price: '',
   author_name: '',
   author_photo: '',
-  event_content: ''
+  event_content: '',
+  category: 'technique'
 };
 
 export const INITIAL_SPECIALIST_FORM: SpecialistFormData = {

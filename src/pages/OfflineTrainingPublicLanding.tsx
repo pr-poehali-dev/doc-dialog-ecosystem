@@ -19,6 +19,7 @@ interface OfflineTrainingData {
   price: number | null;
   original_price: number | null;
   discount_price: number | null;
+  category: 'technique' | 'business' | 'soft_skills' | 'health' | 'digital';
   about_training: string;
   what_you_get: Array<string>;
   training_program: Array<{

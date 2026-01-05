@@ -25,7 +25,8 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
           discount_price: trainingForm.discount_price ? parseFloat(trainingForm.discount_price) : null,
           author_name: trainingForm.author_name,
           author_photo: trainingForm.author_photo,
-          event_content: trainingForm.event_content
+          event_content: trainingForm.event_content,
+          category: trainingForm.category || 'technique'
         })
       });
       
@@ -46,7 +47,8 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
           discount_price: '',
           author_name: '',
           author_photo: '',
-          event_content: ''
+          event_content: '',
+          category: 'technique'
         });
         loadData();
       } else {
@@ -74,7 +76,8 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
       discount_price: training.discount_price?.toString() || '',
       author_name: training.author_name || '',
       author_photo: training.author_photo || '',
-      event_content: training.event_content || ''
+      event_content: training.event_content || '',
+      category: training.category || 'technique'
     });
     setEditingTrainingId(training.id);
     setShowAddForm(true);
@@ -105,7 +108,8 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
           discount_price: trainingForm.discount_price ? parseFloat(trainingForm.discount_price) : null,
           author_name: trainingForm.author_name,
           author_photo: trainingForm.author_photo,
-          event_content: trainingForm.event_content
+          event_content: trainingForm.event_content,
+          category: trainingForm.category || 'technique'
         })
       });
       
@@ -127,7 +131,8 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
           discount_price: '',
           author_name: '',
           author_photo: '',
-          event_content: ''
+          event_content: '',
+          category: 'technique'
         });
         loadData();
       } else {
