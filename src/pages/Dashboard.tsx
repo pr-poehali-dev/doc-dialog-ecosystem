@@ -81,6 +81,84 @@ export default function Dashboard() {
 
           {user.role === 'masseur' && (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="Globe" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Публичный профиль</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Ваша страница для клиентов в каталоге</p>
+                <Link to="/dashboard/public-profile">
+                  <Button className="w-full">Настроить профиль</Button>
+                </Link>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="Users" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">База клиентов</h3>
+                </div>
+                <p className="text-gray-600 mb-4">CRM и повторные записи</p>
+                <Link to="/dashboard/clients">
+                  <Button className="w-full">Управлять клиентами</Button>
+                </Link>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="Layout" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Личная страница</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Конструктор лендинга для клиентов</p>
+                <Link to="/dashboard/page-builder">
+                  <Button className="w-full">Создать страницу</Button>
+                </Link>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="Award" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Бейджи доверия</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Система верификации и репутация</p>
+                <Link to="/dashboard/badges">
+                  <Button className="w-full" variant="outline">Мои бейджи</Button>
+                </Link>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="GraduationCap" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Обучение</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Курсы по работе с клиентами</p>
+                <Link to="/dashboard/education">
+                  <Button className="w-full" variant="outline">К курсам</Button>
+                </Link>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="MessageCircle" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Сообщество</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Обмен опытом и рекомендации</p>
+                <Link to="/dashboard/community">
+                  <Button className="w-full" variant="outline">В сообщество</Button>
+                </Link>
+              </div>
+
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
@@ -90,7 +168,20 @@ export default function Dashboard() {
                 </div>
                 <p className="text-gray-600 mb-4">Найти коллег и обменяться опытом</p>
                 <Link to="/masseurs">
-                  <Button className="w-full">Перейти в каталог</Button>
+                  <Button className="w-full" variant="outline">Перейти в каталог</Button>
+                </Link>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="Briefcase" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Вакансии в салонах</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Найти работу в проверенных салонах</p>
+                <Link to="/salons">
+                  <Button className="w-full" variant="outline">Смотреть вакансии</Button>
                 </Link>
               </div>
 
@@ -101,67 +192,10 @@ export default function Dashboard() {
                   </div>
                   <h3 className="text-xl font-semibold">Каталог курсов</h3>
                 </div>
-                <p className="text-gray-600 mb-4">Обучающие курсы от лучших школ</p>
+                <p className="text-gray-600 mb-4">Обучающие курсы от школ-партнёров</p>
                 <Link to="/courses">
                   <Button className="w-full" variant="outline">Перейти к курсам</Button>
                 </Link>
-              </div>
-
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Icon name="Bot" className="text-primary" size={24} />
-                  </div>
-                  <h3 className="text-xl font-semibold">Чат-боты</h3>
-                </div>
-                <p className="text-gray-600 mb-4">MRTDD и другие ассистенты</p>
-                <Button className="w-full" variant="outline">Открыть ботов</Button>
-              </div>
-
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Icon name="Briefcase" className="text-primary" size={24} />
-                  </div>
-                  <h3 className="text-xl font-semibold">Вакансии</h3>
-                </div>
-                <p className="text-gray-600 mb-4">Найти работу в салонах</p>
-                <Button className="w-full" variant="outline">Смотреть вакансии</Button>
-              </div>
-
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Icon name="Crown" className="text-primary" size={24} />
-                  </div>
-                  <h3 className="text-xl font-semibold">Подписка</h3>
-                </div>
-                <p className="text-gray-600 mb-4">Тариф: <strong>Базовый (бесплатно)</strong></p>
-                <Button className="w-full">Улучшить подписку</Button>
-              </div>
-
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Icon name="User" className="text-primary" size={24} />
-                  </div>
-                  <h3 className="text-xl font-semibold">Мой профиль</h3>
-                </div>
-                <p className="text-gray-600 mb-4">Редактировать профиль массажиста</p>
-                <Link to="/profile/edit">
-                  <Button className="w-full" variant="outline">Редактировать</Button>
-                </Link>
-              </div>
-
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Icon name="Users" className="text-primary" size={24} />
-                  </div>
-                  <h3 className="text-xl font-semibold">Мастермайнды</h3>
-                </div>
-                <p className="text-gray-600 mb-4">Участие в офлайн-встречах</p>
-                <Button className="w-full" variant="outline">Записаться</Button>
               </div>
             </div>
           )}

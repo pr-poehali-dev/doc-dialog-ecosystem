@@ -38,6 +38,12 @@ import SalonsCatalog from "./pages/SalonsCatalog";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
+import PublicProfile from "./pages/dashboard/PublicProfile";
+import ClientsCRM from "./pages/dashboard/ClientsCRM";
+import PageBuilder from "./pages/dashboard/PageBuilder";
+import TrustBadges from "./pages/dashboard/TrustBadges";
+import ClientEducation from "./pages/dashboard/ClientEducation";
+import Community from "./pages/dashboard/Community";
 
 const queryClient = new QueryClient();
 
@@ -80,6 +86,12 @@ const App = () => (
           <Route path="/school/:slug" element={<SchoolLanding />} />
           <Route path="/salon/cabinet" element={<SalonCabinet />} />
           <Route path="/salons" element={<SalonsCatalog />} />
+          <Route path="/dashboard/public-profile" element={<PublicProfile />} />
+          <Route path="/dashboard/clients" element={<ClientsCRM />} />
+          <Route path="/dashboard/page-builder" element={<PageBuilder />} />
+          <Route path="/dashboard/badges" element={<TrustBadges />} />
+          <Route path="/dashboard/education" element={<ClientEducation />} />
+          <Route path="/dashboard/community" element={<Community />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="*" element={<NotFound />} />
