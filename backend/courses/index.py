@@ -199,6 +199,10 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
+        # Увеличиваем счетчик просмотров
+        course_id = course[0]
+        cur.execute(f"UPDATE {schema}.courses SET view_count = COALESCE(view_count, 0) + 1 WHERE id = {course_id}")
+        
         result = {
             'id': course[0],
             'slug': course[1],
