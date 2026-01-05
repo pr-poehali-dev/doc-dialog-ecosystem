@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 
 const API_URL = 'https://functions.poehali.dev/049813c7-cf1a-4ff1-93bc-af749304eb0d';
@@ -15,12 +16,23 @@ export default function Register() {
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [city, setCity] = useState('');
+  const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!agreed) {
+      toast({
+        title: 'Требуется согласие',
+        description: 'Пожалуйста, примите условия обработки персональных данных',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
     setLoading(true);
 
     const profile = role === 'masseur'
@@ -156,7 +168,28 @@ export default function Register() {
               />
             </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <div className="flex items-start space-x-2">
+              <Checkbox 
+                id="terms" 
+                checked={agreed} 
+                onCheckedChange={(checked) => setAgreed(checked as boolean)}
+              />
+              <label
+                htmlFor="terms"
+                className="text-sm leading-relaxed cursor-pointer"
+              >
+                Согласен с{' '}
+                <Link to="/privacy" className="text-primary hover:underline">
+                  условиями обработки персональных данных
+                </Link>
+                {' '}и{' '}
+                <Link to="/terms" className="text-primary hover:underline">
+                  условиями договора оферты
+                </Link>
+              </label>
+            </div>
+
+            <Button type="submit" className="w-full" disabled={loading || !agreed}>
               {loading ? 'Регистрация...' : 'Зарегистрироваться'}
             </Button>
           </form>

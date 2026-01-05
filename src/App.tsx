@@ -35,6 +35,8 @@ import SchoolBalance from "./pages/SchoolBalance";
 import SchoolsLanding from "./pages/SchoolsLanding";
 import SalonCabinet from "./pages/SalonCabinet";
 import SalonsCatalog from "./pages/SalonsCatalog";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -78,6 +80,8 @@ const App = () => (
           <Route path="/school/:slug" element={<SchoolLanding />} />
           <Route path="/salon/cabinet" element={<SalonCabinet />} />
           <Route path="/salons" element={<SalonsCatalog />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
