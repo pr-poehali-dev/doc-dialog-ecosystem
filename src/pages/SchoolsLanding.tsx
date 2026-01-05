@@ -17,9 +17,8 @@ export default function SchoolsLanding() {
       {/* Header */}
       <header className="border-b sticky top-0 bg-background/80 backdrop-blur-sm z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <Icon name="Stethoscope" size={28} className="text-primary" />
-            <span className="font-bold text-xl">Док диалог</span>
+          <div className="cursor-pointer" onClick={() => navigate('/')}>
+            <img src="https://cdn.poehali.dev/files/Group 7 (6).png" alt="Док диалог" className="h-10" />
           </div>
           <div className="flex items-center gap-4">
             <Button variant="ghost" onClick={() => navigate('/login')}>Войти</Button>
@@ -423,9 +422,8 @@ export default function SchoolsLanding() {
       <footer className="py-12 border-t">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Icon name="Stethoscope" size={24} className="text-primary" />
-              <span className="font-bold">Док диалог</span>
+            <div>
+              <img src="https://cdn.poehali.dev/files/Group 7 (6).png" alt="Док диалог" className="h-8" />
             </div>
             <div className="flex gap-6 text-sm text-muted-foreground">
               <span className="cursor-pointer hover:text-foreground" onClick={() => navigate('/about')}>О проекте</span>
