@@ -20,6 +20,8 @@ interface CourseFormProps {
     author_name: string;
     author_photo: string;
     course_content: string;
+    cover_url: string;
+    cta_button_url: string;
   };
   setCourseForm: React.Dispatch<React.SetStateAction<{
     school_name: string;
@@ -36,6 +38,8 @@ interface CourseFormProps {
     author_name: string;
     author_photo: string;
     course_content: string;
+    cover_url: string;
+    cta_button_url: string;
   }>>;
   onSubmit: () => void;
   onCancel: () => void;
@@ -131,6 +135,16 @@ export default function CourseForm({ courseForm, setCourseForm, onSubmit, onCanc
         <div>
           <Label>Содержание курса (программа)</Label>
           <Textarea value={courseForm.course_content} onChange={(e) => setCourseForm({...courseForm, course_content: e.target.value})} rows={6} placeholder="Подробное описание программы курса, модули, темы..." />
+        </div>
+        <div>
+          <Label>URL обложки для лендинга</Label>
+          <Input value={courseForm.cover_url} onChange={(e) => setCourseForm({...courseForm, cover_url: e.target.value})} placeholder="https://... (большая картинка для героя)" />
+          <p className="text-xs text-muted-foreground mt-1">Эта картинка будет отображаться в hero блоке лендинга курса</p>
+        </div>
+        <div>
+          <Label>Ссылка для кнопки CTA</Label>
+          <Input value={courseForm.cta_button_url} onChange={(e) => setCourseForm({...courseForm, cta_button_url: e.target.value})} placeholder="https://... (ссылка для записи на курс)" />
+          <p className="text-xs text-muted-foreground mt-1">Эта ссылка будет использоваться в кнопке 'Записаться на курс' в лендинге и футере</p>
         </div>
         <div className="flex gap-2">
           <Button onClick={onSubmit}>{isEditing ? 'Сохранить изменения' : 'Добавить курс'}</Button>

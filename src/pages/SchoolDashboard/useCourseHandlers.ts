@@ -66,7 +66,9 @@ export function useCourseHandlers({
       discount_price: course.discount_price?.toString() || '',
       author_name: course.author_name || '',
       author_photo: course.author_photo || '',
-      course_content: course.course_content || ''
+      course_content: course.course_content || '',
+      cover_url: course.cover_url || '',
+      cta_button_url: course.cta_button_url || ''
     });
     setEditingCourseId(course.id);
     setShowAddForm(true);

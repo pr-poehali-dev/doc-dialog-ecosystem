@@ -243,7 +243,7 @@ def handler(event: dict, context) -> dict:
                    c.author_name, c.author_photo, c.course_content, c.view_count, c.author_position, c.co_authors, c.created_at,
                    c.short_description, c.hero_title, c.hero_subtitle, c.about_course, c.duration_text,
                    c.what_you_learn, c.program_modules, c.benefits, c.testimonials, c.faq,
-                   c.author_bio, c.author_experience
+                   c.author_bio, c.author_experience, c.cover_url, c.cta_button_url
             FROM {schema}.courses c
             LEFT JOIN {schema}.schools s ON c.school_id = s.id
             WHERE c.id = {course_id} {status_filter}
@@ -298,7 +298,9 @@ def handler(event: dict, context) -> dict:
             'testimonials': course[30] if course[30] else [],
             'faq': course[31] if course[31] else [],
             'author_bio': course[32],
-            'author_experience': course[33]
+            'author_experience': course[33],
+            'cover_url': course[34],
+            'cta_button_url': course[35]
         }
         
         cur.close()
@@ -1051,6 +1053,8 @@ def handler(event: dict, context) -> dict:
         author_photo = body.get('author_photo')
         course_content = body.get('course_content', '')
         school_name = body.get('school_name', '')
+        cover_url = body.get('cover_url')
+        cta_button_url = body.get('cta_button_url')
         
         if not all([title, category, course_type, external_url]):
             cur.close()
@@ -1079,6 +1083,8 @@ def handler(event: dict, context) -> dict:
                 author_photo = {f"'{author_photo}'" if author_photo else 'NULL'},
                 course_content = '{course_content.replace("'", "''")}',
                 school_name = '{school_name.replace("'", "''")}',
+                cover_url = {f"'{cover_url}'" if cover_url else 'NULL'},
+                cta_button_url = {f"'{cta_button_url}'" if cta_button_url else 'NULL'},
                 status = 'pending',
                 updated_at = NOW()
             WHERE id = {course_id}

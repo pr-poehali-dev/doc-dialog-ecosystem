@@ -16,6 +16,12 @@ export interface Course {
   view_count?: number;
   slug?: string;
   created_at: string;
+  cover_url?: string | null;
+  cta_button_url?: string | null;
+  school_name?: string;
+  author_name?: string;
+  author_photo?: string;
+  course_content?: string;
 }
 
 export interface Mastermind {
@@ -67,6 +73,8 @@ export interface CourseFormData {
   author_name: string;
   author_photo: string;
   course_content: string;
+  cover_url: string;
+  cta_button_url: string;
 }
 
 export interface MastermindFormData {
@@ -113,7 +121,9 @@ export const INITIAL_COURSE_FORM: CourseFormData = {
   discount_price: '',
   author_name: '',
   author_photo: '',
-  course_content: ''
+  course_content: '',
+  cover_url: '',
+  cta_button_url: ''
 };
 
 export const INITIAL_MASTERMIND_FORM: MastermindFormData = {
