@@ -33,7 +33,8 @@ def handler(event: dict, context) -> dict:
         faq_id = query_params.get('id')
         
         # Проверка авторизации для всех операций кроме GET без id
-        token = event.get('headers', {}).get('Authorization', '').replace('Bearer ', '')
+        headers = event.get('headers', {})
+        token = headers.get('X-Authorization', headers.get('Authorization', '')).replace('Bearer ', '')
         is_admin = False
         
         if method != 'GET' or action == 'save_settings':
