@@ -192,16 +192,6 @@ export default function Dashboard() {
                 <Button className="w-full" variant="outline">Смотреть отчёты</Button>
               </div>
 
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Icon name="Building2" className="text-primary" size={24} />
-                  </div>
-                  <h3 className="text-xl font-semibold">Страница школы</h3>
-                </div>
-                <p className="text-gray-600 mb-4">Редактировать профиль</p>
-                <Button className="w-full" variant="outline">Редактировать</Button>
-              </div>
             </div>
           )}
 
