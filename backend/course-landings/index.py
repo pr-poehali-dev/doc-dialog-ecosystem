@@ -172,7 +172,7 @@ def handler(event: dict, context) -> dict:
         if method == 'GET' and school_id:
             cur.execute(f"""
                 SELECT id, title, short_description, type, category, cover_url, 
-                       status, slug, created_at, updated_at
+                       status, slug, created_at, updated_at, view_count
                 FROM {schema}.courses
                 WHERE school_id = {school_id}
                 ORDER BY created_at DESC
@@ -190,7 +190,8 @@ def handler(event: dict, context) -> dict:
                 'status': c[6],
                 'slug': c[7],
                 'created_at': c[8].isoformat() if c[8] else None,
-                'updated_at': c[9].isoformat() if c[9] else None
+                'updated_at': c[9].isoformat() if c[9] else None,
+                'view_count': c[10] or 0
             } for c in courses]
             
             cur.close()

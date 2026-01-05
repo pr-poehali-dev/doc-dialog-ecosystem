@@ -146,7 +146,7 @@ export default function SchoolDashboard() {
             status: c.status,
             slug: c.slug,
             created_at: c.created_at,
-            view_count: 0,
+            view_count: c.view_count || 0,
             promoted_until: promo?.promoted_until || null,
             promotion_type: promo?.promotion_type || null
           };
