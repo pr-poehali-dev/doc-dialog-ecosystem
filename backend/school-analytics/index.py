@@ -30,11 +30,11 @@ def handler(event: dict, context) -> dict:
         cur = conn.cursor()
         
         headers = event.get('headers', {})
-        token = headers.get('X-Authorization', '').replace('Bearer ', '')
+        token = headers.get('X-Authorization', headers.get('Authorization', '')).replace('Bearer ', '')
         
         if not token:
-            print(f"DEBUG: Headers keys: {list(headers.keys())}")
-            print(f"DEBUG: Token extracted: '{token}'")
+            print(f"DEBUG: All headers: {headers}")
+            print(f"DEBUG: Token: '{token}'")
             cur.close()
             conn.close()
             return {
