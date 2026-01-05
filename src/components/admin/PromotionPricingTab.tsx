@@ -58,6 +58,8 @@ export default function PromotionPricingTab() {
       if (response.ok) {
         const data = await response.json();
         console.log('Loaded pricing data:', data);
+        console.log('Sample item:', data[0]);
+        console.log('Grouped keys will be:', data.map((item: PricingItem) => `${item.entity_type}_${item.promotion_type}`));
         setPricing(data);
       } else {
         const errorText = await response.text();

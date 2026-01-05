@@ -41,10 +41,12 @@ def handler(event: dict, context) -> dict:
         user_id = payload.get('user_id')
         role = payload.get('role')
     except Exception as e:
+        print(f'JWT decode error: {str(e)}')
+        print(f'Token: {token[:20]}...')
         return {
             'statusCode': 401,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'error': 'Неверный токен'}),
+            'body': json.dumps({'error': f'Неверный токен: {str(e)}'}),
             'isBase64Encoded': False
         }
     
