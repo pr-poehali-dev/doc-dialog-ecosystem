@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Icon from "@/components/ui/icon";
 
 type UserType = 'masseur' | 'school' | 'salon' | null;
@@ -9,6 +9,8 @@ interface HeroSectionProps {
 }
 
 const HeroSection = ({ openDialog }: HeroSectionProps) => {
+  const navigate = useNavigate();
+
   return (
     <section className="relative py-20 md:py-32 animate-fade-in overflow-hidden bg-gradient-to-br from-slate-50 via-slate-100/30 to-slate-50">
       {/* Network pattern background */}
@@ -52,7 +54,7 @@ const HeroSection = ({ openDialog }: HeroSectionProps) => {
                 size="lg" 
                 variant="outline" 
                 className="text-lg px-8 bg-white/80 backdrop-blur-sm hover:bg-primary hover:text-white border-primary text-primary transition-all" 
-                onClick={() => openDialog('school')}
+                onClick={() => navigate('/schools-info')}
               >
                 Я школа
               </Button>
