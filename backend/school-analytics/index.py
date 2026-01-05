@@ -94,7 +94,11 @@ def handler(event: dict, context) -> dict:
         products = []
         
         cur.execute(f"""
-            SELECT id, title, COALESCE(views_count, 0)
+            SELECT id, title, 
+                   COALESCE(view_count, 0), 
+                   COALESCE(views_day, 0),
+                   COALESCE(views_month, 0),
+                   COALESCE(views_year, 0)
             FROM {schema}.courses 
             WHERE school_id = {school_id}
         """)
@@ -104,13 +108,17 @@ def handler(event: dict, context) -> dict:
                 'product_name': row[1],
                 'product_type': 'course',
                 'views_total': row[2],
-                'views_day': 0,
-                'views_month': 0,
-                'views_year': 0
+                'views_day': row[3],
+                'views_month': row[4],
+                'views_year': row[5]
             })
         
         cur.execute(f"""
-            SELECT id, title, COALESCE(views_count, 0)
+            SELECT id, title,
+                   COALESCE(view_count, 0),
+                   COALESCE(views_day, 0),
+                   COALESCE(views_month, 0),
+                   COALESCE(views_year, 0)
             FROM {schema}.masterminds 
             WHERE school_id = {school_id}
         """)
@@ -120,13 +128,17 @@ def handler(event: dict, context) -> dict:
                 'product_name': row[1],
                 'product_type': 'mastermind',
                 'views_total': row[2],
-                'views_day': 0,
-                'views_month': 0,
-                'views_year': 0
+                'views_day': row[3],
+                'views_month': row[4],
+                'views_year': row[5]
             })
         
         cur.execute(f"""
-            SELECT id, title, COALESCE(views_count, 0)
+            SELECT id, title,
+                   COALESCE(view_count, 0),
+                   COALESCE(views_day, 0),
+                   COALESCE(views_month, 0),
+                   COALESCE(views_year, 0)
             FROM {schema}.offline_training 
             WHERE school_id = {school_id}
         """)
@@ -136,9 +148,9 @@ def handler(event: dict, context) -> dict:
                 'product_name': row[1],
                 'product_type': 'offline',
                 'views_total': row[2],
-                'views_day': 0,
-                'views_month': 0,
-                'views_year': 0
+                'views_day': row[3],
+                'views_month': row[4],
+                'views_year': row[5]
             })
         
         for product in products:
