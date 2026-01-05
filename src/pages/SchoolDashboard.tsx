@@ -127,28 +127,31 @@ export default function SchoolDashboard() {
       }
       
       if (activeTab === 'courses') {
-        const response = await fetch(`https://functions.poehali.dev/a81dd7cd-c267-4f44-85f5-0da8353dc741?school_id=${schoolId}`);
+        const response = await fetch(`${COURSE_API_URL}?type=courses&school_id=${schoolId}&status=all`);
         const data = await response.json();
-        // Маппинг данных из course-landings API в формат Course
+        // Маппинг данных из courses API в формат Course
         const mappedCourses = data.map((c: any) => {
           const promo = activePromotions.find(p => p.course_id === c.id);
           return {
             id: c.id,
             title: c.title,
-            description: c.short_description || '',
+            description: c.description || '',
             category: c.category || '',
-            course_type: c.type || 'online',
-            price: null,
-            currency: 'RUB',
-            duration_hours: null,
-            image_url: c.cover_url || null,
-            external_url: '',
+            course_type: c.course_type || 'online',
+            price: c.price,
+            currency: c.currency || 'RUB',
+            duration_hours: c.duration_hours,
+            image_url: c.image_url || null,
+            external_url: c.external_url || '',
             status: c.status,
             slug: c.slug,
             created_at: c.created_at,
             view_count: c.view_count || 0,
             promoted_until: promo?.promoted_until || null,
-            promotion_type: promo?.promotion_type || null
+            promotion_type: promo?.promotion_type || null,
+            original_price: c.original_price,
+            discount_price: c.discount_price,
+            moderation_comment: c.moderation_comment
           };
         });
         setCourses(mappedCourses);
