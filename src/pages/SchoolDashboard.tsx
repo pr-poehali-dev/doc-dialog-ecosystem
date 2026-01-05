@@ -14,6 +14,7 @@ import PromoteCourseDialog from '@/components/school/PromoteCourseDialog';
 import DashboardHeader from './SchoolDashboard/DashboardHeader';
 import DashboardTabs from './SchoolDashboard/DashboardTabs';
 import LandingsTab from './SchoolDashboard/LandingsTab';
+import KnowledgeBase from '@/components/school/KnowledgeBase';
 import {
   Course,
   Mastermind,
@@ -32,7 +33,7 @@ export default function SchoolDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<'courses' | 'masterminds' | 'offline-training' | 'specialists' | 'landings'>('courses');
+  const [activeTab, setActiveTab] = useState<'courses' | 'masterminds' | 'offline-training' | 'specialists' | 'landings' | 'knowledge'>('courses');
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingCourseId, setEditingCourseId] = useState<number | null>(null);
   const [editingMastermindId, setEditingMastermindId] = useState<number | null>(null);
@@ -311,7 +312,7 @@ export default function SchoolDashboard() {
 
         <DashboardTabs activeTab={activeTab} onTabChange={handleTabChange} />
 
-        {activeTab !== 'landings' && (
+        {activeTab !== 'landings' && activeTab !== 'knowledge' && (
           <div className="mb-6">
             <Button onClick={() => {
               if (activeTab === 'courses') {
@@ -389,7 +390,7 @@ export default function SchoolDashboard() {
           />
         )}
 
-        {!showAddForm && activeTab !== 'landings' && (
+        {!showAddForm && activeTab !== 'landings' && activeTab !== 'knowledge' && (
           <ItemsList
             activeTab={activeTab}
             courses={courses}
@@ -423,6 +424,10 @@ export default function SchoolDashboard() {
 
         {activeTab === 'landings' && (
           <LandingsTab landings={landings} onReload={loadData} />
+        )}
+
+        {activeTab === 'knowledge' && (
+          <KnowledgeBase />
         )}
       </div>
 
