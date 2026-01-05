@@ -1,5 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
+import CourseCard from './CourseCard';
+import MastermindCard from './MastermindCard';
+import OfflineTrainingCard from './OfflineTrainingCard';
+import SpecialistCard from './SpecialistCard';
 
 interface Course {
   id: number;
@@ -85,410 +88,46 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
     <>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {activeTab === 'courses' && courses.map((course) => (
-          <Card key={course.id}>
-            <CardHeader>
-              <div className="flex justify-between items-start mb-2">
-                <CardTitle className="text-lg">{course.title}</CardTitle>
-                {getStatusBadge(course.status)}
-              </div>
-              <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
-              {course.promoted_until && new Date(course.promoted_until) > new Date() && (
-                <div className="mt-2 p-2 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 rounded text-xs">
-                  <div className="flex items-center gap-1 font-semibold text-amber-800">
-                    <Icon name="TrendingUp" size={14} />
-                    <span>В топе {course.promotion_type === 'all_categories' ? 'во всех категориях' : 'в своей категории'}</span>
-                  </div>
-                  <div className="text-amber-700 mt-1">
-                    До {new Date(course.promoted_until).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
-                  </div>
-                </div>
-              )}
-              {course.status === 'rejected' && course.moderation_comment && (
-                <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-xs text-red-800">
-                  <strong>Причина отклонения:</strong> {course.moderation_comment}
-                </div>
-              )}
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center gap-2">
-                  <Icon name="Tag" size={16} className="text-primary" />
-                  <span>{course.category}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Icon name="Monitor" size={16} className="text-primary" />
-                  <span>{course.course_type === 'online' ? 'Онлайн' : course.course_type === 'offline' ? 'Офлайн' : 'Бесплатный'}</span>
-                </div>
-                {(course.original_price || course.discount_price) ? (
-                  <div className="flex items-center gap-2">
-                    <Icon name="Coins" size={16} className="text-primary" />
-                    <div className="flex items-center gap-2">
-                      {course.original_price && (
-                        <span className="line-through text-muted-foreground">{course.original_price.toLocaleString()} {course.currency}</span>
-                      )}
-                      {course.discount_price && (
-                        <span className="text-red-600 font-semibold">{course.discount_price.toLocaleString()} {course.currency}</span>
-                      )}
-                    </div>
-                  </div>
-                ) : course.price ? (
-                  <div className="flex items-center gap-2">
-                    <Icon name="Coins" size={16} className="text-primary" />
-                    <span>{course.price.toLocaleString()} {course.currency}</span>
-                  </div>
-                ) : null}
-                {course.duration_hours && (
-                  <div className="flex items-center gap-2">
-                    <Icon name="Clock" size={16} className="text-primary" />
-                    <span>{course.duration_hours} часов</span>
-                  </div>
-                )}
-                {course.view_count !== undefined && (
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Icon name="Eye" size={16} className="text-primary" />
-                    <span>{course.view_count} просмотров</span>
-                  </div>
-                )}
-              </div>
-              <div className="space-y-2 mt-4 pt-4 border-t">
-                {(course.status === 'approved' || course.status === 'moderation') && course.slug && (
-                  <a
-                    href={`/course/landing/${course.slug}?preview=true`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors font-medium"
-                  >
-                    <Icon name="ExternalLink" size={16} />
-                    {course.status === 'moderation' ? 'Предпросмотр' : 'Открыть лендинг'}
-                  </a>
-                )}
-                {course.status === 'approved' && (
-                  <button
-                    onClick={() => onPromoteCourse?.(course.id, course.title, course.category)}
-                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-md hover:from-amber-600 hover:to-orange-600 transition-colors font-medium"
-                  >
-                    <Icon name="TrendingUp" size={16} />
-                    Поднять в топ
-                  </button>
-                )}
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => onEditCourse?.(course)}
-                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-                  >
-                    <Icon name="Pencil" size={16} />
-                    Редактировать
-                  </button>
-                  <button
-                    onClick={() => onDeleteCourse?.(course.id)}
-                    className="flex items-center justify-center gap-2 px-3 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
-                  >
-                    <Icon name="Trash2" size={16} />
-                  </button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <CourseCard
+            key={course.id}
+            course={course}
+            getStatusBadge={getStatusBadge}
+            onEdit={onEditCourse}
+            onDelete={onDeleteCourse}
+            onPromote={onPromoteCourse}
+          />
         ))}
 
         {activeTab === 'masterminds' && masterminds.map((mm) => (
-          <Card key={mm.id}>
-            <CardHeader>
-              <div className="flex justify-between items-start mb-2">
-                <CardTitle className="text-lg">{mm.title}</CardTitle>
-                {getStatusBadge(mm.status)}
-              </div>
-              <p className="text-sm text-muted-foreground line-clamp-2">{mm.description}</p>
-              {mm.promoted_until && new Date(mm.promoted_until) > new Date() && (
-                <div className="mt-2 p-2 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 rounded text-xs">
-                  <div className="flex items-center gap-1 font-semibold text-amber-800">
-                    <Icon name="TrendingUp" size={14} />
-                    <span>В топе {mm.promotion_type === 'all_categories' ? 'во всех категориях' : 'в своей категории'}</span>
-                  </div>
-                  <div className="text-amber-700 mt-1">
-                    До {new Date(mm.promoted_until).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
-                  </div>
-                </div>
-              )}
-              {mm.status === 'rejected' && mm.moderation_comment && (
-                <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-xs text-red-800">
-                  <strong>Причина отклонения:</strong> {mm.moderation_comment}
-                </div>
-              )}
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center gap-2">
-                  <Icon name="Tag" size={16} className="text-primary" />
-                  <span>
-                    {mm.category === 'technique' && 'Массажные техники'}
-                    {mm.category === 'business' && 'Бизнес и маркетинг'}
-                    {mm.category === 'soft_skills' && 'Общение и психология'}
-                    {mm.category === 'health' && 'Здоровье и безопасность'}
-                    {mm.category === 'digital' && 'Цифровые навыки'}
-                    {!mm.category && 'Массажные техники'}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Icon name="Calendar" size={16} className="text-primary" />
-                  <span>{new Date(mm.event_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
-                </div>
-                {mm.location && (
-                  <div className="flex items-center gap-2">
-                    <Icon name="MapPin" size={16} className="text-primary" />
-                    <span>{mm.location}</span>
-                  </div>
-                )}
-                {mm.max_participants && (
-                  <div className="flex items-center gap-2">
-                    <Icon name="Users" size={16} className="text-primary" />
-                    <span>{mm.current_participants}/{mm.max_participants} участников</span>
-                  </div>
-                )}
-                {(mm.original_price || mm.discount_price) ? (
-                  <div className="flex items-center gap-2">
-                    <Icon name="Coins" size={16} className="text-primary" />
-                    <div className="flex items-center gap-2">
-                      {mm.original_price && (
-                        <span className="line-through text-muted-foreground">{mm.original_price.toLocaleString()} {mm.currency}</span>
-                      )}
-                      {mm.discount_price && (
-                        <span className="text-red-600 font-semibold">{mm.discount_price.toLocaleString()} {mm.currency}</span>
-                      )}
-                    </div>
-                  </div>
-                ) : mm.price ? (
-                  <div className="flex items-center gap-2">
-                    <Icon name="Coins" size={16} className="text-primary" />
-                    <span>{mm.price.toLocaleString()} {mm.currency}</span>
-                  </div>
-                ) : null}
-                {mm.view_count !== undefined && (
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Icon name="Eye" size={16} className="text-primary" />
-                    <span>{mm.view_count} просмотров</span>
-                  </div>
-                )}
-              </div>
-              <div className="space-y-2 mt-4 pt-4 border-t">
-                {mm.status === 'approved' && mm.slug && (
-                  <a
-                    href={`/mastermind/landing/${mm.slug}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors font-medium"
-                  >
-                    <Icon name="ExternalLink" size={16} />
-                    Открыть лендинг
-                  </a>
-                )}
-                {mm.status === 'approved' && (
-                  <button
-                    onClick={() => onPromoteMastermind?.(mm.id, mm.title)}
-                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-md hover:from-amber-600 hover:to-orange-600 transition-colors font-medium"
-                  >
-                    <Icon name="TrendingUp" size={16} />
-                    Поднять в топ
-                  </button>
-                )}
-                <div className="flex gap-2">
-                  <a
-                    href={`/mastermind/landing/builder?id=${mm.id}`}
-                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-                  >
-                    <Icon name="Pencil" size={16} />
-                    Редактировать
-                  </a>
-                  <button
-                    onClick={() => onDeleteMastermind?.(mm.id)}
-                    className="flex items-center justify-center gap-2 px-3 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
-                  >
-                    <Icon name="Trash2" size={16} />
-                  </button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <MastermindCard
+            key={mm.id}
+            mastermind={mm}
+            getStatusBadge={getStatusBadge}
+            onEdit={onEditMastermind}
+            onDelete={onDeleteMastermind}
+            onPromote={onPromoteMastermind}
+          />
         ))}
 
         {activeTab === 'offline-training' && offlineTrainings.map((training) => (
-          <Card key={training.id}>
-            <CardHeader>
-              <div className="flex justify-between items-start mb-2">
-                <CardTitle className="text-lg">{training.title}</CardTitle>
-                {getStatusBadge(training.status)}
-              </div>
-              <p className="text-sm text-muted-foreground line-clamp-2">{training.description}</p>
-              {training.promoted_until && new Date(training.promoted_until) > new Date() && (
-                <div className="mt-2 p-2 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 rounded text-xs">
-                  <div className="flex items-center gap-1 font-semibold text-amber-800">
-                    <Icon name="TrendingUp" size={14} />
-                    <span>В топе {training.promotion_type === 'all_categories' ? 'во всех категориях' : 'в своей категории'}</span>
-                  </div>
-                  <div className="text-amber-700 mt-1">
-                    До {new Date(training.promoted_until).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
-                  </div>
-                </div>
-              )}
-              {training.status === 'rejected' && training.moderation_comment && (
-                <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-xs text-red-800">
-                  <strong>Причина отклонения:</strong> {training.moderation_comment}
-                </div>
-              )}
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center gap-2">
-                  <Icon name="Tag" size={16} className="text-primary" />
-                  <span>
-                    {training.category === 'technique' && 'Массажные техники'}
-                    {training.category === 'business' && 'Бизнес и маркетинг'}
-                    {training.category === 'soft_skills' && 'Общение и психология'}
-                    {training.category === 'health' && 'Здоровье и безопасность'}
-                    {training.category === 'digital' && 'Цифровые навыки'}
-                    {!training.category && 'Массажные техники'}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Icon name="Calendar" size={16} className="text-primary" />
-                  <span>{new Date(training.event_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
-                </div>
-                {training.location && (
-                  <div className="flex items-center gap-2">
-                    <Icon name="MapPin" size={16} className="text-primary" />
-                    <span>{training.location}</span>
-                  </div>
-                )}
-                {training.max_participants && (
-                  <div className="flex items-center gap-2">
-                    <Icon name="Users" size={16} className="text-primary" />
-                    <span>Макс. {training.max_participants} участников</span>
-                  </div>
-                )}
-                {(training.original_price || training.discount_price) ? (
-                  <div className="flex items-center gap-2">
-                    <Icon name="Coins" size={16} className="text-primary" />
-                    <div className="flex items-center gap-2">
-                      {training.original_price && (
-                        <span className="line-through text-muted-foreground">{training.original_price.toLocaleString()} ₽</span>
-                      )}
-                      {training.discount_price && (
-                        <span className="text-red-600 font-semibold">{training.discount_price.toLocaleString()} ₽</span>
-                      )}
-                    </div>
-                  </div>
-                ) : training.price ? (
-                  <div className="flex items-center gap-2">
-                    <Icon name="Coins" size={16} className="text-primary" />
-                    <span>{training.price.toLocaleString()} ₽</span>
-                  </div>
-                ) : null}
-                {training.view_count !== undefined && (
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Icon name="Eye" size={16} className="text-primary" />
-                    <span>{training.view_count} просмотров</span>
-                  </div>
-                )}
-              </div>
-              <div className="space-y-2 mt-4 pt-4 border-t">
-                {training.status === 'approved' && training.slug && (
-                  <a
-                    href={`/offline-training/landing/${training.slug}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors font-medium"
-                  >
-                    <Icon name="ExternalLink" size={16} />
-                    Открыть лендинг
-                  </a>
-                )}
-                {training.status === 'approved' && (
-                  <button
-                    onClick={() => onPromoteTraining?.(training.id, training.title)}
-                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-md hover:from-amber-600 hover:to-orange-600 transition-colors font-medium"
-                  >
-                    <Icon name="TrendingUp" size={16} />
-                    Поднять в топ
-                  </button>
-                )}
-                <div className="flex gap-2">
-                  <a
-                    href={`/offline-training/landing/builder?id=${training.id}`}
-                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-                  >
-                    <Icon name="Pencil" size={16} />
-                    Редактировать
-                  </a>
-                  <button
-                    onClick={() => onDeleteTraining?.(training.id)}
-                    className="flex items-center justify-center gap-2 px-3 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
-                  >
-                    <Icon name="Trash2" size={16} />
-                  </button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <OfflineTrainingCard
+            key={training.id}
+            training={training}
+            getStatusBadge={getStatusBadge}
+            onEdit={onEditTraining}
+            onDelete={onDeleteTraining}
+            onPromote={onPromoteTraining}
+          />
         ))}
 
         {activeTab === 'specialists' && specialists.map((spec) => (
-          <Card key={spec.id}>
-            <CardHeader>
-              <div className="flex justify-between items-start mb-2">
-                <CardTitle className="text-lg">{spec.title}</CardTitle>
-                {getStatusBadge(spec.status)}
-              </div>
-              <p className="text-sm text-muted-foreground line-clamp-3">{spec.description}</p>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center gap-2">
-                  <Icon name="Briefcase" size={16} className="text-primary" />
-                  <span>{spec.specialty}</span>
-                </div>
-                {(spec.budget_from || spec.budget_to) && (
-                  <div className="flex items-center gap-2">
-                    <Icon name="DollarSign" size={16} className="text-primary" />
-                    <span>
-                      {spec.budget_from && spec.budget_to 
-                        ? `${spec.budget_from.toLocaleString()}-${spec.budget_to.toLocaleString()}`
-                        : spec.budget_from 
-                          ? `от ${spec.budget_from.toLocaleString()}`
-                          : `до ${spec.budget_to?.toLocaleString()}`
-                      } {spec.currency}
-                    </span>
-                  </div>
-                )}
-                {spec.location && (
-                  <div className="flex items-center gap-2">
-                    <Icon name="MapPin" size={16} className="text-primary" />
-                    <span>{spec.location}</span>
-                  </div>
-                )}
-                {spec.deadline_date && (
-                  <div className="flex items-center gap-2">
-                    <Icon name="Calendar" size={16} className="text-primary" />
-                    <span>До {new Date(spec.deadline_date).toLocaleDateString('ru-RU')}</span>
-                  </div>
-                )}
-              </div>
-              <div className="flex gap-2 mt-4 pt-4 border-t">
-                <button
-                  onClick={() => onEditSpecialist?.(spec)}
-                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-                >
-                  <Icon name="Pencil" size={16} />
-                  Редактировать
-                </button>
-                <button
-                  onClick={() => onDeleteSpecialist?.(spec.id)}
-                  className="flex items-center justify-center gap-2 px-3 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
-                >
-                  <Icon name="Trash2" size={16} />
-                </button>
-              </div>
-            </CardContent>
-          </Card>
+          <SpecialistCard
+            key={spec.id}
+            specialist={spec}
+            getStatusBadge={getStatusBadge}
+            onEdit={onEditSpecialist}
+            onDelete={onDeleteSpecialist}
+          />
         ))}
       </div>
 
