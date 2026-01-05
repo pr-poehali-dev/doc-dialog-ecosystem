@@ -72,6 +72,11 @@ export default function CourseForm({ courseForm, setCourseForm, onSubmit, onCanc
               <option>SPA массаж</option>
               <option>Косметический массаж</option>
               <option>Детский массаж</option>
+              <option>Массажные техники</option>
+              <option>Бизнес и маркетинг</option>
+              <option>Общение и психология</option>
+              <option>Здоровье и безопасность</option>
+              <option>Цифровые навыки</option>
               <option>Другое</option>
             </select>
           </div>
