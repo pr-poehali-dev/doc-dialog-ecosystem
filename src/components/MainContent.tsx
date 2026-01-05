@@ -304,15 +304,23 @@ const MainContent = ({ openDialog }: MainContentProps) => {
                 </ul>
                 <Button size="lg" onClick={() => openDialog('masseur')}>Перейти к курсам</Button>
               </div>
-              <div className="bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl p-8 aspect-square flex items-center justify-center">
-                <Icon name="GraduationCap" size={120} className="text-primary/30" />
+              <div className="rounded-2xl overflow-hidden aspect-square">
+                <img 
+                  src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/ea42a26a-4066-471f-af44-87925247d714.jpg" 
+                  alt="Обучение массажу" 
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
 
             {/* Tools */}
             <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div className="bg-gradient-to-br from-secondary/10 to-primary/10 rounded-2xl p-8 aspect-square flex items-center justify-center order-2 md:order-1">
-                <Icon name="Bot" size={120} className="text-secondary/30" />
+              <div className="rounded-2xl overflow-hidden aspect-square order-2 md:order-1">
+                <img 
+                  src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/94626720-6c03-405b-8d5b-7116894a2a98.jpg" 
+                  alt="Инструменты для массажистов" 
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div className="order-1 md:order-2">
                 <h2 className="text-3xl md:text-4xl font-bold mb-6">
@@ -372,8 +380,12 @@ const MainContent = ({ openDialog }: MainContentProps) => {
                 </ul>
                 <Button size="lg" onClick={() => openDialog('masseur')}>Узнать о мастермайндах</Button>
               </div>
-              <div className="bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl p-8 aspect-square flex items-center justify-center">
-                <Icon name="Users" size={120} className="text-primary/30" />
+              <div className="rounded-2xl overflow-hidden aspect-square">
+                <img 
+                  src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/6bc644e6-9a4e-44e1-af04-7f0241db5def.jpg" 
+                  alt="Сообщество массажистов" 
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
           </div>
