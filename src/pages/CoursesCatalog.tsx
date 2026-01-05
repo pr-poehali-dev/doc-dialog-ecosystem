@@ -71,19 +71,30 @@ export default function CoursesCatalog() {
         image_url: (t as any).cover_url || t.image_url
       }));
       
+      const getCategoryLabel = (category: string | undefined) => {
+        const labels: Record<string, string> = {
+          technique: 'Массажные техники',
+          business: 'Бизнес и маркетинг',
+          soft_skills: 'Общение и психология',
+          health: 'Здоровье и безопасность',
+          digital: 'Цифровые навыки'
+        };
+        return labels[category || 'technique'] || 'Массажные техники';
+      };
+
       const allItemsWithoutRatings: CatalogItem[] = [
         ...coursesWithCovers.map(c => ({ ...c, itemType: 'course' as const })),
         ...mastermindsWithCovers.map(m => ({ 
           ...m, 
           itemType: 'mastermind' as const,
-          category: 'Офлайн мероприятия',
+          category: getCategoryLabel((m as any).category),
           course_type: 'offline',
           duration_hours: null
         })),
         ...trainingsWithCovers.map(t => ({ 
           ...t, 
           itemType: 'offline_training' as const,
-          category: 'Офлайн мероприятия',
+          category: getCategoryLabel((t as any).category),
           course_type: 'offline',
           duration_hours: null
         }))

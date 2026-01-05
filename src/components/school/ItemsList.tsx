@@ -43,6 +43,7 @@ interface Mastermind {
   created_at: string;
   promoted_until?: string | null;
   promotion_type?: string | null;
+  category?: 'technique' | 'business' | 'soft_skills' | 'health' | 'digital';
 }
 
 interface SpecialistRequest {
@@ -218,6 +219,17 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
             <CardContent>
               <div className="space-y-2 text-sm">
                 <div className="flex items-center gap-2">
+                  <Icon name="Tag" size={16} className="text-primary" />
+                  <span>
+                    {mm.category === 'technique' && 'Массажные техники'}
+                    {mm.category === 'business' && 'Бизнес и маркетинг'}
+                    {mm.category === 'soft_skills' && 'Общение и психология'}
+                    {mm.category === 'health' && 'Здоровье и безопасность'}
+                    {mm.category === 'digital' && 'Цифровые навыки'}
+                    {!mm.category && 'Массажные техники'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
                   <Icon name="Calendar" size={16} className="text-primary" />
                   <span>{new Date(mm.event_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
                 </div>
@@ -326,6 +338,17 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
             </CardHeader>
             <CardContent>
               <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <Icon name="Tag" size={16} className="text-primary" />
+                  <span>
+                    {training.category === 'technique' && 'Массажные техники'}
+                    {training.category === 'business' && 'Бизнес и маркетинг'}
+                    {training.category === 'soft_skills' && 'Общение и психология'}
+                    {training.category === 'health' && 'Здоровье и безопасность'}
+                    {training.category === 'digital' && 'Цифровые навыки'}
+                    {!training.category && 'Массажные техники'}
+                  </span>
+                </div>
                 <div className="flex items-center gap-2">
                   <Icon name="Calendar" size={16} className="text-primary" />
                   <span>{new Date(training.event_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}</span>

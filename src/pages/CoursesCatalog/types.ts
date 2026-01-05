@@ -46,6 +46,7 @@ export interface Mastermind {
   has_promotion?: boolean;
   promoted_until?: string | null;
   promotion_type?: string | null;
+  category?: 'technique' | 'business' | 'soft_skills' | 'health' | 'digital';
 }
 
 export interface OfflineTraining {
@@ -71,6 +72,7 @@ export interface OfflineTraining {
   has_promotion?: boolean;
   promoted_until?: string | null;
   promotion_type?: string | null;
+  category?: 'technique' | 'business' | 'soft_skills' | 'health' | 'digital';
 }
 
 export type CatalogItem = (Course & { itemType: 'course' }) | (Mastermind & { itemType: 'mastermind'; category: string; course_type: string }) | (OfflineTraining & { itemType: 'offline_training'; category: string; course_type: string });
@@ -88,6 +90,10 @@ export const CATEGORIES = [
   'SPA массаж',
   'Косметический массаж',
   'Детский массаж',
-  'Офлайн мероприятия',
+  'Массажные техники',
+  'Бизнес и маркетинг',
+  'Общение и психология',
+  'Здоровье и безопасность',
+  'Цифровые навыки',
   'Другое'
 ];

@@ -35,6 +35,7 @@ export interface Mastermind {
   discount_price?: number | null;
   view_count?: number;
   created_at: string;
+  category?: 'technique' | 'business' | 'soft_skills' | 'health' | 'digital';
 }
 
 export interface SpecialistRequest {

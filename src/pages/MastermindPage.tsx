@@ -38,6 +38,7 @@ interface MastermindDetails {
   co_authors?: CoAuthor[];
   view_count?: number;
   created_at: string;
+  category?: 'technique' | 'business' | 'soft_skills' | 'health' | 'digital';
 }
 
 const COURSE_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f';
@@ -138,7 +139,14 @@ export default function MastermindPage() {
                   <Badge className="bg-purple-100 text-purple-800">
                     Мастермайнд
                   </Badge>
-                  <Badge variant="outline">Офлайн мероприятия</Badge>
+                  <Badge variant="outline">
+                    {mastermind.category === 'technique' && 'Массажные техники'}
+                    {mastermind.category === 'business' && 'Бизнес и маркетинг'}
+                    {mastermind.category === 'soft_skills' && 'Общение и психология'}
+                    {mastermind.category === 'health' && 'Здоровье и безопасность'}
+                    {mastermind.category === 'digital' && 'Цифровые навыки'}
+                    {!mastermind.category && 'Массажные техники'}
+                  </Badge>
                 </div>
                 <h1 className="text-4xl font-bold mb-4">{mastermind.title}</h1>
                 <RatingDisplay rating={rating} reviewCount={reviewCount} size="lg" />
