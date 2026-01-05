@@ -29,7 +29,8 @@ interface ProductStats {
   views_month: number;
   views_year: number;
   views_total: number;
-  cost_per_view?: number;
+  spent_total: number;
+  cost_per_view: number;
 }
 
 interface BalanceStats {
@@ -243,7 +244,7 @@ export default function SchoolAnalytics() {
                       <th className="text-left py-3 px-4">Продукт</th>
                       <th className="text-left py-3 px-4">Тип</th>
                       <th className="text-right py-3 px-4">Просмотры</th>
-                      <th className="text-right py-3 px-4">Всего просмотров</th>
+                      <th className="text-right py-3 px-4">Потрачено</th>
                       <th className="text-right py-3 px-4">Цена за просмотр</th>
                     </tr>
                   </thead>
@@ -252,10 +253,12 @@ export default function SchoolAnalytics() {
                       <tr key={product.product_id} className="border-b hover:bg-gray-50">
                         <td className="py-3 px-4 font-medium">{product.product_name}</td>
                         <td className="py-3 px-4 text-gray-600">{getProductTypeLabel(product.product_type)}</td>
-                        <td className="py-3 px-4 text-right">{getViewsByPeriod(product)}</td>
-                        <td className="py-3 px-4 text-right text-gray-600">{product.views_total}</td>
+                        <td className="py-3 px-4 text-right font-semibold">{getViewsByPeriod(product)}</td>
+                        <td className="py-3 px-4 text-right text-red-600 font-medium">
+                          {product.spent_total > 0 ? formatMoney(product.spent_total) : '—'}
+                        </td>
                         <td className="py-3 px-4 text-right">
-                          {product.cost_per_view !== undefined && product.cost_per_view > 0 ? (
+                          {product.cost_per_view > 0 ? (
                             <span className={`px-2 py-1 rounded text-sm font-medium ${
                               product.cost_per_view <= 10 ? 'bg-green-100 text-green-700' :
                               product.cost_per_view <= 30 ? 'bg-yellow-100 text-yellow-700' :

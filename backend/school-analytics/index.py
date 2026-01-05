@@ -156,22 +156,22 @@ def handler(event: dict, context) -> dict:
         for product in products:
             cur.execute(f"""
                 SELECT COALESCE(SUM(amount), 0)
-                FROM {schema}.product_payments
+                FROM {schema}.balance_transactions
                 WHERE school_id = {school_id}
-                  AND product_type = '{product['product_type']}'
-                  AND product_id = {product['product_id']}
+                  AND type = 'withdrawal'
+                  AND description LIKE '%{product['product_name']}%'
             """)
-            payments_row = cur.fetchone()
-            product['payments_total'] = float(payments_row[0]) if payments_row else 0
+            spent_row = cur.fetchone()
+            product['spent_total'] = float(spent_row[0]) if spent_row else 0
             
-            if product['views_total'] > 0:
-                product['conversion_rate'] = round((product['payments_total'] / product['views_total']) * 100, 2)
+            if product['spent_total'] > 0 and product['views_total'] > 0:
+                product['cost_per_view'] = round(product['spent_total'] / product['views_total'], 2)
             else:
-                product['conversion_rate'] = 0
+                product['cost_per_view'] = 0
         
         cur.execute(f"""
             SELECT COALESCE(SUM(CASE WHEN type = 'deposit' THEN amount ELSE 0 END), 0) as total_added,
-                   COALESCE(SUM(CASE WHEN type = 'withdrawal' THEN amount ELSE 0 END), 0) as total_spent
+                   COALESCE(SUM(CASE WHEN type = 'withdrawal' THEN ABS(amount) ELSE 0 END), 0) as total_spent
             FROM {schema}.balance_transactions
             WHERE school_id = {school_id}
         """)
