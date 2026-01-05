@@ -235,10 +235,8 @@ def handler(event: dict, context) -> dict:
                     'isBase64Encoded': False
                 }
             
-            # Получаем цену из базы данных
-            pricing = get_promotion_prices(cur, item_type, category)
-            
-            if promotion_type not in pricing or days not in pricing[promotion_type]:
+            # Получаем цену из фиксированного прайс-листа
+            if promotion_type not in PROMOTION_PRICES or days not in PROMOTION_PRICES[promotion_type]:
                 cur.close()
                 conn.close()
                 return {
@@ -248,7 +246,7 @@ def handler(event: dict, context) -> dict:
                     'isBase64Encoded': False
                 }
             
-            price = pricing[promotion_type][days]
+            price = PROMOTION_PRICES[promotion_type][days]
             
             # Проверяем баланс
             cur.execute("SELECT balance FROM school_balance WHERE school_id = %s", (school_id,))
