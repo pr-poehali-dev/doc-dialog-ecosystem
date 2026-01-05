@@ -191,6 +191,10 @@ def handler(event: dict, context) -> dict:
         }
         
     except Exception as e:
+        print(f"ERROR: Exception occurred: {type(e).__name__}: {str(e)}")
+        import traceback
+        print(f"ERROR: Traceback: {traceback.format_exc()}")
+        
         if 'cur' in locals():
             cur.close()
         if 'conn' in locals():
