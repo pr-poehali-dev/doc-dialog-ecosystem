@@ -36,9 +36,10 @@ def handler(event: dict, context) -> dict:
             headers = event.get('headers', {})
             token = headers.get('X-Authorization', headers.get('Authorization', '')).replace('Bearer ', '')
         
+        print(f"DEBUG: Query params keys: {list(query_params.keys())}")
+        print(f"DEBUG: Token length: {len(token) if token else 0}")
+        
         if not token:
-            print(f"DEBUG: Query params: {query_params}")
-            print(f"DEBUG: Token: '{token}'")
             cur.close()
             conn.close()
             return {
@@ -60,6 +61,8 @@ def handler(event: dict, context) -> dict:
                     'body': json.dumps({'error': 'Ошибка конфигурации сервера'}),
                     'isBase64Encoded': False
                 }
+            print(f"DEBUG: JWT_SECRET exists, length: {len(jwt_secret)}")
+            print(f"DEBUG: Token first 20 chars: {token[:20] if len(token) > 20 else token}")
             decoded = jwt.decode(token, jwt_secret, algorithms=['HS256'])
             user_id = decoded.get('user_id')
             user_role = decoded.get('role')
