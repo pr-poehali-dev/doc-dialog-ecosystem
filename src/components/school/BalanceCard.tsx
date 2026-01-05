@@ -13,7 +13,7 @@ const BALANCE_API_URL = 'https://functions.poehali.dev/8c82911e-481f-4a63-92ff-a
 interface Transaction {
   id: number;
   amount: number;
-  type: 'deposit' | 'withdrawal' | 'refund';
+  type: 'credit' | 'debit';
   description: string;
   created_at: string;
 }
@@ -33,14 +33,19 @@ export default function BalanceCard() {
 
   const loadBalance = async () => {
     try {
-      const userId = getUserId();
-      const response = await fetch(`${BALANCE_API_URL}?action=balance`, {
-        headers: { 'X-User-Id': userId }
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      
+      const response = await fetch(`${BALANCE_API_URL}?token=${encodeURIComponent(token)}&action=get`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
 
       if (response.ok) {
         const data = await response.json();
-        setBalance(data.balance);
+        setBalance(data.current_balance);
       }
     } catch (error) {
       console.error('Load balance error:', error);
@@ -49,14 +54,19 @@ export default function BalanceCard() {
 
   const loadTransactions = async () => {
     try {
-      const userId = getUserId();
-      const response = await fetch(`${BALANCE_API_URL}?action=transactions&limit=20`, {
-        headers: { 'X-User-Id': userId }
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      
+      const response = await fetch(`${BALANCE_API_URL}?token=${encodeURIComponent(token)}&action=get`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
 
       if (response.ok) {
         const data = await response.json();
-        setTransactions(data.transactions);
+        setTransactions(data.transactions || []);
       }
     } catch (error) {
       console.error('Load transactions error:', error);
@@ -73,22 +83,23 @@ export default function BalanceCard() {
 
     setLoading(true);
     try {
-      const userId = getUserId();
-      const response = await fetch(BALANCE_API_URL, {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      
+      const response = await fetch(`${BALANCE_API_URL}?token=${encodeURIComponent(token)}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'X-User-Id': userId
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+          action: 'add',
           amount,
           description: 'Пополнение баланса (тестовое)'
         })
       });
 
       if (response.ok) {
-        const data = await response.json();
-        setBalance(data.new_balance);
+        await loadBalance();
         setTopUpAmount('');
         setShowTopUp(false);
         toast({ title: 'Успешно', description: `Баланс пополнен на ${amount} ₽` });
@@ -104,18 +115,16 @@ export default function BalanceCard() {
 
   const getTransactionIcon = (type: string) => {
     switch (type) {
-      case 'deposit': return 'ArrowDownToLine';
-      case 'withdrawal': return 'ArrowUpFromLine';
-      case 'refund': return 'RotateCcw';
+      case 'credit': return 'ArrowDownToLine';
+      case 'debit': return 'ArrowUpFromLine';
       default: return 'Circle';
     }
   };
 
   const getTransactionColor = (type: string) => {
     switch (type) {
-      case 'deposit': return 'text-green-600';
-      case 'withdrawal': return 'text-red-600';
-      case 'refund': return 'text-blue-600';
+      case 'credit': return 'text-green-600';
+      case 'debit': return 'text-red-600';
       default: return 'text-gray-600';
     }
   };
