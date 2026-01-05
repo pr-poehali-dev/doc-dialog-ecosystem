@@ -68,6 +68,11 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
+        # Увеличиваем счетчик просмотров (только для approved, не для модерации)
+        if not skip_status:
+            training_id = training[0]
+            cur.execute(f"UPDATE {schema}.offline_training SET view_count = COALESCE(view_count, 0) + 1 WHERE id = {training_id}")
+        
         result = {
             'id': training[0], 'slug': training[1], 'title': training[2], 'description': training[3],
             'hero_title': training[4], 'hero_subtitle': training[5],
@@ -124,6 +129,10 @@ def handler(event: dict, context) -> dict:
                 'body': json.dumps({'error': 'Mastermind not found'}),
                 'isBase64Encoded': False
             }
+        
+        # Увеличиваем счетчик просмотров для мастермайндов
+        mastermind_id = mastermind[0]
+        cur.execute(f"UPDATE {schema}.masterminds SET view_count = COALESCE(view_count, 0) + 1 WHERE id = {mastermind_id}")
         
         result = {
             'id': mastermind[0],
