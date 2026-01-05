@@ -46,33 +46,50 @@ export default function PromoteCourseDialog({
   }, [open]);
 
   const loadData = async () => {
+    // Сначала устанавливаем фиксированные цены как fallback
+    const defaultPrices: Prices = {
+      own_category: { 1: 100, 3: 250, 7: 500 },
+      all_categories: { 1: 300, 3: 750, 7: 1500 }
+    };
+    setPrices(defaultPrices);
+    
     try {
       const userId = getUserId();
+      console.log('Loading data for user:', userId);
       
       // Загружаем баланс
-      const balanceRes = await fetch(`${BALANCE_API_URL}?action=balance`, {
-        headers: { 'X-User-Id': userId }
-      });
-      
-      if (balanceRes.ok) {
-        const balanceData = await balanceRes.json();
-        setBalance(balanceData.balance);
+      try {
+        const balanceRes = await fetch(`${BALANCE_API_URL}?action=balance`, {
+          headers: { 'X-User-Id': userId }
+        });
+        
+        if (balanceRes.ok) {
+          const balanceData = await balanceRes.json();
+          setBalance(balanceData.balance);
+          console.log('Balance loaded:', balanceData.balance);
+        }
+      } catch (balanceError) {
+        console.log('Balance load failed, using 0:', balanceError);
       }
 
       // Загружаем прайс-лист
-      const pricesRes = await fetch(`${PROMOTIONS_API_URL}?action=prices`, {
-        headers: { 'X-User-Id': userId }
-      });
-      
-      if (pricesRes.ok) {
-        const pricesData = await pricesRes.json();
-        console.log('Prices loaded:', pricesData);
-        setPrices(pricesData.prices);
-      } else {
-        console.error('Failed to load prices:', await pricesRes.text());
+      try {
+        const pricesRes = await fetch(`${PROMOTIONS_API_URL}?action=prices`, {
+          headers: { 'X-User-Id': userId }
+        });
+        
+        if (pricesRes.ok) {
+          const pricesData = await pricesRes.json();
+          console.log('Prices loaded from API:', pricesData);
+          setPrices(pricesData.prices);
+        } else {
+          console.log('Prices API failed, using defaults');
+        }
+      } catch (pricesError) {
+        console.log('Prices load failed, using defaults:', pricesError);
       }
     } catch (error) {
-      console.error('Load data error:', error);
+      console.log('Load data error, using defaults:', error);
     }
   };
 
