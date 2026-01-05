@@ -29,8 +29,7 @@ interface ProductStats {
   views_month: number;
   views_year: number;
   views_total: number;
-  payments_total: number;
-  conversion_rate: number;
+  cost_per_view?: number;
 }
 
 interface BalanceStats {
@@ -117,7 +116,7 @@ export default function SchoolAnalytics() {
     }
   };
 
-  const topProducts = [...products].sort((a, b) => b.payments_total - a.payments_total).slice(0, 5);
+  const topProducts = [...products].sort((a, b) => b.views_total - a.views_total).slice(0, 5);
 
   if (loading) {
     return (
@@ -245,8 +244,7 @@ export default function SchoolAnalytics() {
                       <th className="text-left py-3 px-4">Тип</th>
                       <th className="text-right py-3 px-4">Просмотры</th>
                       <th className="text-right py-3 px-4">Всего просмотров</th>
-                      <th className="text-right py-3 px-4">Платежи</th>
-                      <th className="text-right py-3 px-4">Конверсия</th>
+                      <th className="text-right py-3 px-4">Цена за просмотр</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -256,17 +254,18 @@ export default function SchoolAnalytics() {
                         <td className="py-3 px-4 text-gray-600">{getProductTypeLabel(product.product_type)}</td>
                         <td className="py-3 px-4 text-right">{getViewsByPeriod(product)}</td>
                         <td className="py-3 px-4 text-right text-gray-600">{product.views_total}</td>
-                        <td className="py-3 px-4 text-right font-semibold text-green-600">
-                          {formatMoney(product.payments_total)}
-                        </td>
                         <td className="py-3 px-4 text-right">
-                          <span className={`px-2 py-1 rounded text-sm font-medium ${
-                            product.conversion_rate >= 5 ? 'bg-green-100 text-green-700' :
-                            product.conversion_rate >= 2 ? 'bg-yellow-100 text-yellow-700' :
-                            'bg-gray-100 text-gray-700'
-                          }`}>
-                            {product.conversion_rate.toFixed(1)}%
-                          </span>
+                          {product.cost_per_view !== undefined && product.cost_per_view > 0 ? (
+                            <span className={`px-2 py-1 rounded text-sm font-medium ${
+                              product.cost_per_view <= 10 ? 'bg-green-100 text-green-700' :
+                              product.cost_per_view <= 30 ? 'bg-yellow-100 text-yellow-700' :
+                              'bg-red-100 text-red-700'
+                            }`}>
+                              {formatMoney(product.cost_per_view)}
+                            </span>
+                          ) : (
+                            <span className="text-gray-400">—</span>
+                          )}
                         </td>
                       </tr>
                     ))}
