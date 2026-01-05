@@ -116,7 +116,7 @@ export default function CourseCard({ course, getStatusBadge, onEdit, onDelete, o
               className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-md hover:from-amber-600 hover:to-orange-600 transition-colors font-medium"
             >
               <Icon name="TrendingUp" size={16} />
-              Поднять в топ
+              Поднять в топ (от 100 ₽)
             </button>
           )}
           <div className="flex gap-2">
