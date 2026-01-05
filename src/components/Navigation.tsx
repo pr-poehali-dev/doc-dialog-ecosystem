@@ -1,5 +1,12 @@
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import Icon from "@/components/ui/icon";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 interface NavigationProps {
   scrollToSection?: (id: string) => void;
@@ -9,14 +16,13 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
   const isLoggedIn = !!localStorage.getItem('token');
+  const [isOpen, setIsOpen] = useState(false);
   
-  // Проверяем, вошли ли мы от имени другого пользователя
   const userStr = localStorage.getItem('user');
   const isImpersonating = userStr ? JSON.parse(userStr).is_impersonating : false;
   const originalAdminEmail = userStr ? JSON.parse(userStr).original_admin_email : null;
 
   const handleReturnToAdmin = () => {
-    // Восстанавливаем данные админа
     const adminUser = localStorage.getItem('admin_backup_user');
     const adminToken = localStorage.getItem('admin_backup_token');
     
@@ -29,9 +35,29 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
       localStorage.removeItem('admin_backup_token');
     }
     
-    // Переходим в админку
     window.location.href = '/admin';
   };
+
+  const handleMenuClick = (action: () => void) => {
+    action();
+    setIsOpen(false);
+  };
+
+  const homePageMenuItems = [
+    { label: "Образование", onClick: () => scrollToSection?.('education') },
+    { label: "Инструменты", onClick: () => scrollToSection?.('tools') },
+    { label: "Сообщество", onClick: () => scrollToSection?.('community') },
+    { label: "Вакансии", onClick: () => scrollToSection?.('jobs') },
+    { label: "О платформе", onClick: () => scrollToSection?.('about') },
+  ];
+
+  const otherPagesMenuItems = [
+    { label: "Главная", path: "/" },
+    { label: "Массажисты", path: "/masseurs" },
+    { label: "Школы", path: "/schools" },
+    { label: "Курсы", path: "/courses" },
+    { label: "Салоны", path: "/salons" },
+  ];
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -40,46 +66,116 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
           <Link to="/" className="flex items-center gap-3">
             <img src="https://cdn.poehali.dev/files/Group 7 (6).png" alt="Док диалог" className="h-10" />
           </Link>
+
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             {isHomePage && scrollToSection ? (
               <>
-                <button onClick={() => scrollToSection('education')} className="text-sm font-medium hover:text-primary transition-colors">
-                  Образование
-                </button>
-                <button onClick={() => scrollToSection('tools')} className="text-sm font-medium hover:text-primary transition-colors">
-                  Инструменты
-                </button>
-                <button onClick={() => scrollToSection('community')} className="text-sm font-medium hover:text-primary transition-colors">
-                  Сообщество
-                </button>
-                <button onClick={() => scrollToSection('jobs')} className="text-sm font-medium hover:text-primary transition-colors">
-                  Вакансии
-                </button>
-                <button onClick={() => scrollToSection('about')} className="text-sm font-medium hover:text-primary transition-colors">
-                  О платформе
-                </button>
+                {homePageMenuItems.map((item, index) => (
+                  <button
+                    key={index}
+                    onClick={item.onClick}
+                    className="text-sm font-medium hover:text-primary transition-colors"
+                  >
+                    {item.label}
+                  </button>
+                ))}
               </>
             ) : (
               <>
-                <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">
-                  Главная
-                </Link>
-                <Link to="/masseurs" className="text-sm font-medium hover:text-primary transition-colors">
-                  Массажисты
-                </Link>
-                <Link to="/schools" className="text-sm font-medium hover:text-primary transition-colors">
-                  Школы
-                </Link>
-                <Link to="/courses" className="text-sm font-medium hover:text-primary transition-colors">
-                  Курсы
-                </Link>
-                <Link to="/salons" className="text-sm font-medium hover:text-primary transition-colors">
-                  Салоны
-                </Link>
+                {otherPagesMenuItems.map((item, index) => (
+                  <Link
+                    key={index}
+                    to={item.path}
+                    className="text-sm font-medium hover:text-primary transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
               </>
             )}
           </div>
-          <div className="flex items-center gap-2">
+
+          {/* Mobile Menu */}
+          <div className="md:hidden">
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="sm" className="px-2">
+                  <Icon name="Menu" size={24} />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[280px] sm:w-[320px]">
+                <div className="flex flex-col gap-6 mt-8">
+                  <div className="flex flex-col gap-4">
+                    {isHomePage && scrollToSection ? (
+                      <>
+                        {homePageMenuItems.map((item, index) => (
+                          <button
+                            key={index}
+                            onClick={() => handleMenuClick(item.onClick)}
+                            className="text-left py-3 px-4 text-base font-medium hover:bg-muted rounded-lg transition-colors"
+                          >
+                            {item.label}
+                          </button>
+                        ))}
+                      </>
+                    ) : (
+                      <>
+                        {otherPagesMenuItems.map((item, index) => (
+                          <Link
+                            key={index}
+                            to={item.path}
+                            onClick={() => setIsOpen(false)}
+                            className="text-left py-3 px-4 text-base font-medium hover:bg-muted rounded-lg transition-colors"
+                          >
+                            {item.label}
+                          </Link>
+                        ))}
+                      </>
+                    )}
+                  </div>
+                  <div className="border-t pt-6 flex flex-col gap-3">
+                    {isImpersonating && (
+                      <Button
+                        variant="destructive"
+                        onClick={() => handleMenuClick(handleReturnToAdmin)}
+                        className="w-full text-sm"
+                      >
+                        ← Вернуться в админку
+                      </Button>
+                    )}
+                    {isLoggedIn ? (
+                      <Button
+                        onClick={() => handleMenuClick(() => window.location.href = '/dashboard')}
+                        className="w-full"
+                      >
+                        Личный кабинет
+                      </Button>
+                    ) : (
+                      <>
+                        <Button
+                          variant="ghost"
+                          onClick={() => handleMenuClick(() => window.location.href = '/login')}
+                          className="w-full justify-start"
+                        >
+                          Войти
+                        </Button>
+                        <Button
+                          onClick={() => handleMenuClick(() => window.location.href = '/register')}
+                          className="w-full"
+                        >
+                          Регистрация
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+
+          {/* Desktop Buttons */}
+          <div className="hidden md:flex items-center gap-2">
             {isImpersonating && (
               <Button 
                 variant="destructive" 
