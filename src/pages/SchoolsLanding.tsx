@@ -45,8 +45,18 @@ export default function SchoolsLanding() {
       </header>
 
       {/* Hero Section */}
-      <section className="py-20 md:py-32 bg-gradient-to-b from-primary/5 to-background">
-        <div className="container mx-auto px-4">
+      <section className="relative py-20 md:py-32 animate-fade-in overflow-hidden bg-gradient-to-br from-slate-50 via-slate-100/30 to-slate-50">
+        {/* Network pattern background */}
+        <div 
+          className="absolute inset-0 opacity-[0.15]"
+          style={{
+            backgroundImage: `url('https://cdn.poehali.dev/files/17976.jpg')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        ></div>
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
               Экосистема, которая приводит школам целевых учеников
