@@ -1,6 +1,7 @@
 import json
 import os
 import psycopg2
+import jwt
 from psycopg2.extras import RealDictCursor
 
 def handler(event: dict, context) -> dict:
@@ -25,9 +26,9 @@ def handler(event: dict, context) -> dict:
         }
     
     headers = event.get('headers', {})
-    auth_header = headers.get('X-Authorization', headers.get('x-authorization', ''))
+    token = headers.get('X-Authorization', headers.get('x-authorization', '')).replace('Bearer ', '')
     
-    if not auth_header:
+    if not token:
         return {
             'statusCode': 401,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
@@ -35,7 +36,25 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
-    user_id = 1
+    try:
+        jwt_secret = os.environ['JWT_SECRET']
+        payload = jwt.decode(token, jwt_secret, algorithms=['HS256'])
+        user_id = payload.get('user_id')
+        
+        if not user_id:
+            return {
+                'statusCode': 403,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Недействительный токен'}),
+                'isBase64Encoded': False
+            }
+    except (jwt.InvalidTokenError, jwt.DecodeError, jwt.ExpiredSignatureError):
+        return {
+            'statusCode': 403,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Недействительный токен'}),
+            'isBase64Encoded': False
+        }
     
     dsn = os.environ['DATABASE_URL']
     schema = os.environ['MAIN_DB_SCHEMA']
@@ -50,7 +69,8 @@ def handler(event: dict, context) -> dict:
                     id, user_id, full_name, phone, city, 
                     experience_years, specializations, about,
                     avatar_url, education, languages, 
-                    certificates, portfolio_images, rating, reviews_count
+                    certificates, portfolio_images, rating, reviews_count,
+                    verification_badges, is_premium
                 FROM {schema}.masseur_profiles
                 WHERE user_id = {user_id}
             """)

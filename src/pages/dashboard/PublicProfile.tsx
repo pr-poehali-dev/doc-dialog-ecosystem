@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,6 +12,8 @@ import { useToast } from '@/hooks/use-toast';
 
 export default function PublicProfile() {
   const { toast } = useToast();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
   const [profileData, setProfileData] = useState({
     fullName: '',
@@ -26,6 +28,41 @@ export default function PublicProfile() {
     whatsapp: '',
     photo: '',
   });
+
+  useEffect(() => {
+    loadProfile();
+  }, []);
+
+  const loadProfile = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('https://functions.poehali.dev/bf27da5d-a5ee-4dc7-b5bb-fcc474598d37', {
+        headers: { 'X-Authorization': `Bearer ${token}` }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setProfileData({
+          fullName: data.full_name || '',
+          city: data.city || '',
+          specialization: (data.specializations || []).join(', '),
+          workFormats: data.specializations || [],
+          experience: String(data.experience_years || ''),
+          education: data.education || '',
+          about: data.about || '',
+          phone: data.phone || '',
+          telegram: '',
+          whatsapp: '',
+          photo: data.avatar_url || '',
+        });
+      }
+    } catch (error) {
+      console.error('Ошибка загрузки профиля:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const workFormatOptions = [
     'Релаксационный массаж',
@@ -46,11 +83,57 @@ export default function PublicProfile() {
     });
   };
 
-  const handleSave = () => {
-    toast({
-      title: "Профиль сохранён",
-      description: "Ваш публичный профиль успешно обновлён",
-    });
+  const handleSave = async () => {
+    if (!profileData.fullName || !profileData.phone || !profileData.city) {
+      toast({
+        title: 'Ошибка',
+        description: 'Заполните обязательные поля: имя, телефон, город',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('https://functions.poehali.dev/bf27da5d-a5ee-4dc7-b5bb-fcc474598d37', {
+        method: 'PUT',
+        headers: {
+          'X-Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          full_name: profileData.fullName,
+          phone: profileData.phone,
+          city: profileData.city,
+          experience_years: parseInt(profileData.experience) || 0,
+          about: profileData.about,
+          education: profileData.education,
+          specializations: profileData.workFormats,
+          languages: ['Русский'],
+          certificates: []
+        })
+      });
+      
+      if (response.ok) {
+        toast({
+          title: 'Профиль сохранён',
+          description: 'Ваш публичный профиль успешно обновлён',
+        });
+        await loadProfile();
+      } else {
+        throw new Error('Failed to save');
+      }
+    } catch (error) {
+      console.error('Ошибка сохранения:', error);
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось сохранить профиль',
+        variant: 'destructive'
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const copyProfileLink = () => {
@@ -261,10 +344,10 @@ export default function PublicProfile() {
             </Card>
 
             <div className="flex justify-end gap-4">
-              <Button variant="outline" onClick={() => window.history.back()}>Отмена</Button>
-              <Button onClick={handleSave}>
+              <Button variant="outline" onClick={() => window.history.back()} disabled={saving}>Отмена</Button>
+              <Button onClick={handleSave} disabled={saving || loading}>
                 <Icon name="Save" size={18} className="mr-2" />
-                Сохранить профиль
+                {saving ? 'Сохранение...' : 'Сохранить профиль'}
               </Button>
             </div>
           </div>

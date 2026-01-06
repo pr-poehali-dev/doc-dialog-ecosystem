@@ -17,6 +17,8 @@ interface Masseur {
   rating: number;
   reviews_count: number;
   about: string;
+  verification_badges?: string[];
+  is_premium?: boolean;
 }
 
 const MasseursDirectory = () => {

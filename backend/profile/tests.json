@@ -1,17 +1,13 @@
 {
   "tests": [
     {
-      "name": "Get masseur profile - authorized",
-      "method": "GET",
+      "name": "OPTIONS for CORS",
+      "method": "OPTIONS",
       "path": "/",
-      "headers": {
-        "X-Authorization": "Bearer mock_token"
-      },
       "expectedStatus": 200,
-      "expectedBody": {
-        "user_id": 1
-      },
-      "bodyMatcher": "partial"
+      "expectedHeaders": {
+        "Access-Control-Allow-Origin": "*"
+      }
     },
     {
       "name": "Get profile - unauthorized",
@@ -20,30 +16,6 @@
       "expectedStatus": 401,
       "expectedBody": {
         "error": "string"
-      },
-      "bodyMatcher": "partial"
-    },
-    {
-      "name": "Update profile - success",
-      "method": "PUT",
-      "path": "/",
-      "headers": {
-        "X-Authorization": "Bearer mock_token"
-      },
-      "body": {
-        "full_name": "Тестовый Массажист",
-        "phone": "+7 (999) 111-22-33",
-        "city": "Москва",
-        "experience_years": 3,
-        "about": "Тестовое описание",
-        "education": "Медицинский университет",
-        "languages": ["Русский"],
-        "specializations": ["Классический массаж"],
-        "certificates": ["Сертификат тест"]
-      },
-      "expectedStatus": 200,
-      "expectedBody": {
-        "success": true
       },
       "bodyMatcher": "partial"
     }

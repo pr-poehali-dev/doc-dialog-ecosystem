@@ -46,14 +46,13 @@ def handler(event: dict, context) -> dict:
                 mp.specializations,
                 mp.rating,
                 mp.reviews_count,
-                COALESCE(u.verification_badges, '[]'::jsonb) as verification_badges,
-                COALESCE(u.is_premium, false) as is_premium,
-                u.premium_until,
+                COALESCE(mp.verification_badges, '[]'::jsonb) as verification_badges,
+                COALESCE(mp.is_premium, false) as is_premium,
+                mp.premium_until,
                 mp.created_at
             FROM t_p46047379_doc_dialog_ecosystem.masseur_profiles mp
-            LEFT JOIN t_p46047379_doc_dialog_ecosystem.users u ON mp.user_id = u.id
             ORDER BY 
-                u.is_premium DESC NULLS LAST,
+                mp.is_premium DESC NULLS LAST,
                 mp.rating DESC NULLS LAST,
                 mp.created_at DESC
         """)
