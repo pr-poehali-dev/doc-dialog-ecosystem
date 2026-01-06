@@ -245,7 +245,13 @@ export default function PromoCodesList() {
               <div className="p-4 bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-300 rounded-lg">
                 <p className="text-sm text-muted-foreground mb-2">Промокод</p>
                 <div className="flex items-center gap-2">
-                  <code className="text-2xl font-bold">{selectedPromo.promo_code}</code>
+                  <input 
+                    type="text" 
+                    value={selectedPromo.promo_code || ''} 
+                    readOnly
+                    onClick={(e) => e.currentTarget.select()}
+                    className="text-2xl font-bold bg-transparent border-none outline-none flex-1 font-mono"
+                  />
                   <Button size="sm" variant="ghost" onClick={copyPromoCode}>
                     <Icon name="Copy" size={16} />
                   </Button>
