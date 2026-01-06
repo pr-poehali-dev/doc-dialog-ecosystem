@@ -94,13 +94,13 @@ def get_db_connection():
     db_url = os.environ['DATABASE_URL']
     schema = os.environ.get('MAIN_DB_SCHEMA', 'public')
     
+    conn = psycopg2.connect(db_url)
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    
     if schema and schema != 'public':
         escaped_schema = schema.replace('"', '""')
-        conn = psycopg2.connect(db_url, options=f'-c search_path="{escaped_schema}"')
-    else:
-        conn = psycopg2.connect(db_url)
+        cursor.execute(f'SET search_path TO "{escaped_schema}", public')
     
-    cursor = conn.cursor(cursor_factory=RealDictCursor)
     return conn, cursor
 
 
@@ -116,6 +116,10 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
     conn, cursor = get_db_connection()
     
     try:
+        print(f"DEBUG: Getting chats for user_id={user_id}, role={user_role}")
+        cursor.execute("SHOW search_path")
+        search_path = cursor.fetchone()
+        print(f"DEBUG: Current search_path = {search_path}")
         if user_role == 'client':
             cursor.execute("""
                 WITH chat_users AS (
