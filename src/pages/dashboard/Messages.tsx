@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
@@ -51,7 +51,7 @@ export default function Messages() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<number>(0);
-  const [hasLoadedMasseur, setHasLoadedMasseur] = useState(false);
+  const loadedMasseurRef = useRef<number | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -72,26 +72,36 @@ export default function Messages() {
     const masseurId = searchParams.get('masseur');
     const isBooking = searchParams.get('booking') === 'true';
     
-    if (masseurId && chats.length > 0 && !hasLoadedMasseur) {
-      const parsedMasseurId = parseInt(masseurId);
-      const existingChat = chats.find(c => c.other_user_id === parsedMasseurId);
-      
-      if (existingChat) {
-        setSelectedChat(existingChat);
-        fetchMessages(existingChat.other_user_id);
-        
-        if (isBooking && messageText === '') {
-          setMessageText('Здравствуйте! Хочу записаться на сеанс массажа.');
-        }
-        setHasLoadedMasseur(true);
-      } else {
-        loadMasseurAndCreateChat(parsedMasseurId, isBooking);
-        setHasLoadedMasseur(true);
-      }
-    } else if (!masseurId) {
-      setHasLoadedMasseur(false);
+    if (!masseurId) {
+      loadedMasseurRef.current = null;
+      return;
     }
-  }, [chats, searchParams, hasLoadedMasseur]);
+    
+    const parsedMasseurId = parseInt(masseurId);
+    
+    if (loadedMasseurRef.current === parsedMasseurId) {
+      return;
+    }
+    
+    if (chats.length === 0 && !loading) {
+      return;
+    }
+    
+    const existingChat = chats.find(c => c.other_user_id === parsedMasseurId);
+    
+    if (existingChat) {
+      setSelectedChat(existingChat);
+      fetchMessages(existingChat.other_user_id);
+      
+      if (isBooking && messageText === '') {
+        setMessageText('Здравствуйте! Хочу записаться на сеанс массажа.');
+      }
+      loadedMasseurRef.current = parsedMasseurId;
+    } else if (chats.length >= 0 && !loading) {
+      loadMasseurAndCreateChat(parsedMasseurId, isBooking);
+      loadedMasseurRef.current = parsedMasseurId;
+    }
+  }, [chats, searchParams, loading]);
 
   const loadMasseurAndCreateChat = async (masseurId: number, isBooking: boolean = false) => {
     try {
