@@ -62,7 +62,6 @@ const defaultPageData = {
   template: 'minimal',
   showPhone: true,
   showTelegram: true,
-  showWhatsapp: true,
   colorTheme: 'gradient',
 };
 
@@ -743,13 +742,6 @@ export default function PageBuilder() {
                     <Switch
                       checked={pageData.showTelegram}
                       onCheckedChange={(checked) => setPageData({ ...pageData, showTelegram: checked })}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <Label>Показывать WhatsApp</Label>
-                    <Switch
-                      checked={pageData.showWhatsapp}
-                      onCheckedChange={(checked) => setPageData({ ...pageData, showWhatsapp: checked })}
                     />
                   </div>
                 </CardContent>

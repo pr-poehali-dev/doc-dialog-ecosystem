@@ -53,7 +53,6 @@ interface PageData {
   template: string;
   showPhone: boolean;
   showTelegram: boolean;
-  showWhatsapp: boolean;
   colorTheme: string;
 }
 
@@ -62,6 +61,7 @@ export default function PagePreview() {
   const [selectedPost, setSelectedPost] = useState<any>(null);
   const [isPostDialogOpen, setIsPostDialogOpen] = useState(false);
   const [orderForm, setOrderForm] = useState<{ [key: number]: { name: string; email: string; phone: string; agreed: boolean } }>({});
+  const [userProfile, setUserProfile] = useState<any>(null);
 
   useEffect(() => {
     const data = localStorage.getItem('pageBuilderData');
@@ -72,6 +72,24 @@ export default function PagePreview() {
         console.error('Failed to parse page data', e);
       }
     }
+
+    // Загружаем профиль пользователя
+    const loadUserProfile = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('https://functions.poehali.dev/0fb6eb3b-ce10-437e-a4a7-fec98d24a9a2', {
+          headers: { 'X-Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+          const profile = await response.json();
+          setUserProfile(profile);
+        }
+      } catch (error) {
+        console.error('Failed to load profile', error);
+      }
+    };
+
+    loadUserProfile();
   }, []);
 
   if (!pageData) {
@@ -435,42 +453,38 @@ export default function PagePreview() {
                 Выберите удобный способ связи и запишитесь на сеанс
               </p>
             </div>
-            <div className="grid md:grid-cols-3 gap-4">
-              {pageData.showPhone && (
-                <div className="group p-6 rounded-2xl bg-white border-2 border-gray-100 hover:border-blue-200 hover:shadow-lg transition-all text-center">
+            <div className={`grid ${pageData.showPhone && pageData.showTelegram ? 'md:grid-cols-2' : 'md:grid-cols-1'} gap-4 max-w-2xl mx-auto`}>
+              {pageData.showPhone && userProfile?.phone && (
+                <a 
+                  href={`tel:${userProfile.phone}`}
+                  className="group p-6 rounded-2xl bg-white border-2 border-gray-100 hover:border-blue-200 hover:shadow-lg transition-all text-center block no-underline"
+                >
                   <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${gradientClass} flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
                     <Icon name="Phone" size={28} className="text-white" />
                   </div>
-                  <p className="font-semibold text-lg mb-2">Телефон</p>
-                  <p className="text-gray-600 text-sm mb-4">Позвоните для записи</p>
-                  <Button className={`w-full bg-gradient-to-r ${gradientClass}`}>
+                  <p className="font-semibold text-lg mb-2 text-gray-900">Телефон</p>
+                  <p className="text-gray-600 text-sm mb-4">{userProfile.phone}</p>
+                  <div className={`w-full py-2 px-4 rounded-lg bg-gradient-to-r ${gradientClass} text-white font-medium`}>
                     Позвонить
-                  </Button>
-                </div>
+                  </div>
+                </a>
               )}
-              {pageData.showTelegram && (
-                <div className="group p-6 rounded-2xl bg-white border-2 border-gray-100 hover:border-blue-200 hover:shadow-lg transition-all text-center">
+              {pageData.showTelegram && userProfile?.telegram && (
+                <a 
+                  href={`https://t.me/${userProfile.telegram.replace('@', '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group p-6 rounded-2xl bg-white border-2 border-gray-100 hover:border-blue-200 hover:shadow-lg transition-all text-center block no-underline"
+                >
                   <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${gradientClass} flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
                     <Icon name="Send" size={28} className="text-white" />
                   </div>
-                  <p className="font-semibold text-lg mb-2">Telegram</p>
-                  <p className="text-gray-600 text-sm mb-4">Напишите в мессенджер</p>
-                  <Button className={`w-full bg-gradient-to-r ${gradientClass}`}>
+                  <p className="font-semibold text-lg mb-2 text-gray-900">Telegram</p>
+                  <p className="text-gray-600 text-sm mb-4">{userProfile.telegram}</p>
+                  <div className={`w-full py-2 px-4 rounded-lg bg-gradient-to-r ${gradientClass} text-white font-medium`}>
                     Написать
-                  </Button>
-                </div>
-              )}
-              {pageData.showWhatsapp && (
-                <div className="group p-6 rounded-2xl bg-white border-2 border-gray-100 hover:border-blue-200 hover:shadow-lg transition-all text-center">
-                  <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${gradientClass} flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
-                    <Icon name="MessageCircle" size={28} className="text-white" />
                   </div>
-                  <p className="font-semibold text-lg mb-2">WhatsApp</p>
-                  <p className="text-gray-600 text-sm mb-4">Свяжитесь через WhatsApp</p>
-                  <Button className={`w-full bg-gradient-to-r ${gradientClass}`}>
-                    Связаться
-                  </Button>
-                </div>
+                </a>
               )}
             </div>
           </div>
