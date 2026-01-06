@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,6 +19,7 @@ import {
 
 export default function PageBuilder() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [pageData, setPageData] = useState({
     heroTitle: 'Оздоровительный массаж',
     heroSubtitle: 'Профессиональный специалист по телу с опытом 5+ лет',
@@ -101,7 +103,7 @@ export default function PageBuilder() {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center gap-4 mb-6">
-            <Button variant="ghost" onClick={() => window.history.back()}>
+            <Button variant="ghost" onClick={() => navigate('/dashboard')}>
               <Icon name="ArrowLeft" size={20} />
             </Button>
             <div className="flex-1">
