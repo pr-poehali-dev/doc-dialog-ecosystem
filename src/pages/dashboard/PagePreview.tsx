@@ -58,37 +58,48 @@ export default function PagePreview() {
   const [userProfile, setUserProfile] = useState<any>(null);
 
   useEffect(() => {
-    const data = localStorage.getItem('pageBuilderData');
-    if (data) {
-      try {
-        setPageData(JSON.parse(data));
-      } catch (e) {
-        console.error('Failed to parse page data', e);
-      }
-    }
-
-    // Загружаем профиль пользователя
-    const loadUserProfile = async () => {
+    const loadData = async () => {
       try {
         const token = localStorage.getItem('token');
-        console.log('Loading user profile with token:', token ? 'exists' : 'missing');
-        const response = await fetch('https://functions.poehali.dev/bf27da5d-a5ee-4dc7-b5bb-fcc474598d37', {
+        
+        // Загружаем данные лендинга
+        const landingResponse = await fetch('https://functions.poehali.dev/ea735e68-a4b3-4d19-bb7a-4f720bd82568', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (landingResponse.ok) {
+          const data = await landingResponse.json();
+          setPageData(data);
+        } else {
+          const localData = localStorage.getItem('pageBuilderData');
+          if (localData) {
+            setPageData(JSON.parse(localData));
+          }
+        }
+        
+        // Загружаем профиль пользователя
+        const profileResponse = await fetch('https://functions.poehali.dev/bf27da5d-a5ee-4dc7-b5bb-fcc474598d37', {
           headers: { 'X-Authorization': `Bearer ${token}` }
         });
-        console.log('Profile response status:', response.status);
-        if (response.ok) {
-          const profile = await response.json();
-          console.log('Profile loaded:', profile);
+        
+        if (profileResponse.ok) {
+          const profile = await profileResponse.json();
           setUserProfile(profile);
-        } else {
-          console.error('Failed to load profile, status:', response.status);
         }
       } catch (error) {
-        console.error('Failed to load profile', error);
+        console.error('Failed to load data', error);
+        const localData = localStorage.getItem('pageBuilderData');
+        if (localData) {
+          try {
+            setPageData(JSON.parse(localData));
+          } catch (e) {
+            console.error('Failed to parse local data', e);
+          }
+        }
       }
     };
 
-    loadUserProfile();
+    loadData();
   }, []);
 
   if (!pageData) {

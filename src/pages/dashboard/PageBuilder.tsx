@@ -73,15 +73,40 @@ export default function PageBuilder() {
   const [isPublished, setIsPublished] = useState(false);
 
   useEffect(() => {
-    const savedData = localStorage.getItem('pageBuilderData');
-    if (savedData) {
+    const loadPageData = async () => {
       try {
-        const parsed = JSON.parse(savedData);
-        setPageData({ ...defaultPageData, ...parsed });
+        const token = localStorage.getItem('token');
+        const response = await fetch('https://functions.poehali.dev/ea735e68-a4b3-4d19-bb7a-4f720bd82568', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setPageData({ ...defaultPageData, ...data });
+        } else {
+          const savedData = localStorage.getItem('pageBuilderData');
+          if (savedData) {
+            const parsed = JSON.parse(savedData);
+            setPageData({ ...defaultPageData, ...parsed });
+          }
+        }
       } catch (e) {
         console.error('Failed to load saved data', e);
+        const savedData = localStorage.getItem('pageBuilderData');
+        if (savedData) {
+          try {
+            const parsed = JSON.parse(savedData);
+            setPageData({ ...defaultPageData, ...parsed });
+          } catch (err) {
+            console.error('Failed to parse local data', err);
+          }
+        }
       }
-    }
+    };
+    
+    loadPageData();
   }, []);
   const [uploadingHero, setUploadingHero] = useState(false);
   const [uploadingProfile, setUploadingProfile] = useState(false);
@@ -156,21 +181,65 @@ export default function PageBuilder() {
     });
   };
 
-  const handleSave = () => {
-    localStorage.setItem('pageBuilderData', JSON.stringify(pageData));
-    toast({
-      title: "Черновик сохранен",
-      description: "Ваши изменения сохранены",
-    });
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('https://functions.poehali.dev/ea735e68-a4b3-4d19-bb7a-4f720bd82568', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(pageData)
+      });
+      
+      if (response.ok) {
+        localStorage.setItem('pageBuilderData', JSON.stringify(pageData));
+        toast({
+          title: "Черновик сохранен",
+          description: "Ваши изменения сохранены на всех устройствах",
+        });
+      } else {
+        throw new Error('Failed to save');
+      }
+    } catch (error) {
+      localStorage.setItem('pageBuilderData', JSON.stringify(pageData));
+      toast({
+        title: "Черновик сохранен локально",
+        description: "Изменения будут синхронизированы при подключении",
+      });
+    }
   };
 
-  const handlePublish = () => {
-    localStorage.setItem('pageBuilderData', JSON.stringify(pageData));
-    setIsPublished(true);
-    toast({
-      title: "Страница опубликована!",
-      description: "Теперь клиенты могут увидеть ваш лендинг",
-    });
+  const handlePublish = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('https://functions.poehali.dev/ea735e68-a4b3-4d19-bb7a-4f720bd82568', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(pageData)
+      });
+      
+      if (response.ok) {
+        localStorage.setItem('pageBuilderData', JSON.stringify(pageData));
+        setIsPublished(true);
+        toast({
+          title: "Страница опубликована!",
+          description: "Теперь клиенты могут увидеть ваш лендинг на всех устройствах",
+        });
+      } else {
+        throw new Error('Failed to publish');
+      }
+    } catch (error) {
+      toast({
+        title: "Ошибка публикации",
+        description: "Проверьте подключение к интернету",
+        variant: "destructive"
+      });
+    }
   };
 
   const copyPageLink = () => {
