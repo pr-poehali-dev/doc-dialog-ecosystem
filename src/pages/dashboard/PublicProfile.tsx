@@ -165,33 +165,6 @@ export default function PublicProfile() {
           <div className="grid gap-6">
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Видимость профиля</CardTitle>
-                    <CardDescription>Показывать профиль в каталоге специалистов</CardDescription>
-                  </div>
-                  <Switch checked={isPublished} onCheckedChange={setIsPublished} />
-                </div>
-              </CardHeader>
-              {isPublished && (
-                <CardContent>
-                  <div className="flex items-center gap-4 p-4 bg-primary/5 rounded-lg">
-                    <Icon name="Globe" className="text-primary" size={24} />
-                    <div className="flex-1">
-                      <p className="font-medium">Ваша страница опубликована</p>
-                      <p className="text-sm text-muted-foreground">Клиенты могут найти вас в каталоге</p>
-                    </div>
-                    <Button onClick={copyProfileLink} variant="outline" size="sm">
-                      <Icon name="Copy" size={16} className="mr-2" />
-                      Копировать ссылку
-                    </Button>
-                  </div>
-                </CardContent>
-              )}
-            </Card>
-
-            <Card>
-              <CardHeader>
                 <CardTitle>Основная информация</CardTitle>
                 <CardDescription>Заполните данные о себе как о специалисте</CardDescription>
               </CardHeader>
