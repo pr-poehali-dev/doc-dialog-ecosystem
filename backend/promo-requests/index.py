@@ -35,8 +35,10 @@ def handler(event: dict, context) -> dict:
     # Проверка авторизации
     headers = event.get('headers', {})
     token = headers.get('x-authorization', headers.get('X-Authorization', '')).replace('Bearer ', '')
+    print(f"[DEBUG] Token before unquote: {token[:50] if token else 'NO TOKEN'}...")
     
     if not token:
+        print("[DEBUG] No token found")
         cur.close()
         conn.close()
         return {
@@ -50,16 +52,21 @@ def handler(event: dict, context) -> dict:
     try:
         # URL decode token if needed
         token = unquote(token)
+        print(f"[DEBUG] Token after unquote: {token[:50]}...")
         
         if token.endswith('.impersonated'):
+            print("[DEBUG] Stripping .impersonated")
             token = token[:-len('.impersonated')]
+            print(f"[DEBUG] Token after strip: {token[:50]}...")
         
         secret_key = os.environ.get('JWT_SECRET', 'default_secret_key')
         payload = jwt.decode(token, secret_key, algorithms=['HS256'], options={'verify_signature': False})
         user_id = payload.get('user_id')
         user_email = payload.get('email')
         user_role = payload.get('role', 'user')
+        print(f"[DEBUG] Decoded: user_id={user_id}, role={user_role}")
     except Exception as e:
+        print(f"[DEBUG] Token decode error: {type(e).__name__}: {str(e)}")
         cur.close()
         conn.close()
         return {
