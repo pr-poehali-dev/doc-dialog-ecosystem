@@ -273,7 +273,7 @@ export default function SchoolBalance() {
                 <CardContent>
                   <div className="flex items-center">
                     <Icon name="TrendingDown" className="text-red-600 mr-3" size={32} />
-                    <div className="text-3xl font-bold text-red-600">{formatMoney(balanceData.total_spent)}</div>
+                    <div className="text-3xl font-bold text-red-600">{formatMoney(Math.abs(balanceData.total_spent))}</div>
                   </div>
                 </CardContent>
               </Card>
