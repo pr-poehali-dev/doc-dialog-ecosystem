@@ -159,14 +159,27 @@ const MasseursDirectory = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredMasseurs.map((masseur) => (
             <Link key={masseur.id} to={`/masseurs/${masseur.id}`}>
-              <Card className="hover:shadow-lg transition-all cursor-pointer h-full">
+              <Card className={`hover:shadow-lg transition-all cursor-pointer h-full relative overflow-visible ${masseur.is_premium ? 'ring-2 ring-amber-400 shadow-xl shadow-amber-200/50' : ''}`}>
+                {masseur.is_premium && (
+                  <div className="absolute -top-3 -right-3 z-10">
+                    <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
+                      <Icon name="Crown" size={14} />
+                      PREMIUM
+                    </div>
+                  </div>
+                )}
                 <CardHeader>
                   <div className="flex items-start gap-4">
                     <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
                       {masseur.full_name.charAt(0)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-lg mb-1 truncate">{masseur.full_name}</h3>
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-semibold text-lg truncate">{masseur.full_name}</h3>
+                        {masseur.verification_badges && masseur.verification_badges.includes('identity') && (
+                          <Icon name="BadgeCheck" size={16} className="text-blue-500 flex-shrink-0" title="Личность подтверждена" />
+                        )}
+                      </div>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                         <Icon name="MapPin" size={14} />
                         <span>{masseur.city}</span>
@@ -182,6 +195,29 @@ const MasseursDirectory = () => {
                       </div>
                     </div>
                   </div>
+                  
+                  {masseur.verification_badges && masseur.verification_badges.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t">
+                      {masseur.verification_badges.includes('education') && (
+                        <Badge variant="outline" className="text-xs flex items-center gap-1 bg-green-50 border-green-200 text-green-700">
+                          <Icon name="GraduationCap" size={12} />
+                          Образование
+                        </Badge>
+                      )}
+                      {masseur.verification_badges.includes('experience') && (
+                        <Badge variant="outline" className="text-xs flex items-center gap-1 bg-blue-50 border-blue-200 text-blue-700">
+                          <Icon name="Award" size={12} />
+                          Опыт
+                        </Badge>
+                      )}
+                      {masseur.verification_badges.includes('insurance') && (
+                        <Badge variant="outline" className="text-xs flex items-center gap-1 bg-purple-50 border-purple-200 text-purple-700">
+                          <Icon name="Shield" size={12} />
+                          Страховка
+                        </Badge>
+                      )}
+                    </div>
+                  )}
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-sm text-muted-foreground line-clamp-2">{masseur.about}</p>

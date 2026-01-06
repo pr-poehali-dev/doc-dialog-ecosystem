@@ -123,13 +123,13 @@ export default function Dashboard() {
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Icon name="Award" className="text-primary" size={24} />
+                    <Icon name="BadgeCheck" className="text-primary" size={24} />
                   </div>
-                  <h3 className="text-xl font-semibold">Бейджи доверия</h3>
+                  <h3 className="text-xl font-semibold">Верификация</h3>
                 </div>
-                <p className="text-gray-600 mb-4">Система верификации и репутация</p>
-                <Link to="/dashboard/badges">
-                  <Button className="w-full" variant="outline">Мои бейджи</Button>
+                <p className="text-gray-600 mb-4">Подтвердите квалификацию и получите бейджи</p>
+                <Link to="/dashboard/verification">
+                  <Button className="w-full">Пройти верификацию</Button>
                 </Link>
               </div>
 
