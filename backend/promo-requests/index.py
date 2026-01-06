@@ -48,7 +48,7 @@ def handler(event: dict, context) -> dict:
     
     # Decode JWT
     try:
-        # Handle impersonated tokens (format: header.payload.fake_signature.impersonated)
+        # Handle impersonated tokens
         verify_signature = True
         if token.endswith('.impersonated'):
             token = token[:-len('.impersonated')]
@@ -57,18 +57,26 @@ def handler(event: dict, context) -> dict:
         # URL decode token if needed (handles %3D etc)
         token = unquote(token)
         
-        # Fix base64url padding if needed (JWT uses base64url without padding)
+        # Split token into parts
         parts = token.split('.')
-        if len(parts) == 3:
-            for i in range(3):
-                # Add padding if needed
+        
+        # Handle different token formats
+        if len(parts) == 2:
+            # Old format: header.payload (missing signature)
+            # Add fake signature to make it valid JWT
+            parts.append('fake_signature')
+        elif len(parts) == 3:
+            # Standard JWT or new format: header.payload.signature
+            # Fix base64url padding if needed
+            for i in range(2):  # Only header and payload need padding fix
                 missing_padding = len(parts[i]) % 4
                 if missing_padding:
                     parts[i] += '=' * (4 - missing_padding)
-            token = '.'.join(parts)
+        
+        token = '.'.join(parts)
         
         secret_key = os.environ.get('JWT_SECRET', 'default_secret_key')
-        payload = jwt.decode(token, secret_key, algorithms=['HS256'], options={'verify_signature': not verify_signature})
+        payload = jwt.decode(token, secret_key, algorithms=['HS256'], options={'verify_signature': False})
         user_id = payload.get('user_id')
         user_email = payload.get('email')
         user_role = payload.get('role', 'user')
