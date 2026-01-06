@@ -370,24 +370,45 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
-        # Устанавливаем opened_at и expires_at (1 час с момента открытия)
+        # Проверяем статус промокода: можно открыть если он не был открыт ИЛИ истёк
         cur.execute(f"""
             UPDATE {schema}.promo_requests
             SET opened_at = NOW(),
                 expires_at = NOW() + INTERVAL '1 hour'
-            WHERE id = {request_id} AND masseur_id = {user_id} AND opened_at IS NULL
+            WHERE id = {request_id} 
+              AND masseur_id = {user_id} 
+              AND status = 'approved'
+              AND (opened_at IS NULL OR expires_at < NOW())
             RETURNING id, promo_code, purchase_url, expires_at
         """)
         
         result = cur.fetchone()
         
         if not result:
+            # Проверяем, может промокод ещё активен
+            cur.execute(f"""
+                SELECT expires_at FROM {schema}.promo_requests
+                WHERE id = {request_id} AND masseur_id = {user_id}
+            """)
+            check = cur.fetchone()
+            
+            if check and check[0] and check[0] > datetime.now():
+                time_left = (check[0] - datetime.now()).seconds // 60
+                cur.close()
+                conn.close()
+                return {
+                    'statusCode': 400,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': f'Промокод уже активен. Осталось {time_left} минут'}),
+                    'isBase64Encoded': False
+                }
+            
             cur.close()
             conn.close()
             return {
-                'statusCode': 400,
+                'statusCode': 404,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Промокод уже был открыт или не найден'}),
+                'body': json.dumps({'error': 'Промокод не найден или недоступен'}),
                 'isBase64Encoded': False
             }
         
