@@ -33,34 +33,40 @@ def handler(event: dict, context) -> dict:
     
     # Проверка авторизации
     headers = event.get('headers', {})
+    print(f"[DEBUG] Headers keys: {list(headers.keys())}")
     token = headers.get('x-authorization', headers.get('X-Authorization', '')).replace('Bearer ', '')
+    print(f"[DEBUG] Token extracted: {token[:30] if token else 'NO TOKEN'}...")
     
     if not token:
+        print("[DEBUG] No token found, returning 401")
         cur.close()
         conn.close()
         return {
             'statusCode': 401,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'error': 'Unauthorized'}),
+            'body': json.dumps({'error': 'Unauthorized - no token'}),
             'isBase64Encoded': False
         }
     
     # Decode JWT
     try:
         if token.endswith('.impersonated'):
+            print("[DEBUG] Stripping .impersonated suffix")
             token = token[:-len('.impersonated')]
         secret_key = os.environ.get('JWT_SECRET', 'default_secret_key')
         payload = jwt.decode(token, secret_key, algorithms=['HS256'], options={'verify_signature': False})
         user_id = payload.get('user_id')
         user_email = payload.get('email')
         user_role = payload.get('role', 'user')
-    except:
+        print(f"[DEBUG] Token decoded: user_id={user_id}, email={user_email}, role={user_role}")
+    except Exception as e:
+        print(f"[DEBUG] Token decode failed: {str(e)}")
         cur.close()
         conn.close()
         return {
             'statusCode': 401,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'error': 'Invalid token'}),
+            'body': json.dumps({'error': f'Invalid token: {str(e)}'}),
             'isBase64Encoded': False
         }
     
