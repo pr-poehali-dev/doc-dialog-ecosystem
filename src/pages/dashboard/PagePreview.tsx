@@ -2,6 +2,12 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 interface PageData {
   heroTitle: string;
@@ -46,6 +52,8 @@ interface PageData {
 
 export default function PagePreview() {
   const [pageData, setPageData] = useState<PageData | null>(null);
+  const [selectedPost, setSelectedPost] = useState<any>(null);
+  const [isPostDialogOpen, setIsPostDialogOpen] = useState(false);
 
   useEffect(() => {
     const data = localStorage.getItem('pageBuilderData');
@@ -252,7 +260,15 @@ export default function PagePreview() {
                     <p className="text-gray-600 text-sm mb-4 leading-relaxed line-clamp-3">{post.content}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-gray-500">{post.date}</span>
-                      <Button size="sm" variant="ghost" className={`text-${gradientClass.includes('blue') ? 'blue' : gradientClass.includes('purple') ? 'purple' : 'indigo'}-600`}>
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        className="text-blue-600 hover:text-blue-700"
+                        onClick={() => {
+                          setSelectedPost(post);
+                          setIsPostDialogOpen(true);
+                        }}
+                      >
                         Читать далее
                         <Icon name="ArrowRight" size={14} className="ml-1" />
                       </Button>
@@ -366,6 +382,49 @@ export default function PagePreview() {
           <p className="text-gray-500 text-sm">© 2024 Все права защищены</p>
         </div>
       </footer>
+
+      {/* Blog Post Dialog */}
+      <Dialog open={isPostDialogOpen} onOpenChange={setIsPostDialogOpen}>
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold pr-8">
+              {selectedPost?.title}
+            </DialogTitle>
+          </DialogHeader>
+          
+          {selectedPost && (
+            <div className="space-y-6">
+              {selectedPost.image && (
+                <img 
+                  src={selectedPost.image} 
+                  alt={selectedPost.title} 
+                  className="w-full h-64 object-cover rounded-lg"
+                />
+              )}
+              
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <Icon name="Calendar" size={16} />
+                <span>{selectedPost.date}</span>
+              </div>
+
+              <div className="prose prose-gray max-w-none">
+                <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                  {selectedPost.content}
+                </p>
+              </div>
+
+              <div className="pt-6 border-t">
+                <Button 
+                  className={`w-full bg-gradient-to-r ${gradientClass}`}
+                  onClick={() => setIsPostDialogOpen(false)}
+                >
+                  Закрыть
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
