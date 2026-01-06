@@ -31,6 +31,11 @@ export default function ReviewsSection({ entityType, entityId, onRatingUpdate }:
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showAll, setShowAll] = useState(false);
+  
+  const INITIAL_DISPLAY = 4;
+  const PER_PAGE = 10;
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -214,20 +219,64 @@ export default function ReviewsSection({ entityType, entityId, onRatingUpdate }:
         </Card>
       ) : (
         <div className="space-y-4">
-          {reviews.map((review) => (
-            <Card key={review.id}>
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <p className="font-semibold">{review.user_name}</p>
-                    <p className="text-sm text-muted-foreground">{formatDate(review.created_at)}</p>
+          {(() => {
+            const displayReviews = !showAll 
+              ? reviews.slice(0, INITIAL_DISPLAY)
+              : reviews.slice(0, currentPage * PER_PAGE);
+            
+            return (
+              <>
+                {displayReviews.map((review) => (
+                  <Card key={review.id}>
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <p className="font-semibold">{review.user_name}</p>
+                          <p className="text-sm text-muted-foreground">{formatDate(review.created_at)}</p>
+                        </div>
+                        {renderStars(review.rating)}
+                      </div>
+                      <p className="text-muted-foreground whitespace-pre-line">{review.comment}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+                
+                {!showAll && reviews.length > INITIAL_DISPLAY && (
+                  <div className="flex justify-center pt-2">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setShowAll(true)}
+                      className="gap-2"
+                    >
+                      Показать все отзывы ({reviews.length})
+                      <Icon name="ChevronDown" size={18} />
+                    </Button>
                   </div>
-                  {renderStars(review.rating)}
-                </div>
-                <p className="text-muted-foreground whitespace-pre-line">{review.comment}</p>
-              </CardContent>
-            </Card>
-          ))}
+                )}
+                
+                {showAll && reviews.length > currentPage * PER_PAGE && (
+                  <div className="flex justify-center pt-2">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setCurrentPage(prev => prev + 1)}
+                      className="gap-2"
+                    >
+                      Загрузить ещё
+                      <Icon name="ChevronDown" size={18} />
+                    </Button>
+                  </div>
+                )}
+                
+                {showAll && currentPage > 1 && (
+                  <div className="flex justify-center pt-2">
+                    <p className="text-sm text-muted-foreground">
+                      Показано {Math.min(currentPage * PER_PAGE, reviews.length)} из {reviews.length} отзывов
+                    </p>
+                  </div>
+                )}
+              </>
+            );
+          })()}
         </div>
       )}
     </div>
