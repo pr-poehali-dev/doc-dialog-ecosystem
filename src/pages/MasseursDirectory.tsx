@@ -132,7 +132,7 @@ const MasseursDirectory = () => {
                   <div className="absolute -top-3 -right-3 z-10">
                     <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
                       <Icon name="Crown" size={14} />
-                      PREMIUM
+                      Премиум
                     </div>
                   </div>
                 )}
