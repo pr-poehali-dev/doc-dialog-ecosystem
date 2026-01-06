@@ -249,6 +249,53 @@ export default function Messages() {
     }
   };
 
+  const handleDeleteChat = async () => {
+    if (!selectedChat) return;
+
+    if (!confirm(`Удалить переписку с ${selectedChat.name}? Это действие нельзя отменить.`)) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      
+      const response = await fetch(`${API_URL}?action=delete-chat`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          other_user_id: selectedChat.other_user_id,
+        }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: 'Переписка удалена',
+          description: 'Все сообщения с этим пользователем были удалены',
+        });
+        
+        setSelectedChat(null);
+        setMessages([]);
+        await fetchChats();
+      } else {
+        toast({
+          title: 'Ошибка',
+          description: 'Не удалось удалить переписку',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting chat:', error);
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось удалить переписку',
+        variant: 'destructive',
+      });
+    }
+  };
+
   const filteredChats = chats.filter(chat =>
     chat.name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -344,6 +391,7 @@ export default function Messages() {
               onMessageTextChange={setMessageText}
               onSendMessage={handleSendMessage}
               onBookingResponse={handleBookingResponse}
+              onDeleteChat={handleDeleteChat}
             />
           </div>
         </div>

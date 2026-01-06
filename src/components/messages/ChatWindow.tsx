@@ -42,6 +42,7 @@ interface ChatWindowProps {
   onMessageTextChange: (text: string) => void;
   onSendMessage: () => void;
   onBookingResponse: (messageId: number, action: 'accept' | 'decline') => void;
+  onDeleteChat: () => void;
 }
 
 const getRoleBadge = (role: string) => {
@@ -74,7 +75,8 @@ export default function ChatWindow({
   currentUserId,
   onMessageTextChange,
   onSendMessage,
-  onBookingResponse
+  onBookingResponse,
+  onDeleteChat
 }: ChatWindowProps) {
   if (!selectedChat) {
     return (
@@ -114,6 +116,14 @@ export default function ChatWindow({
                 {getRoleBadge(selectedChat.role)}
               </div>
             </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onDeleteChat}
+              className="text-destructive hover:text-destructive hover:bg-destructive/10"
+            >
+              <Icon name="Trash2" size={18} />
+            </Button>
           </div>
         </div>
 

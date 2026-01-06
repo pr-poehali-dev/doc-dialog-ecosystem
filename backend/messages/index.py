@@ -48,6 +48,8 @@ def handler(event: dict, context) -> dict:
             
             if action == 'send-message':
                 return send_message(user_data['user_id'], body)
+            elif action == 'delete-chat':
+                return delete_chat(user_data['user_id'], body)
         
         return error_response('Действие не поддерживается', 405)
     
@@ -276,6 +278,43 @@ def send_message(user_id: int, body: dict) -> dict:
         traceback.print_exc()
         conn.rollback()
         return error_response(f"Ошибка отправки сообщения: {str(e)}", 500)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def delete_chat(user_id: int, body: dict) -> dict:
+    '''Удаление переписки с пользователем'''
+    conn, cursor = get_db_connection()
+    
+    try:
+        other_user_id = body.get('other_user_id')
+        
+        if not other_user_id:
+            return error_response('Не указан other_user_id', 400)
+        
+        query = """
+            DELETE FROM t_p46047379_doc_dialog_ecosystem.messages
+            WHERE (sender_id = %s AND receiver_id = %s)
+               OR (sender_id = %s AND receiver_id = %s)
+        """
+        
+        cursor.execute(query, (user_id, other_user_id, other_user_id, user_id))
+        conn.commit()
+        
+        deleted_count = cursor.rowcount
+        
+        return success_response({
+            'success': True,
+            'deleted_messages': deleted_count
+        })
+        
+    except Exception as e:
+        print(f"ERROR in delete_chat: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        conn.rollback()
+        return error_response(f"Ошибка удаления переписки: {str(e)}", 500)
     finally:
         cursor.close()
         conn.close()
