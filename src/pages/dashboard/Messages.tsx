@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
@@ -51,7 +51,6 @@ export default function Messages() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<number>(0);
-  const loadedMasseurRef = useRef<number | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -72,36 +71,22 @@ export default function Messages() {
     const masseurId = searchParams.get('masseur');
     const isBooking = searchParams.get('booking') === 'true';
     
-    if (!masseurId) {
-      loadedMasseurRef.current = null;
-      return;
-    }
-    
-    const parsedMasseurId = parseInt(masseurId);
-    
-    if (loadedMasseurRef.current === parsedMasseurId) {
-      return;
-    }
-    
-    if (chats.length === 0 && !loading) {
-      return;
-    }
-    
-    const existingChat = chats.find(c => c.other_user_id === parsedMasseurId);
-    
-    if (existingChat) {
-      setSelectedChat(existingChat);
-      fetchMessages(existingChat.other_user_id);
+    if (masseurId) {
+      const parsedMasseurId = parseInt(masseurId);
+      const existingChat = chats.find(c => c.other_user_id === parsedMasseurId);
       
-      if (isBooking && messageText === '') {
-        setMessageText('Здравствуйте! Хочу записаться на сеанс массажа.');
+      if (existingChat) {
+        setSelectedChat(existingChat);
+        fetchMessages(existingChat.other_user_id);
+        
+        if (isBooking && messageText === '') {
+          setMessageText('Здравствуйте! Хочу записаться на сеанс массажа.');
+        }
+      } else if (chats.length >= 0) {
+        loadMasseurAndCreateChat(parsedMasseurId, isBooking);
       }
-      loadedMasseurRef.current = parsedMasseurId;
-    } else if (chats.length >= 0 && !loading) {
-      loadMasseurAndCreateChat(parsedMasseurId, isBooking);
-      loadedMasseurRef.current = parsedMasseurId;
     }
-  }, [chats, searchParams, loading]);
+  }, [chats, searchParams]);
 
   const loadMasseurAndCreateChat = async (masseurId: number, isBooking: boolean = false) => {
     try {
