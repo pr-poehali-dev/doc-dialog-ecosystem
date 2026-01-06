@@ -6,6 +6,7 @@ interface Service {
   duration: string;
   price: string;
   description: string;
+  image?: string;
 }
 
 interface ProcessStep {
@@ -60,25 +61,34 @@ export default function LandingContentSections({
               {services.map((service, index) => (
                 <div 
                   key={index} 
-                  className="p-6 rounded-2xl border-2 border-gray-100 hover:border-blue-200 hover:shadow-xl transition-all bg-white"
+                  className="rounded-2xl border-2 border-gray-100 hover:border-blue-200 hover:shadow-xl transition-all bg-white overflow-hidden"
                 >
-                  <div className="flex items-start justify-between mb-4">
-                    <h3 className="text-xl font-bold flex-1 text-gray-900">{service.name}</h3>
-                    {service.price && (
-                      <Badge className={`bg-gradient-to-r ${gradientClass} text-white border-0`}>
-                        {service.price} ₽
-                      </Badge>
+                  {service.image && (
+                    <img 
+                      src={service.image} 
+                      alt={service.name} 
+                      className="w-full h-48 object-cover"
+                    />
+                  )}
+                  <div className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <h3 className="text-xl font-bold flex-1 text-gray-900">{service.name}</h3>
+                      {service.price && (
+                        <Badge className={`bg-gradient-to-r ${gradientClass} text-white border-0`}>
+                          {service.price} ₽
+                        </Badge>
+                      )}
+                    </div>
+                    {service.description && (
+                      <p className="text-gray-600 text-sm mb-3 leading-relaxed">{service.description}</p>
+                    )}
+                    {service.duration && (
+                      <div className="flex items-center text-gray-500 text-sm">
+                        <Icon name="Clock" size={16} className="mr-2" />
+                        {service.duration}
+                      </div>
                     )}
                   </div>
-                  {service.description && (
-                    <p className="text-gray-600 text-sm mb-3 leading-relaxed">{service.description}</p>
-                  )}
-                  {service.duration && (
-                    <div className="flex items-center text-gray-500 text-sm">
-                      <Icon name="Clock" size={16} className="mr-2" />
-                      {service.duration}
-                    </div>
-                  )}
                 </div>
               ))}
             </div>
