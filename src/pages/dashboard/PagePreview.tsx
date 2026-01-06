@@ -71,12 +71,17 @@ export default function PagePreview() {
     const loadUserProfile = async () => {
       try {
         const token = localStorage.getItem('token');
+        console.log('Loading user profile with token:', token ? 'exists' : 'missing');
         const response = await fetch('https://functions.poehali.dev/0fb6eb3b-ce10-437e-a4a7-fec98d24a9a2', {
           headers: { 'X-Authorization': `Bearer ${token}` }
         });
+        console.log('Profile response status:', response.status);
         if (response.ok) {
           const profile = await response.json();
+          console.log('Profile loaded:', profile);
           setUserProfile(profile);
+        } else {
+          console.error('Failed to load profile, status:', response.status);
         }
       } catch (error) {
         console.error('Failed to load profile', error);
