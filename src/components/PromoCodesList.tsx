@@ -211,7 +211,7 @@ export default function PromoCodesList() {
                     {request.opened_at && request.expires_at && new Date(request.expires_at) > new Date()
                       ? 'Посмотреть промокод' 
                       : request.opened_at 
-                        ? 'Активировать заново' 
+                        ? 'Использовать скидку' 
                         : 'Получить промокод'
                     }
                   </Button>
