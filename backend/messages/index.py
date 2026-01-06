@@ -146,13 +146,12 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
                 cp.partner_id as other_user_id,
                 COALESCE(
                     mp.full_name,
+                    sc.name,
+                    clp.full_name,
                     CONCAT('Пользователь #', cp.partner_id)
                 ) as name,
-                mp.avatar_url as avatar,
-                CASE 
-                    WHEN mp.id IS NOT NULL THEN 'masseur'
-                    ELSE 'client'
-                END as role,
+                COALESCE(mp.avatar_url, sc.logo_url, clp.avatar_url) as avatar,
+                u.role as role,
                 lm.message_text as last_message,
                 lm.created_at as last_message_time,
                 (
@@ -163,7 +162,10 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
                       AND m.is_read = FALSE
                 ) as unread_count
             FROM chat_partners cp
+            LEFT JOIN {schema}.users u ON cp.partner_id = u.id
             LEFT JOIN {schema}.masseur_profiles mp ON cp.partner_id = mp.user_id
+            LEFT JOIN {schema}.schools sc ON cp.partner_id = sc.owner_id
+            LEFT JOIN {schema}.client_profiles clp ON cp.partner_id = clp.user_id
             LEFT JOIN last_messages lm ON cp.partner_id = lm.partner_id
             ORDER BY lm.created_at DESC NULLS LAST
         """
