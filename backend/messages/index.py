@@ -149,7 +149,7 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
                     mp.full_name,
                     sc.name,
                     clp.full_name,
-                    CONCAT('Пользователь #', cp.partner_id)
+                    'Пользователь #' || cp.partner_id
                 ) as name,
                 COALESCE(mp.avatar_url, sc.logo_url, clp.avatar_url) as avatar,
                 u.role as role,
