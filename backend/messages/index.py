@@ -45,9 +45,15 @@ def handler(event: dict, context) -> dict:
                 chat_id = query_params.get('chat_id')
                 return get_chat_messages(user_data['user_id'], chat_id)
         
-        if method == 'POST' and action == 'send-message':
+        if method == 'POST':
             body = json.loads(event.get('body', '{}'))
-            return send_message(user_data['user_id'], body)
+            
+            if action == 'send-message':
+                return send_message(user_data['user_id'], body)
+            elif action == 'send-booking-request':
+                return send_booking_request(user_data['user_id'], body)
+            elif action == 'respond-booking':
+                return respond_to_booking(user_data['user_id'], body)
         
         return {
             'statusCode': 405,
@@ -284,6 +290,125 @@ def send_message(user_id: int, data: dict) -> dict:
                 'message_id': result['id'],
                 'created_at': str(result['created_at'])
             }),
+            'isBase64Encoded': False
+        }
+    
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def send_booking_request(user_id: int, data: dict) -> dict:
+    '''Отправка заявки на запись через чат'''
+    masseur_id = data.get('masseur_id')
+    
+    if not masseur_id:
+        return {
+            'statusCode': 400,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Укажите ID специалиста'}),
+            'isBase64Encoded': False
+        }
+    
+    conn, cursor = get_db_connection()
+    
+    try:
+        cursor.execute("""
+            SELECT full_name FROM client_profiles WHERE user_id = %s
+        """, (user_id,))
+        client = cursor.fetchone()
+        client_name = client['full_name'] if client else 'Клиент'
+        
+        cursor.execute("""
+            INSERT INTO messages (sender_id, receiver_id, message_text, is_read, message_type, booking_data)
+            VALUES (%s, %s, %s, FALSE, 'booking_request', %s)
+            RETURNING id, created_at
+        """, (
+            user_id, 
+            masseur_id, 
+            f'{client_name} хочет записаться на сеанс',
+            json.dumps({'status': 'pending', 'client_id': user_id})
+        ))
+        
+        result = cursor.fetchone()
+        conn.commit()
+        
+        return {
+            'statusCode': 201,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({
+                'message_id': result['id'],
+                'created_at': str(result['created_at'])
+            }),
+            'isBase64Encoded': False
+        }
+    
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def respond_to_booking(user_id: int, data: dict) -> dict:
+    '''Ответ специалиста на заявку (принять/отклонить)'''
+    message_id = data.get('message_id')
+    action = data.get('action')
+    
+    if not message_id or action not in ['accept', 'decline']:
+        return {
+            'statusCode': 400,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Укажите ID сообщения и действие (accept/decline)'}),
+            'isBase64Encoded': False
+        }
+    
+    conn, cursor = get_db_connection()
+    
+    try:
+        cursor.execute("""
+            SELECT sender_id, booking_data FROM messages WHERE id = %s AND receiver_id = %s
+        """, (message_id, user_id))
+        message = cursor.fetchone()
+        
+        if not message:
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Сообщение не найдено'}),
+                'isBase64Encoded': False
+            }
+        
+        booking_data = json.loads(message['booking_data'])
+        booking_data['status'] = 'accepted' if action == 'accept' else 'declined'
+        
+        cursor.execute("""
+            UPDATE messages 
+            SET booking_data = %s
+            WHERE id = %s
+        """, (json.dumps(booking_data), message_id))
+        
+        cursor.execute("""
+            SELECT full_name FROM masseur_profiles WHERE user_id = %s
+        """, (user_id,))
+        masseur = cursor.fetchone()
+        masseur_name = masseur['full_name'] if masseur else 'Специалист'
+        
+        response_text = (
+            f'{masseur_name} принял вашу заявку! Обсудите детали записи в чате.' 
+            if action == 'accept' 
+            else f'{masseur_name} не может принять заявку в данный момент.'
+        )
+        
+        cursor.execute("""
+            INSERT INTO messages (sender_id, receiver_id, message_text, is_read, message_type)
+            VALUES (%s, %s, %s, FALSE, 'booking_response')
+        """, (user_id, message['sender_id'], response_text))
+        
+        conn.commit()
+        
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'message': 'Ответ отправлен'}),
             'isBase64Encoded': False
         }
     
