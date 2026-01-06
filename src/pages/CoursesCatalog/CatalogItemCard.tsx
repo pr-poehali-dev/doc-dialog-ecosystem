@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -33,10 +34,12 @@ const getCourseTypeColor = (type: string) => {
 
 export default function CatalogItemCard({ item }: CatalogItemCardProps) {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [requesting, setRequesting] = useState(false);
   const isPromoted = item.has_promotion && item.promoted_until && new Date(item.promoted_until) > new Date();
   
   const userData = localStorage.getItem('user');
+  const token = localStorage.getItem('token');
   const user = userData ? JSON.parse(userData) : null;
   const isMasseur = user?.role === 'masseur';
   
@@ -61,14 +64,21 @@ export default function CatalogItemCard({ item }: CatalogItemCardProps) {
   const handleRequestDiscount = async (e: React.MouseEvent) => {
     e.stopPropagation();
     
-    if (!user) {
-      toast({ title: 'Ошибка', description: 'Войдите в аккаунт', variant: 'destructive' });
+    if (!user || !token) {
+      toast({ 
+        title: 'Требуется авторизация', 
+        description: 'Войдите в аккаунт, чтобы запросить скидку',
+        variant: 'destructive',
+        action: {
+          label: 'Войти',
+          onClick: () => navigate('/login')
+        }
+      });
       return;
     }
     
     setRequesting(true);
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch(PROMO_API_URL, {
         method: 'POST',
         headers: {
