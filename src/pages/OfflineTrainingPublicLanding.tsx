@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
 import Icon from '@/components/ui/icon';
 import { Navigation } from '@/components/Navigation';
 
@@ -59,8 +63,13 @@ const TRAINING_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-
 export default function OfflineTrainingPublicLanding() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [training, setTraining] = useState<OfflineTrainingData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [reviewName, setReviewName] = useState('');
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewText, setReviewText] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
   
   const isPreview = new URLSearchParams(window.location.search).get('preview') === 'true';
 
@@ -83,6 +92,52 @@ export default function OfflineTrainingPublicLanding() {
       console.error('Load error:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const submitReview = async () => {
+    if (!reviewName.trim() || !reviewText.trim()) {
+      toast({
+        title: 'Ошибка',
+        description: 'Заполните имя и текст отзыва',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    setSubmittingReview(true);
+    try {
+      const response = await fetch(`${TRAINING_API_URL}?action=add_review`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          item_type: 'offline_training',
+          item_id: training?.id,
+          author_name: reviewName.trim(),
+          rating: reviewRating,
+          text: reviewText.trim()
+        })
+      });
+
+      if (response.ok) {
+        toast({
+          title: 'Отзыв отправлен',
+          description: 'Ваш отзыв будет опубликован после модерации'
+        });
+        setReviewName('');
+        setReviewRating(5);
+        setReviewText('');
+      } else {
+        throw new Error('Ошибка отправки');
+      }
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось отправить отзыв',
+        variant: 'destructive'
+      });
+    } finally {
+      setSubmittingReview(false);
     }
   };
 
@@ -333,6 +388,62 @@ export default function OfflineTrainingPublicLanding() {
                 </Card>
               ))}
             </div>
+
+            <Card className="mt-8 sm:mt-10 md:mt-12">
+              <CardContent className="p-4 sm:p-6">
+                <h3 className="text-lg sm:text-xl font-bold mb-4">Оставить отзыв</h3>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="review-name">Ваше имя</Label>
+                    <Input
+                      id="review-name"
+                      value={reviewName}
+                      onChange={(e) => setReviewName(e.target.value)}
+                      placeholder="Как вас зовут?"
+                    />
+                  </div>
+
+                  <div>
+                    <Label>Оценка</Label>
+                    <div className="flex gap-2 mt-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setReviewRating(star)}
+                          className="focus:outline-none"
+                        >
+                          <Icon
+                            name="Star"
+                            size={24}
+                            className={star <= reviewRating ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="review-text">Ваш отзыв</Label>
+                    <Textarea
+                      id="review-text"
+                      value={reviewText}
+                      onChange={(e) => setReviewText(e.target.value)}
+                      placeholder="Поделитесь впечатлениями о курсе"
+                      rows={4}
+                    />
+                  </div>
+
+                  <Button
+                    onClick={submitReview}
+                    disabled={submittingReview}
+                    className="w-full sm:w-auto"
+                  >
+                    {submittingReview ? 'Отправка...' : 'Отправить отзыв'}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </section>
       )}
