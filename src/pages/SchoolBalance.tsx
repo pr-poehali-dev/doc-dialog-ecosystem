@@ -311,7 +311,7 @@ export default function SchoolBalance() {
                         <div className={`text-xl font-bold ${
                           transaction.type === 'deposit' ? 'text-green-600' : 'text-red-600'
                         }`}>
-                          {transaction.type === 'deposit' ? '+' : '-'}{formatMoney(transaction.amount)}
+                          {transaction.type === 'deposit' ? '+' : ''}{formatMoney(transaction.amount)}
                         </div>
                       </div>
                     ))}
