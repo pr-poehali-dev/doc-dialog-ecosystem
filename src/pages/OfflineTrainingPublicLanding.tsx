@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
 import { Navigation } from '@/components/Navigation';
 import ReviewsSection from '@/components/ReviewsSection';
+import { useToast } from '@/hooks/use-toast';
 
 interface OfflineTrainingData {
   id: number;
