@@ -138,9 +138,17 @@ const MasseursDirectory = () => {
                 )}
                 <CardHeader>
                   <div className="flex items-start gap-4">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
-                      {masseur.full_name.charAt(0)}
-                    </div>
+                    {masseur.avatar_url ? (
+                      <img 
+                        src={masseur.avatar_url} 
+                        alt={masseur.full_name}
+                        className="w-16 h-16 rounded-full object-cover flex-shrink-0"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
+                        {masseur.full_name.charAt(0)}
+                      </div>
+                    )}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="font-semibold text-lg truncate">{masseur.full_name}</h3>
