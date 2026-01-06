@@ -112,7 +112,7 @@ export default function SchoolAnalytics() {
     switch (type) {
       case 'course': return 'Курс';
       case 'mastermind': return 'Мастермайнд';
-      case 'offline': return 'Очное обучение';
+      case 'offline_training': return 'Очное обучение';
       default: return type;
     }
   };

@@ -146,7 +146,7 @@ def handler(event: dict, context) -> dict:
             products.append({
                 'product_id': row[0],
                 'product_name': row[1],
-                'product_type': 'offline',
+                'product_type': 'offline_training',
                 'views_total': row[2],
                 'views_day': row[3],
                 'views_month': row[4],
