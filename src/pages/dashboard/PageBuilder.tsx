@@ -9,78 +9,129 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 
 export default function PageBuilder() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [pageData, setPageData] = useState({
-    heroTitle: 'Оздоровительный массаж',
-    heroSubtitle: 'Профессиональный специалист по телу с опытом 5+ лет',
+    heroTitle: 'Массаж, который возвращает энергию',
+    heroSubtitle: 'Индивидуальный подход к каждому клиенту. Опыт работы 7+ лет',
+    heroImage: '',
+    profilePhoto: '',
     aboutTitle: 'Обо мне',
-    aboutText: '',
-    servicesTitle: 'Услуги массажа',
+    aboutText: 'Я практикующий массажист с 7-летним опытом. Специализируюсь на восстановительных техниках и работе с мышечным напряжением. Помогаю людям избавиться от стресса и вернуть телу легкость.',
     services: [
-      { name: 'Релаксационный массаж', duration: '60 мин', price: '3000' },
-      { name: 'Восстановительный массаж', duration: '90 мин', price: '4500' },
+      { name: 'Классический массаж', duration: '60 мин', price: '3500', description: 'Глубокая проработка всех групп мышц' },
+      { name: 'Релаксационный массаж', duration: '90 мин', price: '4800', description: 'Снятие напряжения и полное расслабление' },
+      { name: 'Спортивный массаж', duration: '60 мин', price: '4000', description: 'Восстановление после тренировок' },
     ],
     processTitle: 'Как проходит сеанс',
     processSteps: [
-      'Консультация и обсуждение пожеланий',
-      'Подбор техник массажа',
-      'Сеанс массажа в комфортной обстановке',
-      'Рекомендации после сеанса',
+      { title: 'Знакомство', description: 'Обсуждаем ваши пожелания и проблемные зоны', icon: 'Users' },
+      { title: 'Подготовка', description: 'Создаю комфортную атмосферу для расслабления', icon: 'Sparkles' },
+      { title: 'Сеанс', description: 'Применяю индивидуально подобранные техники', icon: 'Heart' },
+      { title: 'Рекомендации', description: 'Даю советы по уходу за телом', icon: 'MessageCircle' },
     ],
-    contactsTitle: 'Связаться со мной',
+    gallery: [] as string[],
+    certificates: [] as string[],
     showPhone: true,
     showTelegram: true,
     showWhatsapp: true,
-    colorTheme: 'blue',
+    colorTheme: 'gradient',
   });
 
   const [isPublished, setIsPublished] = useState(false);
+  const [uploadingHero, setUploadingHero] = useState(false);
+  const [uploadingProfile, setUploadingProfile] = useState(false);
+  const [uploadingGallery, setUploadingGallery] = useState(false);
+  const [uploadingCert, setUploadingCert] = useState(false);
 
-  const colorThemes = [
-    { value: 'blue', label: 'Синий', color: 'bg-blue-500' },
-    { value: 'green', label: 'Зелёный', color: 'bg-green-500' },
-    { value: 'purple', label: 'Фиолетовый', color: 'bg-purple-500' },
-    { value: 'orange', label: 'Оранжевый', color: 'bg-orange-500' },
-  ];
+  const handleImageUpload = async (file: File, type: 'hero' | 'profile' | 'gallery' | 'certificate') => {
+    if (!file) return;
+
+    const setLoading = type === 'hero' ? setUploadingHero : 
+                       type === 'profile' ? setUploadingProfile :
+                       type === 'gallery' ? setUploadingGallery : setUploadingCert;
+    
+    setLoading(true);
+    
+    try {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        
+        if (type === 'hero') {
+          setPageData({ ...pageData, heroImage: base64 });
+        } else if (type === 'profile') {
+          setPageData({ ...pageData, profilePhoto: base64 });
+        } else if (type === 'gallery') {
+          setPageData({ ...pageData, gallery: [...pageData.gallery, base64] });
+        } else if (type === 'certificate') {
+          setPageData({ ...pageData, certificates: [...pageData.certificates, base64] });
+        }
+        
+        toast({
+          title: "Фото загружено",
+          description: "Изображение успешно добавлено",
+        });
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось загрузить фото",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const removeGalleryImage = (index: number) => {
+    setPageData({
+      ...pageData,
+      gallery: pageData.gallery.filter((_, i) => i !== index)
+    });
+  };
+
+  const removeCertificate = (index: number) => {
+    setPageData({
+      ...pageData,
+      certificates: pageData.certificates.filter((_, i) => i !== index)
+    });
+  };
 
   const handleSave = () => {
+    localStorage.setItem('pageBuilderData', JSON.stringify(pageData));
     toast({
-      title: "Страница сохранена",
-      description: "Ваша личная страница успешно обновлена",
+      title: "Черновик сохранен",
+      description: "Ваши изменения сохранены",
     });
   };
 
   const handlePublish = () => {
+    localStorage.setItem('pageBuilderData', JSON.stringify(pageData));
     setIsPublished(true);
     toast({
-      title: "Страница опубликована",
-      description: "Теперь вы можете делиться ссылкой с клиентами",
+      title: "Страница опубликована!",
+      description: "Теперь клиенты могут увидеть ваш лендинг",
     });
   };
 
   const copyPageLink = () => {
-    const link = `https://dokdialog.ru/page/${pageData.heroTitle.toLowerCase().replace(/\s+/g, '-')}`;
+    const link = `https://dokdialog.ru/masseur/${pageData.heroTitle.toLowerCase().replace(/\s+/g, '-')}`;
     navigator.clipboard.writeText(link);
     toast({
       title: "Ссылка скопирована",
-      description: "Поделитесь страницей с вашими клиентами",
+      description: "Поделитесь с клиентами",
     });
   };
 
   const addService = () => {
     setPageData({
       ...pageData,
-      services: [...pageData.services, { name: '', duration: '', price: '' }]
+      services: [...pageData.services, { name: '', duration: '', price: '', description: '' }]
     });
   };
 
@@ -97,18 +148,57 @@ export default function PageBuilder() {
     setPageData({ ...pageData, services: updatedServices });
   };
 
+  const applyTemplate = (templateType: 'premium' | 'minimal' | 'luxury') => {
+    const templates = {
+      premium: {
+        heroTitle: 'Массаж мирового уровня в вашем городе',
+        heroSubtitle: 'Сертифицированный специалист. Индивидуальный подход. Результат с первого сеанса',
+        aboutText: 'Я сертифицированный массажист с международным образованием. Прошла обучение в ведущих школах Европы и Азии. Работаю с профессиональными спортсменами, бизнесменами и людьми, ценящими качество.',
+        colorTheme: 'gradient',
+      },
+      minimal: {
+        heroTitle: 'Оздоровительный массаж',
+        heroSubtitle: 'Забота о вашем теле и здоровье',
+        aboutText: 'Практикующий массажист. Помогаю людям восстановить силы и избавиться от напряжения. Работаю в спокойной, расслабляющей обстановке.',
+        colorTheme: 'blue',
+      },
+      luxury: {
+        heroTitle: 'SPA-массаж класса Люкс',
+        heroSubtitle: 'Эксклюзивные техники. Премиальный сервис. Атмосфера релакса',
+        aboutText: 'Предлагаю эксклюзивные массажные программы с использованием натуральных масел премиум-класса. Создаю атмосферу настоящего SPA-салона с заботой о каждой детали.',
+        colorTheme: 'purple',
+      },
+    };
+
+    const selected = templates[templateType];
+    setPageData({
+      ...pageData,
+      heroTitle: selected.heroTitle,
+      heroSubtitle: selected.heroSubtitle,
+      aboutText: selected.aboutText,
+      colorTheme: selected.colorTheme,
+    });
+
+    toast({
+      title: "Шаблон применен",
+      description: "Вы можете отредактировать текст под себя",
+    });
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Navigation />
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-4 mb-6">
             <Button variant="ghost" onClick={() => navigate('/dashboard')}>
               <Icon name="ArrowLeft" size={20} />
             </Button>
             <div className="flex-1">
-              <h1 className="text-3xl font-bold">Конструктор личной страницы</h1>
-              <p className="text-muted-foreground">Создайте профессиональный лендинг для клиентов</p>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                Конструктор премиум-лендинга
+              </h1>
+              <p className="text-muted-foreground">Создайте страницу, которая привлекает клиентов</p>
             </div>
             <div className="flex gap-2">
               <Button variant="outline" onClick={() => {
@@ -121,32 +211,116 @@ export default function PageBuilder() {
               {isPublished && (
                 <Button variant="secondary" onClick={copyPageLink}>
                   <Icon name="Copy" size={18} className="mr-2" />
-                  Скопировать ссылку
+                  Ссылка
                 </Button>
               )}
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-6">
-            <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Главный экран (Hero)</CardTitle>
-                  <CardDescription>Первое, что увидят клиенты</CardDescription>
+          <div className="grid lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-6">
+              {/* Hero Section */}
+              <Card className="border-2 border-blue-100 shadow-lg">
+                <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center">
+                      <Icon name="Sparkles" className="text-white" size={20} />
+                    </div>
+                    <div>
+                      <CardTitle>Главный экран</CardTitle>
+                      <CardDescription>Первое впечатление решает всё</CardDescription>
+                    </div>
+                  </div>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 pt-6">
                   <div className="space-y-2">
-                    <Label>Заголовок</Label>
+                    <Label className="text-base font-semibold">Фоновое фото Hero-блока</Label>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Загрузите атмосферное фото массажного кабинета или spa-зоны
+                    </p>
+                    {pageData.heroImage ? (
+                      <div className="relative group">
+                        <img 
+                          src={pageData.heroImage} 
+                          alt="Hero" 
+                          className="w-full h-48 object-cover rounded-lg"
+                        />
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => setPageData({ ...pageData, heroImage: '' })}
+                        >
+                          <Icon name="Trash2" size={16} />
+                        </Button>
+                      </div>
+                    ) : (
+                      <label className="flex flex-col items-center justify-center h-48 border-2 border-dashed border-blue-300 rounded-lg cursor-pointer hover:border-blue-500 transition-colors bg-blue-50/50">
+                        <Icon name="Upload" size={32} className="text-blue-400 mb-2" />
+                        <span className="text-sm text-blue-600 font-medium">Загрузить фото</span>
+                        <span className="text-xs text-muted-foreground mt-1">JPG, PNG до 5MB</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => e.target.files && handleImageUpload(e.target.files[0], 'hero')}
+                          disabled={uploadingHero}
+                        />
+                      </label>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-base font-semibold">Ваше фото (профиль)</Label>
+                    {pageData.profilePhoto ? (
+                      <div className="flex items-center gap-4">
+                        <img 
+                          src={pageData.profilePhoto} 
+                          alt="Profile" 
+                          className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
+                        />
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setPageData({ ...pageData, profilePhoto: '' })}
+                        >
+                          <Icon name="Trash2" size={16} className="mr-2" />
+                          Удалить
+                        </Button>
+                      </div>
+                    ) : (
+                      <label className="flex items-center gap-4 p-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
+                        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center">
+                          <Icon name="User" size={32} className="text-white" />
+                        </div>
+                        <div>
+                          <span className="text-sm font-medium text-blue-600">Загрузить фото</span>
+                          <p className="text-xs text-muted-foreground">Профессиональное фото специалиста</p>
+                        </div>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => e.target.files && handleImageUpload(e.target.files[0], 'profile')}
+                          disabled={uploadingProfile}
+                        />
+                      </label>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-base font-semibold">Заголовок</Label>
                     <Input
-                      placeholder="Оздоровительный массаж"
+                      placeholder="Массаж, который возвращает энергию"
                       value={pageData.heroTitle}
                       onChange={(e) => setPageData({ ...pageData, heroTitle: e.target.value })}
+                      className="text-lg"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Подзаголовок</Label>
+                    <Label className="text-base font-semibold">Подзаголовок</Label>
                     <Input
-                      placeholder="Профессиональный массажист..."
+                      placeholder="Индивидуальный подход к каждому клиенту"
                       value={pageData.heroSubtitle}
                       onChange={(e) => setPageData({ ...pageData, heroSubtitle: e.target.value })}
                     />
@@ -154,58 +328,64 @@ export default function PageBuilder() {
                 </CardContent>
               </Card>
 
+              {/* About Section */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Обо мне</CardTitle>
-                  <CardDescription>Расскажите о своём опыте</CardDescription>
+                  <div className="flex items-center gap-3">
+                    <Icon name="User" size={20} className="text-blue-500" />
+                    <div>
+                      <CardTitle>Обо мне</CardTitle>
+                      <CardDescription>Расскажите о своём опыте и подходе</CardDescription>
+                    </div>
+                  </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label>Заголовок раздела</Label>
+                    <Label>Заголовок</Label>
                     <Input
                       value={pageData.aboutTitle}
                       onChange={(e) => setPageData({ ...pageData, aboutTitle: e.target.value })}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Текст</Label>
+                    <Label>Текст о себе</Label>
                     <Textarea
-                      placeholder="Расскажите о себе, опыте, подходе к работе"
+                      placeholder="Расскажите о квалификации, опыте, философии работы..."
                       value={pageData.aboutText}
                       onChange={(e) => setPageData({ ...pageData, aboutText: e.target.value })}
-                      rows={5}
+                      rows={6}
+                      className="resize-none"
                     />
-                    <p className="text-xs text-muted-foreground">
-                      ⚠️ Избегайте медицинских терминов. Используйте: "оздоровление", "релакс", "восстановление"
+                    <p className="text-xs text-amber-600 flex items-center gap-1">
+                      <Icon name="AlertCircle" size={12} />
+                      Избегайте медицинских терминов. Используйте: оздоровление, релакс, восстановление
                     </p>
                   </div>
                 </CardContent>
               </Card>
 
+              {/* Services */}
               <Card>
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle>Услуги</CardTitle>
-                      <CardDescription>Форматы работы и ориентировочная стоимость</CardDescription>
+                    <div className="flex items-center gap-3">
+                      <Icon name="Sparkles" size={20} className="text-purple-500" />
+                      <div>
+                        <CardTitle>Услуги и цены</CardTitle>
+                        <CardDescription>Покажите, что вы предлагаете</CardDescription>
+                      </div>
                     </div>
                     <Button size="sm" onClick={addService}>
-                      <Icon name="Plus" size={16} />
+                      <Icon name="Plus" size={16} className="mr-2" />
+                      Добавить
                     </Button>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="space-y-2 mb-4">
-                    <Label>Заголовок раздела</Label>
-                    <Input
-                      value={pageData.servicesTitle}
-                      onChange={(e) => setPageData({ ...pageData, servicesTitle: e.target.value })}
-                    />
-                  </div>
                   {pageData.services.map((service, index) => (
-                    <div key={index} className="p-4 border rounded-lg space-y-3">
+                    <div key={index} className="p-4 border-2 border-gray-100 rounded-lg space-y-3 hover:border-blue-200 transition-colors">
                       <div className="flex items-center justify-between">
-                        <Label>Услуга {index + 1}</Label>
+                        <Badge variant="secondary">Услуга {index + 1}</Badge>
                         <Button
                           size="sm"
                           variant="ghost"
@@ -219,177 +399,295 @@ export default function PageBuilder() {
                         value={service.name}
                         onChange={(e) => updateService(index, 'name', e.target.value)}
                       />
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-2 gap-3">
                         <Input
                           placeholder="60 мин"
                           value={service.duration}
                           onChange={(e) => updateService(index, 'duration', e.target.value)}
                         />
                         <Input
-                          placeholder="3000 ₽"
+                          placeholder="3500 ₽"
                           value={service.price}
                           onChange={(e) => updateService(index, 'price', e.target.value)}
                         />
                       </div>
+                      <Textarea
+                        placeholder="Краткое описание услуги (необязательно)"
+                        value={service.description}
+                        onChange={(e) => updateService(index, 'description', e.target.value)}
+                        rows={2}
+                      />
                     </div>
                   ))}
                 </CardContent>
               </Card>
 
+              {/* Gallery */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Как проходит сеанс</CardTitle>
-                  <CardDescription>Этапы работы с клиентом</CardDescription>
+                  <div className="flex items-center gap-3">
+                    <Icon name="Image" size={20} className="text-green-500" />
+                    <div>
+                      <CardTitle>Галерея фотографий</CardTitle>
+                      <CardDescription>Покажите ваш кабинет и атмосферу</CardDescription>
+                    </div>
+                  </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Заголовок раздела</Label>
-                    <Input
-                      value={pageData.processTitle}
-                      onChange={(e) => setPageData({ ...pageData, processTitle: e.target.value })}
-                    />
-                  </div>
-                  {pageData.processSteps.map((step, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">
-                        {index + 1}
+                  <div className="grid grid-cols-3 gap-4">
+                    {pageData.gallery.map((img, index) => (
+                      <div key={index} className="relative group">
+                        <img 
+                          src={img} 
+                          alt={`Gallery ${index + 1}`} 
+                          className="w-full h-32 object-cover rounded-lg"
+                        />
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => removeGalleryImage(index)}
+                        >
+                          <Icon name="X" size={14} />
+                        </Button>
                       </div>
-                      <Input
-                        value={step}
-                        onChange={(e) => {
-                          const newSteps = [...pageData.processSteps];
-                          newSteps[index] = e.target.value;
-                          setPageData({ ...pageData, processSteps: newSteps });
-                        }}
+                    ))}
+                    <label className="flex flex-col items-center justify-center h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors">
+                      <Icon name="Plus" size={24} className="text-gray-400 mb-1" />
+                      <span className="text-xs text-gray-500">Добавить фото</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => e.target.files && handleImageUpload(e.target.files[0], 'gallery')}
+                        disabled={uploadingGallery}
                       />
+                    </label>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Certificates */}
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <Icon name="Award" size={20} className="text-amber-500" />
+                    <div>
+                      <CardTitle>Сертификаты и дипломы</CardTitle>
+                      <CardDescription>Подтвердите квалификацию</CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    {pageData.certificates.map((cert, index) => (
+                      <div key={index} className="relative group">
+                        <img 
+                          src={cert} 
+                          alt={`Certificate ${index + 1}`} 
+                          className="w-full h-40 object-cover rounded-lg border-2 border-amber-100"
+                        />
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => removeCertificate(index)}
+                        >
+                          <Icon name="X" size={14} />
+                        </Button>
+                      </div>
+                    ))}
+                    <label className="flex flex-col items-center justify-center h-40 border-2 border-dashed border-amber-300 rounded-lg cursor-pointer hover:border-amber-500 transition-colors bg-amber-50/50">
+                      <Icon name="Upload" size={24} className="text-amber-400 mb-1" />
+                      <span className="text-xs text-amber-600">Загрузить сертификат</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => e.target.files && handleImageUpload(e.target.files[0], 'certificate')}
+                        disabled={uploadingCert}
+                      />
+                    </label>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Process Steps */}
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <Icon name="ListChecks" size={20} className="text-indigo-500" />
+                    <div>
+                      <CardTitle>Как проходит сеанс</CardTitle>
+                      <CardDescription>Расскажите о процессе работы</CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {pageData.processSteps.map((step, index) => (
+                    <div key={index} className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+                      <p className="font-semibold text-sm mb-1">{step.title}</p>
+                      <p className="text-xs text-muted-foreground">{step.description}</p>
                     </div>
                   ))}
+                </CardContent>
+              </Card>
+
+              {/* Contacts */}
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <Icon name="Phone" size={20} className="text-green-500" />
+                    <div>
+                      <CardTitle>Контакты</CardTitle>
+                      <CardDescription>Способы связи с вами</CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Label>Показывать телефон</Label>
+                    <Switch
+                      checked={pageData.showPhone}
+                      onCheckedChange={(checked) => setPageData({ ...pageData, showPhone: checked })}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Label>Показывать Telegram</Label>
+                    <Switch
+                      checked={pageData.showTelegram}
+                      onCheckedChange={(checked) => setPageData({ ...pageData, showTelegram: checked })}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Label>Показывать WhatsApp</Label>
+                    <Switch
+                      checked={pageData.showWhatsapp}
+                      onCheckedChange={(checked) => setPageData({ ...pageData, showWhatsapp: checked })}
+                    />
+                  </div>
                 </CardContent>
               </Card>
             </div>
 
+            {/* Right Sidebar */}
             <div className="space-y-6">
-              <Card>
+              {/* Templates */}
+              <Card className="border-2 border-purple-100 bg-gradient-to-br from-purple-50 to-pink-50">
                 <CardHeader>
-                  <CardTitle>Настройки дизайна</CardTitle>
-                  <CardDescription>Выберите цветовую тему</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Select value={pageData.colorTheme} onValueChange={(value) => setPageData({ ...pageData, colorTheme: value })}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {colorThemes.map((theme) => (
-                        <SelectItem key={theme.value} value={theme.value}>
-                          <div className="flex items-center gap-2">
-                            <div className={`w-4 h-4 rounded ${theme.color}`} />
-                            {theme.label}
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Контакты</CardTitle>
-                  <CardDescription>Какие способы связи показывать</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Заголовок раздела</Label>
-                    <Input
-                      value={pageData.contactsTitle}
-                      onChange={(e) => setPageData({ ...pageData, contactsTitle: e.target.value })}
-                    />
+                  <div className="flex items-center gap-2">
+                    <Icon name="Wand2" size={20} className="text-purple-500" />
+                    <CardTitle>Готовые шаблоны</CardTitle>
                   </div>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <Label>Показывать телефон</Label>
-                      <Switch
-                        checked={pageData.showPhone}
-                        onCheckedChange={(checked) => setPageData({ ...pageData, showPhone: checked })}
-                      />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <Label>Показывать Telegram</Label>
-                      <Switch
-                        checked={pageData.showTelegram}
-                        onCheckedChange={(checked) => setPageData({ ...pageData, showTelegram: checked })}
-                      />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <Label>Показывать WhatsApp</Label>
-                      <Switch
-                        checked={pageData.showWhatsapp}
-                        onCheckedChange={(checked) => setPageData({ ...pageData, showWhatsapp: checked })}
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-primary/20 bg-primary/5">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Icon name="Sparkles" className="text-primary" size={24} />
-                    Готовые шаблоны
-                  </CardTitle>
-                  <CardDescription>Используйте профессионально оформленные блоки</CardDescription>
+                  <CardDescription>Применить профессиональный дизайн</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <Button variant="outline" className="w-full justify-start">
-                    <Icon name="Image" size={18} className="mr-2" />
-                    Добавить галерею фото
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start h-auto p-4 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50"
+                    onClick={() => applyTemplate('premium')}
+                  >
+                    <div className="text-left">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Icon name="Crown" size={16} className="text-amber-500" />
+                        <span className="font-semibold">Premium</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">Для элитных специалистов</p>
+                    </div>
                   </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <Icon name="Star" size={18} className="mr-2" />
-                    Блок отзывов
+
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start h-auto p-4 hover:bg-blue-50"
+                    onClick={() => applyTemplate('minimal')}
+                  >
+                    <div className="text-left">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Icon name="Minimize2" size={16} className="text-blue-500" />
+                        <span className="font-semibold">Минимализм</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">Лаконичный стиль</p>
+                    </div>
                   </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <Icon name="Award" size={18} className="mr-2" />
-                    Сертификаты и дипломы
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <Icon name="MapPin" size={18} className="mr-2" />
-                    Карта проезда
+
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start h-auto p-4 hover:bg-purple-50"
+                    onClick={() => applyTemplate('luxury')}
+                  >
+                    <div className="text-left">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Icon name="Gem" size={16} className="text-purple-500" />
+                        <span className="font-semibold">Luxury SPA</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">Премиум-атмосфера</p>
+                    </div>
                   </Button>
                 </CardContent>
               </Card>
 
-              <Card>
+              {/* Publish */}
+              <Card className="border-2 border-green-100 bg-gradient-to-br from-green-50 to-emerald-50">
                 <CardHeader>
-                  <CardTitle>Публикация</CardTitle>
-                  <CardDescription>Опубликуйте страницу и делитесь ссылкой</CardDescription>
+                  <div className="flex items-center gap-2">
+                    <Icon name="Rocket" size={20} className="text-green-600" />
+                    <CardTitle>Публикация</CardTitle>
+                  </div>
+                  <CardDescription>Сделайте лендинг доступным</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  {isPublished ? (
-                    <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                <CardContent className="space-y-3">
+                  {isPublished && (
+                    <div className="p-3 bg-green-100 border border-green-200 rounded-lg">
                       <div className="flex items-center gap-2 mb-2">
-                        <Icon name="CheckCircle" className="text-green-600" size={20} />
-                        <p className="font-medium text-green-900">Страница опубликована</p>
+                        <Icon name="CheckCircle2" size={16} className="text-green-600" />
+                        <span className="text-sm font-semibold text-green-900">Опубликовано</span>
                       </div>
-                      <p className="text-sm text-green-700 mb-3">
-                        Ваша личная страница доступна по ссылке
-                      </p>
-                      <Button onClick={copyPageLink} className="w-full" variant="secondary">
-                        <Icon name="Copy" size={16} className="mr-2" />
-                        Скопировать ссылку
-                      </Button>
+                      <p className="text-xs text-green-700">Ваш лендинг доступен клиентам</p>
                     </div>
-                  ) : (
-                    <Button onClick={handlePublish} className="w-full">
-                      <Icon name="Globe" size={18} className="mr-2" />
-                      Опубликовать страницу
-                    </Button>
                   )}
-                  <Button onClick={handleSave} variant="outline" className="w-full">
+                  <Button
+                    onClick={handlePublish}
+                    className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                  >
+                    <Icon name="Rocket" size={18} className="mr-2" />
+                    {isPublished ? 'Обновить публикацию' : 'Опубликовать'}
+                  </Button>
+                  <Button
+                    onClick={handleSave}
+                    variant="outline"
+                    className="w-full"
+                  >
                     <Icon name="Save" size={18} className="mr-2" />
                     Сохранить черновик
                   </Button>
+                </CardContent>
+              </Card>
+
+              {/* Tips */}
+              <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-amber-100">
+                <CardHeader>
+                  <div className="flex items-center gap-2">
+                    <Icon name="Lightbulb" size={20} className="text-amber-600" />
+                    <CardTitle className="text-base">Советы</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-start gap-2">
+                    <Icon name="Check" size={14} className="text-amber-600 mt-0.5" />
+                    <p className="text-xs text-gray-700">Используйте качественные фото</p>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Icon name="Check" size={14} className="text-amber-600 mt-0.5" />
+                    <p className="text-xs text-gray-700">Укажите реальные цены</p>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Icon name="Check" size={14} className="text-amber-600 mt-0.5" />
+                    <p className="text-xs text-gray-700">Добавьте сертификаты</p>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Icon name="Check" size={14} className="text-amber-600 mt-0.5" />
+                    <p className="text-xs text-gray-700">Заполните галерею (3-6 фото)</p>
+                  </div>
                 </CardContent>
               </Card>
             </div>
