@@ -15,7 +15,7 @@ interface Review {
 }
 
 interface ReviewsSectionProps {
-  entityType: 'course' | 'mastermind';
+  entityType: 'course' | 'mastermind' | 'offline_training';
   entityId: number;
   onRatingUpdate?: (rating: number, count: number) => void;
 }
