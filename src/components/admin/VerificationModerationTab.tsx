@@ -131,7 +131,6 @@ export default function VerificationModerationTab() {
       education: 'Образование',
       experience: 'Опыт работы',
       identity: 'Личность',
-      insurance: 'Страхование',
     };
     return labels[type as keyof typeof labels] || type;
   };
@@ -141,7 +140,6 @@ export default function VerificationModerationTab() {
       education: 'GraduationCap',
       experience: 'Award',
       identity: 'BadgeCheck',
-      insurance: 'Shield',
     };
     return icons[type as keyof typeof icons] || 'FileText';
   };
@@ -151,7 +149,6 @@ export default function VerificationModerationTab() {
       education: 'text-green-600 bg-green-50 border-green-200',
       experience: 'text-blue-600 bg-blue-50 border-blue-200',
       identity: 'text-purple-600 bg-purple-50 border-purple-200',
-      insurance: 'text-amber-600 bg-amber-50 border-amber-200',
     };
     return colors[type as keyof typeof colors] || 'text-gray-600 bg-gray-50 border-gray-200';
   };

@@ -109,22 +109,6 @@ def handler(event: dict, context) -> dict:
                 LEFT JOIN t_p46047379_doc_dialog_ecosystem.masseur_profiles mp ON mv.user_id = mp.user_id
                 WHERE mv.identity_status = 'pending' AND mv.identity_folder_url IS NOT NULL
                 
-                UNION ALL
-                
-                SELECT 
-                    mv.id,
-                    mv.user_id,
-                    COALESCE(mp.full_name, 'Пользователь') as masseur_name,
-                    COALESCE(mp.phone, 'Нет данных') as masseur_contact,
-                    'insurance' as type,
-                    mv.insurance_folder_url as folder_url,
-                    mv.insurance_status as status,
-                    mv.created_at as submitted_at,
-                    mv.insurance_comment as moderator_comment
-                FROM t_p46047379_doc_dialog_ecosystem.masseur_verifications mv
-                LEFT JOIN t_p46047379_doc_dialog_ecosystem.masseur_profiles mp ON mv.user_id = mp.user_id
-                WHERE mv.insurance_status = 'pending' AND mv.insurance_folder_url IS NOT NULL
-                
                 ORDER BY submitted_at DESC
             """)
             
@@ -199,20 +183,10 @@ def handler(event: dict, context) -> dict:
                             updated_at = NOW()
                         WHERE id = %s
                     """, (admin_id, verification_id))
-                elif verification_type == 'insurance':
-                    cur.execute("""
-                        UPDATE t_p46047379_doc_dialog_ecosystem.masseur_verifications
-                        SET insurance_verified = TRUE,
-                            insurance_status = 'approved',
-                            verified_by = %s,
-                            verified_at = NOW(),
-                            updated_at = NOW()
-                        WHERE id = %s
-                    """, (admin_id, verification_id))
                 
                 # Получаем user_id для обновления badges
                 cur.execute("""
-                    SELECT user_id, education_verified, experience_verified, identity_verified, insurance_verified
+                    SELECT user_id, education_verified, experience_verified, identity_verified
                     FROM t_p46047379_doc_dialog_ecosystem.masseur_verifications
                     WHERE id = %s
                 """, (verification_id,))
@@ -224,7 +198,6 @@ def handler(event: dict, context) -> dict:
                     if ver_data[1]: badges.append('education')
                     if ver_data[2]: badges.append('experience')
                     if ver_data[3]: badges.append('identity')
-                    if ver_data[4]: badges.append('insurance')
                     
                     # Обновляем badges в masseur_profiles (users недоступна)
                     cur.execute("""
@@ -274,15 +247,6 @@ def handler(event: dict, context) -> dict:
                         SET identity_verified = FALSE,
                             identity_status = 'rejected',
                             identity_comment = %s,
-                            updated_at = NOW()
-                        WHERE id = %s
-                    """, (comment, verification_id))
-                elif verification_type == 'insurance':
-                    cur.execute("""
-                        UPDATE t_p46047379_doc_dialog_ecosystem.masseur_verifications
-                        SET insurance_verified = FALSE,
-                            insurance_status = 'rejected',
-                            insurance_comment = %s,
                             updated_at = NOW()
                         WHERE id = %s
                     """, (comment, verification_id))
