@@ -1040,7 +1040,7 @@ export default function PageBuilder() {
                     <div className="text-left flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <Icon name="Minimize2" size={16} className="text-blue-500" />
-                        <span className="font-semibold">Минимализм</span>
+                        <span className="font-semibold">Minimalism</span>
                         {pageData.template === 'minimal' && (
                           <Badge className="ml-2 bg-green-500">Активен</Badge>
                         )}
