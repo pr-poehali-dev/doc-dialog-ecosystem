@@ -156,10 +156,13 @@ def handler(event: dict, context) -> dict:
         # Get user name from email
         user_name = user_email.split('@')[0] if user_email else 'Аноним'
         
+        # Prepare SQL values with proper NULL handling
+        user_id_val = str(user_id) if user_id else 'NULL'
+        
         # Insert review with pending status
         cur.execute(f"""
             INSERT INTO {schema}.course_reviews (entity_type, entity_id, user_id, user_email, user_name, rating, comment, is_auto_generated, status)
-            VALUES ('{entity_type}', {entity_id}, {user_id if user_id else 'NULL'}, '{user_email.replace("'", "''")}', '{user_name.replace("'", "''")}', {rating}, '{comment.replace("'", "''")}', FALSE, 'pending')
+            VALUES ('{entity_type}', {entity_id}, {user_id_val}, '{user_email.replace("'", "''")}', '{user_name.replace("'", "''")}', {rating}, '{comment.replace("'", "''")}', FALSE, 'pending')
             RETURNING id, created_at
         """)
         
