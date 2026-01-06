@@ -55,7 +55,16 @@ export default function AdminUsersTab({ users, loading, onUpdateUserRole }: Admi
       exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60), // 24 часа
       is_impersonating: true
     };
-    const fakeToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' + btoa(JSON.stringify(payload)) + '.impersonated';
+    
+    // Base64URL encoding (без паддинга = и с URL-safe символами)
+    const base64url = (str: string) => {
+      return btoa(str)
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=/g, '');
+    };
+    
+    const fakeToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' + base64url(JSON.stringify(payload)) + '.impersonated';
     localStorage.setItem('token', fakeToken);
     
     // Переход в кабинет пользователя

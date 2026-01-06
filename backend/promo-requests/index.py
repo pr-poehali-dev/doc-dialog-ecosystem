@@ -48,15 +48,27 @@ def handler(event: dict, context) -> dict:
     
     # Decode JWT
     try:
-        # Handle impersonated tokens BEFORE URL decode
+        # Handle impersonated tokens
+        verify_signature = True
         if token.endswith('.impersonated'):
             token = token[:-len('.impersonated')]
+            verify_signature = False
         
         # URL decode token if needed (handles %3D etc)
         token = unquote(token)
         
+        # Fix base64url padding if needed (JWT uses base64url without padding)
+        parts = token.split('.')
+        if len(parts) == 3:
+            for i in range(3):
+                # Add padding if needed
+                missing_padding = len(parts[i]) % 4
+                if missing_padding:
+                    parts[i] += '=' * (4 - missing_padding)
+            token = '.'.join(parts)
+        
         secret_key = os.environ.get('JWT_SECRET', 'default_secret_key')
-        payload = jwt.decode(token, secret_key, algorithms=['HS256'], options={'verify_signature': False})
+        payload = jwt.decode(token, secret_key, algorithms=['HS256'], options={'verify_signature': not verify_signature})
         user_id = payload.get('user_id')
         user_email = payload.get('email')
         user_role = payload.get('role', 'user')
