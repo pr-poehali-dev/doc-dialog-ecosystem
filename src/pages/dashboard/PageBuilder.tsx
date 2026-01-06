@@ -656,16 +656,26 @@ export default function PageBuilder() {
                 </CardContent>
               </Card>
 
-              {/* Reviews */}
-              <Card>
+              {/* Reviews - Super Premium only */}
+              <Card className={pageData.template !== 'luxury' ? 'opacity-60 pointer-events-none relative' : ''}>
+                {pageData.template !== 'luxury' && (
+                  <div className="absolute inset-0 bg-gray-100/50 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-lg">
+                    <div className="bg-white p-6 rounded-xl shadow-xl text-center max-w-sm">
+                      <Icon name="Lock" size={32} className="mx-auto mb-3 text-purple-600" />
+                      <p className="font-bold text-lg mb-2">Доступно в Super Premium</p>
+                      <p className="text-sm text-gray-600 mb-4">Активируйте тариф Super Premium для доступа</p>
+                    </div>
+                  </div>
+                )}
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Icon name="Star" size={20} className="text-amber-500" />
-                      <div>
+                      <div className="flex-1">
                         <CardTitle>Отзывы клиентов</CardTitle>
                         <CardDescription>Добавьте отзывы о работе</CardDescription>
                       </div>
+                      <Badge className="bg-gradient-to-r from-purple-500 to-pink-500">Super Premium</Badge>
                     </div>
                   </div>
                 </CardHeader>
