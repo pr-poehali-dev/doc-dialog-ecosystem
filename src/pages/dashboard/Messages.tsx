@@ -177,7 +177,7 @@ export default function Messages() {
         },
         body: JSON.stringify({
           receiver_id: selectedChat.other_user_id,
-          message: messageText,
+          message_text: messageText,
         }),
       });
 
