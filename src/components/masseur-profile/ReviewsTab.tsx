@@ -1,0 +1,189 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import Icon from "@/components/ui/icon";
+import { useToast } from "@/hooks/use-toast";
+
+interface Masseur {
+  id: number;
+  full_name: string;
+  city: string;
+  experience_years: number;
+  specializations: string[];
+  avatar_url: string | null;
+  rating: number;
+  reviews_count: number;
+  about: string;
+  phone: string;
+  certificates?: string[];
+  portfolio_images?: string[];
+  education?: string;
+  languages?: string[];
+  verification_badges?: string[];
+  is_premium?: boolean;
+}
+
+interface Review {
+  id: number;
+  author_name: string;
+  author_avatar: string | null;
+  rating: number;
+  comment: string;
+  massage_type: string;
+  created_at: string;
+  is_verified: boolean;
+}
+
+interface ReviewsTabProps {
+  masseur: Masseur;
+  reviews: Review[];
+  renderStars: (rating: number) => JSX.Element[];
+}
+
+export default function ReviewsTab({ masseur, reviews, renderStars }: ReviewsTabProps) {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [newReview, setNewReview] = useState({ rating: 5, massage_type: '', comment: '' });
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+
+  return (
+    <div className="space-y-4">
+      <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-purple-50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Icon name="MessageSquarePlus" size={20} />
+            Оставить отзыв
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {localStorage.getItem('token') ? (
+            <>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Оценка</label>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setNewReview({ ...newReview, rating: star })}
+                      className="focus:outline-none transition-transform hover:scale-110"
+                    >
+                      <Icon
+                        name="Star"
+                        size={32}
+                        className={star <= newReview.rating ? 'text-amber-500 fill-amber-500' : 'text-gray-300'}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Виды услуг</label>
+                <select
+                  className="w-full p-2 border rounded-md"
+                  value={newReview.massage_type}
+                  onChange={(e) => setNewReview({ ...newReview, massage_type: e.target.value })}
+                >
+                  <option value="">Выберите услугу</option>
+                  {masseur?.specializations.map((spec) => (
+                    <option key={spec} value={spec}>{spec}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Ваш отзыв</label>
+                <Textarea
+                  placeholder="Расскажите о вашем опыте..."
+                  value={newReview.comment}
+                  onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                  rows={4}
+                />
+              </div>
+              <Button
+                className="w-full"
+                onClick={async () => {
+                  if (!newReview.massage_type || !newReview.comment) {
+                    toast({
+                      title: 'Заполните все поля',
+                      description: 'Выберите вид массажа и напишите отзыв',
+                      variant: 'destructive'
+                    });
+                    return;
+                  }
+                  setIsSubmittingReview(true);
+                  toast({
+                    title: 'Отзыв отправлен',
+                    description: 'Спасибо за ваш отзыв!'
+                  });
+                  setNewReview({ rating: 5, massage_type: '', comment: '' });
+                  setIsSubmittingReview(false);
+                }}
+                disabled={isSubmittingReview}
+              >
+                <Icon name="Send" size={18} className="mr-2" />
+                Отправить отзыв
+              </Button>
+            </>
+          ) : (
+            <div className="text-center py-8">
+              <Icon name="Lock" size={48} className="mx-auto mb-4 text-muted-foreground" />
+              <p className="text-muted-foreground mb-4">
+                Войдите в систему, чтобы оставить отзыв
+              </p>
+              <Button onClick={() => navigate('/login')}>
+                Войти
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {reviews.map((review) => (
+        <Card key={review.id}>
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-4">
+              <Avatar>
+                <AvatarFallback className="bg-gradient-to-br from-primary to-purple-600 text-white">
+                  {review.author_name.charAt(0)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1">
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <p className="font-semibold flex items-center gap-2">
+                      {review.author_name}
+                      {review.is_verified && (
+                        <Badge variant="secondary" className="text-xs">
+                          <Icon name="CheckCircle2" size={12} className="mr-1" />
+                          Проверено
+                        </Badge>
+                      )}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {new Date(review.created_at).toLocaleDateString('ru-RU', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      })}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {renderStars(review.rating)}
+                  </div>
+                </div>
+                <Badge variant="outline" className="mb-3">
+                  {review.massage_type}
+                </Badge>
+                <p className="text-muted-foreground leading-relaxed">{review.comment}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
