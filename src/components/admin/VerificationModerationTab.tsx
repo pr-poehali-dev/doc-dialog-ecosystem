@@ -45,7 +45,7 @@ export default function VerificationModerationTab() {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch('https://functions.poehali.dev/f94ccac9-1077-4744-892a-ab95e9e41ecb', {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { 'X-Authorization': `Bearer ${token}` }
       });
       
       if (response.ok) {
@@ -91,7 +91,7 @@ export default function VerificationModerationTab() {
       const response = await fetch('https://functions.poehali.dev/f94ccac9-1077-4744-892a-ab95e9e41ecb', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'X-Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
