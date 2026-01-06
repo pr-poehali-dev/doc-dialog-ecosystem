@@ -725,11 +725,15 @@ export default function PageBuilder() {
 
                   <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
                     <p className="text-sm font-semibold">Добавить отзыв</p>
-                    <Input
-                      placeholder="Имя клиента"
-                      value={newReview.name}
-                      onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
-                    />
+                    <div className="space-y-1">
+                      <Input
+                        placeholder="Имя клиента"
+                        value={newReview.name}
+                        onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
+                        maxLength={40}
+                      />
+                      <p className="text-xs text-gray-500">{newReview.name.length}/40 символов</p>
+                    </div>
                     <div className="space-y-2">
                       <Label>Рейтинг</Label>
                       <div className="flex gap-1">
@@ -749,12 +753,16 @@ export default function PageBuilder() {
                         ))}
                       </div>
                     </div>
-                    <Textarea
-                      placeholder="Текст отзыва"
-                      value={newReview.text}
-                      onChange={(e) => setNewReview({ ...newReview, text: e.target.value })}
-                      rows={3}
-                    />
+                    <div className="space-y-1">
+                      <Textarea
+                        placeholder="Текст отзыва"
+                        value={newReview.text}
+                        onChange={(e) => setNewReview({ ...newReview, text: e.target.value })}
+                        rows={3}
+                        maxLength={200}
+                      />
+                      <p className="text-xs text-gray-500">{newReview.text.length}/200 символов</p>
+                    </div>
                     <Button
                       size="sm"
                       className="w-full"
@@ -867,17 +875,25 @@ export default function PageBuilder() {
 
                     <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
                       <p className="text-sm font-semibold">Добавить пост</p>
-                      <Input
-                        placeholder="Заголовок поста"
-                        value={newBlogPost.title}
-                        onChange={(e) => setNewBlogPost({ ...newBlogPost, title: e.target.value })}
-                      />
-                      <Textarea
-                        placeholder="Текст поста"
-                        value={newBlogPost.content}
-                        onChange={(e) => setNewBlogPost({ ...newBlogPost, content: e.target.value })}
-                        rows={4}
-                      />
+                      <div className="space-y-1">
+                        <Input
+                          placeholder="Заголовок поста"
+                          value={newBlogPost.title}
+                          onChange={(e) => setNewBlogPost({ ...newBlogPost, title: e.target.value })}
+                          maxLength={60}
+                        />
+                        <p className="text-xs text-gray-500">{newBlogPost.title.length}/60 символов</p>
+                      </div>
+                      <div className="space-y-1">
+                        <Textarea
+                          placeholder="Текст поста"
+                          value={newBlogPost.content}
+                          onChange={(e) => setNewBlogPost({ ...newBlogPost, content: e.target.value })}
+                          rows={4}
+                          maxLength={500}
+                        />
+                        <p className="text-xs text-gray-500">{newBlogPost.content.length}/500 символов</p>
+                      </div>
                       <div className="space-y-2">
                         <Label className="text-xs">Обложка поста (необязательно)</Label>
                         {newBlogPost.image ? (
@@ -1000,22 +1016,34 @@ export default function PageBuilder() {
 
                     <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
                       <p className="text-sm font-semibold">Добавить предложение</p>
-                      <Input
-                        placeholder="Название (например: Скидка 20% на первый сеанс)"
-                        value={newOffer.title}
-                        onChange={(e) => setNewOffer({ ...newOffer, title: e.target.value })}
-                      />
-                      <Input
-                        placeholder="Размер скидки (например: -20% или -1000₽)"
-                        value={newOffer.discount}
-                        onChange={(e) => setNewOffer({ ...newOffer, discount: e.target.value })}
-                      />
-                      <Textarea
-                        placeholder="Описание предложения и условий"
-                        value={newOffer.description}
-                        onChange={(e) => setNewOffer({ ...newOffer, description: e.target.value })}
-                        rows={3}
-                      />
+                      <div className="space-y-1">
+                        <Input
+                          placeholder="Название (например: Скидка 20% на первый сеанс)"
+                          value={newOffer.title}
+                          onChange={(e) => setNewOffer({ ...newOffer, title: e.target.value })}
+                          maxLength={60}
+                        />
+                        <p className="text-xs text-gray-500">{newOffer.title.length}/60 символов</p>
+                      </div>
+                      <div className="space-y-1">
+                        <Input
+                          placeholder="Размер скидки (например: -20% или -1000₽)"
+                          value={newOffer.discount}
+                          onChange={(e) => setNewOffer({ ...newOffer, discount: e.target.value })}
+                          maxLength={20}
+                        />
+                        <p className="text-xs text-gray-500">{newOffer.discount.length}/20 символов</p>
+                      </div>
+                      <div className="space-y-1">
+                        <Textarea
+                          placeholder="Описание предложения и условий"
+                          value={newOffer.description}
+                          onChange={(e) => setNewOffer({ ...newOffer, description: e.target.value })}
+                          rows={3}
+                          maxLength={200}
+                        />
+                        <p className="text-xs text-gray-500">{newOffer.description.length}/200 символов</p>
+                      </div>
                       <div className="space-y-2">
                         <Label className="text-xs">Изображение (необязательно)</Label>
                         {newOffer.image ? (
