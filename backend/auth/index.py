@@ -95,7 +95,7 @@ def register_user(data: dict) -> dict:
             'isBase64Encoded': False
         }
     
-    if role not in ['masseur', 'school', 'salon']:
+    if role not in ['masseur', 'school', 'salon', 'client']:
         return {
             'statusCode': 400,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
@@ -123,7 +123,7 @@ def register_user(data: dict) -> dict:
         )
         user_id = cursor.fetchone()['id']
         
-        if role == 'masseur':
+        if role == 'masseur' or role == 'client':
             cursor.execute(
                 "INSERT INTO masseur_profiles (user_id, full_name, phone, city) VALUES (%s, %s, %s, %s)",
                 (user_id, profile_data.get('full_name'), profile_data.get('phone'), profile_data.get('city'))
