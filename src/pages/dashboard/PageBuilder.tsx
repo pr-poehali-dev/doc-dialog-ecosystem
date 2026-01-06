@@ -32,6 +32,12 @@ const defaultPageData = {
   ],
   gallery: [] as string[],
   certificates: [] as string[],
+  reviews: [] as Array<{
+    name: string;
+    rating: number;
+    text: string;
+    date: string;
+  }>,
   showPhone: true,
   showTelegram: true,
   showWhatsapp: true,
@@ -60,6 +66,7 @@ export default function PageBuilder() {
   const [uploadingProfile, setUploadingProfile] = useState(false);
   const [uploadingGallery, setUploadingGallery] = useState(false);
   const [uploadingCert, setUploadingCert] = useState(false);
+  const [newReview, setNewReview] = useState({ name: '', rating: 5, text: '' });
 
   const handleImageUpload = async (file: File, type: 'hero' | 'profile' | 'gallery' | 'certificate') => {
     if (!file) return;
@@ -544,6 +551,118 @@ export default function PageBuilder() {
                       <p className="text-xs text-muted-foreground">{step.description}</p>
                     </div>
                   ))}
+                </CardContent>
+              </Card>
+
+              {/* Reviews */}
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Icon name="Star" size={20} className="text-amber-500" />
+                      <div>
+                        <CardTitle>Отзывы клиентов</CardTitle>
+                        <CardDescription>Добавьте отзывы о работе</CardDescription>
+                      </div>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {pageData.reviews && pageData.reviews.length > 0 && (
+                    <div className="space-y-3 mb-4">
+                      {pageData.reviews.map((review, index) => (
+                        <div key={index} className="p-3 bg-amber-50 rounded-lg border border-amber-100">
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="font-semibold text-sm">{review.name}</p>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => {
+                                setPageData({
+                                  ...pageData,
+                                  reviews: pageData.reviews.filter((_, i) => i !== index)
+                                });
+                              }}
+                            >
+                              <Icon name="Trash2" size={14} />
+                            </Button>
+                          </div>
+                          <div className="flex items-center gap-1 mb-2">
+                            {[...Array(5)].map((_, i) => (
+                              <Icon
+                                key={i}
+                                name="Star"
+                                size={12}
+                                className={i < review.rating ? 'text-amber-500 fill-amber-500' : 'text-gray-300'}
+                              />
+                            ))}
+                          </div>
+                          <p className="text-xs text-gray-600">{review.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
+                    <p className="text-sm font-semibold">Добавить отзыв</p>
+                    <Input
+                      placeholder="Имя клиента"
+                      value={newReview.name}
+                      onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
+                    />
+                    <div className="space-y-2">
+                      <Label>Рейтинг</Label>
+                      <div className="flex gap-1">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button
+                            key={star}
+                            type="button"
+                            onClick={() => setNewReview({ ...newReview, rating: star })}
+                            className="focus:outline-none"
+                          >
+                            <Icon
+                              name="Star"
+                              size={24}
+                              className={star <= newReview.rating ? 'text-amber-500 fill-amber-500' : 'text-gray-300'}
+                            />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <Textarea
+                      placeholder="Текст отзыва"
+                      value={newReview.text}
+                      onChange={(e) => setNewReview({ ...newReview, text: e.target.value })}
+                      rows={3}
+                    />
+                    <Button
+                      size="sm"
+                      className="w-full"
+                      onClick={() => {
+                        if (newReview.name && newReview.text) {
+                          setPageData({
+                            ...pageData,
+                            reviews: [
+                              ...pageData.reviews,
+                              {
+                                ...newReview,
+                                date: new Date().toLocaleDateString('ru-RU')
+                              }
+                            ]
+                          });
+                          setNewReview({ name: '', rating: 5, text: '' });
+                          toast({
+                            title: 'Отзыв добавлен',
+                            description: 'Отзыв появится на лендинге',
+                          });
+                        }
+                      }}
+                      disabled={!newReview.name || !newReview.text}
+                    >
+                      <Icon name="Plus" size={16} className="mr-2" />
+                      Добавить отзыв
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
 

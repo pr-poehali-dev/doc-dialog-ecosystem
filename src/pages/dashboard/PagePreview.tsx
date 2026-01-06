@@ -24,6 +24,12 @@ interface PageData {
   }>;
   gallery: string[];
   certificates: string[];
+  reviews: Array<{
+    name: string;
+    rating: number;
+    text: string;
+    date: string;
+  }>;
   showPhone: boolean;
   showTelegram: boolean;
   showWhatsapp: boolean;
@@ -118,7 +124,7 @@ export default function PagePreview() {
       {pageData.services && pageData.services.length > 0 && (
         <section className="py-20 bg-white">
           <div className="container mx-auto px-4">
-            <h2 className="text-4xl font-bold text-center mb-12">Услуги массажа</h2>
+            <h2 className="text-4xl font-bold text-center mb-12">Мои услуги</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
               {pageData.services.map((service, index) => (
                 <div 
@@ -212,33 +218,93 @@ export default function PagePreview() {
         </section>
       )}
 
+      {/* Reviews Section */}
+      {pageData.reviews && pageData.reviews.length > 0 && (
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <h2 className="text-4xl font-bold text-center mb-4">Отзывы клиентов</h2>
+            <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+              Реальные истории людей, которым я помог
+            </p>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+              {pageData.reviews.map((review: any, index: number) => (
+                <div 
+                  key={index} 
+                  className="p-6 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-100 shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold text-lg">
+                      {review.name.charAt(0)}
+                    </div>
+                    <div className="flex gap-0.5">
+                      {[...Array(5)].map((_, i) => (
+                        <Icon
+                          key={i}
+                          name="Star"
+                          size={16}
+                          className={i < review.rating ? 'text-amber-500 fill-amber-500' : 'text-gray-300'}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <p className="font-semibold text-gray-900 mb-2">{review.name}</p>
+                  <p className="text-gray-700 text-sm leading-relaxed mb-3">{review.text}</p>
+                  <p className="text-xs text-gray-500">{review.date}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Contact Section */}
-      <section className={`py-20 bg-gradient-to-r ${gradientClass} text-white relative overflow-hidden`}>
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="relative z-10 container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold mb-6">Записаться на сеанс</h2>
-          <p className="text-xl mb-8 text-white/90 max-w-2xl mx-auto">
-            Свяжитесь со мной удобным способом и получите консультацию
-          </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            {pageData.showPhone && (
-              <Button size="lg" variant="secondary" className="shadow-lg">
-                <Icon name="Phone" size={20} className="mr-2" />
-                Позвонить
-              </Button>
-            )}
-            {pageData.showTelegram && (
-              <Button size="lg" variant="secondary" className="shadow-lg">
-                <Icon name="Send" size={20} className="mr-2" />
-                Telegram
-              </Button>
-            )}
-            {pageData.showWhatsapp && (
-              <Button size="lg" variant="secondary" className="shadow-lg">
-                <Icon name="MessageCircle" size={20} className="mr-2" />
-                WhatsApp
-              </Button>
-            )}
+      <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold mb-4">Свяжитесь со мной</h2>
+              <p className="text-xl text-gray-600">
+                Выберите удобный способ связи и запишитесь на сеанс
+              </p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-4">
+              {pageData.showPhone && (
+                <div className="group p-6 rounded-2xl bg-white border-2 border-gray-100 hover:border-blue-200 hover:shadow-lg transition-all text-center">
+                  <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${gradientClass} flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
+                    <Icon name="Phone" size={28} className="text-white" />
+                  </div>
+                  <p className="font-semibold text-lg mb-2">Телефон</p>
+                  <p className="text-gray-600 text-sm mb-4">Позвоните для записи</p>
+                  <Button className={`w-full bg-gradient-to-r ${gradientClass}`}>
+                    Позвонить
+                  </Button>
+                </div>
+              )}
+              {pageData.showTelegram && (
+                <div className="group p-6 rounded-2xl bg-white border-2 border-gray-100 hover:border-blue-200 hover:shadow-lg transition-all text-center">
+                  <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${gradientClass} flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
+                    <Icon name="Send" size={28} className="text-white" />
+                  </div>
+                  <p className="font-semibold text-lg mb-2">Telegram</p>
+                  <p className="text-gray-600 text-sm mb-4">Напишите в мессенджер</p>
+                  <Button className={`w-full bg-gradient-to-r ${gradientClass}`}>
+                    Написать
+                  </Button>
+                </div>
+              )}
+              {pageData.showWhatsapp && (
+                <div className="group p-6 rounded-2xl bg-white border-2 border-gray-100 hover:border-blue-200 hover:shadow-lg transition-all text-center">
+                  <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${gradientClass} flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
+                    <Icon name="MessageCircle" size={28} className="text-white" />
+                  </div>
+                  <p className="font-semibold text-lg mb-2">WhatsApp</p>
+                  <p className="text-gray-600 text-sm mb-4">Свяжитесь через WhatsApp</p>
+                  <Button className={`w-full bg-gradient-to-r ${gradientClass}`}>
+                    Связаться
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </section>
