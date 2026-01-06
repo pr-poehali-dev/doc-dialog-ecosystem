@@ -42,6 +42,7 @@ import NotFound from "./pages/NotFound";
 import PublicProfile from "./pages/dashboard/PublicProfile";
 import ClientsCRM from "./pages/dashboard/ClientsCRM";
 import PageBuilder from "./pages/dashboard/PageBuilder";
+import PagePreview from "./pages/dashboard/PagePreview";
 import TrustBadges from "./pages/dashboard/TrustBadges";
 import ClientEducation from "./pages/dashboard/ClientEducation";
 import Community from "./pages/dashboard/Community";
@@ -93,6 +94,7 @@ const App = () => (
           <Route path="/dashboard/public-profile" element={<PublicProfile />} />
           <Route path="/dashboard/clients" element={<ClientsCRM />} />
           <Route path="/dashboard/page-builder" element={<PageBuilder />} />
+          <Route path="/dashboard/page-preview" element={<PagePreview />} />
           <Route path="/dashboard/badges" element={<TrustBadges />} />
           <Route path="/dashboard/education" element={<ClientEducation />} />
           <Route path="/dashboard/community" element={<Community />} />
