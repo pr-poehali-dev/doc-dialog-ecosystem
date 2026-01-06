@@ -67,11 +67,11 @@ export default function LandingContentSections({
     <>
       {/* About Section */}
       {aboutText && (
-        <section className="py-20 bg-gradient-to-b from-white to-gray-50">
+        <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-white to-gray-50">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-4xl font-bold mb-6">{aboutTitle}</h2>
-              <p className="text-lg text-gray-700 leading-relaxed whitespace-pre-line">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">{aboutTitle}</h2>
+              <p className="text-base sm:text-lg text-gray-700 leading-relaxed whitespace-pre-line">
                 {aboutText}
               </p>
             </div>
@@ -81,10 +81,10 @@ export default function LandingContentSections({
 
       {/* Services Section */}
       {services && services.length > 0 && (
-        <section className="py-20 bg-white">
+        <section className="py-12 sm:py-16 md:py-20 bg-white">
           <div className="container mx-auto px-4">
-            <h2 className="text-4xl font-bold text-center mb-12">Мои услуги</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12">Мои услуги</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-6xl mx-auto">
               {services.map((service, index) => (
                 <div 
                   key={index} 
@@ -97,9 +97,9 @@ export default function LandingContentSections({
                       className="w-full h-48 object-cover"
                     />
                   )}
-                  <div className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <h3 className="text-xl font-bold flex-1 text-gray-900">{service.name}</h3>
+                  <div className="p-4 sm:p-6">
+                    <div className="flex items-start justify-between mb-3 sm:mb-4">
+                      <h3 className="text-lg sm:text-xl font-bold flex-1 text-gray-900">{service.name}</h3>
                       {service.price && (
                         <Badge className={`bg-gradient-to-r ${gradientClass} text-white border-0`}>
                           {service.price} ₽
@@ -125,10 +125,10 @@ export default function LandingContentSections({
 
       {/* Process Section */}
       {processSteps && processSteps.length > 0 && (
-        <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+        <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-gray-50 to-white">
           <div className="container mx-auto px-4">
-            <h2 className="text-4xl font-bold text-center mb-12">{processTitle}</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12">{processTitle}</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 max-w-6xl mx-auto">
               {processSteps.map((step, index) => (
                 <div key={index} className="text-center">
                   <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${gradientClass} flex items-center justify-center mx-auto mb-4 shadow-lg`}>
@@ -145,13 +145,13 @@ export default function LandingContentSections({
 
       {/* Offers Section - Super Premium only */}
       {offers && offers.length > 0 && template === 'luxury' && (
-        <section className="py-20 bg-gradient-to-b from-white to-rose-50">
+        <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-white to-rose-50">
           <div className="container mx-auto px-4">
-            <h2 className="text-4xl font-bold text-center mb-4">Специальные предложения</h2>
-            <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4">Специальные предложения</h2>
+            <p className="text-center text-sm sm:text-base text-gray-600 mb-8 sm:mb-12 max-w-2xl mx-auto px-4">
               Выгодные скидки и подарочные сертификаты
             </p>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-6xl mx-auto">
               {offers.map((offer, index) => (
                 <div 
                   key={index} 
@@ -241,13 +241,13 @@ export default function LandingContentSections({
 
       {/* Blog Section - Premium/Luxury only */}
       {blog && blog.length > 0 && (template === 'premium' || template === 'luxury') && (
-        <section className="py-20 bg-gradient-to-b from-white to-gray-50">
+        <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-white to-gray-50">
           <div className="container mx-auto px-4">
-            <h2 className="text-4xl font-bold text-center mb-4">Блог и новости</h2>
-            <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4">Блог и новости</h2>
+            <p className="text-center text-sm sm:text-base text-gray-600 mb-8 sm:mb-12 max-w-2xl mx-auto px-4">
               Полезные материалы и советы от специалиста
             </p>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-6xl mx-auto">
               {blog.map((post, index) => (
                 <div 
                   key={index} 
@@ -260,9 +260,9 @@ export default function LandingContentSections({
                       className="w-full h-48 object-cover"
                     />
                   )}
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold mb-3 text-gray-900">{post.title}</h3>
-                    <p className="text-gray-600 text-sm mb-4 leading-relaxed line-clamp-3">{post.content}</p>
+                  <div className="p-4 sm:p-6">
+                    <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-gray-900">{post.title}</h3>
+                    <p className="text-gray-600 text-sm mb-3 sm:mb-4 leading-relaxed line-clamp-3">{post.content}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-gray-500">{post.date}</span>
                       <Button 
@@ -285,16 +285,16 @@ export default function LandingContentSections({
 
       {/* Gallery Section */}
       {gallery && gallery.length > 0 && (
-        <section className="py-20 bg-white">
+        <section className="py-12 sm:py-16 md:py-20 bg-white">
           <div className="container mx-auto px-4">
-            <h2 className="text-4xl font-bold text-center mb-12">Галерея</h2>
-            <div className="grid md:grid-cols-3 gap-4 max-w-6xl mx-auto">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12">Галерея</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 max-w-6xl mx-auto">
               {gallery.map((img, index) => (
                 <div key={index} className="overflow-hidden rounded-2xl shadow-lg">
                   <img 
                     src={img} 
                     alt={`Фото ${index + 1}`} 
-                    className="w-full h-64 object-cover hover:scale-110 transition-transform duration-300"
+                    className="w-full h-48 sm:h-56 md:h-64 object-cover hover:scale-110 transition-transform duration-300"
                   />
                 </div>
               ))}
@@ -305,13 +305,13 @@ export default function LandingContentSections({
 
       {/* Certificates Section */}
       {certificates && certificates.length > 0 && (
-        <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+        <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-gray-50 to-white">
           <div className="container mx-auto px-4">
-            <h2 className="text-4xl font-bold text-center mb-4">Сертификаты и дипломы</h2>
-            <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4">Сертификаты и дипломы</h2>
+            <p className="text-center text-sm sm:text-base text-gray-600 mb-8 sm:mb-12 max-w-2xl mx-auto px-4">
               Подтвержденная квалификация и профессиональное образование
             </p>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto">
               {certificates.map((cert, index) => (
                 <div key={index} className="overflow-hidden rounded-2xl shadow-lg border-2 border-amber-100">
                   <img 
