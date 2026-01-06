@@ -15,6 +15,7 @@ import DashboardHeader from './SchoolDashboard/DashboardHeader';
 import DashboardTabs from './SchoolDashboard/DashboardTabs';
 import LandingsTab from './SchoolDashboard/LandingsTab';
 import KnowledgeBasePublic from '@/components/school/KnowledgeBasePublic';
+import PromoRequestsTab from '@/components/school/PromoRequestsTab';
 import {
   Course,
   Mastermind,
@@ -33,7 +34,7 @@ export default function SchoolDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<'courses' | 'masterminds' | 'offline-training' | 'specialists' | 'landings' | 'knowledge'>('courses');
+  const [activeTab, setActiveTab] = useState<'courses' | 'masterminds' | 'offline-training' | 'specialists' | 'landings' | 'knowledge' | 'promo-requests'>('courses');
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingCourseId, setEditingCourseId] = useState<number | null>(null);
   const [editingMastermindId, setEditingMastermindId] = useState<number | null>(null);
@@ -312,7 +313,7 @@ export default function SchoolDashboard() {
 
         <DashboardTabs activeTab={activeTab} onTabChange={handleTabChange} />
 
-        {activeTab !== 'landings' && activeTab !== 'knowledge' && (
+        {activeTab !== 'landings' && activeTab !== 'knowledge' && activeTab !== 'promo-requests' && (
           <div className="mb-6">
             <Button onClick={() => {
               if (activeTab === 'courses') {
@@ -390,7 +391,7 @@ export default function SchoolDashboard() {
           />
         )}
 
-        {!showAddForm && activeTab !== 'landings' && activeTab !== 'knowledge' && (
+        {!showAddForm && activeTab !== 'landings' && activeTab !== 'knowledge' && activeTab !== 'promo-requests' && (
           <ItemsList
             activeTab={activeTab}
             courses={courses}
@@ -428,6 +429,10 @@ export default function SchoolDashboard() {
 
         {activeTab === 'knowledge' && (
           <KnowledgeBasePublic targetType="school" />
+        )}
+
+        {activeTab === 'promo-requests' && (
+          <PromoRequestsTab />
         )}
       </div>
 

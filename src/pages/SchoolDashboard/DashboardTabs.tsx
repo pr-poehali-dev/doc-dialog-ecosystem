@@ -1,6 +1,6 @@
 import Icon from '@/components/ui/icon';
 
-type TabType = 'courses' | 'masterminds' | 'offline-training' | 'specialists' | 'landings' | 'knowledge';
+type TabType = 'courses' | 'masterminds' | 'offline-training' | 'specialists' | 'landings' | 'knowledge' | 'promo-requests';
 
 interface DashboardTabsProps {
   activeTab: TabType;
@@ -44,6 +44,13 @@ export default function DashboardTabs({ activeTab, onTabChange }: DashboardTabsP
       >
         <Icon name="HelpCircle" size={18} className="inline mr-2" />
         База знаний
+      </button>
+      <button
+        onClick={() => onTabChange('promo-requests')}
+        className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${activeTab === 'promo-requests' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+      >
+        <Icon name="Tag" size={18} className="inline mr-2" />
+        Запросы скидок
       </button>
     </div>
   );

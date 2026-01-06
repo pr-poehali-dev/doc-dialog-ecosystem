@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 import Icon from '@/components/ui/icon';
 import RatingDisplay from '@/components/RatingDisplay';
 import { CatalogItem } from './types';
@@ -8,6 +10,8 @@ import { CatalogItem } from './types';
 interface CatalogItemCardProps {
   item: CatalogItem;
 }
+
+const PROMO_API_URL = 'https://functions.poehali.dev/0e44bf6d-cb4d-404e-832f-02070e6e8b13';
 
 const getCourseTypeLabel = (type: string) => {
   const labels: Record<string, string> = {
@@ -28,7 +32,13 @@ const getCourseTypeColor = (type: string) => {
 };
 
 export default function CatalogItemCard({ item }: CatalogItemCardProps) {
+  const { toast } = useToast();
+  const [requesting, setRequesting] = useState(false);
   const isPromoted = item.has_promotion && item.promoted_until && new Date(item.promoted_until) > new Date();
+  
+  const userData = localStorage.getItem('user');
+  const user = userData ? JSON.parse(userData) : null;
+  const isMasseur = user?.role === 'masseur';
   
   const handleClick = () => {
     if (item.itemType === 'mastermind') {
@@ -45,6 +55,47 @@ export default function CatalogItemCard({ item }: CatalogItemCardProps) {
       window.location.href = `/course/landing/${item.slug}`;
     } else {
       window.location.href = `/course/${item.id}`;
+    }
+  };
+
+  const handleRequestDiscount = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (!user) {
+      toast({ title: 'Ошибка', description: 'Войдите в аккаунт', variant: 'destructive' });
+      return;
+    }
+    
+    setRequesting(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(PROMO_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          school_id: item.school_id,
+          course_id: item.id,
+          course_title: item.title,
+          entity_type: item.itemType === 'mastermind' ? 'mastermind' : item.itemType === 'offline_training' ? 'offline_training' : 'course'
+        })
+      });
+      
+      if (response.ok) {
+        toast({ 
+          title: 'Запрос отправлен', 
+          description: 'Школа получит ваш запрос и ответит в ближайшее время' 
+        });
+      } else {
+        const error = await response.json();
+        toast({ title: 'Ошибка', description: error.error || 'Не удалось отправить запрос', variant: 'destructive' });
+      }
+    } catch (error) {
+      toast({ title: 'Ошибка', description: 'Не удалось отправить запрос', variant: 'destructive' });
+    } finally {
+      setRequesting(false);
     }
   };
 
@@ -132,33 +183,48 @@ export default function CatalogItemCard({ item }: CatalogItemCardProps) {
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-3 border-t mt-3">
-          <div>
-            {item.discount_price ? (
-              <div className="flex flex-col">
-                <span className="text-xs text-muted-foreground line-through">
-                  {item.original_price?.toLocaleString()} ₽
+        <div className="space-y-2 pt-3 border-t mt-3">
+          <div className="flex items-center justify-between">
+            <div>
+              {item.discount_price ? (
+                <div className="flex flex-col">
+                  <span className="text-xs text-muted-foreground line-through">
+                    {item.original_price?.toLocaleString()} ₽
+                  </span>
+                  <span className="text-2xl font-bold text-red-600">
+                    {item.discount_price.toLocaleString()} ₽
+                  </span>
+                </div>
+              ) : item.price ? (
+                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  {item.price.toLocaleString()} ₽
                 </span>
-                <span className="text-2xl font-bold text-red-600">
-                  {item.discount_price.toLocaleString()} ₽
-                </span>
-              </div>
-            ) : item.price ? (
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                {item.price.toLocaleString()} ₽
-              </span>
-            ) : (
-              <span className="text-2xl font-bold text-green-600">Бесплатно</span>
-            )}
+              ) : (
+                <span className="text-2xl font-bold text-green-600">Бесплатно</span>
+              )}
+            </div>
+            <Button 
+              size="sm" 
+              className="group-hover:bg-primary group-hover:shadow-lg transition-all"
+              onClick={handleClick}
+            >
+              Подробнее
+              <Icon name="ArrowRight" size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
+            </Button>
           </div>
-          <Button 
-            size="sm" 
-            className="group-hover:bg-primary group-hover:shadow-lg transition-all"
-            onClick={handleClick}
-          >
-            Подробнее
-            <Icon name="ArrowRight" size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
-          </Button>
+          
+          {isMasseur && item.price && item.price > 0 && (
+            <Button 
+              size="sm" 
+              variant="outline"
+              className="w-full text-xs gap-1"
+              onClick={handleRequestDiscount}
+              disabled={requesting}
+            >
+              <Icon name="Tag" size={14} />
+              {requesting ? 'Отправка...' : 'Запросить скидку'}
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>

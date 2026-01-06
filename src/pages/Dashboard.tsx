@@ -185,6 +185,19 @@ export default function Dashboard() {
                 </Link>
               </div>
 
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                    <Icon name="Tag" className="text-amber-600" size={24} />
+                  </div>
+                  <h3 className="text-xl font-semibold">Мои промокоды</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Скидки на курсы от школ</p>
+                <Link to="/dashboard/promo-codes">
+                  <Button className="w-full">Мои скидки</Button>
+                </Link>
+              </div>
+
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
