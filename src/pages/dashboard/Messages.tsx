@@ -4,12 +4,11 @@ import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Avatar } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+import ChatListItem from '@/components/messages/ChatListItem';
+import ChatWindow from '@/components/messages/ChatWindow';
 
 interface Message {
   id: number;
@@ -125,28 +124,6 @@ export default function Messages() {
   const handleSelectChat = (chat: Chat) => {
     setSelectedChat(chat);
     fetchMessages(chat.other_user_id);
-  };
-
-  const getRoleBadge = (role: string) => {
-    switch (role) {
-      case 'client':
-        return <Badge variant="secondary" className="text-xs">Клиент</Badge>;
-      case 'masseur':
-        return <Badge variant="default" className="text-xs">Специалист</Badge>;
-      default:
-        return null;
-    }
-  };
-
-  const getRoleIcon = (role: string) => {
-    switch (role) {
-      case 'client':
-        return 'User';
-      case 'masseur':
-        return 'Heart';
-      default:
-        return 'User';
-    }
   };
 
   const handleSendMessage = async () => {
@@ -308,53 +285,13 @@ export default function Messages() {
                   ) : (
                     <div className="space-y-2">
                       {filteredChats.map((chat) => (
-                        <div
+                        <ChatListItem
                           key={chat.other_user_id}
-                          onClick={() => handleSelectChat(chat)}
-                          className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                            selectedChat?.other_user_id === chat.other_user_id
-                              ? 'bg-primary/10 border-primary/50'
-                              : 'hover:bg-muted border-transparent'
-                          } border`}
-                        >
-                          <div className="flex items-start gap-3">
-                            <div className="relative">
-                              <Avatar className="w-12 h-12">
-                                {chat.avatar ? (
-                                  <img src={chat.avatar} alt={chat.name} className="w-full h-full object-cover" />
-                                ) : (
-                                  <div className="w-full h-full bg-primary/10 flex items-center justify-center">
-                                    <Icon name={getRoleIcon(chat.role) as any} className="text-primary" size={20} />
-                                  </div>
-                                )}
-                              </Avatar>
-                              {chat.verified && (
-                                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
-                                  <Icon name="CheckCircle" className="text-primary-foreground" size={12} />
-                                </div>
-                              )}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center justify-between mb-1">
-                                <div className="flex items-center gap-2">
-                                  <p className="font-semibold text-sm truncate">{chat.name || 'Без имени'}</p>
-                                  {getRoleBadge(chat.role)}
-                                </div>
-                                {chat.unread_count > 0 && (
-                                  <Badge className="bg-primary text-primary-foreground rounded-full w-5 h-5 p-0 flex items-center justify-center text-xs">
-                                    {chat.unread_count}
-                                  </Badge>
-                                )}
-                              </div>
-                              <p className="text-xs text-muted-foreground truncate">
-                                {chat.last_message || 'Нет сообщений'}
-                              </p>
-                              <p className="text-xs text-muted-foreground mt-1">
-                                {formatTime(chat.last_message_time)}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
+                          chat={chat}
+                          isSelected={selectedChat?.other_user_id === chat.other_user_id}
+                          onSelect={handleSelectChat}
+                          formatTime={formatTime}
+                        />
                       ))}
                     </div>
                   )}
@@ -362,187 +299,16 @@ export default function Messages() {
               </CardContent>
             </Card>
 
-            <Card className="lg:col-span-2">
-              {selectedChat ? (
-                <CardContent className="p-0">
-                  <div className="border-b p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Avatar className="w-12 h-12">
-                          {selectedChat.avatar ? (
-                            <img src={selectedChat.avatar} alt={selectedChat.name} className="w-full h-full object-cover" />
-                          ) : (
-                            <div className="w-full h-full bg-primary/10 flex items-center justify-center">
-                              <Icon name={getRoleIcon(selectedChat.role) as any} className="text-primary" size={24} />
-                            </div>
-                          )}
-                        </Avatar>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h3 className="font-semibold">{selectedChat.name || 'Без имени'}</h3>
-                            {selectedChat.verified && (
-                              <Icon name="CheckCircle" className="text-primary" size={16} />
-                            )}
-                          </div>
-                          {getRoleBadge(selectedChat.role)}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <ScrollArea className="h-[500px] p-4">
-                    <div className="space-y-4">
-                      {messages.length === 0 ? (
-                        <div className="text-center py-12 text-gray-500">
-                          <Icon name="MessageCircle" size={48} className="mx-auto mb-4 opacity-50" />
-                          <p>Начните разговор</p>
-                        </div>
-                      ) : (
-                        messages.map((message) => {
-                          const isOwn = message.sender_id === currentUserId;
-                          const isBookingRequest = message.message_type === 'booking_request';
-                          const isBookingResponse = message.message_type === 'booking_response';
-                          
-                          if (isBookingRequest) {
-                            const bookingStatus = message.booking_data?.status || 'pending';
-                            return (
-                              <div key={message.id} className="flex justify-center my-4">
-                                <Card className="w-full max-w-md border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-blue-50">
-                                  <CardContent className="pt-6 space-y-4">
-                                    <div className="flex items-center gap-3">
-                                      <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                                        <Icon name="Calendar" size={24} className="text-primary" />
-                                      </div>
-                                      <div>
-                                        <h4 className="font-semibold">Заявка на запись</h4>
-                                        <p className="text-sm text-muted-foreground">{message.message_text}</p>
-                                      </div>
-                                    </div>
-                                    
-                                    {bookingStatus === 'pending' && !isOwn && (
-                                      <div className="flex gap-2">
-                                        <Button 
-                                          onClick={() => handleBookingResponse(message.id, 'accept')}
-                                          className="flex-1"
-                                        >
-                                          <Icon name="Check" size={18} className="mr-2" />
-                                          Принять
-                                        </Button>
-                                        <Button 
-                                          onClick={() => handleBookingResponse(message.id, 'decline')}
-                                          variant="outline"
-                                          className="flex-1"
-                                        >
-                                          <Icon name="X" size={18} className="mr-2" />
-                                          Отклонить
-                                        </Button>
-                                      </div>
-                                    )}
-                                    
-                                    {bookingStatus === 'accepted' && (
-                                      <div className="flex items-center gap-2 text-green-600 text-sm">
-                                        <Icon name="CheckCircle" size={16} />
-                                        <span>Заявка принята</span>
-                                      </div>
-                                    )}
-                                    
-                                    {bookingStatus === 'declined' && (
-                                      <div className="flex items-center gap-2 text-gray-500 text-sm">
-                                        <Icon name="XCircle" size={16} />
-                                        <span>Заявка отклонена</span>
-                                      </div>
-                                    )}
-                                    
-                                    {bookingStatus === 'pending' && isOwn && (
-                                      <div className="flex items-center gap-2 text-amber-600 text-sm">
-                                        <Icon name="Clock" size={16} />
-                                        <span>Ожидает ответа специалиста</span>
-                                      </div>
-                                    )}
-                                    
-                                    <p className="text-xs text-muted-foreground text-center">
-                                      {new Date(message.created_at).toLocaleString('ru-RU', { 
-                                        day: '2-digit', 
-                                        month: '2-digit', 
-                                        hour: '2-digit', 
-                                        minute: '2-digit' 
-                                      })}
-                                    </p>
-                                  </CardContent>
-                                </Card>
-                              </div>
-                            );
-                          }
-                          
-                          if (isBookingResponse) {
-                            return (
-                              <div key={message.id} className="flex justify-center my-3">
-                                <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2 text-sm text-center max-w-md">
-                                  <Icon name="Info" size={16} className="inline mr-2 text-blue-600" />
-                                  {message.message_text}
-                                </div>
-                              </div>
-                            );
-                          }
-                          
-                          return (
-                            <div
-                              key={message.id}
-                              className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
-                            >
-                              <div
-                                className={`max-w-[70%] rounded-2xl px-4 py-2 ${
-                                  isOwn
-                                    ? 'bg-primary text-primary-foreground'
-                                    : 'bg-muted'
-                                }`}
-                              >
-                                <p className="text-sm break-words">{message.message_text}</p>
-                                <p className={`text-xs mt-1 ${isOwn ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
-                                  {new Date(message.created_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
-                                </p>
-                              </div>
-                            </div>
-                          );
-                        })
-                      )}
-                    </div>
-                  </ScrollArea>
-
-                  <div className="border-t p-4">
-                    <div className="flex gap-2">
-                      <Textarea
-                        placeholder="Введите сообщение..."
-                        value={messageText}
-                        onChange={(e) => setMessageText(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' && !e.shiftKey) {
-                            e.preventDefault();
-                            handleSendMessage();
-                          }
-                        }}
-                        className="min-h-[60px] resize-none"
-                      />
-                      <Button
-                        onClick={handleSendMessage}
-                        disabled={!messageText.trim() || sending}
-                        size="lg"
-                        className="self-end"
-                      >
-                        <Icon name="Send" size={20} />
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              ) : (
-                <CardContent className="flex items-center justify-center h-[650px]">
-                  <div className="text-center text-muted-foreground">
-                    <Icon name="MessageSquare" size={64} className="mx-auto mb-4 opacity-30" />
-                    <p className="text-lg">Выберите чат для начала общения</p>
-                  </div>
-                </CardContent>
-              )}
-            </Card>
+            <ChatWindow
+              selectedChat={selectedChat}
+              messages={messages}
+              messageText={messageText}
+              sending={sending}
+              currentUserId={currentUserId}
+              onMessageTextChange={setMessageText}
+              onSendMessage={handleSendMessage}
+              onBookingResponse={handleBookingResponse}
+            />
           </div>
         </div>
       </div>
