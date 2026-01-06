@@ -223,7 +223,7 @@ export default function CatalogItemCard({ item }: CatalogItemCardProps) {
             </Button>
           </div>
           
-          {isMasseur && item.price && item.price > 0 && (
+          {isMasseur && (item.price || item.discount_price) && (item.price > 0 || (item.discount_price && item.discount_price > 0)) && (
             <Button 
               size="sm" 
               variant="outline"
