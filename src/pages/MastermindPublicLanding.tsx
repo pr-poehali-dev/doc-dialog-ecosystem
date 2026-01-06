@@ -385,7 +385,11 @@ export default function MastermindPublicLanding() {
       )}
 
       {/* Отзывы с ReviewsSection */}
-      <ReviewsSection entityType="mastermind" entityId={mastermind.id} onRatingUpdate={(r, c) => { setRating(r); setReviewCount(c); }} />
+      <section className="py-12 sm:py-16 md:py-20 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <ReviewsSection entityType="mastermind" entityId={mastermind.id} onRatingUpdate={(r, c) => { setRating(r); setReviewCount(c); }} />
+        </div>
+      </section>
 
       {/* CTA секция */}
       <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-purple-600 to-pink-600 text-white">
