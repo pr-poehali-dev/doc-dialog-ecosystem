@@ -236,7 +236,7 @@ export default function PromoCodesList() {
                 </div>
               </div>
 
-              {timeLeft ? (
+              {timeLeft && (
                 <div className="p-4 bg-amber-50 border border-amber-300 rounded-lg text-center">
                   <p className="text-sm text-amber-800 mb-2">⏱️ Осталось времени</p>
                   <p className="text-3xl font-bold text-amber-900">
@@ -245,17 +245,7 @@ export default function PromoCodesList() {
                     {String(timeLeft.seconds).padStart(2, '0')}
                   </p>
                 </div>
-              ) : selectedPromo.expires_at && new Date(selectedPromo.expires_at) < new Date() ? (
-                <div className="p-4 bg-red-50 border border-red-300 rounded-lg text-center">
-                  <p className="text-sm text-red-800 mb-2">⏱️ Время истекло</p>
-                  <p className="text-lg font-semibold text-red-900">
-                    Промокод больше не активен
-                  </p>
-                  <p className="text-xs text-red-700 mt-1">
-                    Нажмите "Активировать заново" чтобы получить новый таймер
-                  </p>
-                </div>
-              ) : null}
+              )}
 
               {selectedPromo.discount_percentage && (
                 <div className="text-center">
