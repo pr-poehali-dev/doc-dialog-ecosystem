@@ -37,18 +37,36 @@ export default function Verification() {
   }, []);
 
   const loadVerificationStatus = async () => {
-    // TODO: загрузка статуса верификации из API
-    setLoading(false);
-    setStatus({
-      education_verified: false,
-      experience_verified: false,
-      identity_verified: false,
-      insurance_verified: false,
-      education_status: 'pending',
-      experience_status: 'pending',
-      identity_status: 'pending',
-      insurance_status: 'pending',
-    });
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('https://functions.poehali.dev/63af3811-f2f6-4a51-9544-cc8f6e6b73b3', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data) {
+          setStatus(data);
+        } else {
+          // Если записи еще нет, показываем дефолтные значения
+          setStatus({
+            education_verified: false,
+            experience_verified: false,
+            identity_verified: false,
+            insurance_verified: false,
+            education_status: 'not_submitted',
+            experience_status: 'not_submitted',
+            identity_status: 'not_submitted',
+            insurance_status: 'not_submitted',
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Ошибка загрузки статуса:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmitFolder = async (type: string) => {
@@ -64,8 +82,22 @@ export default function Verification() {
 
     setSubmitting(type);
     try {
-      // TODO: отправка ссылки на backend
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const token = localStorage.getItem('token');
+      const response = await fetch('https://functions.poehali.dev/63af3811-f2f6-4a51-9544-cc8f6e6b73b3', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          type: type,
+          folder_url: url
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to submit');
+      }
       
       toast({
         title: 'Ссылка отправлена',
