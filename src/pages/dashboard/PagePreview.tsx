@@ -72,7 +72,7 @@ export default function PagePreview() {
       try {
         const token = localStorage.getItem('token');
         console.log('Loading user profile with token:', token ? 'exists' : 'missing');
-        const response = await fetch('https://functions.poehali.dev/0fb6eb3b-ce10-437e-a4a7-fec98d24a9a2', {
+        const response = await fetch('https://functions.poehali.dev/bf27da5d-a5ee-4dc7-b5bb-fcc474598d37', {
           headers: { 'X-Authorization': `Bearer ${token}` }
         });
         console.log('Profile response status:', response.status);
