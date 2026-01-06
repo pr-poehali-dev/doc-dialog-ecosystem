@@ -48,23 +48,31 @@ def handler(event: dict, context) -> dict:
     
     # Decode JWT
     try:
+        print(f"[DEBUG] Original token (first 50 chars): {token[:50]}...")
+        print(f"[DEBUG] Original token (last 50 chars): ...{token[-50:]}")
+        
         # Handle impersonated tokens
         verify_signature = True
         if token.endswith('.impersonated'):
             token = token[:-len('.impersonated')]
             verify_signature = False
+            print(f"[DEBUG] After strip .impersonated: {token[:50]}...")
         
         # URL decode token if needed (handles %3D etc)
         token = unquote(token)
+        print(f"[DEBUG] After unquote: {token[:50]}...")
         
         # Fix base64url padding if needed (JWT uses base64url without padding)
         parts = token.split('.')
+        print(f"[DEBUG] Token parts count: {len(parts)}")
         if len(parts) == 3:
+            print(f"[DEBUG] Part lengths before padding: {[len(p) for p in parts]}")
             for i in range(3):
                 # Add padding if needed
                 missing_padding = len(parts[i]) % 4
                 if missing_padding:
                     parts[i] += '=' * (4 - missing_padding)
+            print(f"[DEBUG] Part lengths after padding: {[len(p) for p in parts]}")
             token = '.'.join(parts)
         
         secret_key = os.environ.get('JWT_SECRET', 'default_secret_key')
@@ -72,7 +80,9 @@ def handler(event: dict, context) -> dict:
         user_id = payload.get('user_id')
         user_email = payload.get('email')
         user_role = payload.get('role', 'user')
+        print(f"[DEBUG] Token decoded successfully: user_id={user_id}, role={user_role}")
     except Exception as e:
+        print(f"[DEBUG] Token decode failed: {type(e).__name__}: {str(e)}")
         cur.close()
         conn.close()
         return {
