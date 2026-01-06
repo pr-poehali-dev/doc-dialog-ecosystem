@@ -38,12 +38,11 @@ def handler(event: dict, context) -> dict:
     cur = conn.cursor()
     
     try:
-        # Получаем user_id из токена
+        # Получаем user_id из токена (user_sessions доступна, users - нет)
         cur.execute("""
-            SELECT u.id, u.role 
-            FROM t_p46047379_doc_dialog_ecosystem.users u
-            JOIN t_p46047379_doc_dialog_ecosystem.user_sessions s ON u.id = s.user_id
-            WHERE s.token = %s AND s.expires_at > NOW()
+            SELECT user_id
+            FROM t_p46047379_doc_dialog_ecosystem.user_sessions
+            WHERE token = %s AND expires_at > NOW()
         """, (token,))
         
         user_data = cur.fetchone()
