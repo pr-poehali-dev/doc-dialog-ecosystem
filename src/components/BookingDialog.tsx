@@ -82,7 +82,7 @@ export const BookingDialog = ({ isOpen, onClose, masseurName, masseurId, special
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl">Запись к массажисту</DialogTitle>
+          <DialogTitle className="text-2xl">Запись к специалисту по телу</DialogTitle>
           <DialogDescription>
             Заполните форму, и {masseurName} свяжется с вами для подтверждения
           </DialogDescription>
