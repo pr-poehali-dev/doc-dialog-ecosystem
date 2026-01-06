@@ -201,7 +201,13 @@ export default function PromoRequestsTab() {
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <CardTitle className="text-lg mb-2">{request.course_title}</CardTitle>
+                    <div className="flex items-center gap-2 mb-2">
+                      <CardTitle className="text-lg">{request.course_title}</CardTitle>
+                      <Badge variant="outline" className="text-xs">
+                        {request.entity_type === 'mastermind' ? 'Мастермайнд' : 
+                         request.entity_type === 'offline_training' ? 'Очное обучение' : 'Курс'}
+                      </Badge>
+                    </div>
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground">
                         <Icon name="User" size={14} className="inline mr-1" />
