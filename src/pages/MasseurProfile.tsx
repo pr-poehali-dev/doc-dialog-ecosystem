@@ -189,7 +189,7 @@ const MasseurProfile = () => {
                 {masseur.is_premium && (
                   <Badge className="absolute top-4 right-4 bg-gradient-to-r from-amber-500 to-orange-500">
                     <Icon name="Crown" size={12} className="mr-1" />
-                    PREMIUM
+                    Премиум
                   </Badge>
                 )}
                 <Avatar className="w-32 h-32 mx-auto mb-4">
