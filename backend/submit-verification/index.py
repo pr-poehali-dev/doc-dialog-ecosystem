@@ -1,6 +1,7 @@
 import json
 import os
 import psycopg2
+import jwt
 from datetime import datetime
 
 def handler(event: dict, context) -> dict:
@@ -24,7 +25,7 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
-    # Проверка авторизации
+    # Проверка авторизации - декодируем JWT
     token = event.get('headers', {}).get('X-Authorization', '').replace('Bearer ', '')
     if not token:
         return {
@@ -34,28 +35,30 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
-    conn = psycopg2.connect(os.environ['DATABASE_URL'])
-    cur = conn.cursor()
-    
     try:
-        # Получаем user_id из токена (user_sessions доступна, users - нет)
-        cur.execute("""
-            SELECT user_id
-            FROM t_p46047379_doc_dialog_ecosystem.user_sessions
-            WHERE token = %s AND expires_at > NOW()
-        """, (token,))
+        jwt_secret = os.environ['JWT_SECRET']
+        payload = jwt.decode(token, jwt_secret, algorithms=['HS256'])
+        user_id = payload.get('user_id')
         
-        user_data = cur.fetchone()
-        if not user_data:
+        if not user_id:
             return {
                 'statusCode': 403,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
                 'body': json.dumps({'error': 'Недействительный токен'}),
                 'isBase64Encoded': False
             }
-        
-        user_id = user_data[0]
-        
+    except jwt.InvalidTokenError:
+        return {
+            'statusCode': 403,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Недействительный токен'}),
+            'isBase64Encoded': False
+        }
+    
+    conn = psycopg2.connect(os.environ['DATABASE_URL'])
+    cur = conn.cursor()
+    
+    try:
         if method == 'GET':
             # Получить текущий статус верификаций
             cur.execute("""
@@ -208,18 +211,18 @@ def handler(event: dict, context) -> dict:
             return {
                 'statusCode': 200,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'success': True, 'message': 'Документы отправлены на проверку'}),
+                'body': json.dumps({'success': True}),
                 'isBase64Encoded': False
             }
         
-        else:
-            return {
-                'statusCode': 405,
-                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Метод не поддерживается'}),
-                'isBase64Encoded': False
-            }
-    
+    except Exception as e:
+        conn.rollback()
+        return {
+            'statusCode': 500,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': str(e)}),
+            'isBase64Encoded': False
+        }
     finally:
         cur.close()
         conn.close()

@@ -1,7 +1,6 @@
 {
   "submit-verification": "https://functions.poehali.dev/63af3811-f2f6-4a51-9544-cc8f6e6b73b3",
   "masseurs": "https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436",
-  "verification-moderation": "https://functions.poehali.dev/f94ccac9-1077-4744-892a-ab95e9e41ecb",
   "promo-requests": "https://functions.poehali.dev/0e44bf6d-cb4d-404e-832f-02070e6e8b13",
   "school-analytics": "https://functions.poehali.dev/c8ab0021-49df-43b3-a8eb-44a777edfd13",
   "knowledge-base": "https://functions.poehali.dev/63fa554e-a9fa-4ee0-8105-240950837372",

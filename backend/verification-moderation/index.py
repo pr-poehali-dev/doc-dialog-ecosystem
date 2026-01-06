@@ -1,11 +1,12 @@
 import json
 import os
 import psycopg2
+import jwt
 from datetime import datetime
 
 def handler(event: dict, context) -> dict:
     """
-    API для модерации верификаций массажистов администратором.
+    API для модерации верификаций массажистов администратором (с JWT).
     
     GET: получить список всех pending верификаций
     POST: одобрить или отклонить верификацию
@@ -34,27 +35,31 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
-    conn = psycopg2.connect(os.environ['DATABASE_URL'])
-    cur = conn.cursor()
-    
+    # Декодируем JWT токен
     try:
-        # Получаем user_id из токена (проверка роли через user_sessions недоступна, пропускаем)
-        cur.execute("""
-            SELECT user_id
-            FROM t_p46047379_doc_dialog_ecosystem.user_sessions
-            WHERE token = %s AND expires_at > NOW()
-        """, (token,))
+        jwt_secret = os.environ['JWT_SECRET']
+        payload = jwt.decode(token, jwt_secret, algorithms=['HS256'])
+        admin_id = payload.get('user_id')
         
-        user_data = cur.fetchone()
-        if not user_data:
+        if not admin_id:
             return {
                 'statusCode': 403,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
                 'body': json.dumps({'error': 'Недействительный токен'}),
                 'isBase64Encoded': False
             }
-        
-        admin_id = user_data[0]
+    except jwt.InvalidTokenError:
+        return {
+            'statusCode': 403,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Недействительный токен'}),
+            'isBase64Encoded': False
+        }
+    
+    conn = psycopg2.connect(os.environ['DATABASE_URL'])
+    cur = conn.cursor()
+    
+    try
         
         if method == 'GET':
             # Получить все pending верификации с использованием masseur_profiles вместо users
