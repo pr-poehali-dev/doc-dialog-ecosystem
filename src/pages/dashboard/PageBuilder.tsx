@@ -27,9 +27,9 @@ const defaultPageData = {
   aboutTitle: 'Обо мне',
   aboutText: 'Я практикующий массажист с 7-летним опытом. Специализируюсь на восстановительных техниках и работе с мышечным напряжением. Помогаю людям избавиться от стресса и вернуть телу легкость.',
   services: [
-    { name: 'Классический массаж', duration: '60 мин', price: '3500', description: 'Глубокая проработка всех групп мышц' },
-    { name: 'Релаксационный массаж', duration: '90 мин', price: '4800', description: 'Снятие напряжения и полное расслабление' },
-    { name: 'Спортивный массаж', duration: '60 мин', price: '4000', description: 'Восстановление после тренировок' },
+    { name: 'Классический массаж', duration: '60 мин', price: '3500', description: 'Глубокая проработка всех групп мышц', image: '' },
+    { name: 'Релаксационный массаж', duration: '90 мин', price: '4800', description: 'Снятие напряжения и полное расслабление', image: '' },
+    { name: 'Спортивный массаж', duration: '60 мин', price: '4000', description: 'Восстановление после тренировок', image: '' },
   ],
   processTitle: 'Как проходит сеанс',
   processSteps: [
@@ -89,18 +89,20 @@ export default function PageBuilder() {
   const [uploadingCert, setUploadingCert] = useState(false);
   const [uploadingBlog, setUploadingBlog] = useState(false);
   const [uploadingOffer, setUploadingOffer] = useState(false);
+  const [uploadingService, setUploadingService] = useState<number | null>(null);
   const [newReview, setNewReview] = useState({ name: '', rating: 5, text: '' });
   const [newBlogPost, setNewBlogPost] = useState({ title: '', content: '', image: '' });
   const [newOffer, setNewOffer] = useState({ title: '', description: '', discount: '', image: '' });
   const [isPremiumDialogOpen, setIsPremiumDialogOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState('');
 
-  const handleImageUpload = async (file: File, type: 'hero' | 'profile' | 'gallery' | 'certificate') => {
+  const handleImageUpload = async (file: File, type: 'hero' | 'profile' | 'gallery' | 'certificate' | 'service', serviceIndex?: number) => {
     if (!file) return;
 
     const setLoading = type === 'hero' ? setUploadingHero : 
                        type === 'profile' ? setUploadingProfile :
-                       type === 'gallery' ? setUploadingGallery : setUploadingCert;
+                       type === 'gallery' ? setUploadingGallery : 
+                       type === 'service' ? () => setUploadingService(serviceIndex ?? null) : setUploadingCert;
     
     setLoading(true);
     
@@ -117,6 +119,10 @@ export default function PageBuilder() {
           setPageData({ ...pageData, gallery: [...pageData.gallery, base64] });
         } else if (type === 'certificate') {
           setPageData({ ...pageData, certificates: [...pageData.certificates, base64] });
+        } else if (type === 'service' && serviceIndex !== undefined) {
+          const updatedServices = [...pageData.services];
+          updatedServices[serviceIndex] = { ...updatedServices[serviceIndex], image: base64 };
+          setPageData({ ...pageData, services: updatedServices });
         }
         
         toast({
@@ -490,6 +496,50 @@ export default function PageBuilder() {
                         onChange={(e) => updateService(index, 'description', e.target.value)}
                         rows={2}
                       />
+                      {pageData.template === 'luxury' && (
+                        <div className="space-y-2">
+                          <Label className="text-sm font-medium flex items-center gap-2">
+                            <Icon name="Image" size={14} className="text-purple-500" />
+                            Фото услуги (Super Premium)
+                          </Label>
+                          {service.image ? (
+                            <div className="relative group">
+                              <img 
+                                src={service.image} 
+                                alt={service.name} 
+                                className="w-full h-32 object-cover rounded-lg"
+                              />
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => {
+                                  const updatedServices = [...pageData.services];
+                                  updatedServices[index] = { ...updatedServices[index], image: '' };
+                                  setPageData({ ...pageData, services: updatedServices });
+                                }}
+                              >
+                                <Icon name="X" size={14} />
+                              </Button>
+                            </div>
+                          ) : (
+                            <label className="flex flex-col items-center justify-center h-24 border-2 border-dashed border-purple-300 rounded-lg cursor-pointer hover:border-purple-500 transition-colors">
+                              <Icon name="Plus" size={20} className="text-purple-400 mb-1" />
+                              <span className="text-xs text-gray-500">Добавить фото</span>
+                              <input
+                                type="file"
+                                className="hidden"
+                                accept="image/*"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) handleImageUpload(file, 'service', index);
+                                }}
+                                disabled={uploadingService === index}
+                              />
+                            </label>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </CardContent>
@@ -1065,7 +1115,7 @@ export default function PageBuilder() {
                             <Badge className="ml-2 bg-purple-500">Активен</Badge>
                           )}
                         </div>
-                        <p className="text-xs text-muted-foreground mb-1">+ Блог + Скидки/Сертификаты</p>
+                        <p className="text-xs text-muted-foreground mb-1">+ Блог + Скидки/Сертификаты + Фото к услугам</p>
                         <p className="text-xs font-bold text-purple-600">4990 ₽</p>
                       </div>
                       <Icon name="ChevronRight" size={20} className="text-gray-400" />
