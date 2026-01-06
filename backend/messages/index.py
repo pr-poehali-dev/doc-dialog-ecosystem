@@ -100,13 +100,14 @@ def verify_token(token: str) -> dict:
 
 
 def get_schema():
-    return os.environ.get('MAIN_DB_SCHEMA', 'public')
+    return 't_p46047379_doc_dialog_ecosystem'
 
 
 def get_user_chats(user_id: int, user_role: str) -> dict:
     '''Получение списка чатов пользователя'''
     conn, cursor = get_db_connection()
     schema = get_schema()
+    print(f"DEBUG: Using schema = '{schema}'")
     
     try:
         query = f"""
