@@ -250,7 +250,7 @@ export default function PromoCodesList() {
                     value={selectedPromo.promo_code || ''} 
                     readOnly
                     onClick={(e) => e.currentTarget.select()}
-                    className="text-2xl font-bold bg-transparent border-none outline-none flex-1 font-mono"
+                    className="text-2xl font-bold bg-transparent border-none outline-none flex-1 font-mono selection:bg-transparent"
                   />
                   <Button size="sm" variant="ghost" onClick={copyPromoCode}>
                     <Icon name="Copy" size={16} />
