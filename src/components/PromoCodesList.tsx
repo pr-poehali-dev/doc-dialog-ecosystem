@@ -85,12 +85,15 @@ export default function PromoCodesList() {
   };
 
   const handleOpenPromo = async (request: PromoRequest) => {
-    if (request.opened_at) {
-      // Промокод уже был открыт
+    // Проверяем, истёк ли промокод
+    const isExpired = request.expires_at && new Date(request.expires_at) < new Date();
+    
+    if (request.opened_at && !isExpired) {
+      // Промокод активен - просто показываем
       setSelectedPromo(request);
       setShowDialog(true);
     } else {
-      // Открываем промокод впервые (запускаем таймер)
+      // Открываем промокод (впервые или заново после истечения)
       try {
         const token = localStorage.getItem('token');
         const response = await fetch(`${PROMO_API_URL}?action=open`, {
@@ -191,7 +194,12 @@ export default function PromoCodesList() {
                     onClick={() => handleOpenPromo(request)}
                   >
                     <Icon name="Gift" size={16} className="mr-2" />
-                    {request.opened_at ? 'Открыть промокод снова' : 'Получить промокод'}
+                    {request.opened_at && request.expires_at && new Date(request.expires_at) > new Date()
+                      ? 'Посмотреть промокод' 
+                      : request.opened_at 
+                        ? 'Активировать заново' 
+                        : 'Получить промокод'
+                    }
                   </Button>
                 )}
 
