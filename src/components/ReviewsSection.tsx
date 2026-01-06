@@ -92,6 +92,12 @@ export default function ReviewsSection({ entityType, entityId, onRatingUpdate }:
         setRating(5);
         setShowForm(false);
         loadReviews();
+      } else if (response.status === 401) {
+        toast({ 
+          title: 'Требуется авторизация', 
+          description: 'Войдите в аккаунт, чтобы оставить отзыв', 
+          variant: 'destructive' 
+        });
       } else if (response.status === 403) {
         toast({ 
           title: 'Доступ запрещён', 
