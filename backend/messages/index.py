@@ -112,85 +112,103 @@ def verify_token(token: str) -> dict:
 
 
 def get_user_chats(user_id: int, user_role: str) -> dict:
-    '''Получение списка чатов пользователя'''
+    '''Получение списка чатов пользователя на основе сообщений'''
     conn, cursor = get_db_connection()
     
     try:
         if user_role == 'client':
             cursor.execute("""
-                SELECT DISTINCT
-                    a.masseur_id as other_user_id,
-                    mp.full_name as name,
+                WITH chat_users AS (
+                    SELECT DISTINCT
+                        CASE 
+                            WHEN m.sender_id = %s THEN m.receiver_id
+                            ELSE m.sender_id
+                        END as other_user_id
+                    FROM messages m
+                    WHERE m.sender_id = %s OR m.receiver_id = %s
+                )
+                SELECT
+                    cu.other_user_id,
+                    COALESCE(mp.full_name, 'Неизвестный') as name,
                     mp.avatar_url as avatar,
                     'masseur' as role,
-                    a.id as booking_id,
-                    mv.verified as verified,
+                    COALESCE(a.id, 0) as booking_id,
+                    COALESCE(mv.verified, FALSE) as verified,
                     (
                         SELECT m.message_text 
                         FROM messages m 
-                        WHERE (m.sender_id = %s AND m.receiver_id = a.masseur_id) 
-                           OR (m.sender_id = a.masseur_id AND m.receiver_id = %s)
+                        WHERE (m.sender_id = %s AND m.receiver_id = cu.other_user_id) 
+                           OR (m.sender_id = cu.other_user_id AND m.receiver_id = %s)
                         ORDER BY m.created_at DESC 
                         LIMIT 1
                     ) as last_message,
                     (
                         SELECT m.created_at 
                         FROM messages m 
-                        WHERE (m.sender_id = %s AND m.receiver_id = a.masseur_id) 
-                           OR (m.sender_id = a.masseur_id AND m.receiver_id = %s)
+                        WHERE (m.sender_id = %s AND m.receiver_id = cu.other_user_id) 
+                           OR (m.sender_id = cu.other_user_id AND m.receiver_id = %s)
                         ORDER BY m.created_at DESC 
                         LIMIT 1
                     ) as last_message_time,
                     (
                         SELECT COUNT(*) 
                         FROM messages m 
-                        WHERE m.sender_id = a.masseur_id 
+                        WHERE m.sender_id = cu.other_user_id 
                           AND m.receiver_id = %s 
                           AND m.is_read = FALSE
                     ) as unread_count
-                FROM appointments a
-                LEFT JOIN masseur_profiles mp ON a.masseur_id = mp.user_id
+                FROM chat_users cu
+                LEFT JOIN masseur_profiles mp ON cu.other_user_id = mp.user_id
                 LEFT JOIN masseur_verifications mv ON mp.id = mv.masseur_profile_id
-                WHERE a.client_id = %s
-                ORDER BY last_message_time DESC NULLS LAST
-            """, (user_id, user_id, user_id, user_id, user_id, user_id))
+                LEFT JOIN appointments a ON (a.masseur_id = cu.other_user_id AND a.client_id = %s)
+                ORDER BY last_message_time DESC
+            """, (user_id, user_id, user_id, user_id, user_id, user_id, user_id, user_id, user_id))
         else:
             cursor.execute("""
-                SELECT DISTINCT
-                    a.client_id as other_user_id,
-                    cp.full_name as name,
+                WITH chat_users AS (
+                    SELECT DISTINCT
+                        CASE 
+                            WHEN m.sender_id = %s THEN m.receiver_id
+                            ELSE m.sender_id
+                        END as other_user_id
+                    FROM messages m
+                    WHERE m.sender_id = %s OR m.receiver_id = %s
+                )
+                SELECT
+                    cu.other_user_id,
+                    COALESCE(cp.full_name, 'Неизвестный') as name,
                     cp.avatar_url as avatar,
                     'client' as role,
-                    a.id as booking_id,
+                    COALESCE(a.id, 0) as booking_id,
                     FALSE as verified,
                     (
                         SELECT m.message_text 
                         FROM messages m 
-                        WHERE (m.sender_id = %s AND m.receiver_id = a.client_id) 
-                           OR (m.sender_id = a.client_id AND m.receiver_id = %s)
+                        WHERE (m.sender_id = %s AND m.receiver_id = cu.other_user_id) 
+                           OR (m.sender_id = cu.other_user_id AND m.receiver_id = %s)
                         ORDER BY m.created_at DESC 
                         LIMIT 1
                     ) as last_message,
                     (
                         SELECT m.created_at 
                         FROM messages m 
-                        WHERE (m.sender_id = %s AND m.receiver_id = a.client_id) 
-                           OR (m.sender_id = a.client_id AND m.receiver_id = %s)
+                        WHERE (m.sender_id = %s AND m.receiver_id = cu.other_user_id) 
+                           OR (m.sender_id = cu.other_user_id AND m.receiver_id = %s)
                         ORDER BY m.created_at DESC 
                         LIMIT 1
                     ) as last_message_time,
                     (
                         SELECT COUNT(*) 
                         FROM messages m 
-                        WHERE m.sender_id = a.client_id 
+                        WHERE m.sender_id = cu.other_user_id 
                           AND m.receiver_id = %s 
                           AND m.is_read = FALSE
                     ) as unread_count
-                FROM appointments a
-                LEFT JOIN client_profiles cp ON a.client_id = cp.user_id
-                WHERE a.masseur_id = %s
-                ORDER BY last_message_time DESC NULLS LAST
-            """, (user_id, user_id, user_id, user_id, user_id, user_id))
+                FROM chat_users cu
+                LEFT JOIN client_profiles cp ON cu.other_user_id = cp.user_id
+                LEFT JOIN appointments a ON (a.client_id = cu.other_user_id AND a.masseur_id = %s)
+                ORDER BY last_message_time DESC
+            """, (user_id, user_id, user_id, user_id, user_id, user_id, user_id, user_id, user_id))
         
         chats = cursor.fetchall()
         
