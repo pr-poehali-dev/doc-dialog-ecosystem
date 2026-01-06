@@ -116,8 +116,12 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
             )
             SELECT
                 cp.partner_id as other_user_id,
-                COALESCE(mp.full_name, u.email) as name,
-                mp.avatar_url as avatar,
+                COALESCE(
+                    mp.full_name, 
+                    clp.full_name, 
+                    u.email
+                ) as name,
+                COALESCE(mp.avatar_url, clp.avatar_url) as avatar,
                 u.role as role,
                 (
                     SELECT m.message_text 
@@ -145,6 +149,7 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
             FROM chat_partners cp
             JOIN t_p46047379_doc_dialog_ecosystem.users u ON cp.partner_id = u.id
             LEFT JOIN t_p46047379_doc_dialog_ecosystem.masseur_profiles mp ON cp.partner_id = mp.user_id
+            LEFT JOIN t_p46047379_doc_dialog_ecosystem.client_profiles clp ON cp.partner_id = clp.user_id
             ORDER BY last_message_time DESC NULLS LAST
         """
         
