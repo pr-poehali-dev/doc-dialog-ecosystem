@@ -65,16 +65,18 @@ export default function Messages() {
     setCurrentUserId(user.id);
     
     fetchChats();
-    
+  }, [navigate]);
+
+  useEffect(() => {
     const masseurId = searchParams.get('masseur');
-    if (masseurId) {
+    if (masseurId && chats.length > 0) {
       const chat = chats.find(c => c.other_user_id === parseInt(masseurId));
       if (chat) {
         setSelectedChat(chat);
         fetchMessages(chat.other_user_id);
       }
     }
-  }, [navigate, searchParams]);
+  }, [chats, searchParams]);
 
   const fetchChats = async () => {
     try {
