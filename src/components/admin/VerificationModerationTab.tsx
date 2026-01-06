@@ -27,7 +27,11 @@ interface VerificationRequest {
   moderator_comment?: string;
 }
 
-export default function VerificationModerationTab() {
+interface VerificationModerationTabProps {
+  onModerationComplete?: () => void;
+}
+
+export default function VerificationModerationTab({ onModerationComplete }: VerificationModerationTabProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState<VerificationRequest[]>([]);
@@ -115,6 +119,9 @@ export default function VerificationModerationTab() {
       setActionType(null);
       setComment('');
       loadVerificationRequests();
+      if (onModerationComplete) {
+        onModerationComplete();
+      }
     } catch (error) {
       toast({
         title: 'Ошибка',

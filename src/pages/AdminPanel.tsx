@@ -25,6 +25,7 @@ interface Stats {
   pending_courses: number;
   pending_masterminds: number;
   pending_offline_trainings: number;
+  pending_verifications: number;
 }
 
 interface User {
@@ -55,6 +56,7 @@ export default function AdminPanel() {
   const [loading, setLoading] = useState(false);
   
   const [stats, setStats] = useState<Stats | null>(null);
+  const [pendingVerifications, setPendingVerifications] = useState(0);
   const [users, setUsers] = useState<User[]>([]);
   const [moderationItems, setModerationItems] = useState<ModerationItem[]>([]);
 
@@ -83,7 +85,24 @@ export default function AdminPanel() {
     }
     
     loadDashboardStats();
+    loadVerificationCount();
   }, [navigate, toast]);
+
+  const loadVerificationCount = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('https://functions.poehali.dev/f94ccac9-1077-4744-892a-ab95e9e41ecb', {
+        headers: { 'X-Authorization': `Bearer ${token}` }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setPendingVerifications(data.length);
+      }
+    } catch (error) {
+      console.error('Failed to load verification count', error);
+    }
+  };
 
   const loadDashboardStats = async () => {
     setLoading(true);
@@ -344,10 +363,13 @@ export default function AdminPanel() {
             <Button 
               variant={activeTab === 'verifications' ? 'default' : 'outline'}
               onClick={() => setActiveTab('verifications')}
-              className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm"
+              className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm relative"
             >
               <Icon name="BadgeCheck" size={16} className="sm:mr-2" />
               <span className="hidden sm:inline">Верификации</span>
+              {pendingVerifications > 0 && (
+                <Badge className="ml-1 sm:ml-2" variant="destructive">{pendingVerifications}</Badge>
+              )}
             </Button>
           </div>
 
@@ -391,7 +413,7 @@ export default function AdminPanel() {
           {activeTab === 'knowledge' && <KnowledgeBaseManagement />}
           
           {/* Verifications Tab */}
-          {activeTab === 'verifications' && <VerificationModerationTab />}
+          {activeTab === 'verifications' && <VerificationModerationTab onModerationComplete={loadVerificationCount} />}
         </div>
       </div>
     </div>
