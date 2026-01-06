@@ -96,11 +96,11 @@ def get_db_connection():
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     return conn, cursor
 
-def get_schema():
-    '''Получить имя схемы для использования в запросах'''
+def get_schema_prefix():
+    '''Получить префикс схемы для использования в запросах'''
     schema = os.environ.get('MAIN_DB_SCHEMA', 'public')
     if schema and schema != 'public':
-        return f'"{schema}".'
+        return f'{schema}.'
     return ''
 
 
@@ -114,7 +114,7 @@ def verify_token(token: str) -> dict:
 def get_user_chats(user_id: int, user_role: str) -> dict:
     '''Получение списка чатов пользователя на основе сообщений'''
     conn, cursor = get_db_connection()
-    schema = get_schema()
+    schema = get_schema_prefix()
     
     try:
         if user_role == 'client':
@@ -238,7 +238,7 @@ def get_chat_messages(user_id: int, other_user_id: str) -> dict:
         }
     
     conn, cursor = get_db_connection()
-    schema = get_schema()
+    schema = get_schema_prefix()
     
     try:
         cursor.execute(f"""
@@ -293,7 +293,7 @@ def send_message(user_id: int, data: dict) -> dict:
         }
     
     conn, cursor = get_db_connection()
-    schema = get_schema()
+    schema = get_schema_prefix()
     
     try:
         cursor.execute(f"""
@@ -333,7 +333,7 @@ def send_booking_request(user_id: int, data: dict) -> dict:
         }
     
     conn, cursor = get_db_connection()
-    schema = get_schema()
+    schema = get_schema_prefix()
     
     try:
         cursor.execute(f"""
@@ -385,7 +385,7 @@ def respond_to_booking(user_id: int, data: dict) -> dict:
         }
     
     conn, cursor = get_db_connection()
-    schema = get_schema()
+    schema = get_schema_prefix()
     
     try:
         cursor.execute(f"""
