@@ -99,84 +99,56 @@ def verify_token(token: str) -> dict:
     return payload
 
 
-def get_schema():
-    return 't_p46047379_doc_dialog_ecosystem'
-
-
 def get_user_chats(user_id: int, user_role: str) -> dict:
     '''Получение списка чатов пользователя'''
     conn, cursor = get_db_connection()
-    schema = get_schema()
-    print(f"DEBUG: Using schema = '{schema}'")
     
     try:
-        query = f"""
+        query = """
             WITH chat_partners AS (
                 SELECT DISTINCT
                     CASE 
                         WHEN sender_id = %s THEN receiver_id
                         ELSE sender_id
                     END as partner_id
-                FROM {schema}.messages
+                FROM t_p46047379_doc_dialog_ecosystem.messages
                 WHERE sender_id = %s OR receiver_id = %s
-            ),
-            last_messages AS (
-                SELECT DISTINCT ON (
-                    CASE 
-                        WHEN sender_id = %s THEN receiver_id
-                        ELSE sender_id
-                    END
-                )
-                    CASE 
-                        WHEN sender_id = %s THEN receiver_id
-                        ELSE sender_id
-                    END as partner_id,
-                    message_text,
-                    created_at,
-                    sender_id != %s as is_unread
-                FROM {schema}.messages
-                WHERE sender_id = %s OR receiver_id = %s
-                ORDER BY 
-                    CASE 
-                        WHEN sender_id = %s THEN receiver_id
-                        ELSE sender_id
-                    END,
-                    created_at DESC
             )
             SELECT
                 cp.partner_id as other_user_id,
-                COALESCE(
-                    mp.full_name,
-                    sc.name,
-                    clp.full_name,
-                    'Пользователь #' || cp.partner_id
-                ) as name,
-                COALESCE(mp.avatar_url, sc.logo_url, clp.avatar_url) as avatar,
+                COALESCE(mp.full_name, u.email) as name,
+                mp.avatar_url as avatar,
                 u.role as role,
-                lm.message_text as last_message,
-                lm.created_at as last_message_time,
+                (
+                    SELECT m.message_text 
+                    FROM t_p46047379_doc_dialog_ecosystem.messages m 
+                    WHERE (m.sender_id = %s AND m.receiver_id = cp.partner_id) 
+                       OR (m.sender_id = cp.partner_id AND m.receiver_id = %s)
+                    ORDER BY m.created_at DESC 
+                    LIMIT 1
+                ) as last_message,
+                (
+                    SELECT m.created_at 
+                    FROM t_p46047379_doc_dialog_ecosystem.messages m 
+                    WHERE (m.sender_id = %s AND m.receiver_id = cp.partner_id) 
+                       OR (m.sender_id = cp.partner_id AND m.receiver_id = %s)
+                    ORDER BY m.created_at DESC 
+                    LIMIT 1
+                ) as last_message_time,
                 (
                     SELECT COUNT(*)
-                    FROM {schema}.messages m
+                    FROM t_p46047379_doc_dialog_ecosystem.messages m
                     WHERE m.sender_id = cp.partner_id 
                       AND m.receiver_id = %s
                       AND m.is_read = FALSE
                 ) as unread_count
             FROM chat_partners cp
-            LEFT JOIN {schema}.users u ON cp.partner_id = u.id
-            LEFT JOIN {schema}.masseur_profiles mp ON cp.partner_id = mp.user_id
-            LEFT JOIN {schema}.schools sc ON cp.partner_id = sc.owner_id
-            LEFT JOIN {schema}.client_profiles clp ON cp.partner_id = clp.user_id
-            LEFT JOIN last_messages lm ON cp.partner_id = lm.partner_id
-            ORDER BY lm.created_at DESC NULLS LAST
+            JOIN t_p46047379_doc_dialog_ecosystem.users u ON cp.partner_id = u.id
+            LEFT JOIN t_p46047379_doc_dialog_ecosystem.masseur_profiles mp ON cp.partner_id = mp.user_id
+            ORDER BY last_message_time DESC NULLS LAST
         """
         
-        cursor.execute(query, (
-            user_id, user_id, user_id,  
-            user_id, user_id, user_id,  
-            user_id, user_id, user_id,  
-            user_id  
-        ))
+        cursor.execute(query, (user_id, user_id, user_id, user_id, user_id, user_id, user_id, user_id))
         
         chats = cursor.fetchall()
         
@@ -207,10 +179,9 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
 def get_chat_messages(user_id: int, other_user_id: int) -> dict:
     '''Получение сообщений конкретного чата'''
     conn, cursor = get_db_connection()
-    schema = get_schema()
     
     try:
-        query = f"""
+        query = """
             SELECT
                 id,
                 sender_id,
@@ -218,7 +189,7 @@ def get_chat_messages(user_id: int, other_user_id: int) -> dict:
                 message_text,
                 created_at,
                 is_read
-            FROM {schema}.messages
+            FROM t_p46047379_doc_dialog_ecosystem.messages
             WHERE (sender_id = %s AND receiver_id = %s)
                OR (sender_id = %s AND receiver_id = %s)
             ORDER BY created_at ASC
@@ -227,8 +198,8 @@ def get_chat_messages(user_id: int, other_user_id: int) -> dict:
         cursor.execute(query, (user_id, other_user_id, other_user_id, user_id))
         messages = cursor.fetchall()
         
-        update_query = f"""
-            UPDATE {schema}.messages
+        update_query = """
+            UPDATE t_p46047379_doc_dialog_ecosystem.messages
             SET is_read = TRUE
             WHERE sender_id = %s AND receiver_id = %s AND is_read = FALSE
         """
@@ -261,7 +232,6 @@ def get_chat_messages(user_id: int, other_user_id: int) -> dict:
 def send_message(user_id: int, body: dict) -> dict:
     '''Отправка нового сообщения'''
     conn, cursor = get_db_connection()
-    schema = get_schema()
     
     try:
         receiver_id = body.get('receiver_id')
@@ -273,8 +243,8 @@ def send_message(user_id: int, body: dict) -> dict:
         if not message_text:
             return error_response('Сообщение не может быть пустым', 400)
         
-        query = f"""
-            INSERT INTO {schema}.messages (sender_id, receiver_id, message_text, created_at, is_read)
+        query = """
+            INSERT INTO t_p46047379_doc_dialog_ecosystem.messages (sender_id, receiver_id, message_text, created_at, is_read)
             VALUES (%s, %s, %s, NOW(), FALSE)
             RETURNING id, sender_id, receiver_id, message_text, created_at, is_read
         """
