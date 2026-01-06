@@ -159,12 +159,17 @@ def handler(event: dict, context) -> dict:
         # Prepare SQL values with proper NULL handling
         user_id_val = str(user_id) if user_id else 'NULL'
         
-        # Insert review with pending status
-        cur.execute(f"""
+        # Build SQL query
+        sql_query = f"""
             INSERT INTO {schema}.course_reviews (entity_type, entity_id, user_id, user_email, user_name, rating, comment, is_auto_generated, status)
             VALUES ('{entity_type}', {entity_id}, {user_id_val}, '{user_email.replace("'", "''")}', '{user_name.replace("'", "''")}', {rating}, '{comment.replace("'", "''")}', FALSE, 'pending')
             RETURNING id, created_at
-        """)
+        """
+        print(f"[DEBUG] SQL Query: {sql_query}")
+        print(f"[DEBUG] user_id={user_id}, user_email={user_email}, user_name={user_name}, role={user_role}")
+        
+        # Insert review with pending status
+        cur.execute(sql_query)
         
         new_review = cur.fetchone()
         
