@@ -88,7 +88,7 @@ def handler(event: dict, context) -> dict:
         item_type = body.get('item_type')
         item_id = body.get('item_id')
         author_name = body.get('author_name', '').strip()
-        rating = body.get('rating', 5)
+        rating = int(body.get('rating', 5))
         text = body.get('text', '').strip()
         
         if not all([item_type, item_id, author_name, text]):
@@ -101,10 +101,20 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
+        if rating < 1 or rating > 5:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Rating must be between 1 and 5'}),
+                'isBase64Encoded': False
+            }
+        
         cur.execute(f"""
             INSERT INTO {schema}.course_reviews 
-            (entity_type, entity_id, user_id, user_email, user_name, rating, comment, status, created_at, is_auto_generated)
-            VALUES ('{item_type}', {item_id}, NULL, NULL, '{author_name.replace("'", "''")}', {rating}, 
+            (entity_type, entity_id, user_name, rating, comment, status, created_at, is_auto_generated)
+            VALUES ('{item_type}', {item_id}, '{author_name.replace("'", "''")}', {rating}, 
                     '{text.replace("'", "''")}', 'pending', NOW(), false)
             RETURNING id
         """)
