@@ -26,7 +26,8 @@ def handler(event: dict, context) -> dict:
         }
     
     # Проверка авторизации - декодируем JWT
-    token = event.get('headers', {}).get('X-Authorization', '').replace('Bearer ', '')
+    headers = event.get('headers', {})
+    token = headers.get('X-Authorization', headers.get('x-authorization', '')).replace('Bearer ', '')
     if not token:
         return {
             'statusCode': 401,
