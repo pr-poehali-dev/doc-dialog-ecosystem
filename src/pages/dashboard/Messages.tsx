@@ -91,7 +91,7 @@ export default function Messages() {
         
         if (masseur) {
           const virtualChat: Chat = {
-            other_user_id: masseur.id,
+            other_user_id: masseur.user_id,
             name: masseur.full_name,
             role: 'masseur',
             last_message: '',
