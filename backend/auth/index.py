@@ -123,9 +123,14 @@ def register_user(data: dict) -> dict:
         )
         user_id = cursor.fetchone()['id']
         
-        if role == 'masseur' or role == 'client':
+        if role == 'masseur':
             cursor.execute(
                 "INSERT INTO masseur_profiles (user_id, full_name, phone, city) VALUES (%s, %s, %s, %s)",
+                (user_id, profile_data.get('full_name'), profile_data.get('phone'), profile_data.get('city'))
+            )
+        elif role == 'client':
+            cursor.execute(
+                "INSERT INTO client_profiles (user_id, full_name, phone, city) VALUES (%s, %s, %s, %s)",
                 (user_id, profile_data.get('full_name'), profile_data.get('phone'), profile_data.get('city'))
             )
         elif role == 'school':
