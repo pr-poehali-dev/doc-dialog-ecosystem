@@ -52,7 +52,7 @@ export default function PublicProfile() {
           education: data.education || '',
           about: data.about || '',
           phone: data.phone || '',
-          telegram: '',
+          telegram: data.telegram || '',
           whatsapp: '',
           photo: data.avatar_url || '',
         });
@@ -106,6 +106,7 @@ export default function PublicProfile() {
         body: JSON.stringify({
           full_name: profileData.fullName,
           phone: profileData.phone,
+          telegram: profileData.telegram,
           city: profileData.city,
           experience_years: parseInt(profileData.experience) || 0,
           about: profileData.about,
