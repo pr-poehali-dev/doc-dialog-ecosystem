@@ -168,7 +168,7 @@ export default function Verification() {
     {
       id: 'insurance',
       title: 'Сертифицирован Док диалог',
-      description: 'Сертификат от Док диалог',
+      description: 'Мы гарантируем клиентам, что вы прошли обучение на нашей платформе или участвовали в очных встречах Док диалог',
       icon: 'Shield',
       verified: status?.insurance_verified || false,
       statusValue: status?.insurance_status || null,
@@ -208,9 +208,36 @@ export default function Verification() {
                 <div className="flex-1">
                   <CardTitle className="text-xl mb-2">Premium статус</CardTitle>
                   <CardDescription className="text-base">
-                    Получите все 3 бейджа верификации и ваш профиль будет выделен в каталоге! 
+                    Получите все 4 бейджа верификации и ваш профиль будет выделен в каталоге! 
                     Клиенты доверяют проверенным специалистам.
                   </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+          </Card>
+
+          <Card className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+            <CardHeader>
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center flex-shrink-0">
+                  <Icon name="GraduationCap" size={24} className="text-white" />
+                </div>
+                <div className="flex-1">
+                  <CardTitle className="text-xl mb-2">Получите бейдж "Сертифицирован Док диалог"</CardTitle>
+                  <CardDescription className="text-base mb-4">
+                    Пройдите профессиональное обучение на нашей платформе или участвуйте в очных встречах. 
+                    Повышайте квалификацию, осваивайте новые техники массажа и получайте сертификат, 
+                    который подтвердит ваш уровень перед клиентами!
+                  </CardDescription>
+                  <a 
+                    href="https://school.brossok.ru/training" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
+                  >
+                    Перейти на платформу курсов
+                    <Icon name="ExternalLink" size={16} />
+                  </a>
                 </div>
               </div>
             </CardHeader>
