@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
 import { Navigation } from '@/components/Navigation';
 import ReviewsSection from '@/components/ReviewsSection';
+import RatingDisplay from '@/components/RatingDisplay';
 import { useToast } from '@/hooks/use-toast';
 
 interface OfflineTrainingData {
@@ -64,6 +65,8 @@ export default function OfflineTrainingPublicLanding() {
   const { toast } = useToast();
   const [training, setTraining] = useState<OfflineTrainingData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [rating, setRating] = useState(0);
+  const [reviewCount, setReviewCount] = useState(0);
   
   const isPreview = new URLSearchParams(window.location.search).get('preview') === 'true';
 
@@ -152,6 +155,11 @@ export default function OfflineTrainingPublicLanding() {
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 drop-shadow-lg leading-tight px-2">
             {training.hero_title || training.title}
           </h1>
+          <div className="flex justify-center mb-4 sm:mb-6">
+            <div className="bg-white/20 backdrop-blur-sm px-4 sm:px-6 py-1.5 sm:py-2 rounded-full">
+              <RatingDisplay rating={rating} reviewCount={reviewCount} size="sm" className="text-white" />
+            </div>
+          </div>
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 sm:mb-8 text-white/90 px-2">
             {training.hero_subtitle || training.description}
           </p>
@@ -305,7 +313,7 @@ export default function OfflineTrainingPublicLanding() {
 
       <section className="py-12 sm:py-16 md:py-20 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <ReviewsSection entityType="offline_training" entityId={training.id} />
+          <ReviewsSection entityType="offline_training" entityId={training.id} onRatingUpdate={(r, c) => { setRating(r); setReviewCount(c); }} />
         </div>
       </section>
 
