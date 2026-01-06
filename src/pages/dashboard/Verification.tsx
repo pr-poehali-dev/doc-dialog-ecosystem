@@ -144,7 +144,7 @@ export default function Verification() {
       description: 'Дипломы, сертификаты курсов массажа',
       icon: 'GraduationCap',
       verified: status?.education_verified || false,
-      statusValue: status?.education_status || 'pending',
+      statusValue: status?.education_status || null,
       comment: status?.education_comment,
     },
     {
@@ -153,7 +153,7 @@ export default function Verification() {
       description: 'Рекомендательные письма, портфолио',
       icon: 'Award',
       verified: status?.experience_verified || false,
-      statusValue: status?.experience_status || 'pending',
+      statusValue: status?.experience_status || null,
       comment: status?.experience_comment,
     },
     {
@@ -162,7 +162,7 @@ export default function Verification() {
       description: 'Паспорт или другой документ с фото',
       icon: 'BadgeCheck',
       verified: status?.identity_verified || false,
-      statusValue: status?.identity_status || 'pending',
+      statusValue: status?.identity_status || null,
       comment: status?.identity_comment,
     },
   ];
