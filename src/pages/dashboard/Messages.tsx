@@ -96,21 +96,31 @@ export default function Messages() {
         const masseur = masseurs.find((m: any) => m.id === masseurId);
         
         if (masseur) {
-          const virtualChat: Chat = {
-            other_user_id: masseur.user_id,
-            name: masseur.full_name,
-            role: 'masseur',
-            last_message: '',
-            last_message_time: new Date().toISOString(),
-            unread_count: 0,
-            avatar: masseur.avatar_url,
-            verified: true,
-            booking_id: 0
-          };
+          const alreadyExists = chats.some(c => c.other_user_id === masseur.user_id);
           
-          setChats(prevChats => [virtualChat, ...prevChats]);
-          setSelectedChat(virtualChat);
-          fetchMessages(masseur.id);
+          if (!alreadyExists) {
+            const virtualChat: Chat = {
+              other_user_id: masseur.user_id,
+              name: masseur.full_name,
+              role: 'masseur',
+              last_message: '',
+              last_message_time: new Date().toISOString(),
+              unread_count: 0,
+              avatar: masseur.avatar_url,
+              verified: true,
+              booking_id: 0
+            };
+            
+            setChats(prevChats => [virtualChat, ...prevChats]);
+            setSelectedChat(virtualChat);
+          } else {
+            const existingChat = chats.find(c => c.other_user_id === masseur.user_id);
+            if (existingChat) {
+              setSelectedChat(existingChat);
+            }
+          }
+          
+          fetchMessages(masseur.user_id);
           
           if (isBooking) {
             setMessageText('Здравствуйте! Хочу записаться на сеанс массажа.');
