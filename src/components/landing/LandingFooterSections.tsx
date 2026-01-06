@@ -89,36 +89,44 @@ export default function LandingFooterSections({
             </div>
             <div className={`grid ${showPhone && showTelegram ? 'md:grid-cols-2' : 'md:grid-cols-1'} gap-4 max-w-2xl mx-auto`}>
               {showPhone && userProfile?.phone && (
-                <a 
-                  href={`tel:${userProfile.phone}`}
-                  className="group p-6 rounded-2xl bg-white border-2 border-gray-100 hover:border-blue-200 hover:shadow-lg transition-all text-center block no-underline"
-                >
-                  <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${gradientClass} flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
+                <div className="p-6 rounded-2xl bg-white border-2 border-gray-100 shadow-sm text-center">
+                  <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${gradientClass} flex items-center justify-center mx-auto mb-4`}>
                     <Icon name="Phone" size={28} className="text-white" />
                   </div>
                   <p className="font-semibold text-lg mb-2 text-gray-900">Телефон</p>
                   <p className="text-gray-600 text-sm mb-4">{userProfile.phone}</p>
-                  <div className={`w-full py-2 px-4 rounded-lg bg-gradient-to-r ${gradientClass} text-white font-medium`}>
-                    Позвонить
-                  </div>
-                </a>
+                  <Button 
+                    asChild
+                    className={`w-full bg-gradient-to-r ${gradientClass} hover:opacity-90`}
+                  >
+                    <a href={`tel:${userProfile.phone}`}>
+                      <Icon name="Phone" size={18} className="mr-2" />
+                      Позвонить
+                    </a>
+                  </Button>
+                </div>
               )}
               {showTelegram && userProfile?.telegram && (
-                <a 
-                  href={`https://t.me/${userProfile.telegram.replace('@', '')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group p-6 rounded-2xl bg-white border-2 border-gray-100 hover:border-blue-200 hover:shadow-lg transition-all text-center block no-underline"
-                >
-                  <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${gradientClass} flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
+                <div className="p-6 rounded-2xl bg-white border-2 border-gray-100 shadow-sm text-center">
+                  <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${gradientClass} flex items-center justify-center mx-auto mb-4`}>
                     <Icon name="Send" size={28} className="text-white" />
                   </div>
                   <p className="font-semibold text-lg mb-2 text-gray-900">Telegram</p>
                   <p className="text-gray-600 text-sm mb-4">{userProfile.telegram}</p>
-                  <div className={`w-full py-2 px-4 rounded-lg bg-gradient-to-r ${gradientClass} text-white font-medium`}>
-                    Написать
-                  </div>
-                </a>
+                  <Button 
+                    asChild
+                    className={`w-full bg-gradient-to-r ${gradientClass} hover:opacity-90`}
+                  >
+                    <a 
+                      href={`https://t.me/${userProfile.telegram.replace('@', '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Icon name="Send" size={18} className="mr-2" />
+                      Написать
+                    </a>
+                  </Button>
+                </div>
               )}
             </div>
           </div>
