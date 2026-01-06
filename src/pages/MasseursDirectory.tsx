@@ -27,54 +27,20 @@ const MasseursDirectory = () => {
   const [sortBy, setSortBy] = useState<"rating" | "experience">("rating");
 
   useEffect(() => {
-    const mockMasseurs: Masseur[] = [
-      {
-        id: 1,
-        full_name: "Анна Петрова",
-        city: "Москва",
-        experience_years: 8,
-        specializations: ["Классический массаж", "Антицеллюлитный", "Лимфодренаж"],
-        avatar_url: null,
-        rating: 4.9,
-        reviews_count: 127,
-        about: "Профессиональный массажист с медицинским образованием"
-      },
-      {
-        id: 2,
-        full_name: "Дмитрий Соколов",
-        city: "Санкт-Петербург",
-        experience_years: 12,
-        specializations: ["Спортивный массаж", "Реабилитация", "Тайский массаж"],
-        avatar_url: null,
-        rating: 4.95,
-        reviews_count: 203,
-        about: "Работаю со спортсменами и после травм"
-      },
-      {
-        id: 3,
-        full_name: "Елена Иванова",
-        city: "Москва",
-        experience_years: 5,
-        specializations: ["Расслабляющий массаж", "Ароматерапия", "Массаж лица"],
-        avatar_url: null,
-        rating: 4.85,
-        reviews_count: 89,
-        about: "SPA-массаж для релаксации и красоты"
-      },
-      {
-        id: 4,
-        full_name: "Сергей Михайлов",
-        city: "Казань",
-        experience_years: 15,
-        specializations: ["Лечебный массаж", "Мануальная терапия", "Остеопатия"],
-        avatar_url: null,
-        rating: 5.0,
-        reviews_count: 341,
-        about: "Дипломированный врач и массажист"
-      }
-    ];
-    setMasseurs(mockMasseurs);
+    loadMasseurs();
   }, []);
+
+  const loadMasseurs = async () => {
+    try {
+      const response = await fetch('https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436');
+      if (response.ok) {
+        const data = await response.json();
+        setMasseurs(data);
+      }
+    } catch (error) {
+      console.error('Ошибка загрузки массажистов:', error);
+    }
+  };
 
   const cities = ["all", ...Array.from(new Set(masseurs.map(m => m.city)))];
   const specializations = ["all", ...Array.from(new Set(masseurs.flatMap(m => m.specializations)))];

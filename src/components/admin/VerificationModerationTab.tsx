@@ -43,48 +43,17 @@ export default function VerificationModerationTab() {
   const loadVerificationRequests = async () => {
     setLoading(true);
     try {
-      // TODO: заменить на реальный API endpoint
-      // const token = localStorage.getItem('token');
-      // const response = await fetch('API_URL?action=verification_requests', {
-      //   headers: { 'Authorization': `Bearer ${token}` }
-      // });
-      // const data = await response.json();
+      const token = localStorage.getItem('token');
+      const response = await fetch('https://functions.poehali.dev/f94ccac9-1077-4744-892a-ab95e9e41ecb', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       
-      // Mock data для демонстрации
-      const mockRequests: VerificationRequest[] = [
-        {
-          id: 1,
-          user_id: 10,
-          masseur_name: 'Анна Петрова',
-          masseur_email: 'anna@example.com',
-          type: 'education',
-          folder_url: 'https://drive.google.com/drive/folders/example123',
-          status: 'pending',
-          submitted_at: '2024-01-15T10:30:00Z',
-        },
-        {
-          id: 2,
-          user_id: 10,
-          masseur_name: 'Анна Петрова',
-          masseur_email: 'anna@example.com',
-          type: 'identity',
-          folder_url: 'https://disk.yandex.ru/d/example456',
-          status: 'pending',
-          submitted_at: '2024-01-15T10:35:00Z',
-        },
-        {
-          id: 3,
-          user_id: 15,
-          masseur_name: 'Дмитрий Соколов',
-          masseur_email: 'dmitry@example.com',
-          type: 'experience',
-          folder_url: 'https://www.dropbox.com/sh/example789',
-          status: 'pending',
-          submitted_at: '2024-01-14T14:20:00Z',
-        },
-      ];
-      
-      setRequests(mockRequests);
+      if (response.ok) {
+        const data = await response.json();
+        setRequests(data);
+      } else {
+        throw new Error('Failed to load');
+      }
     } catch (error) {
       toast({
         title: 'Ошибка',
@@ -116,23 +85,26 @@ export default function VerificationModerationTab() {
 
     setProcessing(true);
     try {
-      // TODO: API call
-      // const token = localStorage.getItem('token');
-      // await fetch('API_URL?action=moderate_verification', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Authorization': `Bearer ${token}`,
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify({
-      //     verification_id: selectedRequest.id,
-      //     action: actionType,
-      //     comment: comment
-      //   })
-      // });
+      const token = localStorage.getItem('token');
+      const [verification_id, type] = selectedRequest.id.toString().split('_');
+      
+      const response = await fetch('https://functions.poehali.dev/f94ccac9-1077-4744-892a-ab95e9e41ecb', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          verification_id: parseInt(verification_id),
+          type: type || selectedRequest.type,
+          action: actionType,
+          comment: comment
+        })
+      });
 
-      // Временная симуляция
-      await new Promise(resolve => setTimeout(resolve, 500));
+      if (!response.ok) {
+        throw new Error('Failed to process');
+      }
 
       toast({
         title: actionType === 'approve' ? 'Верификация одобрена' : 'Верификация отклонена',
