@@ -29,7 +29,8 @@ export default function Verification() {
   const navigate = useNavigate();
   const [status, setStatus] = useState<VerificationStatus | null>(null);
   const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState<string | null>(null);
+  const [folderUrls, setFolderUrls] = useState<Record<string, string>>({});
 
   useEffect(() => {
     loadVerificationStatus();
@@ -50,35 +51,37 @@ export default function Verification() {
     });
   };
 
-  const handleFileUpload = async (type: string, files: FileList | null) => {
-    if (!files || files.length === 0) return;
-
-    setUploading(type);
-    try {
-      // TODO: загрузка файлов в S3 через backend
-      const formData = new FormData();
-      Array.from(files).forEach((file) => {
-        formData.append('files', file);
+  const handleSubmitFolder = async (type: string) => {
+    const url = folderUrls[type];
+    if (!url || !url.trim()) {
+      toast({
+        title: 'Ошибка',
+        description: 'Введите ссылку на папку',
+        variant: 'destructive',
       });
-      formData.append('type', type);
+      return;
+    }
 
-      // Временная заглушка
-      await new Promise(resolve => setTimeout(resolve, 1000));
+    setSubmitting(type);
+    try {
+      // TODO: отправка ссылки на backend
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       toast({
-        title: 'Документы загружены',
-        description: 'Ваши документы отправлены на проверку',
+        title: 'Ссылка отправлена',
+        description: 'Документы отправлены на проверку',
       });
       
+      setFolderUrls({ ...folderUrls, [type]: '' });
       loadVerificationStatus();
     } catch (error) {
       toast({
         title: 'Ошибка',
-        description: 'Не удалось загрузить документы',
+        description: 'Не удалось отправить ссылку',
         variant: 'destructive',
       });
     } finally {
-      setUploading(null);
+      setSubmitting(null);
     }
   };
 
@@ -209,34 +212,56 @@ export default function Verification() {
                   )}
 
                   {!type.verified && (
-                    <div className="space-y-2">
-                      <Label htmlFor={`file-${type.id}`}>
-                        Загрузите документы (JPEG, PNG, PDF)
-                      </Label>
-                      <div className="flex gap-2">
-                        <Input
-                          id={`file-${type.id}`}
-                          type="file"
-                          accept="image/*,.pdf"
-                          multiple={type.id === 'education' || type.id === 'experience'}
-                          onChange={(e) => handleFileUpload(type.id, e.target.files)}
-                          disabled={uploading === type.id}
-                        />
-                        <Button
-                          disabled={uploading === type.id}
-                          onClick={() => document.getElementById(`file-${type.id}`)?.click()}
-                        >
-                          {uploading === type.id ? (
-                            <Icon name="Loader2" className="animate-spin" size={16} />
-                          ) : (
-                            <Icon name="Upload" size={16} />
-                          )}
-                        </Button>
+                    <div className="space-y-4">
+                      <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg space-y-2">
+                        <div className="flex items-start gap-2">
+                          <Icon name="Info" size={16} className="text-blue-600 mt-0.5 flex-shrink-0" />
+                          <div className="text-sm text-blue-800">
+                            <p className="font-semibold mb-2">Как подготовить документы:</p>
+                            <ol className="list-decimal list-inside space-y-1 text-xs">
+                              <li>Сфотографируйте или отсканируйте документы</li>
+                              <li>Загрузите в облако (Google Диск, Яндекс.Диск, Dropbox)</li>
+                              <li>Откройте доступ «Просмотр для всех, у кого есть ссылка»</li>
+                              <li>Скопируйте ссылку на папку и вставьте ниже</li>
+                            </ol>
+                          </div>
+                        </div>
                       </div>
-                      {type.statusValue === 'pending' && (
+
+                      <div className="space-y-2">
+                        <Label htmlFor={`url-${type.id}`}>
+                          Ссылка на папку с документами
+                        </Label>
+                        <div className="flex gap-2">
+                          <Input
+                            id={`url-${type.id}`}
+                            type="url"
+                            placeholder="https://drive.google.com/... или https://disk.yandex.ru/..."
+                            value={folderUrls[type.id] || ''}
+                            onChange={(e) => setFolderUrls({ ...folderUrls, [type.id]: e.target.value })}
+                            disabled={submitting === type.id}
+                          />
+                          <Button
+                            disabled={submitting === type.id || !folderUrls[type.id]}
+                            onClick={() => handleSubmitFolder(type.id)}
+                          >
+                            {submitting === type.id ? (
+                              <Icon name="Loader2" className="animate-spin" size={16} />
+                            ) : (
+                              <Icon name="Send" size={16} />
+                            )}
+                          </Button>
+                        </div>
                         <p className="text-xs text-muted-foreground">
-                          Документы на проверке. Обычно проверка занимает 1-2 рабочих дня.
+                          ⚠️ Убедитесь, что доступ к папке открыт для просмотра по ссылке
                         </p>
+                      </div>
+
+                      {type.statusValue === 'pending' && (
+                        <div className="p-3 bg-amber-50 border border-amber-200 rounded text-sm text-amber-800">
+                          <Icon name="Clock" size={14} className="inline mr-1" />
+                          Документы на проверке. Обычно проверка занимает 1-2 рабочих дня.
+                        </div>
                       )}
                     </div>
                   )}
@@ -251,6 +276,48 @@ export default function Verification() {
               </Card>
             ))}
           </div>
+
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle>Как правильно открыть доступ к папке?</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-3">
+                <div className="font-semibold flex items-center gap-2">
+                  <Icon name="HardDrive" size={18} className="text-blue-500" />
+                  Google Диск:
+                </div>
+                <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground ml-6">
+                  <li>Создайте папку и загрузите документы</li>
+                  <li>Нажмите правой кнопкой → «Настроить доступ»</li>
+                  <li>Выберите «Доступ для всех, у кого есть ссылка»</li>
+                  <li>Роль: «Читатель» → Скопировать ссылку</li>
+                </ol>
+
+                <div className="font-semibold flex items-center gap-2 mt-4">
+                  <Icon name="Cloud" size={18} className="text-red-500" />
+                  Яндекс.Диск:
+                </div>
+                <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground ml-6">
+                  <li>Создайте папку и загрузите документы</li>
+                  <li>Нажмите «Поделиться» → «Получить ссылку»</li>
+                  <li>Включите доступ по ссылке</li>
+                  <li>Скопировать ссылку</li>
+                </ol>
+
+                <div className="font-semibold flex items-center gap-2 mt-4">
+                  <Icon name="Box" size={18} className="text-blue-600" />
+                  Dropbox:
+                </div>
+                <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground ml-6">
+                  <li>Создайте папку и загрузите документы</li>
+                  <li>Нажмите «Поделиться» → «Создать ссылку»</li>
+                  <li>Настройки: «Все, у кого есть ссылка»</li>
+                  <li>Скопировать ссылку</li>
+                </ol>
+              </div>
+            </CardContent>
+          </Card>
 
           <Card className="mt-6">
             <CardHeader>
