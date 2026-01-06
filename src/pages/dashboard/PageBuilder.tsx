@@ -798,18 +798,26 @@ export default function PageBuilder() {
               </Card>
 
               {/* Blog Section - Premium/Luxury only */}
-              {(pageData.template === 'premium' || pageData.template === 'luxury') && (
-                <Card>
-                  <CardHeader>
-                    <div className="flex items-center gap-3">
-                      <Icon name="FileText" size={20} className="text-indigo-500" />
-                      <div className="flex-1">
-                        <CardTitle>Блог / Новости</CardTitle>
-                        <CardDescription>Делитесь полезными материалами</CardDescription>
-                      </div>
-                      <Badge className="bg-gradient-to-r from-blue-500 to-indigo-500">Premium</Badge>
+              <Card className={pageData.template === 'minimal' ? 'opacity-60 pointer-events-none relative' : ''}>
+                {pageData.template === 'minimal' && (
+                  <div className="absolute inset-0 bg-gray-100/50 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-lg">
+                    <div className="bg-white p-6 rounded-xl shadow-xl text-center max-w-sm">
+                      <Icon name="Lock" size={32} className="mx-auto mb-3 text-blue-600" />
+                      <p className="font-bold text-lg mb-2">Доступно в Premium</p>
+                      <p className="text-sm text-gray-600 mb-4">Активируйте тариф Premium или Super Premium</p>
                     </div>
-                  </CardHeader>
+                  </div>
+                )}
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <Icon name="FileText" size={20} className="text-indigo-500" />
+                    <div className="flex-1">
+                      <CardTitle>Блог / Новости</CardTitle>
+                      <CardDescription>Делитесь полезными материалами</CardDescription>
+                    </div>
+                    <Badge className="bg-gradient-to-r from-blue-500 to-indigo-500">Premium</Badge>
+                  </div>
+                </CardHeader>
                   <CardContent className="space-y-4">
                     {pageData.blog && pageData.blog.length > 0 && (
                       <div className="space-y-3 mb-4">
@@ -918,21 +926,28 @@ export default function PageBuilder() {
                     </div>
                   </CardContent>
                 </Card>
-              )}
 
               {/* Offers Section - Super Premium only */}
-              {pageData.template === 'luxury' && (
-                <Card>
-                  <CardHeader>
-                    <div className="flex items-center gap-3">
-                      <Icon name="Tag" size={20} className="text-rose-500" />
-                      <div className="flex-1">
-                        <CardTitle>Скидки и сертификаты</CardTitle>
-                        <CardDescription>Специальные предложения с формой заказа</CardDescription>
-                      </div>
-                      <Badge className="bg-gradient-to-r from-purple-500 to-pink-500">Супер Премиум</Badge>
+              <Card className={pageData.template !== 'luxury' ? 'opacity-60 pointer-events-none relative' : ''}>
+                {pageData.template !== 'luxury' && (
+                  <div className="absolute inset-0 bg-gray-100/50 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-lg">
+                    <div className="bg-white p-6 rounded-xl shadow-xl text-center max-w-sm">
+                      <Icon name="Lock" size={32} className="mx-auto mb-3 text-purple-600" />
+                      <p className="font-bold text-lg mb-2">Доступно в Super Premium</p>
+                      <p className="text-sm text-gray-600 mb-4">Активируйте тариф Super Premium для доступа</p>
                     </div>
-                  </CardHeader>
+                  </div>
+                )}
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <Icon name="Tag" size={20} className="text-rose-500" />
+                    <div className="flex-1">
+                      <CardTitle>Скидки и сертификаты</CardTitle>
+                      <CardDescription>Специальные предложения с формой заказа</CardDescription>
+                    </div>
+                    <Badge className="bg-gradient-to-r from-purple-500 to-pink-500">Super Premium</Badge>
+                  </div>
+                </CardHeader>
                   <CardContent className="space-y-4">
                     {pageData.offers && pageData.offers.length > 0 && (
                       <div className="space-y-3 mb-4">
@@ -1046,7 +1061,6 @@ export default function PageBuilder() {
                     </div>
                   </CardContent>
                 </Card>
-              )}
             </div>
 
             {/* Right Sidebar */}
