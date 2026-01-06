@@ -320,6 +320,9 @@ export default function AdminPanel() {
             >
               <Icon name="MessageSquare" size={16} className="sm:mr-2" />
               <span className="hidden sm:inline">Отзывы</span>
+              {stats && stats.pending_reviews > 0 && (
+                <Badge className="ml-1 sm:ml-2" variant="destructive">{stats.pending_reviews}</Badge>
+              )}
             </Button>
             <Button 
               variant={activeTab === 'schools' ? 'default' : 'outline'}
