@@ -37,7 +37,7 @@ export default function Dashboard() {
   const getRoleTitle = () => {
     switch (user.role) {
       case 'client':
-        return 'Пользователь';
+        return 'Клиент';
       case 'masseur':
         return 'Специалист по телу';
       case 'school':

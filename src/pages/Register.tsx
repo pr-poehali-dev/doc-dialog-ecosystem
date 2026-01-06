@@ -96,7 +96,7 @@ export default function Register() {
               <RadioGroup value={role} onValueChange={(value: any) => setRole(value)}>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="client" id="client" />
-                  <Label htmlFor="client" className="cursor-pointer">Пользователь</Label>
+                  <Label htmlFor="client" className="cursor-pointer">Клиент</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="masseur" id="masseur" />

@@ -1,0 +1,20 @@
+{
+  "tests": [
+    {
+      "name": "Test get bookings without auth",
+      "method": "GET",
+      "path": "/?action=get-bookings",
+      "expectedStatus": 401,
+      "expectedBody": {
+        "error": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Test OPTIONS request",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200
+    }
+  ]
+}

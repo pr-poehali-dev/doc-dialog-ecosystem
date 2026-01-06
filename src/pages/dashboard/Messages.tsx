@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -8,119 +9,125 @@ import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
 
 interface Message {
   id: number;
-  text: string;
-  timestamp: string;
-  isOwn: boolean;
+  sender_id: number;
+  receiver_id: number;
+  message_text: string;
+  is_read: boolean;
+  created_at: string;
 }
 
 interface Chat {
-  id: number;
+  other_user_id: number;
   name: string;
-  role: 'client' | 'masseur' | 'salon';
-  lastMessage: string;
-  timestamp: string;
-  unread: number;
+  role: 'client' | 'masseur';
+  last_message: string;
+  last_message_time: string;
+  unread_count: number;
   avatar?: string;
   verified?: boolean;
+  booking_id: number;
 }
 
+const API_URL = 'https://functions.poehali.dev/04d0b538-1cf5-4941-9c06-8d1bef5854ec';
+
 export default function Messages() {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
   const [messageText, setMessageText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [chats, setChats] = useState<Chat[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<number>(0);
 
-  const [chats] = useState<Chat[]>([
-    {
-      id: 1,
-      name: 'Анна Смирнова',
-      role: 'client',
-      lastMessage: 'Спасибо за сеанс! Когда можно записаться на следующий?',
-      timestamp: '14:30',
-      unread: 2,
-      verified: false
-    },
-    {
-      id: 2,
-      name: 'Салон "Гармония"',
-      role: 'salon',
-      lastMessage: 'Добрый день! Мы ищем массажиста для работы по графику 2/2',
-      timestamp: '12:15',
-      unread: 1,
-      verified: true
-    },
-    {
-      id: 3,
-      name: 'Иван Петров',
-      role: 'masseur',
-      lastMessage: 'Привет! У меня освободилось время, могу взять твоего клиента',
-      timestamp: 'Вчера',
-      unread: 0,
-      verified: true
-    },
-    {
-      id: 4,
-      name: 'Мария Иванова',
-      role: 'client',
-      lastMessage: 'Можно ли перенести запись на 19 января?',
-      timestamp: '2 дня назад',
-      unread: 0,
-      verified: false
-    },
-    {
-      id: 5,
-      name: 'Салон "Релакс Центр"',
-      role: 'salon',
-      lastMessage: 'Вакансия ещё актуальна?',
-      timestamp: '3 дня назад',
-      unread: 0,
-      verified: true
-    },
-  ]);
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userStr = localStorage.getItem('user');
+    
+    if (!token || !userStr) {
+      navigate('/login');
+      return;
+    }
+    
+    const user = JSON.parse(userStr);
+    setCurrentUserId(user.id);
+    
+    fetchChats();
+    
+    const masseurId = searchParams.get('masseur');
+    if (masseurId) {
+      const chat = chats.find(c => c.other_user_id === parseInt(masseurId));
+      if (chat) {
+        setSelectedChat(chat);
+        fetchMessages(chat.other_user_id);
+      }
+    }
+  }, [navigate, searchParams]);
 
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      text: 'Здравствуйте! Хотела записаться на массаж',
-      timestamp: '14:20',
-      isOwn: false
-    },
-    {
-      id: 2,
-      text: 'Здравствуйте! Конечно, какой день вам удобен?',
-      timestamp: '14:22',
-      isOwn: true
-    },
-    {
-      id: 3,
-      text: 'Может быть 15 января в 18:00?',
-      timestamp: '14:25',
-      isOwn: false
-    },
-    {
-      id: 4,
-      text: 'Отлично, записала вас. Адрес: ул. Примерная, 10. Жду!',
-      timestamp: '14:27',
-      isOwn: true
-    },
-    {
-      id: 5,
-      text: 'Спасибо за сеанс! Когда можно записаться на следующий?',
-      timestamp: '14:30',
-      isOwn: false
-    },
-  ]);
+  const fetchChats = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      
+      const response = await fetch(`${API_URL}?action=get-chats`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setChats(data.chats || []);
+      }
+    } catch (error) {
+      console.error('Error fetching chats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchMessages = async (otherUserId: number) => {
+    try {
+      const token = localStorage.getItem('token');
+      
+      const response = await fetch(`${API_URL}?action=get-messages&chat_id=${otherUserId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setMessages(data.messages || []);
+      }
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    }
+  };
+
+  const handleSelectChat = (chat: Chat) => {
+    setSelectedChat(chat);
+    fetchMessages(chat.other_user_id);
+  };
 
   const getRoleBadge = (role: string) => {
     switch (role) {
       case 'client':
         return <Badge variant="secondary" className="text-xs">Клиент</Badge>;
       case 'masseur':
-        return <Badge variant="default" className="text-xs">Массажист</Badge>;
-      case 'salon':
-        return <Badge className="bg-purple-600 text-xs">Салон</Badge>;
+        return <Badge variant="default" className="text-xs">Специалист</Badge>;
       default:
         return null;
     }
@@ -132,30 +139,85 @@ export default function Messages() {
         return 'User';
       case 'masseur':
         return 'Heart';
-      case 'salon':
-        return 'Building2';
       default:
         return 'User';
     }
   };
 
-  const handleSendMessage = () => {
-    if (!messageText.trim()) return;
+  const handleSendMessage = async () => {
+    if (!messageText.trim() || !selectedChat || sending) return;
 
-    const newMessage: Message = {
-      id: messages.length + 1,
-      text: messageText,
-      timestamp: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
-      isOwn: true
-    };
+    try {
+      setSending(true);
+      const token = localStorage.getItem('token');
 
-    setMessages([...messages, newMessage]);
-    setMessageText('');
+      const response = await fetch(`${API_URL}?action=send-message`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          receiver_id: selectedChat.other_user_id,
+          message: messageText,
+        }),
+      });
+
+      if (response.ok) {
+        setMessageText('');
+        await fetchMessages(selectedChat.other_user_id);
+        await fetchChats();
+      } else {
+        toast({
+          title: 'Ошибка',
+          description: 'Не удалось отправить сообщение',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось отправить сообщение',
+        variant: 'destructive',
+      });
+    } finally {
+      setSending(false);
+    }
   };
 
   const filteredChats = chats.filter(chat =>
-    chat.name.toLowerCase().includes(searchQuery.toLowerCase())
+    chat.name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const formatTime = (timestamp: string) => {
+    if (!timestamp) return '';
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    
+    if (days === 0) {
+      return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    } else if (days === 1) {
+      return 'Вчера';
+    } else if (days < 7) {
+      return `${days} дня назад`;
+    } else {
+      return date.toLocaleDateString('ru-RU');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-white to-blue-50">
+        <Navigation />
+        <div className="container mx-auto px-4 py-16">
+          <div className="text-center">Загрузка...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-blue-50">
@@ -163,12 +225,12 @@ export default function Messages() {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-4 mb-6">
-            <Button variant="ghost" onClick={() => window.history.back()}>
+            <Button variant="ghost" onClick={() => navigate('/dashboard')}>
               <Icon name="ArrowLeft" size={20} />
             </Button>
             <div className="flex-1">
               <h1 className="text-3xl font-bold">Сообщения</h1>
-              <p className="text-muted-foreground">Общение с клиентами, коллегами и салонами</p>
+              <p className="text-muted-foreground">Общение с клиентами и специалистами</p>
             </div>
           </div>
 
@@ -188,49 +250,64 @@ export default function Messages() {
                 </div>
 
                 <ScrollArea className="h-[600px]">
-                  <div className="space-y-2">
-                    {filteredChats.map((chat) => (
-                      <div
-                        key={chat.id}
-                        onClick={() => setSelectedChat(chat)}
-                        className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                          selectedChat?.id === chat.id
-                            ? 'bg-primary/10 border-primary/50'
-                            : 'hover:bg-muted border-transparent'
-                        } border`}
-                      >
-                        <div className="flex items-start gap-3">
-                          <div className="relative">
-                            <Avatar className="w-12 h-12">
-                              <div className="w-full h-full bg-primary/10 flex items-center justify-center">
-                                <Icon name={getRoleIcon(chat.role) as any} className="text-primary" size={20} />
-                              </div>
-                            </Avatar>
-                            {chat.verified && (
-                              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
-                                <Icon name="CheckCircle" className="text-primary-foreground" size={12} />
-                              </div>
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between mb-1">
-                              <div className="flex items-center gap-2">
-                                <p className="font-semibold text-sm truncate">{chat.name}</p>
-                                {getRoleBadge(chat.role)}
-                              </div>
-                              {chat.unread > 0 && (
-                                <Badge className="bg-primary text-primary-foreground rounded-full w-5 h-5 p-0 flex items-center justify-center text-xs">
-                                  {chat.unread}
-                                </Badge>
+                  {filteredChats.length === 0 ? (
+                    <div className="text-center py-12 text-gray-500">
+                      <Icon name="MessageSquare" size={48} className="mx-auto mb-4 opacity-50" />
+                      <p>Нет сообщений</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {filteredChats.map((chat) => (
+                        <div
+                          key={chat.other_user_id}
+                          onClick={() => handleSelectChat(chat)}
+                          className={`p-3 rounded-lg cursor-pointer transition-colors ${
+                            selectedChat?.other_user_id === chat.other_user_id
+                              ? 'bg-primary/10 border-primary/50'
+                              : 'hover:bg-muted border-transparent'
+                          } border`}
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="relative">
+                              <Avatar className="w-12 h-12">
+                                {chat.avatar ? (
+                                  <img src={chat.avatar} alt={chat.name} className="w-full h-full object-cover" />
+                                ) : (
+                                  <div className="w-full h-full bg-primary/10 flex items-center justify-center">
+                                    <Icon name={getRoleIcon(chat.role) as any} className="text-primary" size={20} />
+                                  </div>
+                                )}
+                              </Avatar>
+                              {chat.verified && (
+                                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
+                                  <Icon name="CheckCircle" className="text-primary-foreground" size={12} />
+                                </div>
                               )}
                             </div>
-                            <p className="text-xs text-muted-foreground truncate">{chat.lastMessage}</p>
-                            <p className="text-xs text-muted-foreground mt-1">{chat.timestamp}</p>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between mb-1">
+                                <div className="flex items-center gap-2">
+                                  <p className="font-semibold text-sm truncate">{chat.name || 'Без имени'}</p>
+                                  {getRoleBadge(chat.role)}
+                                </div>
+                                {chat.unread_count > 0 && (
+                                  <Badge className="bg-primary text-primary-foreground rounded-full w-5 h-5 p-0 flex items-center justify-center text-xs">
+                                    {chat.unread_count}
+                                  </Badge>
+                                )}
+                              </div>
+                              <p className="text-xs text-muted-foreground truncate">
+                                {chat.last_message || 'Нет сообщений'}
+                              </p>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {formatTime(chat.last_message_time)}
+                              </p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )}
                 </ScrollArea>
               </CardContent>
             </Card>
@@ -242,13 +319,17 @@ export default function Messages() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <Avatar className="w-12 h-12">
-                          <div className="w-full h-full bg-primary/10 flex items-center justify-center">
-                            <Icon name={getRoleIcon(selectedChat.role) as any} className="text-primary" size={24} />
-                          </div>
+                          {selectedChat.avatar ? (
+                            <img src={selectedChat.avatar} alt={selectedChat.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full bg-primary/10 flex items-center justify-center">
+                              <Icon name={getRoleIcon(selectedChat.role) as any} className="text-primary" size={24} />
+                            </div>
+                          )}
                         </Avatar>
                         <div>
                           <div className="flex items-center gap-2">
-                            <p className="font-semibold">{selectedChat.name}</p>
+                            <h3 className="font-semibold">{selectedChat.name || 'Без имени'}</h3>
                             {selectedChat.verified && (
                               <Icon name="CheckCircle" className="text-primary" size={16} />
                             )}
@@ -256,62 +337,45 @@ export default function Messages() {
                           {getRoleBadge(selectedChat.role)}
                         </div>
                       </div>
-                      <div className="flex gap-2">
-                        {selectedChat.role === 'client' && (
-                          <>
-                            <Button variant="outline" size="sm">
-                              <Icon name="Calendar" size={16} className="mr-2" />
-                              Записать
-                            </Button>
-                            <Button variant="outline" size="sm">
-                              <Icon name="Phone" size={16} />
-                            </Button>
-                          </>
-                        )}
-                        {selectedChat.role === 'salon' && (
-                          <Button variant="outline" size="sm">
-                            <Icon name="Briefcase" size={16} className="mr-2" />
-                            Вакансия
-                          </Button>
-                        )}
-                        <Button variant="ghost" size="sm">
-                          <Icon name="MoreVertical" size={16} />
-                        </Button>
-                      </div>
                     </div>
                   </div>
 
-                  <ScrollArea className="h-[480px] p-4">
+                  <ScrollArea className="h-[500px] p-4">
                     <div className="space-y-4">
-                      {messages.map((message) => (
-                        <div
-                          key={message.id}
-                          className={`flex ${message.isOwn ? 'justify-end' : 'justify-start'}`}
-                        >
-                          <div
-                            className={`max-w-[70%] rounded-lg p-3 ${
-                              message.isOwn
-                                ? 'bg-primary text-primary-foreground'
-                                : 'bg-muted'
-                            }`}
-                          >
-                            <p className="text-sm">{message.text}</p>
-                            <p className={`text-xs mt-1 ${
-                              message.isOwn ? 'text-primary-foreground/70' : 'text-muted-foreground'
-                            }`}>
-                              {message.timestamp}
-                            </p>
-                          </div>
+                      {messages.length === 0 ? (
+                        <div className="text-center py-12 text-gray-500">
+                          <Icon name="MessageCircle" size={48} className="mx-auto mb-4 opacity-50" />
+                          <p>Начните разговор</p>
                         </div>
-                      ))}
+                      ) : (
+                        messages.map((message) => {
+                          const isOwn = message.sender_id === currentUserId;
+                          return (
+                            <div
+                              key={message.id}
+                              className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
+                            >
+                              <div
+                                className={`max-w-[70%] rounded-2xl px-4 py-2 ${
+                                  isOwn
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'bg-muted'
+                                }`}
+                              >
+                                <p className="text-sm break-words">{message.message_text}</p>
+                                <p className={`text-xs mt-1 ${isOwn ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
+                                  {new Date(message.created_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                                </p>
+                              </div>
+                            </div>
+                          );
+                        })
+                      )}
                     </div>
                   </ScrollArea>
 
                   <div className="border-t p-4">
                     <div className="flex gap-2">
-                      <Button variant="ghost" size="icon">
-                        <Icon name="Paperclip" size={18} />
-                      </Button>
                       <Textarea
                         placeholder="Введите сообщение..."
                         value={messageText}
@@ -322,54 +386,29 @@ export default function Messages() {
                             handleSendMessage();
                           }
                         }}
-                        className="min-h-[44px] max-h-[120px] resize-none"
-                        rows={1}
+                        className="min-h-[60px] resize-none"
                       />
-                      <Button onClick={handleSendMessage} size="icon">
-                        <Icon name="Send" size={18} />
+                      <Button
+                        onClick={handleSendMessage}
+                        disabled={!messageText.trim() || sending}
+                        size="lg"
+                        className="self-end"
+                      >
+                        <Icon name="Send" size={20} />
                       </Button>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      Enter — отправить, Shift+Enter — новая строка
-                    </p>
                   </div>
                 </CardContent>
               ) : (
-                <CardContent className="p-12">
-                  <div className="text-center">
-                    <Icon name="MessageCircle" className="mx-auto text-muted-foreground mb-4" size={64} />
-                    <h3 className="text-xl font-semibold mb-2">Выберите чат</h3>
-                    <p className="text-muted-foreground">Выберите диалог из списка слева</p>
+                <CardContent className="flex items-center justify-center h-[650px]">
+                  <div className="text-center text-muted-foreground">
+                    <Icon name="MessageSquare" size={64} className="mx-auto mb-4 opacity-30" />
+                    <p className="text-lg">Выберите чат для начала общения</p>
                   </div>
                 </CardContent>
               )}
             </Card>
           </div>
-
-          <Card className="mt-6 border-primary/20 bg-primary/5">
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <Icon name="Info" className="text-primary flex-shrink-0 mt-1" size={24} />
-                <div className="space-y-2">
-                  <h3 className="font-semibold">Кто может с вами связаться?</h3>
-                  <div className="space-y-2 text-sm text-muted-foreground">
-                    <div className="flex items-start gap-2">
-                      <Icon name="CheckCircle" className="text-green-600 flex-shrink-0 mt-0.5" size={16} />
-                      <p><strong>Клиенты:</strong> Зарегистрированные пользователи могут написать вам через профиль в каталоге</p>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Icon name="CheckCircle" className="text-green-600 flex-shrink-0 mt-0.5" size={16} />
-                      <p><strong>Салоны:</strong> Проверенные салоны-партнёры могут предложить вакансии</p>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Icon name="CheckCircle" className="text-green-600 flex-shrink-0 mt-0.5" size={16} />
-                      <p><strong>Коллеги:</strong> Другие специалисты из сообщества для обмена опытом и рекомендаций</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>

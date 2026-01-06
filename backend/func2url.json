@@ -1,4 +1,6 @@
 {
+  "messages": "https://functions.poehali.dev/04d0b538-1cf5-4941-9c06-8d1bef5854ec",
+  "bookings": "https://functions.poehali.dev/d70b63ec-1cf9-43fe-ab45-8638fcdf9687",
   "submit-verification": "https://functions.poehali.dev/63af3811-f2f6-4a51-9544-cc8f6e6b73b3",
   "masseurs": "https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436",
   "verification-moderation": "https://functions.poehali.dev/f94ccac9-1077-4744-892a-ab95e9e41ecb",
