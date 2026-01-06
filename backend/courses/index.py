@@ -41,6 +41,84 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
+    # GET /courses?action=get_reviews - Get all approved reviews
+    if method == 'GET' and action == 'get_reviews':
+        item_type = query_params.get('item_type')
+        item_id = query_params.get('item_id')
+        
+        if not item_type or not item_id:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Missing item_type or item_id'}),
+                'isBase64Encoded': False
+            }
+        
+        cur.execute(f"""
+            SELECT id, user_name, rating, comment, created_at
+            FROM {schema}.course_reviews
+            WHERE entity_type = '{item_type}' 
+              AND entity_id = {item_id}
+              AND status = 'approved'
+            ORDER BY created_at DESC
+        """)
+        
+        reviews = [{
+            'id': r[0],
+            'user_name': r[1],
+            'rating': r[2],
+            'comment': r[3],
+            'created_at': r[4].isoformat() if r[4] else None
+        } for r in cur.fetchall()]
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps(reviews),
+            'isBase64Encoded': False
+        }
+    
+    # POST /courses?action=add_review - Add review with moderation (check early!)
+    if method == 'POST' and action == 'add_review':
+        body = json.loads(event.get('body', '{}'))
+        item_type = body.get('item_type')
+        item_id = body.get('item_id')
+        author_name = body.get('author_name', '').strip()
+        rating = body.get('rating', 5)
+        text = body.get('text', '').strip()
+        
+        if not all([item_type, item_id, author_name, text]):
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Missing required fields'}),
+                'isBase64Encoded': False
+            }
+        
+        cur.execute(f"""
+            INSERT INTO {schema}.course_reviews 
+            (entity_type, entity_id, user_name, rating, comment, status, created_at, is_auto_generated)
+            VALUES ('{item_type}', {item_id}, '{author_name.replace("'", "''")}', {rating}, 
+                    '{text.replace("'", "''")}', 'pending', NOW(), false)
+            RETURNING id
+        """)
+        review_id = cur.fetchone()[0]
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'id': review_id, 'status': 'pending'}),
+            'isBase64Encoded': False
+        }
+    
     # GET /courses?action=offline_trainings&slug=X - Get offline training by slug
     if method == 'GET' and slug and action == 'offline_trainings':
         skip_status = query_params.get('skip_status_check', 'false').lower() == 'true'
@@ -1706,43 +1784,6 @@ def handler(event: dict, context) -> dict:
         cur.close()
         conn.close()
         return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'message': 'Course deleted'}), 'isBase64Encoded': False}
-    
-    # POST /courses?action=add_review - Add review with moderation
-    if method == 'POST' and action == 'add_review':
-        body = json.loads(event.get('body', '{}'))
-        item_type = body.get('item_type')
-        item_id = body.get('item_id')
-        author_name = body.get('author_name', '').strip()
-        rating = body.get('rating', 5)
-        text = body.get('text', '').strip()
-        
-        if not all([item_type, item_id, author_name, text]):
-            cur.close()
-            conn.close()
-            return {
-                'statusCode': 400,
-                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Missing required fields'}),
-                'isBase64Encoded': False
-            }
-        
-        cur.execute(f"""
-            INSERT INTO {schema}.course_reviews 
-            (entity_type, entity_id, user_name, rating, comment, status, created_at, is_auto_generated)
-            VALUES ('{item_type}', {item_id}, '{author_name.replace("'", "''")}', {rating}, 
-                    '{text.replace("'", "''")}', 'pending', NOW(), false)
-            RETURNING id
-        """)
-        review_id = cur.fetchone()[0]
-        
-        cur.close()
-        conn.close()
-        return {
-            'statusCode': 200,
-            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'id': review_id, 'status': 'pending'}),
-            'isBase64Encoded': False
-        }
     
     cur.close()
     conn.close()

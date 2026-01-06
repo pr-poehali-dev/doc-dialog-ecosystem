@@ -27,6 +27,7 @@ import MastermindLandingBuilder from "./pages/MastermindLandingBuilder";
 import MastermindPublicLanding from "./pages/MastermindPublicLanding";
 import OfflineTrainingLandingBuilder from "./pages/OfflineTrainingLandingBuilder";
 import OfflineTrainingPublicLanding from "./pages/OfflineTrainingPublicLanding";
+import OfflineTrainingReviews from "./pages/OfflineTrainingReviews";
 import SchoolCatalog from "./pages/SchoolCatalog";
 import SchoolLanding from "./pages/SchoolLanding";
 import SchoolLandingBuilder from "./pages/SchoolLandingBuilder";
@@ -82,6 +83,7 @@ const App = () => (
           <Route path="/offline-training/landing/builder" element={<OfflineTrainingLandingBuilder />} />
           <Route path="/offline-training/landing/:slug" element={<OfflineTrainingPublicLanding />} />
           <Route path="/offline-training/:slug" element={<OfflineTrainingPublicLanding />} />
+          <Route path="/offline-training/:slug/reviews" element={<OfflineTrainingReviews />} />
           <Route path="/schools-info" element={<SchoolsLanding />} />
           <Route path="/schools" element={<SchoolCatalog />} />
           <Route path="/school/:slug" element={<SchoolLanding />} />

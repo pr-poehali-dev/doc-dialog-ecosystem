@@ -356,7 +356,15 @@ export default function OfflineTrainingPublicLanding() {
       {training.testimonials && training.testimonials.length > 0 && (
         <section className="py-12 sm:py-16 md:py-20 bg-gray-50">
           <div className="max-w-4xl mx-auto px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-10 md:mb-12 text-center">Отзывы выпускников</h2>
+            <div className="flex items-center justify-between mb-8 sm:mb-10 md:mb-12">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">Отзывы выпускников</h2>
+              <Button 
+                variant="outline" 
+                onClick={() => navigate(`/offline-training/${training.slug}/reviews`)}
+              >
+                Все отзывы
+              </Button>
+            </div>
             <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
               {training.testimonials.map((testimonial, idx) => (
                 <Card key={idx}>
