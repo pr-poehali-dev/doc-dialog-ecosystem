@@ -103,8 +103,8 @@ def handler(event: dict, context) -> dict:
         
         cur.execute(f"""
             INSERT INTO {schema}.course_reviews 
-            (entity_type, entity_id, user_name, rating, comment, status, created_at, is_auto_generated)
-            VALUES ('{item_type}', {item_id}, '{author_name.replace("'", "''")}', {rating}, 
+            (entity_type, entity_id, user_id, user_email, user_name, rating, comment, status, created_at, is_auto_generated)
+            VALUES ('{item_type}', {item_id}, NULL, NULL, '{author_name.replace("'", "''")}', {rating}, 
                     '{text.replace("'", "''")}', 'pending', NOW(), false)
             RETURNING id
         """)
