@@ -153,22 +153,17 @@ def handler(event: dict, context) -> dict:
                 'views_year': row[5]
             })
         
-        cur.execute(f"""
-            SELECT COALESCE(SUM(ABS(amount)), 0)
-            FROM {schema}.balance_transactions
-            WHERE school_id = {school_id}
-              AND type = 'withdrawal'
-        """)
-        total_spent_row = cur.fetchone()
-        total_spent = float(total_spent_row[0]) if total_spent_row else 0
-        
-        total_views = sum(p['views_total'] for p in products)
-        
         for product in products:
-            if total_views > 0 and total_spent > 0:
-                product['spent_total'] = round((product['views_total'] / total_views) * total_spent, 2)
-            else:
-                product['spent_total'] = 0
+            cur.execute(f"""
+                SELECT COALESCE(SUM(ABS(amount)), 0)
+                FROM {schema}.balance_transactions
+                WHERE school_id = {school_id}
+                  AND type = 'withdrawal'
+                  AND product_type = '{product['product_type']}'
+                  AND product_id = {product['product_id']}
+            """)
+            spent_row = cur.fetchone()
+            product['spent_total'] = float(spent_row[0]) if spent_row else 0
             
             if product['spent_total'] > 0 and product['views_total'] > 0:
                 product['cost_per_view'] = round(product['spent_total'] / product['views_total'], 2)
