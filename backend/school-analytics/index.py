@@ -159,8 +159,8 @@ def handler(event: dict, context) -> dict:
                 FROM {schema}.balance_transactions
                 WHERE school_id = {school_id}
                   AND type = 'withdrawal'
-                  AND product_type = '{product['product_type']}'
-                  AND product_id = {product['product_id']}
+                  AND related_entity_type = '{product['product_type']}'
+                  AND related_entity_id = {product['product_id']}
             """)
             spent_row = cur.fetchone()
             product['spent_total'] = float(spent_row[0]) if spent_row else 0
