@@ -111,13 +111,19 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
-        cur.execute(f"""
-            INSERT INTO {schema}.course_reviews 
-            (entity_type, entity_id, user_name, rating, comment, status, created_at, is_auto_generated)
-            VALUES ('{item_type}', {item_id}, '{author_name.replace("'", "''")}', {rating}, 
-                    '{text.replace("'", "''")}', 'pending', NOW(), false)
-            RETURNING id
-        """)
+        print(f"DEBUG: item_type={item_type}, item_id={item_id}, author_name={author_name}, rating={rating}, text_len={len(text)}")
+        
+        try:
+            cur.execute(f"""
+                INSERT INTO {schema}.course_reviews 
+                (entity_type, entity_id, user_name, rating, comment, status, is_auto_generated)
+                VALUES ('{item_type}', {item_id}, '{author_name.replace("'", "''")}', {rating}, 
+                        '{text.replace("'", "''")}', 'pending', false)
+                RETURNING id
+            """)
+        except Exception as e:
+            print(f"DEBUG: Insert error: {str(e)}")
+            raise
         review_id = cur.fetchone()[0]
         
         cur.close()
