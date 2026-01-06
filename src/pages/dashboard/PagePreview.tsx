@@ -127,6 +127,7 @@ export default function PagePreview() {
         heroImage={pageData.heroImage}
         profilePhoto={pageData.profilePhoto}
         gradientClass={gradientClass}
+        userProfile={userProfile}
       />
 
       <LandingContentSections

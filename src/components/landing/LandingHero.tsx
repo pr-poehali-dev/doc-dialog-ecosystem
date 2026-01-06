@@ -7,6 +7,7 @@ interface LandingHeroProps {
   heroImage: string;
   profilePhoto: string;
   gradientClass: string;
+  userProfile?: any;
 }
 
 export default function LandingHero({
@@ -15,6 +16,7 @@ export default function LandingHero({
   heroImage,
   profilePhoto,
   gradientClass,
+  userProfile,
 }: LandingHeroProps) {
   return (
     <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden">
@@ -44,9 +46,16 @@ export default function LandingHero({
         <p className="text-lg md:text-2xl text-white/95 mb-8 max-w-3xl mx-auto drop-shadow">
           {heroSubtitle}
         </p>
-        <Button size="lg" className="bg-white text-gray-900 hover:bg-gray-100 shadow-xl">
-          <Icon name="Phone" size={20} className="mr-2" />
-          Записаться на сеанс
+        <Button 
+          size="lg" 
+          className="bg-white text-gray-900 hover:bg-gray-100 shadow-xl"
+          asChild
+          disabled={!userProfile?.phone}
+        >
+          <a href={userProfile?.phone ? `tel:${userProfile.phone}` : '#'}>
+            <Icon name="Phone" size={20} className="mr-2" />
+            Записаться на сеанс
+          </a>
         </Button>
       </div>
     </section>
