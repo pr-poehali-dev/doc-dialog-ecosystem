@@ -109,7 +109,7 @@ export default function PageBuilder() {
               <p className="text-muted-foreground">Создайте профессиональный лендинг для клиентов</p>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => window.open('/preview', '_blank')}>
+              <Button variant="outline" onClick={() => window.open('/dashboard/public-profile', '_blank')}>
                 <Icon name="Eye" size={18} className="mr-2" />
                 Предпросмотр
               </Button>
