@@ -346,13 +346,13 @@ const MasseurProfile = () => {
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <label className="text-sm font-medium">Вид массажа</label>
+                          <label className="text-sm font-medium">Виды услуг</label>
                           <select
                             className="w-full p-2 border rounded-md"
                             value={newReview.massage_type}
                             onChange={(e) => setNewReview({ ...newReview, massage_type: e.target.value })}
                           >
-                            <option value="">Выберите вид массажа</option>
+                            <option value="">Выберите услугу</option>
                             {masseur?.specializations.map((spec) => (
                               <option key={spec} value={spec}>{spec}</option>
                             ))}
