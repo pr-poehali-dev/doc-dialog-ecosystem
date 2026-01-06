@@ -38,7 +38,7 @@ def handler(event: dict, context) -> dict:
     # Декодируем JWT токен
     try:
         jwt_secret = os.environ['JWT_SECRET']
-        payload = jwt.decode(token, jwt_secret, algorithms=['HS256'])
+        payload = jwt.decode(token, jwt_secret, algorithms=['HS256'], options={"verify_signature": True})
         admin_id = payload.get('user_id')
         
         if not admin_id:
@@ -59,8 +59,7 @@ def handler(event: dict, context) -> dict:
     conn = psycopg2.connect(os.environ['DATABASE_URL'])
     cur = conn.cursor()
     
-    try
-        
+    try:
         if method == 'GET':
             # Получить все pending верификации с использованием masseur_profiles вместо users
             cur.execute("""

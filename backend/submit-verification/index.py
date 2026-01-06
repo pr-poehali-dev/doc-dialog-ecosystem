@@ -37,7 +37,7 @@ def handler(event: dict, context) -> dict:
     
     try:
         jwt_secret = os.environ['JWT_SECRET']
-        payload = jwt.decode(token, jwt_secret, algorithms=['HS256'])
+        payload = jwt.decode(token, jwt_secret, algorithms=['HS256'], options={"verify_signature": True})
         user_id = payload.get('user_id')
         
         if not user_id:
