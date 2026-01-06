@@ -473,11 +473,15 @@ export default function PageBuilder() {
                           <Icon name="Trash2" size={16} />
                         </Button>
                       </div>
-                      <Input
-                        placeholder="Название услуги"
-                        value={service.name}
-                        onChange={(e) => updateService(index, 'name', e.target.value)}
-                      />
+                      <div className="space-y-1">
+                        <Input
+                          placeholder="Название услуги"
+                          value={service.name}
+                          onChange={(e) => updateService(index, 'name', e.target.value)}
+                          maxLength={50}
+                        />
+                        <p className="text-xs text-gray-500">{service.name.length}/50 символов</p>
+                      </div>
                       <div className="grid grid-cols-2 gap-3">
                         <Input
                           placeholder="60 мин"
@@ -490,12 +494,16 @@ export default function PageBuilder() {
                           onChange={(e) => updateService(index, 'price', e.target.value)}
                         />
                       </div>
-                      <Textarea
-                        placeholder="Краткое описание услуги (необязательно)"
-                        value={service.description}
-                        onChange={(e) => updateService(index, 'description', e.target.value)}
-                        rows={2}
-                      />
+                      <div className="space-y-1">
+                        <Textarea
+                          placeholder="Краткое описание услуги (необязательно)"
+                          value={service.description}
+                          onChange={(e) => updateService(index, 'description', e.target.value)}
+                          rows={2}
+                          maxLength={150}
+                        />
+                        <p className="text-xs text-gray-500">{service.description.length}/150 символов</p>
+                      </div>
                       {pageData.template === 'luxury' && (
                         <div className="space-y-2">
                           <Label className="text-sm font-medium flex items-center gap-2">
