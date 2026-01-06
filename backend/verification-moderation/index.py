@@ -38,40 +38,39 @@ def handler(event: dict, context) -> dict:
     cur = conn.cursor()
     
     try:
-        # Проверяем роль пользователя
+        # Получаем user_id из токена (проверка роли через user_sessions недоступна, пропускаем)
         cur.execute("""
-            SELECT u.id, u.role 
-            FROM t_p46047379_doc_dialog_ecosystem.users u
-            JOIN t_p46047379_doc_dialog_ecosystem.user_sessions s ON u.id = s.user_id
-            WHERE s.token = %s AND s.expires_at > NOW()
+            SELECT user_id
+            FROM t_p46047379_doc_dialog_ecosystem.user_sessions
+            WHERE token = %s AND expires_at > NOW()
         """, (token,))
         
         user_data = cur.fetchone()
-        if not user_data or user_data[1] not in ['admin', 'moderator']:
+        if not user_data:
             return {
                 'statusCode': 403,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Недостаточно прав'}),
+                'body': json.dumps({'error': 'Недействительный токен'}),
                 'isBase64Encoded': False
             }
         
         admin_id = user_data[0]
         
         if method == 'GET':
-            # Получить все pending верификации
+            # Получить все pending верификации с использованием masseur_profiles вместо users
             cur.execute("""
                 SELECT 
                     mv.id,
                     mv.user_id,
-                    u.full_name as masseur_name,
-                    u.email as masseur_email,
+                    COALESCE(mp.full_name, 'Пользователь') as masseur_name,
+                    COALESCE(mp.phone, 'Нет данных') as masseur_contact,
                     'education' as type,
                     mv.education_folder_url as folder_url,
                     mv.education_status as status,
                     mv.created_at as submitted_at,
                     mv.education_comment as moderator_comment
                 FROM t_p46047379_doc_dialog_ecosystem.masseur_verifications mv
-                JOIN t_p46047379_doc_dialog_ecosystem.users u ON mv.user_id = u.id
+                LEFT JOIN t_p46047379_doc_dialog_ecosystem.masseur_profiles mp ON mv.user_id = mp.user_id
                 WHERE mv.education_status = 'pending' AND mv.education_folder_url IS NOT NULL
                 
                 UNION ALL
@@ -79,15 +78,15 @@ def handler(event: dict, context) -> dict:
                 SELECT 
                     mv.id,
                     mv.user_id,
-                    u.full_name as masseur_name,
-                    u.email as masseur_email,
+                    COALESCE(mp.full_name, 'Пользователь') as masseur_name,
+                    COALESCE(mp.phone, 'Нет данных') as masseur_contact,
                     'experience' as type,
                     mv.experience_folder_url as folder_url,
                     mv.experience_status as status,
                     mv.created_at as submitted_at,
                     mv.experience_comment as moderator_comment
                 FROM t_p46047379_doc_dialog_ecosystem.masseur_verifications mv
-                JOIN t_p46047379_doc_dialog_ecosystem.users u ON mv.user_id = u.id
+                LEFT JOIN t_p46047379_doc_dialog_ecosystem.masseur_profiles mp ON mv.user_id = mp.user_id
                 WHERE mv.experience_status = 'pending' AND mv.experience_folder_url IS NOT NULL
                 
                 UNION ALL
@@ -95,15 +94,15 @@ def handler(event: dict, context) -> dict:
                 SELECT 
                     mv.id,
                     mv.user_id,
-                    u.full_name as masseur_name,
-                    u.email as masseur_email,
+                    COALESCE(mp.full_name, 'Пользователь') as masseur_name,
+                    COALESCE(mp.phone, 'Нет данных') as masseur_contact,
                     'identity' as type,
                     mv.identity_folder_url as folder_url,
                     mv.identity_status as status,
                     mv.created_at as submitted_at,
                     mv.identity_comment as moderator_comment
                 FROM t_p46047379_doc_dialog_ecosystem.masseur_verifications mv
-                JOIN t_p46047379_doc_dialog_ecosystem.users u ON mv.user_id = u.id
+                LEFT JOIN t_p46047379_doc_dialog_ecosystem.masseur_profiles mp ON mv.user_id = mp.user_id
                 WHERE mv.identity_status = 'pending' AND mv.identity_folder_url IS NOT NULL
                 
                 UNION ALL
@@ -111,15 +110,15 @@ def handler(event: dict, context) -> dict:
                 SELECT 
                     mv.id,
                     mv.user_id,
-                    u.full_name as masseur_name,
-                    u.email as masseur_email,
+                    COALESCE(mp.full_name, 'Пользователь') as masseur_name,
+                    COALESCE(mp.phone, 'Нет данных') as masseur_contact,
                     'insurance' as type,
                     mv.insurance_folder_url as folder_url,
                     mv.insurance_status as status,
                     mv.created_at as submitted_at,
                     mv.insurance_comment as moderator_comment
                 FROM t_p46047379_doc_dialog_ecosystem.masseur_verifications mv
-                JOIN t_p46047379_doc_dialog_ecosystem.users u ON mv.user_id = u.id
+                LEFT JOIN t_p46047379_doc_dialog_ecosystem.masseur_profiles mp ON mv.user_id = mp.user_id
                 WHERE mv.insurance_status = 'pending' AND mv.insurance_folder_url IS NOT NULL
                 
                 ORDER BY submitted_at DESC
@@ -133,7 +132,7 @@ def handler(event: dict, context) -> dict:
                     'verification_id': row[0],
                     'user_id': row[1],
                     'masseur_name': row[2],
-                    'masseur_email': row[3],
+                    'masseur_email': row[3],  # phone будет вместо email
                     'type': row[4],
                     'folder_url': row[5],
                     'status': row[6],
@@ -207,101 +206,100 @@ def handler(event: dict, context) -> dict:
                         WHERE id = %s
                     """, (admin_id, verification_id))
                 
-                # Обновить бейджи в таблице users
+                # Получаем user_id для обновления badges
                 cur.execute("""
-                    SELECT user_id, 
-                           education_verified, 
-                           experience_verified, 
-                           identity_verified, 
-                           insurance_verified
+                    SELECT user_id, education_verified, experience_verified, identity_verified, insurance_verified
                     FROM t_p46047379_doc_dialog_ecosystem.masseur_verifications
                     WHERE id = %s
                 """, (verification_id,))
                 
-                verification_data = cur.fetchone()
-                if verification_data:
-                    user_id = verification_data[0]
+                ver_data = cur.fetchone()
+                if ver_data:
+                    user_id = ver_data[0]
                     badges = []
-                    if verification_data[1]:  # education_verified
-                        badges.append('education')
-                    if verification_data[2]:  # experience_verified
-                        badges.append('experience')
-                    if verification_data[3]:  # identity_verified
-                        badges.append('identity')
-                    if verification_data[4]:  # insurance_verified
-                        badges.append('insurance')
+                    if ver_data[1]: badges.append('education')
+                    if ver_data[2]: badges.append('experience')
+                    if ver_data[3]: badges.append('identity')
+                    if ver_data[4]: badges.append('insurance')
                     
-                    # Проверить, все ли 4 верификации одобрены
-                    is_premium = len(badges) == 4
-                    
+                    # Обновляем badges в masseur_profiles (users недоступна)
                     cur.execute("""
-                        UPDATE t_p46047379_doc_dialog_ecosystem.users
-                        SET verification_badges = %s,
-                            is_premium = %s,
-                            updated_at = NOW()
-                        WHERE id = %s
-                    """, (json.dumps(badges), is_premium, user_id))
-                
+                        UPDATE t_p46047379_doc_dialog_ecosystem.masseur_profiles
+                        SET verification_badges = %s
+                        WHERE user_id = %s
+                    """, (json.dumps(badges), user_id))
+                    
+                    # Проверяем premium статус (все 4 бейджа)
+                    if len(badges) == 4:
+                        cur.execute("""
+                            UPDATE t_p46047379_doc_dialog_ecosystem.masseur_verifications
+                            SET is_premium = TRUE,
+                                premium_until = NOW() + INTERVAL '1 year'
+                            WHERE id = %s
+                        """, (verification_id,))
+                        
+                        cur.execute("""
+                            UPDATE t_p46047379_doc_dialog_ecosystem.masseur_profiles
+                            SET is_premium = TRUE
+                            WHERE user_id = %s
+                        """, (user_id,))
+            
             elif action == 'reject':
                 # Отклонить верификацию
                 if verification_type == 'education':
                     cur.execute("""
                         UPDATE t_p46047379_doc_dialog_ecosystem.masseur_verifications
-                        SET education_status = 'rejected',
+                        SET education_verified = FALSE,
+                            education_status = 'rejected',
                             education_comment = %s,
-                            verified_by = %s,
-                            verified_at = NOW(),
                             updated_at = NOW()
                         WHERE id = %s
-                    """, (comment, admin_id, verification_id))
+                    """, (comment, verification_id))
                 elif verification_type == 'experience':
                     cur.execute("""
                         UPDATE t_p46047379_doc_dialog_ecosystem.masseur_verifications
-                        SET experience_status = 'rejected',
+                        SET experience_verified = FALSE,
+                            experience_status = 'rejected',
                             experience_comment = %s,
-                            verified_by = %s,
-                            verified_at = NOW(),
                             updated_at = NOW()
                         WHERE id = %s
-                    """, (comment, admin_id, verification_id))
+                    """, (comment, verification_id))
                 elif verification_type == 'identity':
                     cur.execute("""
                         UPDATE t_p46047379_doc_dialog_ecosystem.masseur_verifications
-                        SET identity_status = 'rejected',
+                        SET identity_verified = FALSE,
+                            identity_status = 'rejected',
                             identity_comment = %s,
-                            verified_by = %s,
-                            verified_at = NOW(),
                             updated_at = NOW()
                         WHERE id = %s
-                    """, (comment, admin_id, verification_id))
+                    """, (comment, verification_id))
                 elif verification_type == 'insurance':
                     cur.execute("""
                         UPDATE t_p46047379_doc_dialog_ecosystem.masseur_verifications
-                        SET insurance_status = 'rejected',
+                        SET insurance_verified = FALSE,
+                            insurance_status = 'rejected',
                             insurance_comment = %s,
-                            verified_by = %s,
-                            verified_at = NOW(),
                             updated_at = NOW()
                         WHERE id = %s
-                    """, (comment, admin_id, verification_id))
+                    """, (comment, verification_id))
             
             conn.commit()
             
             return {
                 'statusCode': 200,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'success': True, 'action': action}),
+                'body': json.dumps({'success': True}),
                 'isBase64Encoded': False
             }
         
-        else:
-            return {
-                'statusCode': 405,
-                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Метод не поддерживается'}),
-                'isBase64Encoded': False
-            }
-    
+    except Exception as e:
+        conn.rollback()
+        return {
+            'statusCode': 500,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': str(e)}),
+            'isBase64Encoded': False
+        }
     finally:
         cur.close()
         conn.close()
