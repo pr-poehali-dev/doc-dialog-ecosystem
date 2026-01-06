@@ -95,9 +95,11 @@ export default function LandingFooterSections({
                       <Icon name="Phone" size={28} className="text-white" />
                     </div>
                     <p className="font-semibold text-lg mb-2 text-gray-900">Телефон</p>
-                    <p className="text-gray-600 text-sm mb-4">
-                      {userProfile?.phone || 'Загрузка...'}
-                    </p>
+                    {userProfile?.phone && (
+                      <p className="text-gray-600 text-sm mb-4">
+                        {userProfile.phone}
+                      </p>
+                    )}
                     <Button 
                       asChild
                       className={`w-full bg-gradient-to-r ${gradientClass} hover:opacity-90`}
@@ -116,9 +118,11 @@ export default function LandingFooterSections({
                       <Icon name="Send" size={28} className="text-white" />
                     </div>
                     <p className="font-semibold text-lg mb-2 text-gray-900">Telegram</p>
-                    <p className="text-gray-600 text-sm mb-4">
-                      {userProfile?.telegram || 'Загрузка...'}
-                    </p>
+                    {userProfile?.telegram && (
+                      <p className="text-gray-600 text-sm mb-4">
+                        {userProfile.telegram}
+                      </p>
+                    )}
                     <Button 
                       asChild
                       className={`w-full bg-gradient-to-r ${gradientClass} hover:opacity-90`}
