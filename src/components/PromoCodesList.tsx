@@ -119,10 +119,26 @@ export default function PromoCodesList() {
     }
   };
 
-  const copyPromoCode = () => {
+  const copyPromoCode = async () => {
     if (selectedPromo?.promo_code) {
-      navigator.clipboard.writeText(selectedPromo.promo_code);
-      toast({ title: 'Скопировано', description: 'Промокод скопирован в буфер обмена' });
+      try {
+        await navigator.clipboard.writeText(selectedPromo.promo_code);
+        toast({ title: 'Скопировано', description: 'Промокод скопирован в буфер обмена' });
+      } catch (error) {
+        const textArea = document.createElement('textarea');
+        textArea.value = selectedPromo.promo_code;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          toast({ title: 'Скопировано', description: 'Промокод скопирован в буфер обмена' });
+        } catch (err) {
+          toast({ title: 'Ошибка', description: 'Не удалось скопировать промокод', variant: 'destructive' });
+        }
+        document.body.removeChild(textArea);
+      }
     }
   };
 
