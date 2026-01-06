@@ -178,10 +178,10 @@ const MasseursDirectory = () => {
                           Опыт
                         </Badge>
                       )}
-                      {masseur.verification_badges.includes('insurance') && (
+                      {masseur.verification_badges.includes('identity') && (
                         <Badge variant="outline" className="text-xs flex items-center gap-1 bg-purple-50 border-purple-200 text-purple-700">
-                          <Icon name="Shield" size={12} />
-                          Страховка
+                          <Icon name="BadgeCheck" size={12} />
+                          Личность
                         </Badge>
                       )}
                     </div>

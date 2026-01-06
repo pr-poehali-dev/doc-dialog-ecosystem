@@ -165,15 +165,6 @@ export default function Verification() {
       statusValue: status?.identity_status || 'pending',
       comment: status?.identity_comment,
     },
-    {
-      id: 'insurance',
-      title: 'Страхование',
-      description: 'Полис страхования ответственности',
-      icon: 'Shield',
-      verified: status?.insurance_verified || false,
-      statusValue: status?.insurance_status || 'pending',
-      comment: status?.insurance_comment,
-    },
   ];
 
   if (loading) {
@@ -208,7 +199,7 @@ export default function Verification() {
                 <div className="flex-1">
                   <CardTitle className="text-xl mb-2">Premium статус</CardTitle>
                   <CardDescription className="text-base">
-                    Получите все 4 бейджа верификации и ваш профиль будет выделен золотой рамкой в каталоге! 
+                    Получите все 3 бейджа верификации и ваш профиль будет выделен в каталоге! 
                     Клиенты доверяют проверенным специалистам.
                   </CardDescription>
                 </div>

@@ -233,8 +233,8 @@ def handler(event: dict, context) -> dict:
                         WHERE user_id = %s
                     """, (json.dumps(badges), user_id))
                     
-                    # Проверяем premium статус (все 4 бейджа)
-                    if len(badges) == 4:
+                    # Проверяем premium статус (все 3 бейджа)
+                    if len(badges) == 3:
                         cur.execute("""
                             UPDATE t_p46047379_doc_dialog_ecosystem.masseur_verifications
                             SET is_premium = TRUE,
