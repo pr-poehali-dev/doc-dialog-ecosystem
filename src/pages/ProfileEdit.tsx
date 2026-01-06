@@ -18,6 +18,7 @@ export default function ProfileEdit() {
   const [formData, setFormData] = useState({
     full_name: "",
     phone: "",
+    telegram: "",
     city: "",
     experience_years: "",
     about: "",
@@ -38,32 +39,76 @@ export default function ProfileEdit() {
       return;
     }
 
-    const mockProfile = {
-      full_name: "Иван Иванов",
-      phone: "+7 (999) 123-45-67",
-      city: "Москва",
-      experience_years: "5",
-      about: "Профессиональный массажист с медицинским образованием",
-      education: "Медицинский университет",
-      languages: ["Русский", "Английский"],
-      specializations: ["Классический массаж", "Спортивный массаж"],
-      certificates: ["Сертификат массажиста"]
+    // Загружаем реальный профиль из API
+    const loadProfile = async () => {
+      try {
+        const response = await fetch('https://functions.poehali.dev/bf27da5d-a5ee-4dc7-b5bb-fcc474598d37', {
+          headers: { 'X-Authorization': `Bearer ${token}` }
+        });
+        
+        if (response.ok) {
+          const profile = await response.json();
+          setFormData({
+            full_name: profile.full_name || "",
+            phone: profile.phone || "",
+            telegram: profile.telegram || "",
+            city: profile.city || "",
+            experience_years: profile.experience_years?.toString() || "",
+            about: profile.about || "",
+            education: profile.education || "",
+            languages: profile.languages || [],
+            specializations: profile.specializations || [],
+            certificates: profile.certificates || []
+          });
+        }
+      } catch (error) {
+        console.error('Failed to load profile:', error);
+      }
     };
 
-    setFormData(mockProfile);
+    loadProfile();
   }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    setTimeout(() => {
-      toast({
-        title: "Профиль сохранен!",
-        description: "Все изменения успешно применены",
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('https://functions.poehali.dev/bf27da5d-a5ee-4dc7-b5bb-fcc474598d37', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          ...formData,
+          experience_years: parseInt(formData.experience_years) || 0
+        })
       });
+
+      if (response.ok) {
+        toast({
+          title: "Профиль сохранен!",
+          description: "Все изменения успешно применены",
+        });
+      } else {
+        const error = await response.json();
+        toast({
+          title: "Ошибка",
+          description: error.error || "Не удалось сохранить профиль",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось сохранить профиль",
+        variant: "destructive"
+      });
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   const addSpecialization = () => {
@@ -168,6 +213,19 @@ export default function ProfileEdit() {
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
+                    <Label htmlFor="telegram">Telegram</Label>
+                    <Input
+                      id="telegram"
+                      value={formData.telegram}
+                      onChange={(e) => setFormData({ ...formData, telegram: e.target.value })}
+                      placeholder="@username или username"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Будет отображаться на лендинге для связи с клиентами
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
                     <Label htmlFor="city">Город *</Label>
                     <Input
                       id="city"
@@ -177,7 +235,9 @@ export default function ProfileEdit() {
                       required
                     />
                   </div>
+                </div>
 
+                <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="experience_years">Опыт работы (лет) *</Label>
                     <Input
