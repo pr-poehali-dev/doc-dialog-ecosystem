@@ -75,7 +75,6 @@ const MasseurProfile = () => {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        credentials: 'include',
         body: JSON.stringify({
           masseur_id: masseur.id,
         }),
