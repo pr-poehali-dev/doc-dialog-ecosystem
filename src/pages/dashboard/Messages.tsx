@@ -69,6 +69,8 @@ export default function Messages() {
 
   useEffect(() => {
     const masseurId = searchParams.get('masseur');
+    const isBooking = searchParams.get('booking') === 'true';
+    
     if (masseurId) {
       const parsedMasseurId = parseInt(masseurId);
       const existingChat = chats.find(c => c.other_user_id === parsedMasseurId);
@@ -76,13 +78,17 @@ export default function Messages() {
       if (existingChat) {
         setSelectedChat(existingChat);
         fetchMessages(existingChat.other_user_id);
+        
+        if (isBooking && messageText === '') {
+          setMessageText('Здравствуйте! Хочу записаться на сеанс массажа.');
+        }
       } else if (chats.length >= 0) {
-        loadMasseurAndCreateChat(parsedMasseurId);
+        loadMasseurAndCreateChat(parsedMasseurId, isBooking);
       }
     }
   }, [chats, searchParams]);
 
-  const loadMasseurAndCreateChat = async (masseurId: number) => {
+  const loadMasseurAndCreateChat = async (masseurId: number, isBooking: boolean = false) => {
     try {
       const response = await fetch('https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436');
       if (response.ok) {
@@ -105,6 +111,10 @@ export default function Messages() {
           setChats(prevChats => [virtualChat, ...prevChats]);
           setSelectedChat(virtualChat);
           fetchMessages(masseur.id);
+          
+          if (isBooking) {
+            setMessageText('Здравствуйте! Хочу записаться на сеанс массажа.');
+          }
         }
       }
     } catch (error) {

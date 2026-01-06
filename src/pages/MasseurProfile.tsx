@@ -59,47 +59,14 @@ const MasseurProfile = () => {
     }
   };
 
-  const handleBooking = async () => {
+  const handleBooking = () => {
     const token = localStorage.getItem('token');
     if (!token) {
       navigate('/login');
       return;
     }
-
-    if (!masseur) return;
-
-    try {
-      const response = await fetch('https://functions.poehali.dev/04d0b538-1cf5-4941-9c06-8d1bef5854ec?action=send-booking-request', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          masseur_id: masseur.id,
-        }),
-      });
-
-      if (response.ok) {
-        toast({
-          title: 'Заявка отправлена',
-          description: 'Специалист получил вашу заявку. Вы можете обсудить детали в чате.',
-        });
-        navigate(`/dashboard/messages?masseur=${masseur.id}`);
-      } else {
-        toast({
-          title: 'Ошибка',
-          description: 'Не удалось отправить заявку',
-          variant: 'destructive',
-        });
-      }
-    } catch (error) {
-      console.error('Error sending booking request:', error);
-      toast({
-        title: 'Ошибка',
-        description: 'Не удалось отправить заявку',
-        variant: 'destructive',
-      });
+    if (masseur) {
+      navigate(`/dashboard/messages?masseur=${masseur.id}&booking=true`);
     }
   };
 
