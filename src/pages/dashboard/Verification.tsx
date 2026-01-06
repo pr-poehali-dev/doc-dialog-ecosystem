@@ -165,6 +165,15 @@ export default function Verification() {
       statusValue: status?.identity_status || null,
       comment: status?.identity_comment,
     },
+    {
+      id: 'insurance',
+      title: 'Сертифицирован Док диалог',
+      description: 'Сертификат от Док диалог',
+      icon: 'Shield',
+      verified: status?.insurance_verified || false,
+      statusValue: status?.insurance_status || null,
+      comment: status?.insurance_comment,
+    },
   ];
 
   if (loading) {

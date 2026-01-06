@@ -67,15 +67,19 @@ def handler(event: dict, context) -> dict:
                     education_verified,
                     experience_verified,
                     identity_verified,
+                    insurance_verified,
                     education_status,
                     experience_status,
                     identity_status,
+                    insurance_status,
                     education_comment,
                     experience_comment,
                     identity_comment,
+                    insurance_comment,
                     education_folder_url,
                     experience_folder_url,
-                    identity_folder_url
+                    identity_folder_url,
+                    insurance_folder_url
                 FROM t_p46047379_doc_dialog_ecosystem.masseur_verifications
                 WHERE user_id = %s
             """, (user_id,))
@@ -86,15 +90,19 @@ def handler(event: dict, context) -> dict:
                     'education_verified': row[0],
                     'experience_verified': row[1],
                     'identity_verified': row[2],
-                    'education_status': row[3],
-                    'experience_status': row[4],
-                    'identity_status': row[5],
-                    'education_comment': row[6],
-                    'experience_comment': row[7],
-                    'identity_comment': row[8],
-                    'education_folder_url': row[9],
-                    'experience_folder_url': row[10],
-                    'identity_folder_url': row[11]
+                    'insurance_verified': row[3],
+                    'education_status': row[4],
+                    'experience_status': row[5],
+                    'identity_status': row[6],
+                    'insurance_status': row[7],
+                    'education_comment': row[8],
+                    'experience_comment': row[9],
+                    'identity_comment': row[10],
+                    'insurance_comment': row[11],
+                    'education_folder_url': row[12],
+                    'experience_folder_url': row[13],
+                    'identity_folder_url': row[14],
+                    'insurance_folder_url': row[15]
                 }
             else:
                 status = None
@@ -162,6 +170,16 @@ def handler(event: dict, context) -> dict:
                             updated_at = NOW()
                         WHERE id = %s
                     """, (folder_url, verification_id))
+                elif verification_type == 'insurance':
+                    cur.execute("""
+                        UPDATE t_p46047379_doc_dialog_ecosystem.masseur_verifications
+                        SET insurance_folder_url = %s,
+                            insurance_status = 'pending',
+                            insurance_verified = FALSE,
+                            insurance_comment = NULL,
+                            updated_at = NOW()
+                        WHERE id = %s
+                    """, (folder_url, verification_id))
             else:
                 # Создаем новую запись
                 if verification_type == 'education':
@@ -180,6 +198,12 @@ def handler(event: dict, context) -> dict:
                     cur.execute("""
                         INSERT INTO t_p46047379_doc_dialog_ecosystem.masseur_verifications
                         (user_id, identity_folder_url, identity_status, created_at, updated_at)
+                        VALUES (%s, %s, 'pending', NOW(), NOW())
+                    """, (user_id, folder_url))
+                elif verification_type == 'insurance':
+                    cur.execute("""
+                        INSERT INTO t_p46047379_doc_dialog_ecosystem.masseur_verifications
+                        (user_id, insurance_folder_url, insurance_status, created_at, updated_at)
                         VALUES (%s, %s, 'pending', NOW(), NOW())
                     """, (user_id, folder_url))
             
