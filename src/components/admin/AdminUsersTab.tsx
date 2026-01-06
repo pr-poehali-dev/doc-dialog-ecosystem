@@ -47,7 +47,7 @@ export default function AdminUsersTab({ users, loading, onUpdateUserRole }: Admi
     localStorage.setItem('user', JSON.stringify(impersonatedUser));
     
     // Создаем временный токен для подмененного пользователя
-    // Формат: header.payload.signature (упрощенный, без реальной подписи)
+    // Формат: header.payload.signature.impersonated
     const payload = {
       user_id: user.id,
       email: user.email,
@@ -64,7 +64,10 @@ export default function AdminUsersTab({ users, loading, onUpdateUserRole }: Admi
         .replace(/=/g, '');
     };
     
-    const fakeToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' + base64url(JSON.stringify(payload)) + '.impersonated';
+    // JWT формат: header.payload.signature
+    // Для impersonated токенов добавляем fake signature и маркер .impersonated
+    const fakeSignature = 'fake_signature_for_impersonation';
+    const fakeToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' + base64url(JSON.stringify(payload)) + '.' + fakeSignature + '.impersonated';
     localStorage.setItem('token', fakeToken);
     
     // Переход в кабинет пользователя
