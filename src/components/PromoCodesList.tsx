@@ -85,39 +85,39 @@ export default function PromoCodesList() {
   };
 
   const handleOpenPromo = async (request: PromoRequest) => {
-    // Проверяем, истёк ли промокод
-    const isExpired = request.expires_at && new Date(request.expires_at) < new Date();
-    
-    if (request.opened_at && !isExpired) {
-      // Промокод активен - просто показываем
-      setSelectedPromo(request);
-      setShowDialog(true);
-    } else {
-      // Открываем промокод (впервые или заново после истечения)
-      try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(`${PROMO_API_URL}?action=open`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({ request_id: request.id })
-        });
+    // Сначала пробуем открыть/переоткрыть промокод через API
+    // API вернёт актуальные данные или ошибку если промокод ещё активен
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${PROMO_API_URL}?action=open`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ request_id: request.id })
+      });
 
-        if (response.ok) {
-          const data = await response.json();
-          const updatedRequest = { ...request, ...data, opened_at: new Date().toISOString() };
-          setSelectedPromo(updatedRequest);
+      if (response.ok) {
+        // Промокод успешно открыт/переоткрыт
+        const data = await response.json();
+        const updatedRequest = { ...request, ...data, opened_at: new Date().toISOString() };
+        setSelectedPromo(updatedRequest);
+        setShowDialog(true);
+        loadRequests();
+      } else {
+        const error = await response.json();
+        
+        // Если промокод уже активен, показываем текущие данные
+        if (error.error?.includes('активен')) {
+          setSelectedPromo(request);
           setShowDialog(true);
-          loadRequests(); // Обновляем список
         } else {
-          const error = await response.json();
           toast({ title: 'Ошибка', description: error.error, variant: 'destructive' });
         }
-      } catch (error) {
-        toast({ title: 'Ошибка', description: 'Не удалось открыть промокод', variant: 'destructive' });
       }
+    } catch (error) {
+      toast({ title: 'Ошибка', description: 'Не удалось открыть промокод', variant: 'destructive' });
     }
   };
 
