@@ -382,7 +382,7 @@ const MainContent = ({ openDialog }: MainContentProps) => {
               </div>
               <div className="rounded-2xl overflow-hidden aspect-square">
                 <img 
-                  src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/6bc644e6-9a4e-44e1-af04-7f0241db5def.jpg" 
+                  src="https://cdn.poehali.dev/files/2148347213.jpg" 
                   alt="Сообщество массажистов" 
                   className="w-full h-full object-cover"
                 />
