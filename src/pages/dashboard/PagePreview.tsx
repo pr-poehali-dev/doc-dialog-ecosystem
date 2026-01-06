@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import Icon from '@/components/ui/icon';
 import {
   Dialog,
@@ -43,6 +44,12 @@ interface PageData {
     date: string;
   }>;
   videos: string[];
+  offers: Array<{
+    title: string;
+    description: string;
+    discount: string;
+    image: string;
+  }>;
   template: string;
   showPhone: boolean;
   showTelegram: boolean;
@@ -54,6 +61,7 @@ export default function PagePreview() {
   const [pageData, setPageData] = useState<PageData | null>(null);
   const [selectedPost, setSelectedPost] = useState<any>(null);
   const [isPostDialogOpen, setIsPostDialogOpen] = useState(false);
+  const [orderForm, setOrderForm] = useState<{ [key: number]: { name: string; email: string; phone: string; agreed: boolean } }>({});
 
   useEffect(() => {
     const data = localStorage.getItem('pageBuilderData');
@@ -271,6 +279,103 @@ export default function PagePreview() {
                       >
                         Читать далее
                         <Icon name="ArrowRight" size={14} className="ml-1" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Offers Section - Super Premium only */}
+      {pageData.offers && pageData.offers.length > 0 && pageData.template === 'luxury' && (
+        <section className="py-20 bg-gradient-to-b from-white to-rose-50">
+          <div className="container mx-auto px-4">
+            <h2 className="text-4xl font-bold text-center mb-4">Специальные предложения</h2>
+            <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+              Выгодные скидки и подарочные сертификаты
+            </p>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+              {pageData.offers.map((offer: any, index: number) => (
+                <div 
+                  key={index} 
+                  className="bg-white rounded-2xl overflow-hidden shadow-lg border-2 border-rose-100"
+                >
+                  {offer.image && (
+                    <img 
+                      src={offer.image} 
+                      alt={offer.title} 
+                      className="w-full h-48 object-cover"
+                    />
+                  )}
+                  <div className="p-6">
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="text-xl font-bold text-gray-900 flex-1">{offer.title}</h3>
+                      <Badge className="bg-gradient-to-r from-rose-500 to-pink-500 text-white">
+                        {offer.discount}
+                      </Badge>
+                    </div>
+                    <p className="text-gray-600 text-sm mb-6 leading-relaxed">{offer.description}</p>
+                    
+                    {/* Order Form */}
+                    <div className="space-y-3 pt-4 border-t">
+                      <p className="text-sm font-semibold text-gray-700 mb-3">Заказать предложение:</p>
+                      <Input
+                        placeholder="Ваше имя"
+                        value={orderForm[index]?.name || ''}
+                        onChange={(e) => setOrderForm({
+                          ...orderForm,
+                          [index]: { ...orderForm[index], name: e.target.value, email: orderForm[index]?.email || '', phone: orderForm[index]?.phone || '', agreed: orderForm[index]?.agreed || false }
+                        })}
+                        className="text-sm"
+                      />
+                      <Input
+                        type="email"
+                        placeholder="Email"
+                        value={orderForm[index]?.email || ''}
+                        onChange={(e) => setOrderForm({
+                          ...orderForm,
+                          [index]: { ...orderForm[index], email: e.target.value, name: orderForm[index]?.name || '', phone: orderForm[index]?.phone || '', agreed: orderForm[index]?.agreed || false }
+                        })}
+                        className="text-sm"
+                      />
+                      <Input
+                        type="tel"
+                        placeholder="+7 (999) 123-45-67"
+                        value={orderForm[index]?.phone || ''}
+                        onChange={(e) => setOrderForm({
+                          ...orderForm,
+                          [index]: { ...orderForm[index], phone: e.target.value, name: orderForm[index]?.name || '', email: orderForm[index]?.email || '', agreed: orderForm[index]?.agreed || false }
+                        })}
+                        className="text-sm"
+                      />
+                      <div className="flex items-start gap-2">
+                        <input
+                          type="checkbox"
+                          id={`agree-${index}`}
+                          checked={orderForm[index]?.agreed || false}
+                          onChange={(e) => setOrderForm({
+                            ...orderForm,
+                            [index]: { ...orderForm[index], agreed: e.target.checked, name: orderForm[index]?.name || '', email: orderForm[index]?.email || '', phone: orderForm[index]?.phone || '' }
+                          })}
+                          className="mt-1"
+                        />
+                        <label htmlFor={`agree-${index}`} className="text-xs text-gray-600">
+                          Согласен с <a href="#" className="text-blue-600 underline">политикой конфиденциальности</a> и <a href="#" className="text-blue-600 underline">договором оферты</a>
+                        </label>
+                      </div>
+                      <Button 
+                        className={`w-full bg-gradient-to-r ${gradientClass}`}
+                        disabled={!orderForm[index]?.name || !orderForm[index]?.email || !orderForm[index]?.phone || !orderForm[index]?.agreed}
+                        onClick={() => {
+                          // Здесь будет отправка заявки на email массажиста
+                          alert(`Заявка отправлена!\nИмя: ${orderForm[index]?.name}\nEmail: ${orderForm[index]?.email}\nТелефон: ${orderForm[index]?.phone}\nПредложение: ${offer.title}`);
+                        }}
+                      >
+                        <Icon name="Send" size={16} className="mr-2" />
+                        Заказать
                       </Button>
                     </div>
                   </div>

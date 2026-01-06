@@ -53,6 +53,12 @@ const defaultPageData = {
     date: string;
   }>,
   videos: [] as string[],
+  offers: [] as Array<{
+    title: string;
+    description: string;
+    discount: string;
+    image: string;
+  }>,
   template: 'minimal',
   showPhone: true,
   showTelegram: true,
@@ -83,8 +89,10 @@ export default function PageBuilder() {
   const [uploadingGallery, setUploadingGallery] = useState(false);
   const [uploadingCert, setUploadingCert] = useState(false);
   const [uploadingBlog, setUploadingBlog] = useState(false);
+  const [uploadingOffer, setUploadingOffer] = useState(false);
   const [newReview, setNewReview] = useState({ name: '', rating: 5, text: '' });
   const [newBlogPost, setNewBlogPost] = useState({ title: '', content: '', image: '' });
+  const [newOffer, setNewOffer] = useState({ title: '', description: '', discount: '', image: '' });
   const [isPremiumDialogOpen, setIsPremiumDialogOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState('');
 
@@ -213,9 +221,9 @@ export default function PageBuilder() {
         template: 'minimal',
       },
       luxury: {
-        heroTitle: 'SPA-массаж класса Люкс',
-        heroSubtitle: 'Эксклюзивные техники. Премиальный сервис. Атмосфера релакса',
-        aboutText: 'Предлагаю эксклюзивные массажные программы с использованием натуральных масел премиум-класса. Создаю атмосферу настоящего SPA-салона с заботой о каждой детали.',
+        heroTitle: 'Эксклюзивный массаж премиум-класса',
+        heroSubtitle: 'Индивидуальные программы. VIP-сервис. Максимальный результат',
+        aboutText: 'Предлагаю эксклюзивные массажные программы с использованием авторских техник и натуральных масел премиум-класса. Создаю атмосферу полного релакса и заботы о каждой детали вашего комфорта.',
         colorTheme: 'purple',
         template: 'luxury',
       },
@@ -869,6 +877,134 @@ export default function PageBuilder() {
                   </CardContent>
                 </Card>
               )}
+
+              {/* Offers Section - Super Premium only */}
+              {pageData.template === 'luxury' && (
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center gap-3">
+                      <Icon name="Tag" size={20} className="text-rose-500" />
+                      <div className="flex-1">
+                        <CardTitle>Скидки и сертификаты</CardTitle>
+                        <CardDescription>Специальные предложения с формой заказа</CardDescription>
+                      </div>
+                      <Badge className="bg-gradient-to-r from-purple-500 to-pink-500">Супер Премиум</Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {pageData.offers && pageData.offers.length > 0 && (
+                      <div className="space-y-3 mb-4">
+                        {pageData.offers.map((offer, index) => (
+                          <div key={index} className="p-3 bg-rose-50 rounded-lg border border-rose-100">
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex-1">
+                                <p className="font-semibold text-sm">{offer.title}</p>
+                                <p className="text-xs text-rose-600 font-bold mt-1">{offer.discount}</p>
+                              </div>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => {
+                                  setPageData({
+                                    ...pageData,
+                                    offers: pageData.offers.filter((_, i) => i !== index)
+                                  });
+                                }}
+                              >
+                                <Icon name="Trash2" size={14} />
+                              </Button>
+                            </div>
+                            {offer.image && (
+                              <img src={offer.image} alt={offer.title} className="w-full h-20 object-cover rounded mb-2" />
+                            )}
+                            <p className="text-xs text-gray-600 line-clamp-2">{offer.description}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
+                      <p className="text-sm font-semibold">Добавить предложение</p>
+                      <Input
+                        placeholder="Название (например: Скидка 20% на первый сеанс)"
+                        value={newOffer.title}
+                        onChange={(e) => setNewOffer({ ...newOffer, title: e.target.value })}
+                      />
+                      <Input
+                        placeholder="Размер скидки (например: -20% или -1000₽)"
+                        value={newOffer.discount}
+                        onChange={(e) => setNewOffer({ ...newOffer, discount: e.target.value })}
+                      />
+                      <Textarea
+                        placeholder="Описание предложения и условий"
+                        value={newOffer.description}
+                        onChange={(e) => setNewOffer({ ...newOffer, description: e.target.value })}
+                        rows={3}
+                      />
+                      <div className="space-y-2">
+                        <Label className="text-xs">Изображение (необязательно)</Label>
+                        {newOffer.image ? (
+                          <div className="relative">
+                            <img src={newOffer.image} alt="Preview" className="w-full h-32 object-cover rounded" />
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              className="absolute top-1 right-1"
+                              onClick={() => setNewOffer({ ...newOffer, image: '' })}
+                            >
+                              <Icon name="X" size={14} />
+                            </Button>
+                          </div>
+                        ) : (
+                          <label className="flex items-center justify-center h-24 border-2 border-dashed rounded cursor-pointer hover:border-rose-400">
+                            <Icon name="Upload" size={20} className="text-gray-400 mr-2" />
+                            <span className="text-sm text-gray-500">Загрузить</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  const reader = new FileReader();
+                                  reader.onloadend = () => {
+                                    setNewOffer({ ...newOffer, image: reader.result as string });
+                                  };
+                                  reader.readAsDataURL(file);
+                                }
+                              }}
+                            />
+                          </label>
+                        )}
+                      </div>
+                      <Button
+                        size="sm"
+                        className="w-full"
+                        onClick={() => {
+                          if (newOffer.title && newOffer.discount && newOffer.description) {
+                            setPageData({
+                              ...pageData,
+                              offers: [
+                                ...pageData.offers,
+                                { ...newOffer }
+                              ]
+                            });
+                            setNewOffer({ title: '', description: '', discount: '', image: '' });
+                            toast({
+                              title: 'Предложение добавлено',
+                              description: 'Предложение появится на лендинге',
+                            });
+                          }
+                        }}
+                        disabled={!newOffer.title || !newOffer.discount || !newOffer.description}
+                      >
+                        <Icon name="Plus" size={16} className="mr-2" />
+                        Добавить предложение
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </div>
 
             {/* Right Sidebar */}
@@ -931,13 +1067,13 @@ export default function PageBuilder() {
                     >
                       <div className="text-left flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <Icon name="Gem" size={16} className="text-purple-500" />
-                          <span className="font-semibold">Luxury SPA</span>
+                          <Icon name="Sparkles" size={16} className="text-purple-500" />
+                          <span className="font-semibold">Супер Премиум</span>
                           {pageData.template === 'luxury' && (
                             <Badge className="ml-2 bg-purple-500">Активен</Badge>
                           )}
                         </div>
-                        <p className="text-xs text-muted-foreground mb-1">+ Блог + Видео</p>
+                        <p className="text-xs text-muted-foreground mb-1">+ Блог + Скидки/Сертификаты</p>
                         <p className="text-xs font-bold text-purple-600">4990 ₽</p>
                       </div>
                       <Icon name="ChevronRight" size={20} className="text-gray-400" />
@@ -1027,8 +1163,8 @@ export default function PageBuilder() {
                 </>
               ) : (
                 <>
-                  <Icon name="Gem" size={24} className="text-purple-500" />
-                  Luxury SPA шаблон
+                  <Icon name="Sparkles" size={24} className="text-purple-500" />
+                  Супер Премиум шаблон
                 </>
               )}
             </DialogTitle>
@@ -1050,10 +1186,16 @@ export default function PageBuilder() {
                   <span className="text-sm">Блок новостей и статей (блог)</span>
                 </div>
                 {selectedTemplate === 'luxury' && (
-                  <div className="flex items-center gap-2">
-                    <Icon name="Check" size={16} className="text-green-600" />
-                    <span className="text-sm">Видео-галерея</span>
-                  </div>
+                  <>
+                    <div className="flex items-center gap-2">
+                      <Icon name="Check" size={16} className="text-green-600" />
+                      <span className="text-sm">Блок "Скидки и сертификаты" с формой заказа</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Icon name="Check" size={16} className="text-green-600" />
+                      <span className="text-sm">Прием заявок на email</span>
+                    </div>
+                  </>
                 )}
                 <div className="flex items-center gap-2">
                   <Icon name="Check" size={16} className="text-green-600" />
