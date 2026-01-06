@@ -78,60 +78,68 @@ export default function LandingFooterSections({
       )}
 
       {/* Contact Section */}
-      <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold mb-4">Свяжитесь со мной</h2>
-              <p className="text-xl text-gray-600">
-                Выберите удобный способ связи и запишитесь на сеанс
-              </p>
-            </div>
-            <div className={`grid ${showPhone && showTelegram ? 'md:grid-cols-2' : 'md:grid-cols-1'} gap-4 max-w-2xl mx-auto`}>
-              {showPhone && userProfile?.phone && (
-                <div className="p-6 rounded-2xl bg-white border-2 border-gray-100 shadow-sm text-center">
-                  <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${gradientClass} flex items-center justify-center mx-auto mb-4`}>
-                    <Icon name="Phone" size={28} className="text-white" />
-                  </div>
-                  <p className="font-semibold text-lg mb-2 text-gray-900">Телефон</p>
-                  <p className="text-gray-600 text-sm mb-4">{userProfile.phone}</p>
-                  <Button 
-                    asChild
-                    className={`w-full bg-gradient-to-r ${gradientClass} hover:opacity-90`}
-                  >
-                    <a href={`tel:${userProfile.phone}`}>
-                      <Icon name="Phone" size={18} className="mr-2" />
-                      Позвонить
-                    </a>
-                  </Button>
-                </div>
-              )}
-              {showTelegram && userProfile?.telegram && (
-                <div className="p-6 rounded-2xl bg-white border-2 border-gray-100 shadow-sm text-center">
-                  <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${gradientClass} flex items-center justify-center mx-auto mb-4`}>
-                    <Icon name="Send" size={28} className="text-white" />
-                  </div>
-                  <p className="font-semibold text-lg mb-2 text-gray-900">Telegram</p>
-                  <p className="text-gray-600 text-sm mb-4">{userProfile.telegram}</p>
-                  <Button 
-                    asChild
-                    className={`w-full bg-gradient-to-r ${gradientClass} hover:opacity-90`}
-                  >
-                    <a 
-                      href={`https://t.me/${userProfile.telegram.replace('@', '')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+      {(showPhone || showTelegram) && (
+        <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-4xl font-bold mb-4">Свяжитесь со мной</h2>
+                <p className="text-xl text-gray-600">
+                  Выберите удобный способ связи и запишитесь на сеанс
+                </p>
+              </div>
+              <div className={`grid ${showPhone && showTelegram ? 'md:grid-cols-2' : 'md:grid-cols-1'} gap-4 max-w-2xl mx-auto`}>
+                {showPhone && (
+                  <div className="p-6 rounded-2xl bg-white border-2 border-gray-100 shadow-sm text-center">
+                    <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${gradientClass} flex items-center justify-center mx-auto mb-4`}>
+                      <Icon name="Phone" size={28} className="text-white" />
+                    </div>
+                    <p className="font-semibold text-lg mb-2 text-gray-900">Телефон</p>
+                    <p className="text-gray-600 text-sm mb-4">
+                      {userProfile?.phone || 'Загрузка...'}
+                    </p>
+                    <Button 
+                      asChild
+                      className={`w-full bg-gradient-to-r ${gradientClass} hover:opacity-90`}
+                      disabled={!userProfile?.phone}
                     >
-                      <Icon name="Send" size={18} className="mr-2" />
-                      Написать
-                    </a>
-                  </Button>
-                </div>
-              )}
+                      <a href={userProfile?.phone ? `tel:${userProfile.phone}` : '#'}>
+                        <Icon name="Phone" size={18} className="mr-2" />
+                        Позвонить
+                      </a>
+                    </Button>
+                  </div>
+                )}
+                {showTelegram && (
+                  <div className="p-6 rounded-2xl bg-white border-2 border-gray-100 shadow-sm text-center">
+                    <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${gradientClass} flex items-center justify-center mx-auto mb-4`}>
+                      <Icon name="Send" size={28} className="text-white" />
+                    </div>
+                    <p className="font-semibold text-lg mb-2 text-gray-900">Telegram</p>
+                    <p className="text-gray-600 text-sm mb-4">
+                      {userProfile?.telegram || 'Загрузка...'}
+                    </p>
+                    <Button 
+                      asChild
+                      className={`w-full bg-gradient-to-r ${gradientClass} hover:opacity-90`}
+                      disabled={!userProfile?.telegram}
+                    >
+                      <a 
+                        href={userProfile?.telegram ? `https://t.me/${userProfile.telegram.replace('@', '')}` : '#'}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Icon name="Send" size={18} className="mr-2" />
+                        Написать
+                      </a>
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12">
