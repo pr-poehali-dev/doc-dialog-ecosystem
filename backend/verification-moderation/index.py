@@ -38,7 +38,7 @@ def handler(event: dict, context) -> dict:
     # Декодируем JWT токен
     try:
         jwt_secret = os.environ['JWT_SECRET']
-        payload = jwt.decode(token, jwt_secret, algorithms=['HS256'], options={"verify_signature": True})
+        payload = jwt.decode(token, jwt_secret, algorithms=['HS256'])
         admin_id = payload.get('user_id')
         
         if not admin_id:
@@ -48,7 +48,7 @@ def handler(event: dict, context) -> dict:
                 'body': json.dumps({'error': 'Недействительный токен'}),
                 'isBase64Encoded': False
             }
-    except jwt.InvalidTokenError:
+    except (jwt.InvalidTokenError, jwt.DecodeError, jwt.ExpiredSignatureError):
         return {
             'statusCode': 403,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
