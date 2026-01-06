@@ -306,7 +306,7 @@ const MainContent = ({ openDialog }: MainContentProps) => {
               </div>
               <div className="rounded-2xl overflow-hidden aspect-square">
                 <img 
-                  src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/ea42a26a-4066-471f-af44-87925247d714.jpg" 
+                  src="https://cdn.poehali.dev/files/44669.jpg" 
                   alt="Обучение массажу" 
                   className="w-full h-full object-cover"
                 />
