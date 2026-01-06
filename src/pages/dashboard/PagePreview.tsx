@@ -30,6 +30,14 @@ interface PageData {
     text: string;
     date: string;
   }>;
+  blog: Array<{
+    title: string;
+    content: string;
+    image: string;
+    date: string;
+  }>;
+  videos: string[];
+  template: string;
   showPhone: boolean;
   showTelegram: boolean;
   showWhatsapp: boolean;
@@ -211,6 +219,45 @@ export default function PagePreview() {
                     alt={`Сертификат ${index + 1}`} 
                     className="w-full h-80 object-cover"
                   />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Blog Section - Premium/Luxury only */}
+      {pageData.blog && pageData.blog.length > 0 && (pageData.template === 'premium' || pageData.template === 'luxury') && (
+        <section className="py-20 bg-gradient-to-b from-white to-gray-50">
+          <div className="container mx-auto px-4">
+            <h2 className="text-4xl font-bold text-center mb-4">Блог и новости</h2>
+            <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+              Полезные материалы и советы от специалиста
+            </p>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+              {pageData.blog.map((post: any, index: number) => (
+                <div 
+                  key={index} 
+                  className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow border border-gray-100"
+                >
+                  {post.image && (
+                    <img 
+                      src={post.image} 
+                      alt={post.title} 
+                      className="w-full h-48 object-cover"
+                    />
+                  )}
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold mb-3 text-gray-900">{post.title}</h3>
+                    <p className="text-gray-600 text-sm mb-4 leading-relaxed line-clamp-3">{post.content}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-500">{post.date}</span>
+                      <Button size="sm" variant="ghost" className={`text-${gradientClass.includes('blue') ? 'blue' : gradientClass.includes('purple') ? 'purple' : 'indigo'}-600`}>
+                        Читать далее
+                        <Icon name="ArrowRight" size={14} className="ml-1" />
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>

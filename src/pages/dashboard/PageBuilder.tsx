@@ -10,6 +10,14 @@ import { Switch } from '@/components/ui/switch';
 import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 const defaultPageData = {
   heroTitle: 'Массаж, который возвращает энергию',
@@ -38,6 +46,14 @@ const defaultPageData = {
     text: string;
     date: string;
   }>,
+  blog: [] as Array<{
+    title: string;
+    content: string;
+    image: string;
+    date: string;
+  }>,
+  videos: [] as string[],
+  template: 'minimal',
   showPhone: true,
   showTelegram: true,
   showWhatsapp: true,
@@ -66,7 +82,11 @@ export default function PageBuilder() {
   const [uploadingProfile, setUploadingProfile] = useState(false);
   const [uploadingGallery, setUploadingGallery] = useState(false);
   const [uploadingCert, setUploadingCert] = useState(false);
+  const [uploadingBlog, setUploadingBlog] = useState(false);
   const [newReview, setNewReview] = useState({ name: '', rating: 5, text: '' });
+  const [newBlogPost, setNewBlogPost] = useState({ title: '', content: '', image: '' });
+  const [isPremiumDialogOpen, setIsPremiumDialogOpen] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState('');
 
   const handleImageUpload = async (file: File, type: 'hero' | 'profile' | 'gallery' | 'certificate') => {
     if (!file) return;
@@ -170,24 +190,34 @@ export default function PageBuilder() {
   };
 
   const applyTemplate = (templateType: 'premium' | 'minimal' | 'luxury') => {
+    // Проверяем, платный ли шаблон и оплачен ли он
+    if ((templateType === 'premium' || templateType === 'luxury') && pageData.template === 'minimal') {
+      setSelectedTemplate(templateType);
+      setIsPremiumDialogOpen(true);
+      return;
+    }
+
     const templates = {
       premium: {
         heroTitle: 'Массаж мирового уровня в вашем городе',
         heroSubtitle: 'Сертифицированный специалист. Индивидуальный подход. Результат с первого сеанса',
         aboutText: 'Я сертифицированный массажист с международным образованием. Прошла обучение в ведущих школах Европы и Азии. Работаю с профессиональными спортсменами, бизнесменами и людьми, ценящими качество.',
         colorTheme: 'gradient',
+        template: 'premium',
       },
       minimal: {
         heroTitle: 'Оздоровительный массаж',
         heroSubtitle: 'Забота о вашем теле и здоровье',
         aboutText: 'Практикующий массажист. Помогаю людям восстановить силы и избавиться от напряжения. Работаю в спокойной, расслабляющей обстановке.',
         colorTheme: 'blue',
+        template: 'minimal',
       },
       luxury: {
         heroTitle: 'SPA-массаж класса Люкс',
         heroSubtitle: 'Эксклюзивные техники. Премиальный сервис. Атмосфера релакса',
         aboutText: 'Предлагаю эксклюзивные массажные программы с использованием натуральных масел премиум-класса. Создаю атмосферу настоящего SPA-салона с заботой о каждой детали.',
         colorTheme: 'purple',
+        template: 'luxury',
       },
     };
 
@@ -198,11 +228,26 @@ export default function PageBuilder() {
       heroSubtitle: selected.heroSubtitle,
       aboutText: selected.aboutText,
       colorTheme: selected.colorTheme,
+      template: selected.template,
     });
 
     toast({
       title: "Шаблон применен",
       description: "Вы можете отредактировать текст под себя",
+    });
+  };
+
+  const handlePurchaseTemplate = () => {
+    // Здесь будет логика оплаты
+    setPageData({
+      ...pageData,
+      template: selectedTemplate,
+    });
+    setIsPremiumDialogOpen(false);
+    applyTemplate(selectedTemplate as 'premium' | 'luxury');
+    toast({
+      title: "Шаблон приобретен!",
+      description: "Теперь вам доступны все возможности выбранного шаблона",
     });
   };
 
@@ -701,6 +746,129 @@ export default function PageBuilder() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Blog Section - Premium/Luxury only */}
+              {(pageData.template === 'premium' || pageData.template === 'luxury') && (
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center gap-3">
+                      <Icon name="FileText" size={20} className="text-indigo-500" />
+                      <div className="flex-1">
+                        <CardTitle>Блог / Новости</CardTitle>
+                        <CardDescription>Делитесь полезными материалами</CardDescription>
+                      </div>
+                      <Badge className="bg-gradient-to-r from-blue-500 to-indigo-500">Premium</Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {pageData.blog && pageData.blog.length > 0 && (
+                      <div className="space-y-3 mb-4">
+                        {pageData.blog.map((post, index) => (
+                          <div key={index} className="p-3 bg-indigo-50 rounded-lg border border-indigo-100">
+                            <div className="flex items-start justify-between mb-2">
+                              <p className="font-semibold text-sm">{post.title}</p>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => {
+                                  setPageData({
+                                    ...pageData,
+                                    blog: pageData.blog.filter((_, i) => i !== index)
+                                  });
+                                }}
+                              >
+                                <Icon name="Trash2" size={14} />
+                              </Button>
+                            </div>
+                            {post.image && (
+                              <img src={post.image} alt={post.title} className="w-full h-20 object-cover rounded mb-2" />
+                            )}
+                            <p className="text-xs text-gray-600 line-clamp-2">{post.content}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
+                      <p className="text-sm font-semibold">Добавить пост</p>
+                      <Input
+                        placeholder="Заголовок поста"
+                        value={newBlogPost.title}
+                        onChange={(e) => setNewBlogPost({ ...newBlogPost, title: e.target.value })}
+                      />
+                      <Textarea
+                        placeholder="Текст поста"
+                        value={newBlogPost.content}
+                        onChange={(e) => setNewBlogPost({ ...newBlogPost, content: e.target.value })}
+                        rows={4}
+                      />
+                      <div className="space-y-2">
+                        <Label className="text-xs">Обложка поста (необязательно)</Label>
+                        {newBlogPost.image ? (
+                          <div className="relative">
+                            <img src={newBlogPost.image} alt="Preview" className="w-full h-32 object-cover rounded" />
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              className="absolute top-1 right-1"
+                              onClick={() => setNewBlogPost({ ...newBlogPost, image: '' })}
+                            >
+                              <Icon name="X" size={14} />
+                            </Button>
+                          </div>
+                        ) : (
+                          <label className="flex items-center justify-center h-24 border-2 border-dashed rounded cursor-pointer hover:border-indigo-400">
+                            <Icon name="Upload" size={20} className="text-gray-400 mr-2" />
+                            <span className="text-sm text-gray-500">Загрузить</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  const reader = new FileReader();
+                                  reader.onloadend = () => {
+                                    setNewBlogPost({ ...newBlogPost, image: reader.result as string });
+                                  };
+                                  reader.readAsDataURL(file);
+                                }
+                              }}
+                            />
+                          </label>
+                        )}
+                      </div>
+                      <Button
+                        size="sm"
+                        className="w-full"
+                        onClick={() => {
+                          if (newBlogPost.title && newBlogPost.content) {
+                            setPageData({
+                              ...pageData,
+                              blog: [
+                                ...pageData.blog,
+                                {
+                                  ...newBlogPost,
+                                  date: new Date().toLocaleDateString('ru-RU')
+                                }
+                              ]
+                            });
+                            setNewBlogPost({ title: '', content: '', image: '' });
+                            toast({
+                              title: 'Пост добавлен',
+                              description: 'Пост появится на лендинге',
+                            });
+                          }
+                        }}
+                        disabled={!newBlogPost.title || !newBlogPost.content}
+                      >
+                        <Icon name="Plus" size={16} className="mr-2" />
+                        Добавить пост
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </div>
 
             {/* Right Sidebar */}
@@ -715,47 +883,66 @@ export default function PageBuilder() {
                   <CardDescription>Применить профессиональный дизайн</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start h-auto p-4 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50"
-                    onClick={() => applyTemplate('premium')}
-                  >
-                    <div className="text-left">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Icon name="Crown" size={16} className="text-amber-500" />
-                        <span className="font-semibold">Premium</span>
+                  <div className="relative">
+                    <Button
+                      variant="outline"
+                      className={`w-full justify-between h-auto p-4 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 ${pageData.template === 'premium' ? 'border-2 border-blue-500 bg-blue-50' : ''}`}
+                      onClick={() => applyTemplate('premium')}
+                    >
+                      <div className="text-left flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Icon name="Crown" size={16} className="text-amber-500" />
+                          <span className="font-semibold">Premium</span>
+                          {pageData.template === 'premium' && (
+                            <Badge className="ml-2 bg-blue-500">Активен</Badge>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground mb-1">+ Блог/Новости</p>
+                        <p className="text-xs font-bold text-blue-600">2990 ₽</p>
                       </div>
-                      <p className="text-xs text-muted-foreground">Для элитных специалистов</p>
-                    </div>
-                  </Button>
+                      <Icon name="ChevronRight" size={20} className="text-gray-400" />
+                    </Button>
+                  </div>
 
                   <Button
                     variant="outline"
-                    className="w-full justify-start h-auto p-4 hover:bg-blue-50"
+                    className={`w-full justify-between h-auto p-4 hover:bg-blue-50 ${pageData.template === 'minimal' ? 'border-2 border-green-500 bg-green-50' : ''}`}
                     onClick={() => applyTemplate('minimal')}
                   >
-                    <div className="text-left">
+                    <div className="text-left flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <Icon name="Minimize2" size={16} className="text-blue-500" />
                         <span className="font-semibold">Минимализм</span>
+                        {pageData.template === 'minimal' && (
+                          <Badge className="ml-2 bg-green-500">Активен</Badge>
+                        )}
                       </div>
-                      <p className="text-xs text-muted-foreground">Лаконичный стиль</p>
+                      <p className="text-xs text-muted-foreground mb-1">Базовые блоки</p>
+                      <p className="text-xs font-bold text-green-600">Бесплатно</p>
                     </div>
+                    <Icon name="ChevronRight" size={20} className="text-gray-400" />
                   </Button>
 
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start h-auto p-4 hover:bg-purple-50"
-                    onClick={() => applyTemplate('luxury')}
-                  >
-                    <div className="text-left">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Icon name="Gem" size={16} className="text-purple-500" />
-                        <span className="font-semibold">Luxury SPA</span>
+                  <div className="relative">
+                    <Button
+                      variant="outline"
+                      className={`w-full justify-between h-auto p-4 hover:bg-purple-50 ${pageData.template === 'luxury' ? 'border-2 border-purple-500 bg-purple-50' : ''}`}
+                      onClick={() => applyTemplate('luxury')}
+                    >
+                      <div className="text-left flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Icon name="Gem" size={16} className="text-purple-500" />
+                          <span className="font-semibold">Luxury SPA</span>
+                          {pageData.template === 'luxury' && (
+                            <Badge className="ml-2 bg-purple-500">Активен</Badge>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground mb-1">+ Блог + Видео</p>
+                        <p className="text-xs font-bold text-purple-600">4990 ₽</p>
                       </div>
-                      <p className="text-xs text-muted-foreground">Премиум-атмосфера</p>
-                    </div>
-                  </Button>
+                      <Icon name="ChevronRight" size={20} className="text-gray-400" />
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
 
@@ -827,6 +1014,87 @@ export default function PageBuilder() {
           </div>
         </div>
       </div>
+
+      {/* Purchase Template Dialog */}
+      <Dialog open={isPremiumDialogOpen} onOpenChange={setIsPremiumDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              {selectedTemplate === 'premium' ? (
+                <>
+                  <Icon name="Crown" size={24} className="text-amber-500" />
+                  Premium шаблон
+                </>
+              ) : (
+                <>
+                  <Icon name="Gem" size={24} className="text-purple-500" />
+                  Luxury SPA шаблон
+                </>
+              )}
+            </DialogTitle>
+            <DialogDescription>
+              Разблокируйте дополнительные возможности для вашего лендинга
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg">
+              <p className="font-semibold mb-3">Что входит:</p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Icon name="Check" size={16} className="text-green-600" />
+                  <span className="text-sm">Все возможности базового шаблона</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Icon name="Check" size={16} className="text-green-600" />
+                  <span className="text-sm">Блок новостей и статей (блог)</span>
+                </div>
+                {selectedTemplate === 'luxury' && (
+                  <div className="flex items-center gap-2">
+                    <Icon name="Check" size={16} className="text-green-600" />
+                    <span className="text-sm">Видео-галерея</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-2">
+                  <Icon name="Check" size={16} className="text-green-600" />
+                  <span className="text-sm">Приоритетная поддержка</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div>
+                <p className="text-sm text-gray-600">Единоразовый платеж</p>
+                <p className="text-2xl font-bold">
+                  {selectedTemplate === 'premium' ? '2 990' : '4 990'} ₽
+                </p>
+              </div>
+              <Badge className="bg-green-500">Навсегда</Badge>
+            </div>
+
+            <p className="text-xs text-gray-500">
+              После покупки шаблон остается у вас навсегда. Никаких подписок.
+            </p>
+          </div>
+
+          <DialogFooter className="sm:flex-row gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setIsPremiumDialogOpen(false)}
+              className="flex-1"
+            >
+              Отмена
+            </Button>
+            <Button
+              onClick={handlePurchaseTemplate}
+              className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+            >
+              <Icon name="CreditCard" size={16} className="mr-2" />
+              Купить
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
