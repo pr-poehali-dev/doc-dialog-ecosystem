@@ -44,6 +44,11 @@ export default function CatalogItemCard({ item }: CatalogItemCardProps) {
   const isMasseur = user?.role === 'masseur';
   
   const handleClick = () => {
+    if (!user || !token) {
+      navigate('/register');
+      return;
+    }
+    
     if (item.itemType === 'mastermind') {
       if ('slug' in item && item.slug) {
         window.location.href = `/mastermind/landing/${item.slug}`;
