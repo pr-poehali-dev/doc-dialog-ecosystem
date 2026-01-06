@@ -336,35 +336,64 @@ export default function PublicProfile() {
               </CardContent>
             </Card>
 
-            <Card className="border-primary/20 bg-primary/5">
+            <Card className="border-primary/20 bg-gradient-to-br from-blue-50 to-indigo-50">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Icon name="ShieldCheck" className="text-primary" size={24} />
-                  Верификация профиля
-                </CardTitle>
-                <CardDescription>Подтвердите образование и получите бейдж доверия</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-background rounded-full flex items-center justify-center">
-                    <Icon name="Award" className="text-primary" size={24} />
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center flex-shrink-0">
+                    <Icon name="ShieldCheck" className="text-white" size={24} />
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium">Подтверждение от школы</p>
-                    <p className="text-sm text-muted-foreground">Запросите подтверждение у школы, где обучались</p>
+                    <CardTitle className="text-xl mb-2">Верификация профиля</CardTitle>
+                    <CardDescription className="text-base">
+                      Получите до 4 бейджей доверия и станьте Premium-специалистом
+                    </CardDescription>
                   </div>
-                  <Button variant="outline">Запросить</Button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid gap-3">
+                  <div className="flex items-start gap-3">
+                    <Icon name="Check" size={18} className="text-green-600 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium text-sm">Больше заявок от клиентов</p>
+                      <p className="text-xs text-muted-foreground">Проверенные массажисты получают на 70% больше обращений</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Icon name="Check" size={18} className="text-green-600 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium text-sm">Приоритет в поиске</p>
+                      <p className="text-xs text-muted-foreground">Ваш профиль показывается первым в каталоге</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Icon name="Check" size={18} className="text-green-600 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium text-sm">Золотая рамка профиля</p>
+                      <p className="text-xs text-muted-foreground">Premium статус при получении всех 4 бейджей</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Icon name="Check" size={18} className="text-green-600 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium text-sm">Знак доверия</p>
+                      <p className="text-xs text-muted-foreground">Бейджи подтверждают вашу квалификацию перед клиентами</p>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-background rounded-full flex items-center justify-center">
-                    <Icon name="FileText" className="text-primary" size={24} />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium">Загрузить сертификаты</p>
-                    <p className="text-sm text-muted-foreground">Прикрепите документы об образовании</p>
-                  </div>
-                  <Button variant="outline">Загрузить</Button>
+                <div className="pt-4 border-t">
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Подтвердите образование, опыт работы, личность и пройдите сертификацию Док диалог
+                  </p>
+                  <Button 
+                    className="w-full" 
+                    size="lg"
+                    onClick={() => window.location.href = '/dashboard/verification'}
+                  >
+                    <Icon name="BadgeCheck" size={18} className="mr-2" />
+                    Перейти к верификации
+                  </Button>
                 </div>
               </CardContent>
             </Card>
