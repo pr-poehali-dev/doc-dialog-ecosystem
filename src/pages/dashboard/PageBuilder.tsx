@@ -1060,7 +1060,7 @@ export default function PageBuilder() {
                       <div className="text-left flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           <Icon name="Sparkles" size={16} className="text-purple-500" />
-                          <span className="font-semibold">Супер Премиум</span>
+                          <span className="font-semibold">Super Premium</span>
                           {pageData.template === 'luxury' && (
                             <Badge className="ml-2 bg-purple-500">Активен</Badge>
                           )}
