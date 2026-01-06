@@ -108,6 +108,7 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
     '''Получение списка чатов пользователя на основе сообщений'''
     conn, cursor = get_db_connection()
     schema_name = os.environ.get('MAIN_DB_SCHEMA', 'public')
+    print(f"DEBUG: schema_name = '{schema_name}'")
     
     try:
         if user_role == 'client':
