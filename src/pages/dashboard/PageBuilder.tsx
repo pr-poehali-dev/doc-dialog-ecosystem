@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
@@ -11,37 +11,51 @@ import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 
+const defaultPageData = {
+  heroTitle: 'Массаж, который возвращает энергию',
+  heroSubtitle: 'Индивидуальный подход к каждому клиенту. Опыт работы 7+ лет',
+  heroImage: '',
+  profilePhoto: '',
+  aboutTitle: 'Обо мне',
+  aboutText: 'Я практикующий массажист с 7-летним опытом. Специализируюсь на восстановительных техниках и работе с мышечным напряжением. Помогаю людям избавиться от стресса и вернуть телу легкость.',
+  services: [
+    { name: 'Классический массаж', duration: '60 мин', price: '3500', description: 'Глубокая проработка всех групп мышц' },
+    { name: 'Релаксационный массаж', duration: '90 мин', price: '4800', description: 'Снятие напряжения и полное расслабление' },
+    { name: 'Спортивный массаж', duration: '60 мин', price: '4000', description: 'Восстановление после тренировок' },
+  ],
+  processTitle: 'Как проходит сеанс',
+  processSteps: [
+    { title: 'Знакомство', description: 'Обсуждаем ваши пожелания и проблемные зоны', icon: 'Users' },
+    { title: 'Подготовка', description: 'Создаю комфортную атмосферу для расслабления', icon: 'Sparkles' },
+    { title: 'Сеанс', description: 'Применяю индивидуально подобранные техники', icon: 'Heart' },
+    { title: 'Рекомендации', description: 'Даю советы по уходу за телом', icon: 'MessageCircle' },
+  ],
+  gallery: [] as string[],
+  certificates: [] as string[],
+  showPhone: true,
+  showTelegram: true,
+  showWhatsapp: true,
+  colorTheme: 'gradient',
+};
+
 export default function PageBuilder() {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [pageData, setPageData] = useState({
-    heroTitle: 'Массаж, который возвращает энергию',
-    heroSubtitle: 'Индивидуальный подход к каждому клиенту. Опыт работы 7+ лет',
-    heroImage: '',
-    profilePhoto: '',
-    aboutTitle: 'Обо мне',
-    aboutText: 'Я практикующий массажист с 7-летним опытом. Специализируюсь на восстановительных техниках и работе с мышечным напряжением. Помогаю людям избавиться от стресса и вернуть телу легкость.',
-    services: [
-      { name: 'Классический массаж', duration: '60 мин', price: '3500', description: 'Глубокая проработка всех групп мышц' },
-      { name: 'Релаксационный массаж', duration: '90 мин', price: '4800', description: 'Снятие напряжения и полное расслабление' },
-      { name: 'Спортивный массаж', duration: '60 мин', price: '4000', description: 'Восстановление после тренировок' },
-    ],
-    processTitle: 'Как проходит сеанс',
-    processSteps: [
-      { title: 'Знакомство', description: 'Обсуждаем ваши пожелания и проблемные зоны', icon: 'Users' },
-      { title: 'Подготовка', description: 'Создаю комфортную атмосферу для расслабления', icon: 'Sparkles' },
-      { title: 'Сеанс', description: 'Применяю индивидуально подобранные техники', icon: 'Heart' },
-      { title: 'Рекомендации', description: 'Даю советы по уходу за телом', icon: 'MessageCircle' },
-    ],
-    gallery: [] as string[],
-    certificates: [] as string[],
-    showPhone: true,
-    showTelegram: true,
-    showWhatsapp: true,
-    colorTheme: 'gradient',
-  });
+  const [pageData, setPageData] = useState(defaultPageData);
 
   const [isPublished, setIsPublished] = useState(false);
+
+  useEffect(() => {
+    const savedData = localStorage.getItem('pageBuilderData');
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData);
+        setPageData({ ...defaultPageData, ...parsed });
+      } catch (e) {
+        console.error('Failed to load saved data', e);
+      }
+    }
+  }, []);
   const [uploadingHero, setUploadingHero] = useState(false);
   const [uploadingProfile, setUploadingProfile] = useState(false);
   const [uploadingGallery, setUploadingGallery] = useState(false);
