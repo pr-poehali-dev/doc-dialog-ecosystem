@@ -49,6 +49,7 @@ import Community from "./pages/dashboard/Community";
 import Messages from "./pages/dashboard/Messages";
 import PromoCodes from "./pages/dashboard/PromoCodes";
 import Verification from "./pages/dashboard/Verification";
+import MyReviews from "./pages/dashboard/MyReviews";
 
 const queryClient = new QueryClient();
 
@@ -102,6 +103,7 @@ const App = () => (
           <Route path="/dashboard/messages" element={<Messages />} />
           <Route path="/dashboard/promo-codes" element={<PromoCodes />} />
           <Route path="/dashboard/verification" element={<Verification />} />
+          <Route path="/dashboard/my-reviews" element={<MyReviews />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="*" element={<NotFound />} />

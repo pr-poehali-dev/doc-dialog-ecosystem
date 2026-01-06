@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 const API_URL = 'https://functions.poehali.dev/049813c7-cf1a-4ff1-93bc-af749304eb0d';
 
 export default function Register() {
-  const [role, setRole] = useState<'masseur' | 'school' | 'salon'>('masseur');
+  const [role, setRole] = useState<'masseur' | 'school' | 'salon' | 'client'>('client');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -35,7 +35,7 @@ export default function Register() {
     
     setLoading(true);
 
-    const profile = role === 'masseur'
+    const profile = role === 'masseur' || role === 'client'
       ? { full_name: fullName, phone, city }
       : { name: fullName, phone, city };
 
@@ -95,6 +95,10 @@ export default function Register() {
               <Label className="mb-3 block">Тип аккаунта</Label>
               <RadioGroup value={role} onValueChange={(value: any) => setRole(value)}>
                 <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="client" id="client" />
+                  <Label htmlFor="client" className="cursor-pointer">Пользователь</Label>
+                </div>
+                <div className="flex items-center space-x-2">
                   <RadioGroupItem value="masseur" id="masseur" />
                   <Label htmlFor="masseur" className="cursor-pointer">Массажист</Label>
                 </div>
@@ -111,11 +115,11 @@ export default function Register() {
 
             <div>
               <Label htmlFor="fullName">
-                {role === 'masseur' ? 'Полное имя' : 'Название организации'}
+                {role === 'masseur' || role === 'client' ? 'Полное имя' : 'Название организации'}
               </Label>
               <Input
                 id="fullName"
-                placeholder={role === 'masseur' ? 'Иван Иванов' : 'Название'}
+                placeholder={role === 'masseur' || role === 'client' ? 'Иван Иванов' : 'Название'}
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 required
