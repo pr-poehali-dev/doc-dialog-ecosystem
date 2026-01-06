@@ -92,16 +92,16 @@ def handler(event: dict, context) -> dict:
 def get_db_connection():
     '''Подключение к базе данных'''
     db_url = os.environ['DATABASE_URL']
-    schema = os.environ.get('MAIN_DB_SCHEMA', 'public')
-    
     conn = psycopg2.connect(db_url)
     cursor = conn.cursor(cursor_factory=RealDictCursor)
-    
-    if schema and schema != 'public':
-        escaped_schema = schema.replace('"', '""')
-        cursor.execute(f'SET search_path TO "{escaped_schema}", public')
-    
     return conn, cursor
+
+def get_schema():
+    '''Получить имя схемы для использования в запросах'''
+    schema = os.environ.get('MAIN_DB_SCHEMA', 'public')
+    if schema and schema != 'public':
+        return f'"{schema}".'
+    return ''
 
 
 def verify_token(token: str) -> dict:
@@ -114,21 +114,18 @@ def verify_token(token: str) -> dict:
 def get_user_chats(user_id: int, user_role: str) -> dict:
     '''Получение списка чатов пользователя на основе сообщений'''
     conn, cursor = get_db_connection()
+    schema = get_schema()
     
     try:
-        print(f"DEBUG: Getting chats for user_id={user_id}, role={user_role}")
-        cursor.execute("SHOW search_path")
-        search_path = cursor.fetchone()
-        print(f"DEBUG: Current search_path = {search_path}")
         if user_role == 'client':
-            cursor.execute("""
+            cursor.execute(f"""
                 WITH chat_users AS (
                     SELECT DISTINCT
                         CASE 
                             WHEN m.sender_id = %s THEN m.receiver_id
                             ELSE m.sender_id
                         END as other_user_id
-                    FROM messages m
+                    FROM {schema}messages m
                     WHERE m.sender_id = %s OR m.receiver_id = %s
                 )
                 SELECT
@@ -140,7 +137,7 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
                     COALESCE(mv.verified, FALSE) as verified,
                     (
                         SELECT m.message_text 
-                        FROM messages m 
+                        FROM {schema}messages m 
                         WHERE (m.sender_id = %s AND m.receiver_id = cu.other_user_id) 
                            OR (m.sender_id = cu.other_user_id AND m.receiver_id = %s)
                         ORDER BY m.created_at DESC 
@@ -148,7 +145,7 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
                     ) as last_message,
                     (
                         SELECT m.created_at 
-                        FROM messages m 
+                        FROM {schema}messages m 
                         WHERE (m.sender_id = %s AND m.receiver_id = cu.other_user_id) 
                            OR (m.sender_id = cu.other_user_id AND m.receiver_id = %s)
                         ORDER BY m.created_at DESC 
@@ -156,26 +153,26 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
                     ) as last_message_time,
                     (
                         SELECT COUNT(*) 
-                        FROM messages m 
+                        FROM {schema}messages m 
                         WHERE m.sender_id = cu.other_user_id 
                           AND m.receiver_id = %s 
                           AND m.is_read = FALSE
                     ) as unread_count
                 FROM chat_users cu
-                LEFT JOIN masseur_profiles mp ON cu.other_user_id = mp.user_id
-                LEFT JOIN masseur_verifications mv ON mp.id = mv.masseur_profile_id
-                LEFT JOIN appointments a ON (a.masseur_id = cu.other_user_id AND a.client_id = %s)
+                LEFT JOIN {schema}masseur_profiles mp ON cu.other_user_id = mp.user_id
+                LEFT JOIN {schema}masseur_verifications mv ON mp.id = mv.masseur_profile_id
+                LEFT JOIN {schema}appointments a ON (a.masseur_id = cu.other_user_id AND a.client_id = %s)
                 ORDER BY last_message_time DESC
             """, (user_id, user_id, user_id, user_id, user_id, user_id, user_id, user_id, user_id))
         else:
-            cursor.execute("""
+            cursor.execute(f"""
                 WITH chat_users AS (
                     SELECT DISTINCT
                         CASE 
                             WHEN m.sender_id = %s THEN m.receiver_id
                             ELSE m.sender_id
                         END as other_user_id
-                    FROM messages m
+                    FROM {schema}messages m
                     WHERE m.sender_id = %s OR m.receiver_id = %s
                 )
                 SELECT
@@ -187,7 +184,7 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
                     FALSE as verified,
                     (
                         SELECT m.message_text 
-                        FROM messages m 
+                        FROM {schema}messages m 
                         WHERE (m.sender_id = %s AND m.receiver_id = cu.other_user_id) 
                            OR (m.sender_id = cu.other_user_id AND m.receiver_id = %s)
                         ORDER BY m.created_at DESC 
@@ -195,7 +192,7 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
                     ) as last_message,
                     (
                         SELECT m.created_at 
-                        FROM messages m 
+                        FROM {schema}messages m 
                         WHERE (m.sender_id = %s AND m.receiver_id = cu.other_user_id) 
                            OR (m.sender_id = cu.other_user_id AND m.receiver_id = %s)
                         ORDER BY m.created_at DESC 
@@ -203,14 +200,14 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
                     ) as last_message_time,
                     (
                         SELECT COUNT(*) 
-                        FROM messages m 
+                        FROM {schema}messages m 
                         WHERE m.sender_id = cu.other_user_id 
                           AND m.receiver_id = %s 
                           AND m.is_read = FALSE
                     ) as unread_count
                 FROM chat_users cu
-                LEFT JOIN client_profiles cp ON cu.other_user_id = cp.user_id
-                LEFT JOIN appointments a ON (a.client_id = cu.other_user_id AND a.masseur_id = %s)
+                LEFT JOIN {schema}client_profiles cp ON cu.other_user_id = cp.user_id
+                LEFT JOIN {schema}appointments a ON (a.client_id = cu.other_user_id AND a.masseur_id = %s)
                 ORDER BY last_message_time DESC
             """, (user_id, user_id, user_id, user_id, user_id, user_id, user_id, user_id, user_id))
         
@@ -241,9 +238,10 @@ def get_chat_messages(user_id: int, other_user_id: str) -> dict:
         }
     
     conn, cursor = get_db_connection()
+    schema = get_schema()
     
     try:
-        cursor.execute("""
+        cursor.execute(f"""
             SELECT 
                 id,
                 sender_id,
@@ -251,7 +249,7 @@ def get_chat_messages(user_id: int, other_user_id: str) -> dict:
                 message_text,
                 is_read,
                 created_at
-            FROM messages
+            FROM {schema}messages
             WHERE (sender_id = %s AND receiver_id = %s) 
                OR (sender_id = %s AND receiver_id = %s)
             ORDER BY created_at ASC
@@ -259,8 +257,8 @@ def get_chat_messages(user_id: int, other_user_id: str) -> dict:
         
         messages = cursor.fetchall()
         
-        cursor.execute("""
-            UPDATE messages 
+        cursor.execute(f"""
+            UPDATE {schema}messages 
             SET is_read = TRUE 
             WHERE receiver_id = %s AND sender_id = %s AND is_read = FALSE
         """, (user_id, int(other_user_id)))
@@ -295,10 +293,11 @@ def send_message(user_id: int, data: dict) -> dict:
         }
     
     conn, cursor = get_db_connection()
+    schema = get_schema()
     
     try:
-        cursor.execute("""
-            INSERT INTO messages (sender_id, receiver_id, message_text, is_read)
+        cursor.execute(f"""
+            INSERT INTO {schema}messages (sender_id, receiver_id, message_text, is_read)
             VALUES (%s, %s, %s, FALSE)
             RETURNING id, created_at
         """, (user_id, receiver_id, message_text))
@@ -334,16 +333,17 @@ def send_booking_request(user_id: int, data: dict) -> dict:
         }
     
     conn, cursor = get_db_connection()
+    schema = get_schema()
     
     try:
-        cursor.execute("""
-            SELECT full_name FROM client_profiles WHERE user_id = %s
+        cursor.execute(f"""
+            SELECT full_name FROM {schema}client_profiles WHERE user_id = %s
         """, (user_id,))
         client = cursor.fetchone()
         client_name = client['full_name'] if client else 'Клиент'
         
-        cursor.execute("""
-            INSERT INTO messages (sender_id, receiver_id, message_text, is_read, message_type, booking_data)
+        cursor.execute(f"""
+            INSERT INTO {schema}messages (sender_id, receiver_id, message_text, is_read, message_type, booking_data)
             VALUES (%s, %s, %s, FALSE, 'booking_request', %s)
             RETURNING id, created_at
         """, (
@@ -385,10 +385,11 @@ def respond_to_booking(user_id: int, data: dict) -> dict:
         }
     
     conn, cursor = get_db_connection()
+    schema = get_schema()
     
     try:
-        cursor.execute("""
-            SELECT sender_id, booking_data FROM messages WHERE id = %s AND receiver_id = %s
+        cursor.execute(f"""
+            SELECT sender_id, booking_data FROM {schema}messages WHERE id = %s AND receiver_id = %s
         """, (message_id, user_id))
         message = cursor.fetchone()
         
@@ -403,14 +404,14 @@ def respond_to_booking(user_id: int, data: dict) -> dict:
         booking_data = json.loads(message['booking_data'])
         booking_data['status'] = 'accepted' if action == 'accept' else 'declined'
         
-        cursor.execute("""
-            UPDATE messages 
+        cursor.execute(f"""
+            UPDATE {schema}messages 
             SET booking_data = %s
             WHERE id = %s
         """, (json.dumps(booking_data), message_id))
         
-        cursor.execute("""
-            SELECT full_name FROM masseur_profiles WHERE user_id = %s
+        cursor.execute(f"""
+            SELECT full_name FROM {schema}masseur_profiles WHERE user_id = %s
         """, (user_id,))
         masseur = cursor.fetchone()
         masseur_name = masseur['full_name'] if masseur else 'Специалист'
@@ -421,8 +422,8 @@ def respond_to_booking(user_id: int, data: dict) -> dict:
             else f'{masseur_name} не может принять заявку в данный момент.'
         )
         
-        cursor.execute("""
-            INSERT INTO messages (sender_id, receiver_id, message_text, is_read, message_type)
+        cursor.execute(f"""
+            INSERT INTO {schema}messages (sender_id, receiver_id, message_text, is_read, message_type)
             VALUES (%s, %s, %s, FALSE, 'booking_response')
         """, (user_id, message['sender_id'], response_text))
         
