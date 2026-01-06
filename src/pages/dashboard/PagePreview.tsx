@@ -137,6 +137,8 @@ export default function PagePreview() {
         processSteps={pageData.processSteps}
         gallery={pageData.gallery}
         certificates={pageData.certificates}
+        offers={pageData.offers}
+        template={pageData.template}
         gradientClass={gradientClass}
       />
 

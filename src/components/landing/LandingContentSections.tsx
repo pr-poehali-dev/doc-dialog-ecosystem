@@ -15,6 +15,13 @@ interface ProcessStep {
   icon: string;
 }
 
+interface Offer {
+  title: string;
+  description: string;
+  discount: string;
+  image: string;
+}
+
 interface LandingContentSectionsProps {
   aboutTitle: string;
   aboutText: string;
@@ -23,6 +30,8 @@ interface LandingContentSectionsProps {
   processSteps: ProcessStep[];
   gallery: string[];
   certificates: string[];
+  offers: Offer[];
+  template: string;
   gradientClass: string;
 }
 
@@ -34,6 +43,8 @@ export default function LandingContentSections({
   processSteps,
   gallery,
   certificates,
+  offers,
+  template,
   gradientClass,
 }: LandingContentSectionsProps) {
   return (
@@ -109,6 +120,43 @@ export default function LandingContentSections({
                   </div>
                   <h3 className="text-lg font-bold mb-2 text-gray-900">{step.title}</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">{step.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Offers Section - Super Premium only */}
+      {offers && offers.length > 0 && template === 'luxury' && (
+        <section className="py-20 bg-gradient-to-b from-white to-rose-50">
+          <div className="container mx-auto px-4">
+            <h2 className="text-4xl font-bold text-center mb-4">Специальные предложения</h2>
+            <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+              Выгодные скидки и подарочные сертификаты
+            </p>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+              {offers.map((offer, index) => (
+                <div 
+                  key={index} 
+                  className="bg-white rounded-2xl overflow-hidden shadow-lg border-2 border-rose-100"
+                >
+                  {offer.image && (
+                    <img 
+                      src={offer.image} 
+                      alt={offer.title} 
+                      className="w-full h-48 object-cover"
+                    />
+                  )}
+                  <div className="p-6">
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="text-xl font-bold text-gray-900 flex-1">{offer.title}</h3>
+                      <Badge className="bg-gradient-to-r from-rose-500 to-pink-500 text-white">
+                        {offer.discount}
+                      </Badge>
+                    </div>
+                    <p className="text-gray-600 text-sm leading-relaxed">{offer.description}</p>
+                  </div>
                 </div>
               ))}
             </div>
