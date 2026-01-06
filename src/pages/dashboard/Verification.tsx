@@ -206,11 +206,28 @@ export default function Verification() {
                   <Icon name="Crown" size={24} className="text-white" />
                 </div>
                 <div className="flex-1">
-                  <CardTitle className="text-xl mb-2">Premium статус</CardTitle>
-                  <CardDescription className="text-base">
-                    Получите все 4 бейджа верификации и ваш профиль будет выделен в каталоге! 
-                    Клиенты доверяют проверенным специалистам.
+                  <CardTitle className="text-xl mb-3">Premium статус</CardTitle>
+                  <CardDescription className="text-base mb-4">
+                    Получите все 4 бейджа верификации и станьте Premium-специалистом!
                   </CardDescription>
+                  <div className="grid gap-2">
+                    <div className="flex items-start gap-2 text-sm">
+                      <Icon name="Check" size={18} className="text-amber-600 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700"><strong>Приоритет в поиске</strong> — ваш профиль показывается первым в каталоге</span>
+                    </div>
+                    <div className="flex items-start gap-2 text-sm">
+                      <Icon name="Check" size={18} className="text-amber-600 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700"><strong>Золотая рамка профиля</strong> — выделяетесь среди других массажистов</span>
+                    </div>
+                    <div className="flex items-start gap-2 text-sm">
+                      <Icon name="Check" size={18} className="text-amber-600 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700"><strong>Больше заявок</strong> — клиенты на 70% чаще выбирают проверенных специалистов</span>
+                    </div>
+                    <div className="flex items-start gap-2 text-sm">
+                      <Icon name="Check" size={18} className="text-amber-600 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700"><strong>Знак доверия</strong> — 4 бейджа подтверждают вашу квалификацию</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardHeader>
