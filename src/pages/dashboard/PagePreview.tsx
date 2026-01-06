@@ -140,13 +140,7 @@ export default function PagePreview() {
         offers={pageData.offers}
         template={pageData.template}
         gradientClass={gradientClass}
-      />
-
-      <LandingPremiumSections
         blog={pageData.blog}
-        offers={pageData.offers}
-        template={pageData.template}
-        gradientClass={gradientClass}
         onPostClick={handlePostClick}
       />
 
