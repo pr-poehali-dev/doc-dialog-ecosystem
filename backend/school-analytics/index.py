@@ -155,12 +155,14 @@ def handler(event: dict, context) -> dict:
         
         for product in products:
             cur.execute(f"""
-                SELECT COALESCE(SUM(ABS(amount)), 0)
-                FROM {schema}.balance_transactions
-                WHERE school_id = {school_id}
-                  AND type = 'withdrawal'
-                  AND related_entity_type = '{product['product_type']}'
-                  AND related_entity_id = {product['product_id']}
+                SELECT COALESCE(SUM(ABS(bt.amount)), 0)
+                FROM {schema}.balance_transactions bt
+                LEFT JOIN {schema}.item_promotions ip ON bt.related_entity_id = ip.id
+                WHERE bt.school_id = {school_id}
+                  AND bt.type = 'withdrawal'
+                  AND bt.related_entity_type = 'promotion'
+                  AND ip.item_type = '{product['product_type']}'
+                  AND ip.item_id = {product['product_id']}
             """)
             spent_row = cur.fetchone()
             product['spent_total'] = float(spent_row[0]) if spent_row else 0
