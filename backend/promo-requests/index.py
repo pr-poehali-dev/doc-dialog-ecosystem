@@ -108,10 +108,8 @@ def handler(event: dict, context) -> dict:
         
         school_email, school_name = school_data
         
-        # Получаем имя массажиста
-        cur.execute(f"SELECT full_name FROM {schema}.users WHERE id = {user_id}")
-        masseur_data = cur.fetchone()
-        masseur_name = masseur_data[0] if masseur_data and masseur_data[0] else user_email.split('@')[0]
+        # Используем email как имя массажиста
+        masseur_name = user_email.split('@')[0] if user_email else 'Массажист'
         
         # Проверяем, нет ли активного запроса
         cur.execute(f"""
