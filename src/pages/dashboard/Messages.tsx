@@ -69,14 +69,48 @@ export default function Messages() {
 
   useEffect(() => {
     const masseurId = searchParams.get('masseur');
-    if (masseurId && chats.length > 0) {
-      const chat = chats.find(c => c.other_user_id === parseInt(masseurId));
-      if (chat) {
-        setSelectedChat(chat);
-        fetchMessages(chat.other_user_id);
+    if (masseurId) {
+      const parsedMasseurId = parseInt(masseurId);
+      const existingChat = chats.find(c => c.other_user_id === parsedMasseurId);
+      
+      if (existingChat) {
+        setSelectedChat(existingChat);
+        fetchMessages(existingChat.other_user_id);
+      } else if (chats.length >= 0) {
+        loadMasseurAndCreateChat(parsedMasseurId);
       }
     }
   }, [chats, searchParams]);
+
+  const loadMasseurAndCreateChat = async (masseurId: number) => {
+    try {
+      const response = await fetch('https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436');
+      if (response.ok) {
+        const masseurs = await response.json();
+        const masseur = masseurs.find((m: any) => m.id === masseurId);
+        
+        if (masseur) {
+          const virtualChat: Chat = {
+            other_user_id: masseur.id,
+            name: masseur.full_name,
+            role: 'masseur',
+            last_message: '',
+            last_message_time: new Date().toISOString(),
+            unread_count: 0,
+            avatar: masseur.avatar_url,
+            verified: true,
+            booking_id: 0
+          };
+          
+          setChats(prevChats => [virtualChat, ...prevChats]);
+          setSelectedChat(virtualChat);
+          fetchMessages(masseur.id);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading masseur:', error);
+    }
+  };
 
   const fetchChats = async () => {
     try {
