@@ -111,7 +111,8 @@ export default function PublicProfile() {
           education: profileData.education,
           specializations: profileData.workFormats,
           languages: ['Русский'],
-          certificates: []
+          certificates: [],
+          avatar_url: profileData.photo
         })
       });
       
@@ -194,6 +195,30 @@ export default function PublicProfile() {
                 <CardDescription>Заполните данные о себе как о специалисте</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Фото профиля</Label>
+                  <div className="flex items-center gap-4">
+                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-white text-3xl overflow-hidden">
+                      {profileData.photo ? (
+                        <img src={profileData.photo} alt="Аватар" className="w-full h-full object-cover" />
+                      ) : (
+                        <span>{profileData.fullName.charAt(0) || 'М'}</span>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <Input
+                        type="url"
+                        placeholder="Ссылка на фото (https://...)"
+                        value={profileData.photo}
+                        onChange={(e) => setProfileData({ ...profileData, photo: e.target.value })}
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Загрузите фото в облако и вставьте прямую ссылку
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>Полное имя</Label>

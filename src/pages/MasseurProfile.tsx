@@ -24,6 +24,8 @@ interface Masseur {
   portfolio_images?: string[];
   education?: string;
   languages?: string[];
+  verification_badges?: string[];
+  is_premium?: boolean;
 }
 
 interface Review {
@@ -54,6 +56,27 @@ const MasseurProfile = () => {
   };
 
   useEffect(() => {
+    loadMasseurProfile();
+  }, [id]);
+
+  const loadMasseurProfile = async () => {
+    try {
+      // Загружаем список всех массажистов
+      const response = await fetch('https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436');
+      if (response.ok) {
+        const masseurs = await response.json();
+        const foundMasseur = masseurs.find((m: any) => m.id === parseInt(id || '0'));
+        
+        if (foundMasseur) {
+          setMasseur(foundMasseur);
+          return;
+        }
+      }
+    } catch (error) {
+      console.error('Ошибка загрузки профиля:', error);
+    }
+    
+    // Fallback на mock данные если не нашли
     const mockMasseur: Masseur = {
       id: 1,
       full_name: "Анна Петрова",
@@ -120,7 +143,7 @@ const MasseurProfile = () => {
 
     setMasseur(mockMasseur);
     setReviews(mockReviews);
-  }, [id]);
+  };
 
   if (!masseur) {
     return (
@@ -156,18 +179,50 @@ const MasseurProfile = () => {
 
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1">
-            <Card className="sticky top-24">
+            <Card className={`sticky top-24 ${masseur.is_premium ? 'border-amber-400 border-2' : ''}`}>
               <CardHeader className="text-center">
+                {masseur.is_premium && (
+                  <Badge className="absolute top-4 right-4 bg-gradient-to-r from-amber-500 to-orange-500">
+                    <Icon name="Crown" size={12} className="mr-1" />
+                    PREMIUM
+                  </Badge>
+                )}
                 <Avatar className="w-32 h-32 mx-auto mb-4">
-                  <AvatarFallback className="bg-gradient-to-br from-primary to-purple-600 text-white text-4xl">
-                    {masseur.full_name.charAt(0)}
-                  </AvatarFallback>
+                  {masseur.avatar_url ? (
+                    <img src={masseur.avatar_url} alt={masseur.full_name} className="w-full h-full object-cover" />
+                  ) : (
+                    <AvatarFallback className="bg-gradient-to-br from-primary to-purple-600 text-white text-4xl">
+                      {masseur.full_name.charAt(0)}
+                    </AvatarFallback>
+                  )}
                 </Avatar>
                 <CardTitle className="text-2xl">{masseur.full_name}</CardTitle>
                 <div className="flex items-center justify-center gap-2 text-muted-foreground mt-2">
                   <Icon name="MapPin" size={16} />
                   <span>{masseur.city}</span>
                 </div>
+                {masseur.verification_badges && masseur.verification_badges.length > 0 && (
+                  <div className="flex justify-center flex-wrap gap-2 mt-3 pt-3 border-t">
+                    {masseur.verification_badges.includes('education') && (
+                      <Badge variant="outline" className="text-xs flex items-center gap-1 bg-green-50 border-green-200 text-green-700">
+                        <Icon name="GraduationCap" size={12} />
+                        Образование
+                      </Badge>
+                    )}
+                    {masseur.verification_badges.includes('experience') && (
+                      <Badge variant="outline" className="text-xs flex items-center gap-1 bg-blue-50 border-blue-200 text-blue-700">
+                        <Icon name="Award" size={12} />
+                        Опыт
+                      </Badge>
+                    )}
+                    {masseur.verification_badges.includes('identity') && (
+                      <Badge variant="outline" className="text-xs flex items-center gap-1 bg-purple-50 border-purple-200 text-purple-700">
+                        <Icon name="BadgeCheck" size={12} />
+                        Личность
+                      </Badge>
+                    )}
+                  </div>
+                )}
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="text-center pb-4 border-b">

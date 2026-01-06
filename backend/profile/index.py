@@ -104,6 +104,7 @@ def handler(event: dict, context) -> dict:
             languages = body.get('languages', [])
             specializations = body.get('specializations', [])
             certificates = body.get('certificates', [])
+            avatar_url = body.get('avatar_url', '')
             
             if not full_name or not phone or not city:
                 return {
@@ -132,6 +133,7 @@ def handler(event: dict, context) -> dict:
                         experience_years = {experience_years},
                         about = '{about}',
                         education = '{education}',
+                        avatar_url = '{avatar_url}',
                         languages = '{languages_str}',
                         specializations = '{specs_str}',
                         certificates = '{certs_str}'
@@ -145,8 +147,8 @@ def handler(event: dict, context) -> dict:
                 
                 cur.execute(f"""
                     INSERT INTO {schema}.masseur_profiles 
-                    (user_id, full_name, phone, city, experience_years, about, education, languages, specializations, certificates)
-                    VALUES ({user_id}, '{full_name}', '{phone}', '{city}', {experience_years}, '{about}', '{education}', 
+                    (user_id, full_name, phone, city, experience_years, about, education, avatar_url, languages, specializations, certificates)
+                    VALUES ({user_id}, '{full_name}', '{phone}', '{city}', {experience_years}, '{about}', '{education}', '{avatar_url}',
                             '{languages_str}', '{specs_str}', '{certs_str}')
                     RETURNING id
                 """)
