@@ -89,6 +89,7 @@ export default function Messages() {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -112,6 +113,7 @@ export default function Messages() {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -141,6 +143,7 @@ export default function Messages() {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           receiver_id: selectedChat.other_user_id,
           message: messageText,
@@ -180,6 +183,7 @@ export default function Messages() {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           message_id: messageId,
           action: action,
