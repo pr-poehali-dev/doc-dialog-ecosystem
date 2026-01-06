@@ -30,7 +30,11 @@ interface PromoRequest {
 
 const PROMO_API_URL = 'https://functions.poehali.dev/0e44bf6d-cb4d-404e-832f-02070e6e8b13';
 
-export default function PromoRequestsTab() {
+interface PromoRequestsTabProps {
+  onRequestsCountChange?: (count: number) => void;
+}
+
+export default function PromoRequestsTab({ onRequestsCountChange }: PromoRequestsTabProps) {
   const { toast } = useToast();
   const [requests, setRequests] = useState<PromoRequest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,6 +63,8 @@ export default function PromoRequestsTab() {
       if (response.ok) {
         const data = await response.json();
         setRequests(data);
+        const pendingCount = data.filter((r: PromoRequest) => r.status === 'pending').length;
+        onRequestsCountChange?.(pendingCount);
       }
     } catch (error) {
       toast({ title: 'Ошибка', description: 'Не удалось загрузить запросы', variant: 'destructive' });

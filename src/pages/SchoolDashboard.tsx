@@ -62,6 +62,7 @@ export default function SchoolDashboard() {
   
   const [promoteTrainingId, setPromoteTrainingId] = useState<number | null>(null);
   const [promoteTrainingTitle, setPromoteTrainingTitle] = useState('');
+  const [pendingPromoRequestsCount, setPendingPromoRequestsCount] = useState(0);
 
   useEffect(() => {
     loadUserSchool();
@@ -311,7 +312,7 @@ export default function SchoolDashboard() {
       <div className="container mx-auto px-4 py-12">
         <DashboardHeader />
 
-        <DashboardTabs activeTab={activeTab} onTabChange={handleTabChange} />
+        <DashboardTabs activeTab={activeTab} onTabChange={handleTabChange} pendingPromoRequestsCount={pendingPromoRequestsCount} />
 
         {activeTab !== 'landings' && activeTab !== 'knowledge' && activeTab !== 'promo-requests' && (
           <div className="mb-6">
@@ -432,7 +433,7 @@ export default function SchoolDashboard() {
         )}
 
         {activeTab === 'promo-requests' && (
-          <PromoRequestsTab />
+          <PromoRequestsTab onRequestsCountChange={setPendingPromoRequestsCount} />
         )}
       </div>
 

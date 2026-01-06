@@ -5,9 +5,10 @@ type TabType = 'courses' | 'masterminds' | 'offline-training' | 'specialists' | 
 interface DashboardTabsProps {
   activeTab: TabType;
   onTabChange: (tab: TabType) => void;
+  pendingPromoRequestsCount?: number;
 }
 
-export default function DashboardTabs({ activeTab, onTabChange }: DashboardTabsProps) {
+export default function DashboardTabs({ activeTab, onTabChange, pendingPromoRequestsCount = 0 }: DashboardTabsProps) {
   return (
     <div className="flex gap-2 mb-6 border-b overflow-x-auto">
       <button
@@ -47,10 +48,15 @@ export default function DashboardTabs({ activeTab, onTabChange }: DashboardTabsP
       </button>
       <button
         onClick={() => onTabChange('promo-requests')}
-        className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${activeTab === 'promo-requests' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+        className={`px-4 py-2 font-medium transition-colors whitespace-nowrap relative ${activeTab === 'promo-requests' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
       >
         <Icon name="Tag" size={18} className="inline mr-2" />
         Запросы скидок
+        {pendingPromoRequestsCount > 0 && (
+          <span className="ml-2 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full">
+            {pendingPromoRequestsCount}
+          </span>
+        )}
       </button>
     </div>
   );
