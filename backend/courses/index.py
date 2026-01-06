@@ -425,16 +425,27 @@ def handler(event: dict, context) -> dict:
         status_filter = query_params.get('status', 'approved')
         category = query_params.get('category')
         
+        # Подзапрос для получения последней активной промоции
         query = f"""
             SELECT c.id, c.school_id, c.title, c.description, c.category, c.course_type, 
                    c.price, c.currency, c.duration_hours, c.image_url, c.external_url, 
                    c.status, c.moderation_comment, c.original_price, c.discount_price, 
                    c.view_count, c.created_at, c.slug,
-                   cp.promoted_until, cp.promotion_type
+                   (SELECT cp.promoted_until 
+                    FROM {schema}.item_promotions cp 
+                    WHERE cp.item_id = c.id 
+                      AND cp.item_type = 'course' 
+                      AND cp.promoted_until > NOW() 
+                    ORDER BY cp.promoted_until DESC 
+                    LIMIT 1) as promoted_until,
+                   (SELECT cp.promotion_type 
+                    FROM {schema}.item_promotions cp 
+                    WHERE cp.item_id = c.id 
+                      AND cp.item_type = 'course' 
+                      AND cp.promoted_until > NOW() 
+                    ORDER BY cp.promoted_until DESC 
+                    LIMIT 1) as promotion_type
             FROM {schema}.courses c
-            LEFT JOIN {schema}.item_promotions cp ON c.id = cp.item_id 
-                AND cp.item_type = 'course'
-                AND cp.promoted_until > NOW()
         """
         
         conditions = ["1=1"]
@@ -449,7 +460,7 @@ def handler(event: dict, context) -> dict:
             query += " WHERE " + " AND ".join(conditions)
         
         # Сортировка: сначала промо (по дате окончания DESC), потом обычные (по created_at DESC)
-        query += " ORDER BY cp.promoted_until DESC NULLS LAST, c.created_at DESC"
+        query += " ORDER BY promoted_until DESC NULLS LAST, c.created_at DESC"
         
         cur.execute(query)
         courses = cur.fetchall()
