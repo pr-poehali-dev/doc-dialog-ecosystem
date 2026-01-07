@@ -116,7 +116,9 @@ def get_masseur_reviews(masseur_id: int) -> dict:
                 r.comment,
                 r.massage_type,
                 r.created_at,
-                r.is_verified
+                r.is_verified,
+                r.masseur_reply,
+                r.masseur_reply_at
             FROM t_p46047379_doc_dialog_ecosystem.reviews r
             WHERE r.masseur_id = %s 
               AND r.moderation_status = 'approved'
@@ -136,7 +138,9 @@ def get_masseur_reviews(masseur_id: int) -> dict:
                 'comment': review['comment'],
                 'massage_type': review['massage_type'],
                 'created_at': review['created_at'].isoformat(),
-                'is_verified': review['is_verified']
+                'is_verified': review['is_verified'],
+                'masseur_reply': review['masseur_reply'],
+                'masseur_reply_at': review['masseur_reply_at'].isoformat() if review['masseur_reply_at'] else None
             })
         
         return success_response({'reviews': result})
