@@ -37,7 +37,7 @@ const MasseursDirectory = () => {
       const response = await fetch('https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436');
       if (response.ok) {
         const data = await response.json();
-        setMasseurs(data);
+        setMasseurs(data.masseurs || data);
       }
     } catch (error) {
       console.error('Ошибка загрузки массажистов:', error);
