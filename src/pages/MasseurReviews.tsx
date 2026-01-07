@@ -63,14 +63,13 @@ export default function MasseurReviews() {
     setSubmitting(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(API_URL, {
+      const response = await fetch(`${API_URL}?action=reply-review`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          action: 'reply-review',
           reviewId,
           reply: replyText.trim()
         })
@@ -79,10 +78,15 @@ export default function MasseurReviews() {
       if (response.ok) {
         setReplyText('');
         setReplyingTo(null);
-        fetchReviews();
+        await fetchReviews();
+      } else {
+        const error = await response.json();
+        console.error('Error submitting reply:', error);
+        alert(error.error || 'Ошибка отправки ответа');
       }
     } catch (error) {
       console.error('Error submitting reply:', error);
+      alert('Ошибка отправки ответа');
     } finally {
       setSubmitting(false);
     }
