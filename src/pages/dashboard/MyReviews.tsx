@@ -100,9 +100,17 @@ export default function MyReviews() {
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white font-bold text-lg">
-                          {review.masseur_name.charAt(0)}
-                        </div>
+                        {review.masseur_avatar ? (
+                          <img 
+                            src={review.masseur_avatar} 
+                            alt={review.masseur_name}
+                            className="w-12 h-12 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white font-bold text-lg">
+                            {review.masseur_name.charAt(0)}
+                          </div>
+                        )}
                         <div>
                           <CardTitle className="text-xl">{review.masseur_name}</CardTitle>
                           <Badge variant="secondary" className="mt-1">
