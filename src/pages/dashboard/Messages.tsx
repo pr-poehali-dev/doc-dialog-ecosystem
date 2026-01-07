@@ -9,6 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
 import ChatListItem from '@/components/messages/ChatListItem';
 import ChatWindow from '@/components/messages/ChatWindow';
+import { formatRelativeTime } from '@/utils/datetime';
 
 interface Message {
   id: number;
@@ -338,23 +339,7 @@ export default function Messages() {
     chat.name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const formatTime = (timestamp: string) => {
-    if (!timestamp) return '';
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    
-    if (days === 0) {
-      return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-    } else if (days === 1) {
-      return 'Вчера';
-    } else if (days < 7) {
-      return `${days} дня назад`;
-    } else {
-      return date.toLocaleDateString('ru-RU');
-    }
-  };
+  const formatTime = formatRelativeTime;
 
   if (loading) {
     return (

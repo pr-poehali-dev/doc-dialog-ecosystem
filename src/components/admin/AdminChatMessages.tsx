@@ -10,6 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { formatMoscowDateTime } from '@/utils/datetime';
 
 interface Message {
   id: number;
@@ -146,12 +147,7 @@ export default function AdminChatMessages({
                       <p className={`text-xs mt-1 ${
                         isMyMessage ? 'text-primary-foreground/70' : 'text-muted-foreground'
                       }`}>
-                        {new Date(msg.created_at).toLocaleString('ru-RU', {
-                          day: 'numeric',
-                          month: 'short',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
+                        {formatMoscowDateTime(msg.created_at)}
                       </p>
                     </div>
                   </div>

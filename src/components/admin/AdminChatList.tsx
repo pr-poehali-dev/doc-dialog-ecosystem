@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Icon from '@/components/ui/icon';
+import { formatMoscowDateTime } from '@/utils/datetime';
 
 interface Chat {
   other_user_id: number;
@@ -80,12 +81,7 @@ export default function AdminChatList({ chats, selectedUserId, onChatSelect }: A
                       <p className="text-xs text-muted-foreground mb-1">{getRoleName(chat.role)}</p>
                       <p className="text-sm text-muted-foreground truncate">{chat.last_message}</p>
                       <p className="text-xs text-muted-foreground mt-1">
-                        {new Date(chat.last_message_time).toLocaleString('ru-RU', {
-                          day: 'numeric',
-                          month: 'short',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
+                        {formatMoscowDateTime(chat.last_message_time)}
                       </p>
                     </div>
                   </div>

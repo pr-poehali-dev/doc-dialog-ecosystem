@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
+import { formatMoscowTime, formatMoscowDateTime } from '@/utils/datetime';
 
 interface Message {
   id: number;
@@ -84,12 +85,7 @@ export default function MessageItem({ message, isOwn, onBookingResponse }: Messa
             )}
 
             <p className="text-xs text-muted-foreground text-center">
-              {new Date(message.created_at).toLocaleString('ru-RU', { 
-                day: '2-digit', 
-                month: '2-digit', 
-                hour: '2-digit', 
-                minute: '2-digit' 
-              })}
+              {formatMoscowDateTime(message.created_at)}
             </p>
           </CardContent>
         </Card>
@@ -119,7 +115,7 @@ export default function MessageItem({ message, isOwn, onBookingResponse }: Messa
       >
         <p className="text-sm break-words">{message.message_text}</p>
         <p className={`text-xs mt-1 ${isOwn ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
-          {new Date(message.created_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+          {formatMoscowTime(message.created_at)}
         </p>
       </div>
     </div>
