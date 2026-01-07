@@ -34,28 +34,22 @@ export default function MyReviews() {
   const loadReviews = async () => {
     try {
       setLoading(true);
-      // TODO: Загрузка отзывов с бэкенда
-      // Пока показываем mock данные
-      setReviews([
+      const token = localStorage.getItem('token');
+      const response = await fetch(
+        'https://functions.poehali.dev/8b4cf7f3-28ec-45d5-9c69-5d586d0f96c1?action=my-reviews',
         {
-          id: 1,
-          masseur_name: 'Анна Петрова',
-          masseur_id: 1,
-          rating: 5,
-          massage_type: 'Классический массаж',
-          comment: 'Отличный специалист! Профессионально и очень качественно. Рекомендую всем!',
-          created_at: '2024-01-15',
-        },
-        {
-          id: 2,
-          masseur_name: 'Мария Иванова',
-          masseur_id: 2,
-          rating: 4,
-          massage_type: 'Расслабляющий массаж',
-          comment: 'Хороший массаж, приятная атмосфера. Единственное - хотелось бы немного больше времени.',
-          created_at: '2024-01-10',
-        },
-      ]);
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setReviews(data.reviews || []);
+      } else {
+        console.error('Ошибка загрузки отзывов');
+      }
     } catch (error) {
       console.error('Ошибка загрузки отзывов:', error);
     } finally {
@@ -136,7 +130,7 @@ export default function MyReviews() {
                     <p className="text-gray-700 leading-relaxed mb-4">{review.comment}</p>
                     <div className="flex items-center justify-between text-sm text-gray-500">
                       <span>{new Date(review.created_at).toLocaleDateString('ru-RU')}</span>
-                      <Link to={`/masseur/${review.masseur_id}`}>
+                      <Link to={`/masseurs/${review.masseur_id}`}>
                         <Button variant="ghost" size="sm">
                           <Icon name="ExternalLink" size={16} className="mr-2" />
                           Перейти к профилю

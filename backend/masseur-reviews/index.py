@@ -32,6 +32,12 @@ def handler(event: dict, context) -> dict:
                 if not masseur_id:
                     return error_response('Не указан masseur_id', 400)
                 return get_masseur_reviews(int(masseur_id))
+            elif action == 'my-reviews':
+                token = event.get('headers', {}).get('X-Authorization', '').replace('Bearer ', '')
+                if not token:
+                    return error_response('Требуется авторизация', 401)
+                user_data = verify_token(token)
+                return get_client_reviews(user_data['user_id'])
             elif action == 'moderation':
                 # Для модерации не требуется авторизация (уже проверена в админ-панели)
                 return get_all_reviews_for_moderation()
@@ -241,6 +247,57 @@ def submit_review(user_id: int, body: dict) -> dict:
         traceback.print_exc()
         conn.rollback()
         return error_response(f"Ошибка отправки отзыва: {str(e)}", 500)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_client_reviews(user_id: int) -> dict:
+    '''Получение всех отзывов клиента'''
+    conn, cursor = get_db_connection()
+    
+    try:
+        query = """
+            SELECT 
+                r.id,
+                r.masseur_id,
+                r.rating,
+                r.comment,
+                r.massage_type,
+                r.created_at,
+                r.moderation_status,
+                mp.full_name as masseur_name,
+                mp.avatar_url as masseur_avatar
+            FROM t_p46047379_doc_dialog_ecosystem.reviews r
+            JOIN t_p46047379_doc_dialog_ecosystem.masseur_profiles mp ON r.masseur_id = mp.id
+            WHERE r.user_id = %s
+            ORDER BY r.created_at DESC
+        """
+        
+        cursor.execute(query, (user_id,))
+        reviews = cursor.fetchall()
+        
+        result = []
+        for review in reviews:
+            result.append({
+                'id': review['id'],
+                'masseur_id': review['masseur_id'],
+                'masseur_name': review['masseur_name'],
+                'masseur_avatar': review['masseur_avatar'],
+                'rating': review['rating'],
+                'comment': review['comment'],
+                'massage_type': review['massage_type'],
+                'created_at': review['created_at'].isoformat(),
+                'moderation_status': review['moderation_status']
+            })
+        
+        return success_response({'reviews': result})
+        
+    except Exception as e:
+        print(f"ERROR in get_client_reviews: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return error_response(f"Ошибка получения отзывов: {str(e)}", 500)
     finally:
         cursor.close()
         conn.close()
