@@ -102,40 +102,47 @@ def get_favorites(user_id: int) -> dict:
     conn, cursor = get_db_connection()
     
     try:
-        # Сначала получаем список избранных
-        fav_query = """
+        # Получаем список избранных ID
+        cursor.execute("""
             SELECT masseur_id, created_at
             FROM t_p46047379_doc_dialog_ecosystem.favorites
             WHERE user_id = %s
             ORDER BY created_at DESC
-        """
+        """, (user_id,))
         
-        cursor.execute(fav_query, (user_id,))
         fav_list = cursor.fetchall()
         
         if not fav_list:
             return success_response({'favorites': []})
         
-        # Получаем информацию о каждом массажисте отдельным запросом
+        # Формируем строку с ID через запятую для IN
+        masseur_ids_str = ','.join(str(f['masseur_id']) for f in fav_list)
+        
+        # Получаем информацию о массажистах одним запросом с IN
+        masseur_query = f"""
+            SELECT 
+                id,
+                full_name,
+                specialization,
+                experience_years,
+                avatar_url,
+                city,
+                rating,
+                reviews_count
+            FROM t_p46047379_doc_dialog_ecosystem.masseur_profiles
+            WHERE id IN ({masseur_ids_str})
+        """
+        
+        cursor.execute(masseur_query)
+        masseurs = cursor.fetchall()
+        
+        # Создаем словарь для быстрого поиска
+        masseurs_dict = {m['id']: m for m in masseurs}
+        
+        # Собираем результат в правильном порядке
         result = []
         for fav in fav_list:
-            masseur_query = """
-                SELECT 
-                    id,
-                    full_name,
-                    specialization,
-                    experience_years,
-                    avatar_url,
-                    city,
-                    rating,
-                    reviews_count
-                FROM t_p46047379_doc_dialog_ecosystem.masseur_profiles
-                WHERE id = %s
-            """
-            
-            cursor.execute(masseur_query, (fav['masseur_id'],))
-            masseur = cursor.fetchone()
-            
+            masseur = masseurs_dict.get(fav['masseur_id'])
             if masseur:
                 result.append({
                     'id': masseur['id'],
