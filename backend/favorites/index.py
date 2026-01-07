@@ -119,18 +119,19 @@ def get_favorites(user_id: int) -> dict:
         masseur_ids_str = ','.join(str(f['masseur_id']) for f in fav_list)
         
         # Получаем информацию о массажистах одним запросом с IN
+        # Используем алиас mp как в функции masseurs
         masseur_query = f"""
             SELECT 
-                id,
-                full_name,
-                specialization,
-                experience_years,
-                avatar_url,
-                city,
-                rating,
-                reviews_count
-            FROM t_p46047379_doc_dialog_ecosystem.masseur_profiles
-            WHERE id IN ({masseur_ids_str})
+                mp.id,
+                mp.full_name,
+                mp.specialization,
+                mp.experience_years,
+                mp.avatar_url,
+                mp.city,
+                mp.rating,
+                mp.reviews_count
+            FROM t_p46047379_doc_dialog_ecosystem.masseur_profiles mp
+            WHERE mp.id IN ({masseur_ids_str})
         """
         
         cursor.execute(masseur_query)
