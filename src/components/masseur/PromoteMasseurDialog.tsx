@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
 
 const BALANCE_API_URL = 'https://functions.poehali.dev/8c82911e-481f-4a63-92ff-aae203e992cc';
+const PROMOTION_API_URL = 'https://functions.poehali.dev/71ef96ce-7019-4622-8253-573a2e8a6567';
 
 
 
@@ -77,10 +78,56 @@ export default function PromoteMasseurDialog({
       return;
     }
 
-    toast({
-      title: 'Функция в разработке',
-      description: 'Продвижение массажистов скоро будет доступно!',
-    });
+    setLoading(true);
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        toast({
+          title: 'Ошибка',
+          description: 'Требуется авторизация',
+          variant: 'destructive'
+        });
+        return;
+      }
+
+      const response = await fetch(PROMOTION_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          days: selectedDays
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: 'Успешно!',
+          description: data.message || `Профиль продвигается на ${selectedDays} ${selectedDays === 1 ? 'день' : selectedDays <= 4 ? 'дня' : 'дней'}`,
+        });
+        onOpenChange(false);
+        onSuccess();
+      } else {
+        toast({
+          title: 'Ошибка',
+          description: data.error || 'Не удалось активировать продвижение',
+          variant: 'destructive'
+        });
+      }
+    } catch (error) {
+      console.error('Promotion error:', error);
+      toast({
+        title: 'Ошибка',
+        description: 'Произошла ошибка при активации продвижения',
+        variant: 'destructive'
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const selectedPrice = prices[selectedDays];

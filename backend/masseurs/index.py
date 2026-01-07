@@ -49,9 +49,11 @@ def handler(event: dict, context) -> dict:
                 COALESCE(mp.verification_badges, '[]'::jsonb) as verification_badges,
                 COALESCE(mp.is_premium, false) as is_premium,
                 mp.premium_until,
+                mp.promoted_until,
                 mp.created_at
             FROM t_p46047379_doc_dialog_ecosystem.masseur_profiles mp
             ORDER BY 
+                CASE WHEN mp.promoted_until > NOW() THEN 0 ELSE 1 END,
                 mp.is_premium DESC NULLS LAST,
                 mp.rating DESC NULLS LAST,
                 mp.created_at DESC
@@ -91,7 +93,8 @@ def handler(event: dict, context) -> dict:
                 'reviews_count': row[10] if row[10] else 0,
                 'verification_badges': badges,
                 'is_premium': row[12] or False,
-                'premium_until': row[13].isoformat() if row[13] else None
+                'premium_until': row[13].isoformat() if row[13] else None,
+                'promoted_until': row[14].isoformat() if row[14] else None
             })
         
         return {
