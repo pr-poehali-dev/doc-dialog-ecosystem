@@ -40,6 +40,8 @@ export default function Favorites() {
       setLoading(true);
       const token = localStorage.getItem('token');
       
+      console.log('Загрузка избранного: запрос к', FAVORITES_API);
+      
       // Получаем список ID избранных
       const favResponse = await fetch(FAVORITES_API, {
         headers: {
@@ -48,30 +50,37 @@ export default function Favorites() {
       });
 
       if (!favResponse.ok) {
-        console.error('Ошибка загрузки избранных ID');
+        console.error('Ошибка загрузки избранных ID:', favResponse.status);
         return;
       }
 
       const favData = await favResponse.json();
+      console.log('Получены избранные ID:', favData);
       const favoriteIds = favData.favorite_ids || [];
 
       if (favoriteIds.length === 0) {
+        console.log('Нет избранных массажистов');
         setFavorites([]);
         return;
       }
 
+      console.log('Загрузка массажистов из', MASSEURS_API);
+      
       // Получаем список всех массажистов
       const masseursResponse = await fetch(MASSEURS_API);
       if (!masseursResponse.ok) {
-        console.error('Ошибка загрузки массажистов');
+        console.error('Ошибка загрузки массажистов:', masseursResponse.status);
         return;
       }
 
       const masseursData = await masseursResponse.json();
       const allMasseurs = masseursData.masseurs || [];
+      console.log('Всего массажистов:', allMasseurs.length);
 
       // Фильтруем только избранных массажистов
       const favoriteIdSet = new Set(favoriteIds.map((f: any) => f.masseur_id));
+      console.log('ID избранных:', Array.from(favoriteIdSet));
+      
       const favoriteMasseurs = allMasseurs
         .filter((m: any) => favoriteIdSet.has(m.id))
         .map((m: any) => {
@@ -89,6 +98,7 @@ export default function Favorites() {
           };
         });
 
+      console.log('Найдено избранных массажистов:', favoriteMasseurs.length, favoriteMasseurs);
       setFavorites(favoriteMasseurs);
     } catch (error) {
       console.error('Ошибка загрузки избранного:', error);
