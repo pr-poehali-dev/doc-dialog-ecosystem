@@ -1,6 +1,9 @@
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
+import { useToast } from "@/hooks/use-toast";
 
 interface Masseur {
   id: number;
@@ -77,6 +80,51 @@ const serviceDescriptions: Record<string, { description: string; icon: string; d
 };
 
 export default function ServicesTab({ masseur }: ServicesTabProps) {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleBookService = async (serviceName: string, serviceInfo: any) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast({
+        title: 'Требуется авторизация',
+        description: 'Войдите в систему, чтобы записаться на услугу',
+        variant: 'destructive'
+      });
+      navigate('/login');
+      return;
+    }
+
+    const message = `Хочу записаться на услугу: ${serviceName}\n\n${serviceInfo.description}\n\nДлительность: ${serviceInfo.duration || 'не указана'}\nСтоимость: ${serviceInfo.price || 'по договоренности'}`;
+    
+    try {
+      const response = await fetch('https://functions.poehali.dev/04d0b538-1cf5-4941-9c06-8d1bef5854ec?action=create-order', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          masseur_id: masseur.id,
+          service_name: serviceName,
+          service_description: serviceInfo.description,
+          duration: serviceInfo.duration,
+          price: serviceInfo.price,
+          message: message
+        })
+      });
+
+      if (response.ok) {
+        navigate(`/dashboard/messages?chat=${masseur.id}&message=${encodeURIComponent(message)}`);
+      } else {
+        throw new Error('Failed to create order');
+      }
+    } catch (error) {
+      console.error('Error creating order:', error);
+      navigate(`/dashboard/messages?chat=${masseur.id}&message=${encodeURIComponent(message)}`);
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -118,9 +166,17 @@ export default function ServicesTab({ masseur }: ServicesTabProps) {
                         )}
                       </div>
                     </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-3">
                       {serviceInfo.description}
                     </p>
+                    <Button
+                      onClick={() => handleBookService(spec, serviceInfo)}
+                      className="w-full"
+                      size="sm"
+                    >
+                      <Icon name="Calendar" size={16} className="mr-2" />
+                      Хочу записаться
+                    </Button>
                   </div>
                 </div>
               </div>

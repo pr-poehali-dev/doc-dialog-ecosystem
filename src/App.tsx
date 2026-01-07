@@ -53,6 +53,8 @@ import Verification from "./pages/dashboard/Verification";
 import MyReviews from "./pages/dashboard/MyReviews";
 import Bookings from "./pages/dashboard/Bookings";
 import MasseurReviews from "./pages/MasseurReviews";
+import MasseurOrders from "./pages/MasseurOrders";
+import ClientOrders from "./pages/ClientOrders";
 
 const queryClient = new QueryClient();
 
@@ -109,6 +111,8 @@ const App = () => (
           <Route path="/dashboard/verification" element={<Verification />} />
           <Route path="/dashboard/my-reviews" element={<MyReviews />} />
           <Route path="/dashboard/reviews" element={<MasseurReviews />} />
+          <Route path="/dashboard/orders" element={<MasseurOrders />} />
+          <Route path="/dashboard/my-orders" element={<ClientOrders />} />
           <Route path="/dashboard/bookings" element={<Bookings />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />

@@ -1,0 +1,244 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import Icon from '@/components/ui/icon';
+import { formatRelativeTime } from '@/utils/datetime';
+
+const API_URL = 'https://functions.poehali.dev/04d0b538-1cf5-4941-9c06-8d1bef5854ec';
+
+interface ServiceOrder {
+  id: number;
+  client_id: number;
+  client_name: string;
+  client_avatar: string | null;
+  service_name: string;
+  service_description: string;
+  duration: string;
+  price: string;
+  status: string;
+  message: string;
+  created_at: string;
+}
+
+export default function MasseurOrders() {
+  const navigate = useNavigate();
+  const [orders, setOrders] = useState<ServiceOrder[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all');
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      const response = await fetch(`${API_URL}?action=get-masseur-orders`, {
+        headers: { 
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setOrders(data.orders || []);
+      }
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateOrderStatus = async (orderId: number, newStatus: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}?action=update-order-status`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          orderId,
+          status: newStatus
+        })
+      });
+
+      if (response.ok) {
+        await fetchOrders();
+      }
+    } catch (error) {
+      console.error('Error updating order:', error);
+    }
+  };
+
+  const filteredOrders = orders.filter(order => {
+    if (filter === 'all') return true;
+    return order.status === filter;
+  });
+
+  const statusConfig = {
+    pending: { label: 'Новый', color: 'bg-amber-100 text-amber-800', icon: 'Clock' },
+    accepted: { label: 'Принят', color: 'bg-blue-100 text-blue-800', icon: 'CheckCircle2' },
+    completed: { label: 'Завершён', color: 'bg-green-100 text-green-800', icon: 'Check' },
+    cancelled: { label: 'Отменён', color: 'bg-gray-100 text-gray-800', icon: 'XCircle' }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-6xl mx-auto py-8 px-4">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <Icon name="ShoppingBag" className="text-primary" size={32} />
+          <h1 className="text-3xl font-bold">Заказы услуг</h1>
+        </div>
+        <Button
+          onClick={() => navigate('/dashboard')}
+          variant="outline"
+        >
+          <Icon name="ArrowLeft" size={16} className="mr-2" />
+          В личный кабинет
+        </Button>
+      </div>
+
+      <div className="flex gap-2 mb-6">
+        <Button
+          onClick={() => setFilter('all')}
+          variant={filter === 'all' ? 'default' : 'outline'}
+          size="sm"
+        >
+          Все ({orders.length})
+        </Button>
+        <Button
+          onClick={() => setFilter('pending')}
+          variant={filter === 'pending' ? 'default' : 'outline'}
+          size="sm"
+        >
+          Новые ({orders.filter(o => o.status === 'pending').length})
+        </Button>
+        <Button
+          onClick={() => setFilter('completed')}
+          variant={filter === 'completed' ? 'default' : 'outline'}
+          size="sm"
+        >
+          Завершённые ({orders.filter(o => o.status === 'completed').length})
+        </Button>
+      </div>
+
+      {filteredOrders.length === 0 ? (
+        <div className="bg-white rounded-xl p-12 text-center shadow-sm border border-gray-100">
+          <Icon name="ShoppingBag" className="mx-auto text-gray-300 mb-4" size={64} />
+          <h3 className="text-xl font-semibold mb-2">Нет заказов</h3>
+          <p className="text-gray-600">Заказы появятся, когда клиенты запишутся на ваши услуги</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {filteredOrders.map((order) => {
+            const config = statusConfig[order.status as keyof typeof statusConfig] || statusConfig.pending;
+            
+            return (
+              <div key={order.id} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                    {order.client_avatar ? (
+                      <img src={order.client_avatar} alt={order.client_name} className="w-full h-full rounded-full object-cover" />
+                    ) : (
+                      <Icon name="User" className="text-primary" size={24} />
+                    )}
+                  </div>
+                  
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="font-semibold text-lg mb-1">{order.client_name}</h3>
+                        <span className="text-sm text-gray-500">{formatRelativeTime(order.created_at)}</span>
+                      </div>
+                      <Badge className={config.color}>
+                        <Icon name={config.icon as any} size={12} className="mr-1" />
+                        {config.label}
+                      </Badge>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-primary/5 to-purple-50 rounded-lg p-4 mb-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <h4 className="font-semibold text-lg">{order.service_name}</h4>
+                        <div className="flex gap-2">
+                          <Badge variant="secondary" className="text-xs">
+                            <Icon name="Clock" size={12} className="mr-1" />
+                            {order.duration}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs font-semibold">
+                            {order.price}
+                          </Badge>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-700 mb-3">{order.service_description}</p>
+                      {order.message && (
+                        <div className="border-t border-primary/20 pt-3">
+                          <p className="text-sm text-gray-600 italic">{order.message}</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex gap-2">
+                      {order.status === 'pending' && (
+                        <>
+                          <Button
+                            onClick={() => updateOrderStatus(order.id, 'accepted')}
+                            size="sm"
+                          >
+                            <Icon name="Check" size={16} className="mr-2" />
+                            Принять заказ
+                          </Button>
+                          <Button
+                            onClick={() => updateOrderStatus(order.id, 'cancelled')}
+                            variant="outline"
+                            size="sm"
+                          >
+                            <Icon name="X" size={16} className="mr-2" />
+                            Отклонить
+                          </Button>
+                        </>
+                      )}
+                      {order.status === 'accepted' && (
+                        <Button
+                          onClick={() => updateOrderStatus(order.id, 'completed')}
+                          size="sm"
+                        >
+                          <Icon name="CheckCircle2" size={16} className="mr-2" />
+                          Отметить как завершённый
+                        </Button>
+                      )}
+                      <Button
+                        onClick={() => navigate(`/dashboard/messages?chat=${order.client_id}`)}
+                        variant="outline"
+                        size="sm"
+                      >
+                        <Icon name="MessageCircle" size={16} className="mr-2" />
+                        Написать клиенту
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}

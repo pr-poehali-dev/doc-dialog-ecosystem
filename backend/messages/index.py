@@ -49,6 +49,10 @@ def handler(event: dict, context) -> dict:
                 return get_content_violations()
             elif action == 'get-reviews':
                 return get_masseur_reviews(user_data['user_id'], user_data.get('role', 'client'))
+            elif action == 'get-masseur-orders':
+                return get_masseur_orders(user_data['user_id'], user_data.get('role', 'client'))
+            elif action == 'get-client-orders':
+                return get_client_orders(user_data['user_id'])
         
         if method == 'POST':
             body = json.loads(event.get('body', '{}'))
@@ -59,6 +63,10 @@ def handler(event: dict, context) -> dict:
                 return delete_chat(user_data['user_id'], body)
             elif action == 'reply-review':
                 return reply_to_review(user_data['user_id'], user_data.get('role', 'client'), body)
+            elif action == 'create-order':
+                return create_service_order(user_data['user_id'], body)
+            elif action == 'update-order-status':
+                return update_order_status(user_data['user_id'], body)
         
         return error_response('Действие не поддерживается', 405)
     
@@ -468,6 +476,210 @@ def get_masseur_reviews(user_id: int, role: str) -> dict:
         import traceback
         traceback.print_exc()
         return error_response(f"Ошибка получения отзывов: {str(e)}", 500)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def create_service_order(user_id: int, body: dict) -> dict:
+    '''Создание заказа услуги'''
+    conn, cursor = get_db_connection()
+    
+    try:
+        masseur_id = body.get('masseur_id')
+        service_name = body.get('service_name')
+        service_description = body.get('service_description')
+        duration = body.get('duration')
+        price = body.get('price')
+        message = body.get('message')
+        
+        if not masseur_id or not service_name:
+            return error_response('Не указаны обязательные параметры', 400)
+        
+        query = """
+            INSERT INTO t_p46047379_doc_dialog_ecosystem.service_orders 
+            (client_id, masseur_id, service_name, service_description, duration, price, message, created_at, status)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, NOW(), 'pending')
+            RETURNING id
+        """
+        
+        cursor.execute(query, (user_id, masseur_id, service_name, service_description, duration, price, message))
+        conn.commit()
+        
+        order = cursor.fetchone()
+        
+        return success_response({'order_id': order['id'], 'status': 'created'})
+        
+    except Exception as e:
+        print(f"ERROR in create_service_order: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return error_response(f"Ошибка создания заказа: {str(e)}", 500)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_masseur_orders(user_id: int, role: str) -> dict:
+    '''Получение заказов для массажиста'''
+    if role != 'masseur':
+        return error_response('Доступ запрещён', 403)
+    
+    conn, cursor = get_db_connection()
+    
+    try:
+        cursor.execute("""
+            SELECT id FROM t_p46047379_doc_dialog_ecosystem.masseur_profiles
+            WHERE user_id = %s
+        """, (user_id,))
+        
+        masseur = cursor.fetchone()
+        if not masseur:
+            return error_response('Профиль массажиста не найден', 404)
+        
+        masseur_id = masseur['id']
+        
+        query = """
+            SELECT 
+                o.id, o.client_id, o.service_name, o.service_description, 
+                o.duration, o.price, o.status, o.message, o.created_at,
+                COALESCE(cp.full_name, u.email) as client_name,
+                cp.avatar_url as client_avatar
+            FROM t_p46047379_doc_dialog_ecosystem.service_orders o
+            JOIN t_p46047379_doc_dialog_ecosystem.users u ON o.client_id = u.id
+            LEFT JOIN t_p46047379_doc_dialog_ecosystem.client_profiles cp ON o.client_id = cp.user_id
+            WHERE o.masseur_id = %s
+            ORDER BY 
+                CASE o.status 
+                    WHEN 'pending' THEN 1
+                    WHEN 'accepted' THEN 2
+                    ELSE 3
+                END,
+                o.created_at DESC
+        """
+        
+        cursor.execute(query, (masseur_id,))
+        orders = cursor.fetchall()
+        
+        result = []
+        for order in orders:
+            result.append({
+                'id': order['id'],
+                'client_id': order['client_id'],
+                'client_name': order['client_name'],
+                'client_avatar': order['client_avatar'],
+                'service_name': order['service_name'],
+                'service_description': order['service_description'],
+                'duration': order['duration'],
+                'price': order['price'],
+                'status': order['status'],
+                'message': order['message'],
+                'created_at': order['created_at'].isoformat()
+            })
+        
+        return success_response({'orders': result})
+        
+    except Exception as e:
+        print(f"ERROR in get_masseur_orders: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return error_response(f"Ошибка получения заказов: {str(e)}", 500)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_client_orders(user_id: int) -> dict:
+    '''Получение заказов для клиента'''
+    conn, cursor = get_db_connection()
+    
+    try:
+        query = """
+            SELECT 
+                o.id, o.masseur_id, o.service_name, o.service_description, 
+                o.duration, o.price, o.status, o.message, o.created_at,
+                mp.full_name as masseur_name,
+                mp.avatar_url as masseur_avatar
+            FROM t_p46047379_doc_dialog_ecosystem.service_orders o
+            JOIN t_p46047379_doc_dialog_ecosystem.masseur_profiles mp ON o.masseur_id = mp.id
+            WHERE o.client_id = %s
+            ORDER BY o.created_at DESC
+        """
+        
+        cursor.execute(query, (user_id,))
+        orders = cursor.fetchall()
+        
+        result = []
+        for order in orders:
+            result.append({
+                'id': order['id'],
+                'masseur_id': order['masseur_id'],
+                'masseur_name': order['masseur_name'],
+                'masseur_avatar': order['masseur_avatar'],
+                'service_name': order['service_name'],
+                'service_description': order['service_description'],
+                'duration': order['duration'],
+                'price': order['price'],
+                'status': order['status'],
+                'message': order['message'],
+                'created_at': order['created_at'].isoformat()
+            })
+        
+        return success_response({'orders': result})
+        
+    except Exception as e:
+        print(f"ERROR in get_client_orders: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return error_response(f"Ошибка получения заказов: {str(e)}", 500)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def update_order_status(user_id: int, body: dict) -> dict:
+    '''Обновление статуса заказа'''
+    conn, cursor = get_db_connection()
+    
+    try:
+        order_id = body.get('orderId')
+        new_status = body.get('status')
+        
+        if not order_id or not new_status:
+            return error_response('Не указаны обязательные параметры', 400)
+        
+        cursor.execute("""
+            SELECT id FROM t_p46047379_doc_dialog_ecosystem.masseur_profiles
+            WHERE user_id = %s
+        """, (user_id,))
+        
+        masseur = cursor.fetchone()
+        if not masseur:
+            return error_response('Профиль массажиста не найден', 404)
+        
+        masseur_id = masseur['id']
+        
+        query = """
+            UPDATE t_p46047379_doc_dialog_ecosystem.service_orders
+            SET status = %s, updated_at = NOW()
+            WHERE id = %s AND masseur_id = %s
+            RETURNING id
+        """
+        
+        cursor.execute(query, (new_status, order_id, masseur_id))
+        conn.commit()
+        
+        updated = cursor.fetchone()
+        if not updated:
+            return error_response('Заказ не найден', 404)
+        
+        return success_response({'status': 'updated'})
+        
+    except Exception as e:
+        print(f"ERROR in update_order_status: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return error_response(f"Ошибка обновления статуса: {str(e)}", 500)
     finally:
         cursor.close()
         conn.close()
