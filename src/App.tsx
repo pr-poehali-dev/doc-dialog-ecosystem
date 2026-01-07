@@ -52,6 +52,7 @@ import PromoCodes from "./pages/dashboard/PromoCodes";
 import Verification from "./pages/dashboard/Verification";
 import MyReviews from "./pages/dashboard/MyReviews";
 import Bookings from "./pages/dashboard/Bookings";
+import SalonBookings from "./pages/dashboard/SalonBookings";
 import MasseurReviews from "./pages/MasseurReviews";
 import MasseurOrders from "./pages/MasseurOrders";
 import ClientOrders from "./pages/ClientOrders";
@@ -114,6 +115,7 @@ const App = () => (
           <Route path="/dashboard/orders" element={<MasseurOrders />} />
           <Route path="/dashboard/my-orders" element={<ClientOrders />} />
           <Route path="/dashboard/bookings" element={<Bookings />} />
+          <Route path="/dashboard/salon-bookings" element={<SalonBookings />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="*" element={<NotFound />} />

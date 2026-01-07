@@ -66,16 +66,16 @@ export default function ClientDashboard() {
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
         <div className="flex items-center gap-4 mb-4">
           <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
             <Icon name="Calendar" className="text-primary" size={24} />
           </div>
-          <h3 className="text-xl font-semibold">Мои записи</h3>
+          <h3 className="text-xl font-semibold">Записи в салоны</h3>
         </div>
-        <p className="text-gray-600 mb-4">История бронирований</p>
-        <Link to="/dashboard/bookings">
-          <Button className="w-full" variant="outline">Мои записи</Button>
+        <p className="text-gray-600 mb-4">История бронирований в салонах</p>
+        <Link to="/dashboard/salon-bookings">
+          <Button className="w-full">Мои записи</Button>
         </Link>
       </div>
 
