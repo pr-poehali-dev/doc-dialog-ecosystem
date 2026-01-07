@@ -233,12 +233,26 @@ def submit_review(user_id: int, body: dict) -> dict:
         ))
         
         result = cursor.fetchone()
+        
+        # Если отзыв положительный (4-5 звёзд), добавляем массажиста в избранное
+        if rating >= 4:
+            try:
+                favorite_query = """
+                    INSERT INTO t_p46047379_doc_dialog_ecosystem.favorites (user_id, masseur_id, created_at)
+                    VALUES (%s, %s, NOW())
+                    ON CONFLICT (user_id, masseur_id) DO NOTHING
+                """
+                cursor.execute(favorite_query, (user_id, masseur_id))
+            except Exception as fav_error:
+                print(f"Не удалось добавить в избранное: {str(fav_error)}")
+        
         conn.commit()
         
         return success_response({
             'success': True,
             'review_id': result['id'],
-            'message': 'Отзыв отправлен на модерацию и появится после проверки'
+            'message': 'Отзыв отправлен на модерацию и появится после проверки',
+            'added_to_favorites': rating >= 4
         })
         
     except Exception as e:
