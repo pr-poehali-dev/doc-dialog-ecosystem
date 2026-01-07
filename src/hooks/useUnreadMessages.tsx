@@ -17,10 +17,8 @@ export function useUnreadMessages() {
 
         const response = await fetch(`${API_URL}?action=get-chats`, {
           headers: { 
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          credentials: 'include'
+            'Authorization': `Bearer ${token}`
+          }
         });
 
         if (response.ok) {
