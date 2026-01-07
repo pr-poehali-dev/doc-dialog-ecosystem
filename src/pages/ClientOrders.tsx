@@ -143,13 +143,17 @@ export default function ClientOrders() {
                     <div className="flex gap-2">
                       <Button
                         onClick={() => {
-                          const serviceInfo = encodeURIComponent(JSON.stringify({
-                            name: order.service_name,
-                            description: order.service_description,
-                            duration: order.duration,
-                            price: order.price
-                          }));
-                          navigate(`/dashboard/messages?chat=${order.masseur_id}&service=${serviceInfo}`);
+                          if (order.status === 'pending') {
+                            const serviceInfo = encodeURIComponent(JSON.stringify({
+                              name: order.service_name,
+                              description: order.service_description,
+                              duration: order.duration,
+                              price: order.price
+                            }));
+                            navigate(`/dashboard/messages?chat=${order.masseur_id}&service=${serviceInfo}`);
+                          } else {
+                            navigate(`/dashboard/messages?chat=${order.masseur_id}`);
+                          }
                         }}
                         variant="outline"
                         size="sm"
