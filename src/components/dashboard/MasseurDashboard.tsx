@@ -4,10 +4,12 @@ import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import { useUnreadMessages } from '@/hooks/useUnreadMessages';
 import { useNewReviews } from '@/hooks/useNewReviews';
+import { useNewOrders } from '@/hooks/useNewOrders';
 
 export default function MasseurDashboard() {
   const { unreadCount } = useUnreadMessages();
   const { newReviewsCount } = useNewReviews();
+  const { newOrdersCount } = useNewOrders();
   
   return (
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -75,8 +77,13 @@ export default function MasseurDashboard() {
 
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
         <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center relative">
             <Icon name="ShoppingBag" className="text-primary" size={24} />
+            {newOrdersCount > 0 && (
+              <Badge className="absolute -top-1 -right-1 h-5 min-w-5 flex items-center justify-center p-0 px-1.5 text-xs bg-primary border-2 border-white">
+                {newOrdersCount}
+              </Badge>
+            )}
           </div>
           <h3 className="text-xl font-semibold">Заказы услуг</h3>
         </div>
