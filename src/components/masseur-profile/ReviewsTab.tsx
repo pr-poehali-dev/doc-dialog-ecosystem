@@ -49,6 +49,7 @@ export default function ReviewsTab({ masseur, reviews, renderStars }: ReviewsTab
   const { toast } = useToast();
   const [newReview, setNewReview] = useState({ rating: 5, massage_type: '', comment: '' });
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const userRole = localStorage.getItem('userRole');
 
   return (
     <div className="space-y-4">
@@ -60,7 +61,27 @@ export default function ReviewsTab({ masseur, reviews, renderStars }: ReviewsTab
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {localStorage.getItem('token') ? (
+          {!localStorage.getItem('token') ? (
+            <div className="text-center py-8">
+              <Icon name="Lock" size={48} className="mx-auto mb-4 text-muted-foreground" />
+              <p className="text-muted-foreground mb-4">
+                Войдите в систему, чтобы оставить отзыв
+              </p>
+              <Button onClick={() => navigate('/login')}>
+                Войти
+              </Button>
+            </div>
+          ) : userRole === 'masseur' || userRole === 'school' ? (
+            <div className="text-center py-8 bg-amber-50 border border-amber-200 rounded-lg">
+              <Icon name="AlertCircle" size={48} className="mx-auto mb-4 text-amber-600" />
+              <p className="font-semibold text-lg mb-2 text-amber-900">
+                Только клиенты могут оставлять отзывы
+              </p>
+              <p className="text-sm text-amber-700">
+                {userRole === 'masseur' ? 'Массажисты' : 'Школы'} не могут оставлять отзывы другим специалистам
+              </p>
+            </div>
+          ) : (
             <>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Оценка</label>
@@ -165,16 +186,6 @@ export default function ReviewsTab({ masseur, reviews, renderStars }: ReviewsTab
                 {isSubmittingReview ? 'Отправка...' : 'Отправить отзыв'}
               </Button>
             </>
-          ) : (
-            <div className="text-center py-8">
-              <Icon name="Lock" size={48} className="mx-auto mb-4 text-muted-foreground" />
-              <p className="text-muted-foreground mb-4">
-                Войдите в систему, чтобы оставить отзыв
-              </p>
-              <Button onClick={() => navigate('/login')}>
-                Войти
-              </Button>
-            </div>
           )}
         </CardContent>
       </Card>

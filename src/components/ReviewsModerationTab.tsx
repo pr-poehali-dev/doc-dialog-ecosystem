@@ -6,19 +6,24 @@ import Icon from '@/components/ui/icon';
 
 interface Review {
   id: number;
-  entity_type: string;
-  entity_id: number;
+  entity_type?: string;
+  entity_id?: number;
+  masseur_id?: number;
+  masseur_name?: string;
+  massage_type?: string;
   user_id: number | null;
   user_email: string | null;
   user_name: string;
   rating: number;
   comment: string;
-  is_auto_generated: boolean;
+  is_auto_generated?: boolean;
   status: string;
   created_at: string;
+  review_type: 'course' | 'masseur';
 }
 
-const REVIEWS_API_URL = 'https://functions.poehali.dev/dacb9e9b-c76e-4430-8ed9-362ffc8b9566';
+const COURSE_REVIEWS_API_URL = 'https://functions.poehali.dev/dacb9e9b-c76e-4430-8ed9-362ffc8b9566';
+const MASSEUR_REVIEWS_API_URL = 'https://functions.poehali.dev/8b4cf7f3-28ec-45d5-9c69-5d586d0f96c1';
 
 export default function ReviewsModerationTab() {
   const { toast } = useToast();
@@ -33,11 +38,29 @@ export default function ReviewsModerationTab() {
   const loadReviews = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${REVIEWS_API_URL}?action=moderation`);
-      if (response.ok) {
-        const data = await response.json();
-        setReviews(data);
-      }
+      // Загружаем отзывы к курсам/мастермайндам
+      const courseReviewsResponse = await fetch(`${COURSE_REVIEWS_API_URL}?action=moderation`);
+      const courseReviews = courseReviewsResponse.ok ? await courseReviewsResponse.json() : [];
+      
+      // Загружаем отзывы массажистам
+      const masseurReviewsResponse = await fetch(`${MASSEUR_REVIEWS_API_URL}?action=moderation`);
+      const masseurReviewsData = masseurReviewsResponse.ok ? await masseurReviewsResponse.json() : { reviews: [] };
+      const masseurReviews = masseurReviewsData.reviews || [];
+      
+      // Объединяем и помечаем типом
+      const allReviews: Review[] = [
+        ...courseReviews.map((r: any) => ({ ...r, review_type: 'course' as const })),
+        ...masseurReviews.map((r: any) => ({ ...r, review_type: 'masseur' as const }))
+      ];
+      
+      // Сортируем: сначала pending, потом по дате
+      allReviews.sort((a, b) => {
+        if (a.status === 'pending' && b.status !== 'pending') return -1;
+        if (a.status !== 'pending' && b.status === 'pending') return 1;
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      });
+      
+      setReviews(allReviews);
     } catch (error) {
       toast({ title: 'Ошибка', description: 'Не удалось загрузить отзывы', variant: 'destructive' });
     } finally {
@@ -45,12 +68,15 @@ export default function ReviewsModerationTab() {
     }
   };
 
-  const updateReviewStatus = async (reviewId: number, status: 'approved' | 'rejected') => {
+  const updateReviewStatus = async (review: Review, status: 'approved' | 'rejected') => {
     try {
-      const response = await fetch(REVIEWS_API_URL, {
+      const apiUrl = review.review_type === 'course' ? COURSE_REVIEWS_API_URL : MASSEUR_REVIEWS_API_URL;
+      const action = review.review_type === 'masseur' ? '?action=moderate' : '';
+      
+      const response = await fetch(`${apiUrl}${action}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ review_id: reviewId, status })
+        body: JSON.stringify({ review_id: review.id, status })
       });
 
       if (response.ok) {
@@ -178,7 +204,10 @@ export default function ReviewsModerationTab() {
                       {review.user_email || 'Без email'} • {formatDate(review.created_at)}
                     </p>
                     <p className="text-sm text-muted-foreground mb-3">
-                      {review.entity_type === 'course' ? 'Курс' : 'Мастермайнд'} ID: {review.entity_id}
+                      {review.review_type === 'course' 
+                        ? `${review.entity_type === 'course' ? 'Курс' : 'Мастермайнд'} ID: ${review.entity_id}`
+                        : `Массажист: ${review.masseur_name} • ${review.massage_type}`
+                      }
                     </p>
                     {renderStars(review.rating)}
                   </div>
@@ -187,7 +216,7 @@ export default function ReviewsModerationTab() {
                       <Button 
                         size="sm" 
                         variant="default"
-                        onClick={() => updateReviewStatus(review.id, 'approved')}
+                        onClick={() => updateReviewStatus(review, 'approved')}
                       >
                         <Icon name="Check" size={16} className="mr-1" />
                         Одобрить
@@ -195,7 +224,7 @@ export default function ReviewsModerationTab() {
                       <Button 
                         size="sm" 
                         variant="destructive"
-                        onClick={() => updateReviewStatus(review.id, 'rejected')}
+                        onClick={() => updateReviewStatus(review, 'rejected')}
                       >
                         <Icon name="X" size={16} className="mr-1" />
                         Отклонить
