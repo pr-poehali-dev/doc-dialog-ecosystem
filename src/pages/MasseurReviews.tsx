@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
 import { formatRelativeTime } from '@/utils/datetime';
@@ -19,6 +20,7 @@ interface Review {
 }
 
 export default function MasseurReviews() {
+  const navigate = useNavigate();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [replyingTo, setReplyingTo] = useState<number | null>(null);
@@ -102,9 +104,18 @@ export default function MasseurReviews() {
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4">
-      <div className="flex items-center gap-3 mb-6">
-        <Icon name="Star" className="text-primary" size={32} />
-        <h1 className="text-3xl font-bold">Мои отзывы</h1>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <Icon name="Star" className="text-primary" size={32} />
+          <h1 className="text-3xl font-bold">Мои отзывы</h1>
+        </div>
+        <Button
+          onClick={() => navigate('/dashboard')}
+          variant="outline"
+        >
+          <Icon name="ArrowLeft" size={16} className="mr-2" />
+          В личный кабинет
+        </Button>
       </div>
 
       {reviews.length === 0 ? (
