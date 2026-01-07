@@ -210,10 +210,11 @@ def handler(event: dict, context) -> dict:
                             VALUES ({entity_id}, {amount}, 'RUB', NOW(), NOW())
                         """)
                 else:
+                    # Для массажистов используем -1 как placeholder для school_id (т.к. колонка NOT NULL)
                     cur.execute(f"""
                         INSERT INTO {schema}.balance_transactions 
                         (school_id, masseur_id, amount, type, description, created_at)
-                        VALUES (NULL, {entity_id}, {amount}, 'deposit', '{description_escaped}', NOW())
+                        VALUES (-1, {entity_id}, {amount}, 'deposit', '{description_escaped}', NOW())
                     """)
                     
                     cur.execute(f"""
