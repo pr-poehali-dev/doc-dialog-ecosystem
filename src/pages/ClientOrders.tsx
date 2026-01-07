@@ -19,6 +19,7 @@ interface ServiceOrder {
   status: string;
   message: string;
   created_at: string;
+  has_review: boolean;
 }
 
 export default function ClientOrders() {
@@ -161,7 +162,7 @@ export default function ClientOrders() {
                         <Icon name="MessageCircle" size={16} className="mr-2" />
                         Написать массажисту
                       </Button>
-                      {order.status === 'accepted' && (
+                      {order.status === 'accepted' && !order.has_review && (
                         <Button
                           onClick={() => navigate(`/masseurs/${order.masseur_id}?review=true&order=${order.id}`)}
                           size="sm"
@@ -170,7 +171,7 @@ export default function ClientOrders() {
                           Оценить визит
                         </Button>
                       )}
-                      {order.status === 'completed' && (
+                      {order.has_review && (
                         <Button
                           onClick={() => navigate(`/masseurs/${order.masseur_id}`)}
                           variant="outline"

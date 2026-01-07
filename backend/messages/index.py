@@ -599,7 +599,9 @@ def get_client_orders(user_id: int) -> dict:
                 o.id, o.masseur_id, o.service_name, o.service_description, 
                 o.duration, o.price, o.status, o.message, o.created_at,
                 mp.full_name as masseur_name,
-                mp.avatar_url as masseur_avatar
+                mp.avatar_url as masseur_avatar,
+                (SELECT COUNT(*) FROM t_p46047379_doc_dialog_ecosystem.reviews 
+                 WHERE order_id = o.id) as has_review
             FROM t_p46047379_doc_dialog_ecosystem.service_orders o
             JOIN t_p46047379_doc_dialog_ecosystem.masseur_profiles mp ON o.masseur_id = mp.id
             WHERE o.client_id = %s
@@ -622,7 +624,8 @@ def get_client_orders(user_id: int) -> dict:
                 'price': order['price'],
                 'status': order['status'],
                 'message': order['message'],
-                'created_at': order['created_at'].isoformat()
+                'created_at': order['created_at'].isoformat(),
+                'has_review': order['has_review'] > 0
             })
         
         return success_response({'orders': result})
