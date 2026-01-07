@@ -85,7 +85,8 @@ const MasseurProfile = () => {
     try {
       const response = await fetch('https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436');
       if (response.ok) {
-        const masseurs = await response.json();
+        const data = await response.json();
+        const masseurs = data.masseurs || data;
         const foundMasseur = masseurs.find((m: any) => m.id === parseInt(id || '0'));
         
         if (foundMasseur) {
