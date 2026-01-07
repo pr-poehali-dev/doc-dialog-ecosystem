@@ -5,7 +5,7 @@ import jwt
 from datetime import datetime
 
 def handler(event: dict, context) -> dict:
-    """API для управления балансом школы: просмотр, пополнение, история транзакций"""
+    """API для управления балансом школы и массажиста: просмотр, пополнение, история транзакций"""
     
     method = event.get('httpMethod', 'GET')
     
@@ -51,13 +51,13 @@ def handler(event: dict, context) -> dict:
             user_id = decoded.get('user_id')
             user_role = decoded.get('role')
             
-            if user_role != 'school':
+            if user_role not in ['school', 'masseur']:
                 cur.close()
                 conn.close()
                 return {
                     'statusCode': 403,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                    'body': json.dumps({'error': 'Доступ только для школ'}),
+                    'body': json.dumps({'error': 'Доступ только для школ и массажистов'}),
                     'isBase64Encoded': False
                 }
         except jwt.InvalidTokenError as e:
@@ -70,30 +70,56 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
-        cur.execute(f"SELECT id FROM {schema}.schools WHERE user_id = {user_id}")
-        school = cur.fetchone()
-        
-        if not school:
-            cur.close()
-            conn.close()
-            return {
-                'statusCode': 404,
-                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Школа не найдена'}),
-                'isBase64Encoded': False
-            }
-        
-        school_id = school[0]
+        if user_role == 'school':
+            cur.execute(f"SELECT id FROM {schema}.schools WHERE user_id = {user_id}")
+            entity = cur.fetchone()
+            
+            if not entity:
+                cur.close()
+                conn.close()
+                return {
+                    'statusCode': 404,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'Школа не найдена'}),
+                    'isBase64Encoded': False
+                }
+            
+            entity_id = entity[0]
+            entity_id_field = 'school_id'
+        else:
+            cur.execute(f"SELECT id FROM {schema}.masseur_profiles WHERE user_id = {user_id}")
+            entity = cur.fetchone()
+            
+            if not entity:
+                cur.close()
+                conn.close()
+                return {
+                    'statusCode': 404,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'Массажист не найден'}),
+                    'isBase64Encoded': False
+                }
+            
+            entity_id = entity[0]
+            entity_id_field = 'masseur_id'
         
         if method == 'GET':
             action = query_params.get('action', 'get')
             
             if action == 'get':
-                cur.execute(f"""
-                    SELECT COALESCE(balance, 0)
-                    FROM {schema}.school_balance
-                    WHERE school_id = {school_id}
-                """)
+                if user_role == 'school':
+                    cur.execute(f"""
+                        SELECT COALESCE(balance, 0)
+                        FROM {schema}.school_balance
+                        WHERE school_id = {entity_id}
+                    """)
+                else:
+                    cur.execute(f"""
+                        SELECT COALESCE(balance, 0)
+                        FROM {schema}.masseur_profiles
+                        WHERE id = {entity_id}
+                    """)
+                
                 balance_row = cur.fetchone()
                 current_balance = float(balance_row[0]) if balance_row else 0
                 
@@ -101,14 +127,14 @@ def handler(event: dict, context) -> dict:
                     SELECT COALESCE(SUM(CASE WHEN type = 'deposit' THEN amount ELSE 0 END), 0) as total_added,
                            COALESCE(SUM(CASE WHEN type = 'withdrawal' THEN amount ELSE 0 END), 0) as total_spent
                     FROM {schema}.balance_transactions
-                    WHERE school_id = {school_id}
+                    WHERE {entity_id_field} = {entity_id}
                 """)
                 stats_row = cur.fetchone()
                 
                 cur.execute(f"""
                     SELECT id, amount, type, description, related_entity_type, related_entity_id, created_at
                     FROM {schema}.balance_transactions
-                    WHERE school_id = {school_id}
+                    WHERE {entity_id_field} = {entity_id}
                     ORDER BY created_at DESC
                     LIMIT 50
                 """)
@@ -160,27 +186,40 @@ def handler(event: dict, context) -> dict:
                 
                 description_escaped = description.replace("'", "''")
                 
-                cur.execute(f"""
-                    INSERT INTO {schema}.balance_transactions 
-                    (school_id, amount, type, description, created_at)
-                    VALUES ({school_id}, {amount}, 'deposit', '{description_escaped}', NOW())
-                """)
-                
-                cur.execute(f"""
-                    SELECT id FROM {schema}.school_balance WHERE school_id = {school_id}
-                """)
-                balance_exists = cur.fetchone()
-                
-                if balance_exists:
+                if user_role == 'school':
                     cur.execute(f"""
-                        UPDATE {schema}.school_balance
-                        SET balance = balance + {amount}, updated_at = NOW()
-                        WHERE school_id = {school_id}
+                        INSERT INTO {schema}.balance_transactions 
+                        (school_id, amount, type, description, created_at)
+                        VALUES ({entity_id}, {amount}, 'deposit', '{description_escaped}', NOW())
                     """)
+                    
+                    cur.execute(f"""
+                        SELECT id FROM {schema}.school_balance WHERE school_id = {entity_id}
+                    """)
+                    balance_exists = cur.fetchone()
+                    
+                    if balance_exists:
+                        cur.execute(f"""
+                            UPDATE {schema}.school_balance
+                            SET balance = balance + {amount}, updated_at = NOW()
+                            WHERE school_id = {entity_id}
+                        """)
+                    else:
+                        cur.execute(f"""
+                            INSERT INTO {schema}.school_balance (school_id, balance, currency, created_at, updated_at)
+                            VALUES ({entity_id}, {amount}, 'RUB', NOW(), NOW())
+                        """)
                 else:
                     cur.execute(f"""
-                        INSERT INTO {schema}.school_balance (school_id, balance, currency, created_at, updated_at)
-                        VALUES ({school_id}, {amount}, 'RUB', NOW(), NOW())
+                        INSERT INTO {schema}.balance_transactions 
+                        (masseur_id, amount, type, description, created_at)
+                        VALUES ({entity_id}, {amount}, 'deposit', '{description_escaped}', NOW())
+                    """)
+                    
+                    cur.execute(f"""
+                        UPDATE {schema}.masseur_profiles
+                        SET balance = COALESCE(balance, 0) + {amount}
+                        WHERE id = {entity_id}
                     """)
                 
                 cur.close()
