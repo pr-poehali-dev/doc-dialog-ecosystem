@@ -1,47 +1,43 @@
 export function toMoscowTime(timestamp: string | Date): Date {
   const date = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
-  return date;
+  const moscowTime = new Date(date.getTime() + (3 * 60 * 60 * 1000));
+  return moscowTime;
 }
 
 export function formatMoscowTime(timestamp: string, locale: string = 'ru-RU'): string {
   if (!timestamp) return '';
   
-  const date = new Date(timestamp);
+  const date = toMoscowTime(timestamp);
   return date.toLocaleTimeString(locale, { 
     hour: '2-digit', 
-    minute: '2-digit',
-    timeZone: 'Europe/Moscow'
+    minute: '2-digit'
   });
 }
 
 export function formatMoscowDate(timestamp: string, locale: string = 'ru-RU'): string {
   if (!timestamp) return '';
   
-  const date = new Date(timestamp);
-  return date.toLocaleDateString(locale, {
-    timeZone: 'Europe/Moscow'
-  });
+  const date = toMoscowTime(timestamp);
+  return date.toLocaleDateString(locale);
 }
 
 export function formatMoscowDateTime(timestamp: string, locale: string = 'ru-RU'): string {
   if (!timestamp) return '';
   
-  const date = new Date(timestamp);
+  const date = toMoscowTime(timestamp);
   return date.toLocaleString(locale, {
     day: 'numeric',
     month: 'short',
     hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Europe/Moscow'
+    minute: '2-digit'
   });
 }
 
 export function formatRelativeTime(timestamp: string): string {
   if (!timestamp) return '';
   
-  const date = new Date(timestamp);
-  const moscowDate = new Date(date.toLocaleString('en-US', { timeZone: 'Europe/Moscow' }));
-  const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Moscow' }));
+  const moscowDate = toMoscowTime(timestamp);
+  const now = toMoscowTime(new Date());
   
   const moscowDateStart = new Date(moscowDate);
   moscowDateStart.setHours(0, 0, 0, 0);
