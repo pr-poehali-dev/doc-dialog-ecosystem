@@ -211,8 +211,38 @@ export default function ReviewsModerationTab() {
                     </p>
                     {renderStars(review.rating)}
                   </div>
-                  {review.status === 'pending' && (
-                    <div className="flex gap-2">
+                  <div className="flex gap-2">
+                    {review.status === 'pending' && (
+                      <>
+                        <Button 
+                          size="sm" 
+                          variant="default"
+                          onClick={() => updateReviewStatus(review, 'approved')}
+                        >
+                          <Icon name="Check" size={16} className="mr-1" />
+                          Одобрить
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="destructive"
+                          onClick={() => updateReviewStatus(review, 'rejected')}
+                        >
+                          <Icon name="X" size={16} className="mr-1" />
+                          Отклонить
+                        </Button>
+                      </>
+                    )}
+                    {review.status === 'approved' && (
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => updateReviewStatus(review, 'rejected')}
+                      >
+                        <Icon name="X" size={16} className="mr-1" />
+                        Отклонить
+                      </Button>
+                    )}
+                    {review.status === 'rejected' && (
                       <Button 
                         size="sm" 
                         variant="default"
@@ -221,16 +251,8 @@ export default function ReviewsModerationTab() {
                         <Icon name="Check" size={16} className="mr-1" />
                         Одобрить
                       </Button>
-                      <Button 
-                        size="sm" 
-                        variant="destructive"
-                        onClick={() => updateReviewStatus(review, 'rejected')}
-                      >
-                        <Icon name="X" size={16} className="mr-1" />
-                        Отклонить
-                      </Button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
                 <p className="text-muted-foreground whitespace-pre-line bg-muted p-4 rounded">
                   {review.comment}
