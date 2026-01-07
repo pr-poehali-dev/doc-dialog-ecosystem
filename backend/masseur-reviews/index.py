@@ -326,6 +326,36 @@ def moderate_review(body: dict) -> dict:
         if not result:
             return error_response('Отзыв не найден', 404)
         
+        # Если отзыв одобрен или отклонён, пересчитываем рейтинг массажиста
+        if new_status in ('approved', 'rejected'):
+            # Получаем ID массажиста из отзыва
+            cursor.execute("""
+                SELECT masseur_id FROM t_p46047379_doc_dialog_ecosystem.reviews
+                WHERE id = %s
+            """, (review_id,))
+            review_data = cursor.fetchone()
+            
+            if review_data:
+                masseur_id = review_data['masseur_id']
+                
+                # Пересчитываем средний рейтинг и количество одобренных отзывов
+                cursor.execute("""
+                    SELECT 
+                        COALESCE(AVG(rating), 0) as avg_rating,
+                        COUNT(*) as reviews_count
+                    FROM t_p46047379_doc_dialog_ecosystem.reviews
+                    WHERE masseur_id = %s AND moderation_status = 'approved'
+                """, (masseur_id,))
+                
+                stats = cursor.fetchone()
+                
+                # Обновляем профиль массажиста
+                cursor.execute("""
+                    UPDATE t_p46047379_doc_dialog_ecosystem.masseur_profiles
+                    SET rating = %s, reviews_count = %s
+                    WHERE user_id = %s
+                """, (float(stats['avg_rating']), stats['reviews_count'], masseur_id))
+        
         conn.commit()
         
         return success_response({
