@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar } from '@/components/ui/avatar';
@@ -5,6 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import MessageItem from './MessageItem';
 
 interface Message {
@@ -78,6 +81,11 @@ export default function ChatWindow({
   onBookingResponse,
   onDeleteChat
 }: ChatWindowProps) {
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+  const handleEmojiClick = (emojiData: EmojiClickData) => {
+    onMessageTextChange(messageText + emojiData.emoji);
+  };
   if (!selectedChat) {
     return (
       <Card className="lg:col-span-2">
@@ -148,7 +156,22 @@ export default function ChatWindow({
         </ScrollArea>
 
         <div className="border-t p-4">
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-end">
+            <Popover open={showEmojiPicker} onOpenChange={setShowEmojiPicker}>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="icon" className="self-end mb-1">
+                  <Icon name="Smile" size={20} />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-full p-0 border-0" align="start" side="top">
+                <EmojiPicker 
+                  onEmojiClick={handleEmojiClick}
+                  width={350}
+                  height={400}
+                />
+              </PopoverContent>
+            </Popover>
+            
             <Textarea
               placeholder="Введите сообщение..."
               value={messageText}
@@ -157,12 +180,16 @@ export default function ChatWindow({
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
                   onSendMessage();
+                  setShowEmojiPicker(false);
                 }
               }}
-              className="min-h-[60px] resize-none"
+              className="min-h-[60px] resize-none flex-1"
             />
             <Button
-              onClick={onSendMessage}
+              onClick={() => {
+                onSendMessage();
+                setShowEmojiPicker(false);
+              }}
               disabled={!messageText.trim() || sending}
               size="lg"
               className="self-end"

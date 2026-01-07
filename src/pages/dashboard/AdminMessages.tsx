@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,12 @@ import Icon from '@/components/ui/icon';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 
 interface Message {
   id: number;
@@ -56,6 +62,18 @@ export default function AdminMessages() {
   const [sending, setSending] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<'chats' | 'users'>('chats');
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const quickTemplates = [
+    'Здравствуйте! Чем могу помочь?',
+    'Спасибо за обращение! Рассмотрим ваш вопрос.',
+    'Ваш запрос принят в обработку.',
+    'Если возникнут вопросы, пишите!',
+    'Отличного дня! 😊'
+  ];
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -229,8 +247,10 @@ export default function AdminMessages() {
 
       if (response.ok) {
         setMessageText('');
+        setShowEmojiPicker(false);
         loadMessages(selectedUser.user_id);
         loadChats();
+        setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
       } else {
         const error = await response.json();
         toast({
@@ -247,7 +267,19 @@ export default function AdminMessages() {
       });
     } finally {
       setSending(false);
+      inputRef.current?.focus();
     }
+  };
+
+  const handleEmojiClick = (emojiData: EmojiClickData) => {
+    setMessageText(prev => prev + emojiData.emoji);
+    inputRef.current?.focus();
+  };
+
+  const handleTemplateClick = (template: string) => {
+    setMessageText(template);
+    setShowTemplates(false);
+    inputRef.current?.focus();
   };
 
   const getRoleBadge = (role: string) => {
@@ -435,12 +467,68 @@ export default function AdminMessages() {
                           );
                         })
                       )}
+                      <div ref={messagesEndRef} />
                     </div>
                   </ScrollArea>
 
-                  <div className="p-4 border-t">
+                  <div className="p-4 border-t space-y-2">
+                    {showTemplates && (
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {quickTemplates.map((template, idx) => (
+                          <Button
+                            key={idx}
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleTemplateClick(template)}
+                            className="text-xs"
+                          >
+                            {template}
+                          </Button>
+                        ))}
+                      </div>
+                    )}
+                    
                     <div className="flex gap-2">
+                      <Popover open={showTemplates} onOpenChange={setShowTemplates}>
+                        <PopoverTrigger asChild>
+                          <Button variant="outline" size="icon">
+                            <Icon name="Zap" size={20} />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-80" align="start">
+                          <div className="space-y-2">
+                            <p className="text-sm font-medium mb-2">Быстрые ответы</p>
+                            {quickTemplates.map((template, idx) => (
+                              <Button
+                                key={idx}
+                                variant="ghost"
+                                className="w-full justify-start text-left h-auto py-2"
+                                onClick={() => handleTemplateClick(template)}
+                              >
+                                {template}
+                              </Button>
+                            ))}
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+
+                      <Popover open={showEmojiPicker} onOpenChange={setShowEmojiPicker}>
+                        <PopoverTrigger asChild>
+                          <Button variant="outline" size="icon">
+                            <Icon name="Smile" size={20} />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-full p-0 border-0" align="start">
+                          <EmojiPicker 
+                            onEmojiClick={handleEmojiClick}
+                            width={350}
+                            height={400}
+                          />
+                        </PopoverContent>
+                      </Popover>
+
                       <Input
+                        ref={inputRef}
                         placeholder="Введите сообщение..."
                         value={messageText}
                         onChange={(e) => setMessageText(e.target.value)}
@@ -451,7 +539,9 @@ export default function AdminMessages() {
                           }
                         }}
                         disabled={sending}
+                        className="flex-1"
                       />
+                      
                       <Button onClick={handleSendMessage} disabled={sending || !messageText.trim()}>
                         {sending ? (
                           <Icon name="Loader2" className="animate-spin" size={20} />
