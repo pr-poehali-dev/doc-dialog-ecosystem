@@ -19,7 +19,7 @@ interface Favorite {
 }
 
 const FAVORITES_API = 'https://functions.poehali.dev/1babd863-d072-4116-9af2-df1166fc0f27';
-const MASSEURS_API = 'https://functions.poehali.dev/d4e0aa3d91qbfb10t0uf';
+const MASSEURS_API = 'https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436';
 
 export default function Favorites() {
   const navigate = useNavigate();
