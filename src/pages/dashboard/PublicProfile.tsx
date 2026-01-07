@@ -93,7 +93,7 @@ export default function PublicProfile() {
       ? profileData.workFormats.filter(f => f !== format)
       : [...profileData.workFormats, format];
     
-    const newDescriptions = { ...profileData.serviceDescriptions };
+    const newDescriptions = { ...(profileData.serviceDescriptions || {}) };
     if (!isRemoving && !newDescriptions[format]) {
       newDescriptions[format] = defaultDescriptions[format] || '';
     }
@@ -109,7 +109,7 @@ export default function PublicProfile() {
     setProfileData({
       ...profileData,
       serviceDescriptions: {
-        ...profileData.serviceDescriptions,
+        ...(profileData.serviceDescriptions || {}),
         [format]: description
       }
     });
@@ -319,13 +319,13 @@ export default function PublicProfile() {
                         </Label>
                         <Textarea
                           placeholder="Описание услуги для клиентов"
-                          value={profileData.serviceDescriptions[format] || defaultDescriptions[format] || ''}
+                          value={(profileData.serviceDescriptions && profileData.serviceDescriptions[format]) || defaultDescriptions[format] || ''}
                           onChange={(e) => updateServiceDescription(format, e.target.value)}
                           rows={3}
                           className="text-sm"
                         />
                         <div className="text-xs text-muted-foreground">
-                          {(profileData.serviceDescriptions[format] || defaultDescriptions[format] || '').length} символов
+                          {((profileData.serviceDescriptions && profileData.serviceDescriptions[format]) || defaultDescriptions[format] || '').length} символов
                         </div>
                       </div>
                     ))}
