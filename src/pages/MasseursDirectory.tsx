@@ -19,6 +19,8 @@ interface Masseur {
   about: string;
   verification_badges?: string[];
   is_premium?: boolean;
+  promoted_until?: string | null;
+  is_promoted?: boolean;
 }
 
 const MasseursDirectory = () => {
@@ -37,7 +39,11 @@ const MasseursDirectory = () => {
       const response = await fetch('https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436');
       if (response.ok) {
         const data = await response.json();
-        setMasseurs(data.masseurs || data);
+        const masseursWithPromoted = (data.masseurs || data).map((m: Masseur) => ({
+          ...m,
+          is_promoted: m.promoted_until ? new Date(m.promoted_until) > new Date() : false
+        }));
+        setMasseurs(masseursWithPromoted);
       }
     } catch (error) {
       console.error('Ошибка загрузки массажистов:', error);
@@ -125,10 +131,26 @@ const MasseursDirectory = () => {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredMasseurs.map((masseur) => (
+          {filteredMasseurs.map((masseur) => {
+            const isPromoted = masseur.promoted_until ? new Date(masseur.promoted_until) > new Date() : false;
+            return (
             <Link key={masseur.id} to={`/masseurs/${masseur.id}`}>
-              <Card className={`hover:shadow-lg transition-all cursor-pointer h-full relative overflow-visible ${masseur.is_premium ? 'ring-2 ring-amber-400 shadow-xl shadow-amber-200/50' : ''}`}>
-                {masseur.is_premium && (
+              <Card className={`hover:shadow-lg transition-all cursor-pointer h-full relative overflow-visible ${
+                isPromoted 
+                  ? 'ring-2 ring-purple-500 shadow-xl shadow-purple-200/50 bg-gradient-to-br from-purple-50/50 to-blue-50/50' 
+                  : masseur.is_premium 
+                  ? 'ring-2 ring-amber-400 shadow-xl shadow-amber-200/50' 
+                  : ''
+              }`}>
+                {isPromoted && (
+                  <div className="absolute -top-3 -right-3 z-10">
+                    <div className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
+                      <Icon name="Rocket" size={14} />
+                      ТОП
+                    </div>
+                  </div>
+                )}
+                {masseur.is_premium && !isPromoted && (
                   <div className="absolute -top-3 -right-3 z-10">
                     <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
                       <Icon name="Crown" size={14} />
@@ -218,7 +240,7 @@ const MasseursDirectory = () => {
                 </CardContent>
               </Card>
             </Link>
-          ))}
+          )})}
         </div>
 
         {filteredMasseurs.length === 0 && (
