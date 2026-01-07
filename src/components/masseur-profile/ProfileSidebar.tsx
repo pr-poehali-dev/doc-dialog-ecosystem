@@ -56,8 +56,8 @@ export default function ProfileSidebar({ masseur, onSendMessage, onBooking, rend
 
       if (response.ok) {
         const data = await response.json();
-        const favorites = data.favorites || [];
-        setIsFavorite(favorites.some((f: any) => f.id === masseur.id));
+        const favoriteIds = data.favorite_ids || [];
+        setIsFavorite(favoriteIds.some((f: any) => f.masseur_id === masseur.id));
       }
     } catch (error) {
       console.error('Ошибка проверки избранного:', error);
