@@ -97,7 +97,7 @@ def handler(event: dict, context) -> dict:
         return {
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps(masseurs),
+            'body': json.dumps({'masseurs': masseurs}),
             'isBase64Encoded': False
         }
     
