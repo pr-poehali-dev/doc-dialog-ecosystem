@@ -349,11 +349,11 @@ def moderate_review(body: dict) -> dict:
                 
                 stats = cursor.fetchone()
                 
-                # Обновляем профиль массажиста
+                # Обновляем профиль массажиста (masseur_id в reviews ссылается на masseur_profiles.id)
                 cursor.execute("""
                     UPDATE t_p46047379_doc_dialog_ecosystem.masseur_profiles
                     SET rating = %s, reviews_count = %s
-                    WHERE user_id = %s
+                    WHERE id = %s
                 """, (float(stats['avg_rating']), stats['reviews_count'], masseur_id))
         
         conn.commit()
