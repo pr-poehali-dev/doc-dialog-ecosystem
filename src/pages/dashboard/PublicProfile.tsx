@@ -27,6 +27,7 @@ export default function PublicProfile() {
     telegram: '',
     whatsapp: '',
     photo: '',
+    serviceDescriptions: {} as Record<string, string>,
   });
 
   useEffect(() => {
@@ -75,12 +76,42 @@ export default function PublicProfile() {
     'Прием в кабинете/салоне',
   ];
 
+  const defaultDescriptions: Record<string, string> = {
+    "Релакс тела": "Полное расслабление и снятие напряжения после интенсивного рабочего дня. Помогаю восстановить энергию, улучшить настроение и общее самочувствие.",
+    "Восстановительные техники": "Индивидуальный подход к восстановлению после нагрузок. Возвращаю подвижность и помогаю вернуться к активной жизни с комфортом.",
+    "Профилактика тела": "Регулярные сеансы для поддержания здоровья и хорошего самочувствия. Работаю со всем телом, помогая сохранить отличную форму на долгие годы.",
+    "Для спортсменов": "Специализированные программы для тех, кто активно занимается спортом. Ускоренное восстановление, профилактика перегрузок, повышение выносливости.",
+    "Коррекция фигуры": "Комплексная программа для улучшения контуров тела. Помогаю улучшить состояние кожи, вывести лишнюю жидкость и достичь желаемых форм.",
+    "Работа с лицом": "Омолаживающие техники для улучшения тонуса кожи и контура лица. Естественный эффект лифтинга без каких-либо вмешательств.",
+    "Выезд к клиенту": "Удобный формат для занятых людей. Привожу все необходимое оборудование. Сеанс проходит в комфортной домашней обстановке в удобное время.",
+    "Прием в кабинете/салоне": "Комфортные условия для проведения сеансов в оборудованном кабинете с профессиональным столом, приятной музыкой и атмосферой."
+  };
+
   const toggleWorkFormat = (format: string) => {
+    const isRemoving = profileData.workFormats.includes(format);
+    const newFormats = isRemoving
+      ? profileData.workFormats.filter(f => f !== format)
+      : [...profileData.workFormats, format];
+    
+    const newDescriptions = { ...profileData.serviceDescriptions };
+    if (!isRemoving && !newDescriptions[format]) {
+      newDescriptions[format] = defaultDescriptions[format] || '';
+    }
+    
     setProfileData({
       ...profileData,
-      workFormats: profileData.workFormats.includes(format)
-        ? profileData.workFormats.filter(f => f !== format)
-        : [...profileData.workFormats, format]
+      workFormats: newFormats,
+      serviceDescriptions: newDescriptions
+    });
+  };
+
+  const updateServiceDescription = (format: string, description: string) => {
+    setProfileData({
+      ...profileData,
+      serviceDescriptions: {
+        ...profileData.serviceDescriptions,
+        [format]: description
+      }
     });
   };
 
@@ -258,10 +289,10 @@ export default function PublicProfile() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Форматы работы</CardTitle>
-                <CardDescription>Выберите, какие услуги вы предоставляете</CardDescription>
+                <CardTitle>Форматы работы и услуги</CardTitle>
+                <CardDescription>Выберите услуги и отредактируйте описания</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
                 <div className="flex flex-wrap gap-2">
                   {workFormatOptions.map((format) => (
                     <Badge
@@ -274,6 +305,32 @@ export default function PublicProfile() {
                     </Badge>
                   ))}
                 </div>
+
+                {profileData.workFormats.length > 0 && (
+                  <div className="mt-6 space-y-4">
+                    <div className="text-sm font-medium text-muted-foreground mb-2">
+                      Описания выбранных услуг (будут видны клиентам)
+                    </div>
+                    {profileData.workFormats.map((format) => (
+                      <div key={format} className="space-y-2 p-4 border rounded-lg bg-secondary/30">
+                        <Label className="flex items-center gap-2">
+                          <Icon name="FileText" size={16} />
+                          {format}
+                        </Label>
+                        <Textarea
+                          placeholder="Описание услуги для клиентов"
+                          value={profileData.serviceDescriptions[format] || defaultDescriptions[format] || ''}
+                          onChange={(e) => updateServiceDescription(format, e.target.value)}
+                          rows={3}
+                          className="text-sm"
+                        />
+                        <div className="text-xs text-muted-foreground">
+                          {(profileData.serviceDescriptions[format] || defaultDescriptions[format] || '').length} символов
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
 
