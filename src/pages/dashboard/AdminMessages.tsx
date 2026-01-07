@@ -1,19 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import Icon from '@/components/ui/icon';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { useToast } from '@/hooks/use-toast';
+import { EmojiClickData } from 'emoji-picker-react';
+import AdminChatList from '@/components/admin/AdminChatList';
+import AdminUserList from '@/components/admin/AdminUserList';
+import AdminChatMessages from '@/components/admin/AdminChatMessages';
 
 interface Message {
   id: number;
@@ -64,8 +57,6 @@ export default function AdminMessages() {
   const [activeTab, setActiveTab] = useState<'chats' | 'users'>('chats');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const quickTemplates = [
     'Здравствуйте! Чем могу помочь?',
@@ -250,7 +241,6 @@ export default function AdminMessages() {
         setShowEmojiPicker(false);
         loadMessages(selectedUser.user_id);
         loadChats();
-        setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
       } else {
         const error = await response.json();
         toast({
@@ -267,302 +257,75 @@ export default function AdminMessages() {
       });
     } finally {
       setSending(false);
-      inputRef.current?.focus();
     }
   };
 
   const handleEmojiClick = (emojiData: EmojiClickData) => {
     setMessageText(prev => prev + emojiData.emoji);
-    inputRef.current?.focus();
   };
 
-  const handleTemplateClick = (template: string) => {
+  const handleTemplateSelect = (template: string) => {
     setMessageText(template);
     setShowTemplates(false);
-    inputRef.current?.focus();
   };
-
-  const getRoleBadge = (role: string) => {
-    const badges: Record<string, { label: string; color: string }> = {
-      client: { label: 'Клиент', color: 'bg-blue-100 text-blue-700' },
-      masseur: { label: 'Массажист', color: 'bg-green-100 text-green-700' },
-      school: { label: 'Школа', color: 'bg-purple-100 text-purple-700' },
-      salon: { label: 'Салон', color: 'bg-orange-100 text-orange-700' }
-    };
-    const badge = badges[role] || { label: role, color: 'bg-gray-100 text-gray-700' };
-    return <span className={`text-xs px-2 py-1 rounded ${badge.color}`}>{badge.label}</span>;
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Navigation />
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-center h-96">
-            <Icon name="Loader2" className="animate-spin" size={32} />
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       <Navigation />
-      
-      <div className="container mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto p-4 pt-24">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">Чат с пользователями</h1>
-          <p className="text-muted-foreground">Администраторская панель для общения с клиентами, массажистами, школами и салонами</p>
+          <h1 className="text-3xl font-bold mb-2">Чаты с пользователями</h1>
+          <p className="text-muted-foreground">
+            Управление сообщениями со всеми пользователями платформы
+          </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          <Card className="lg:col-span-1">
-            <CardHeader>
-              <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'chats' | 'users')}>
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="chats">
-                    <Icon name="MessageSquare" size={16} className="mr-2" />
-                    Активные чаты
-                  </TabsTrigger>
-                  <TabsTrigger value="users">
-                    <Icon name="Users" size={16} className="mr-2" />
-                    Все пользователи
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </CardHeader>
-            <CardContent>
-              <Input
-                placeholder="Поиск..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="mb-4"
-              />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-1">
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'chats' | 'users')}>
+              <TabsList className="grid w-full grid-cols-2 mb-4">
+                <TabsTrigger value="chats">Активные чаты</TabsTrigger>
+                <TabsTrigger value="users">Все пользователи</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="chats">
+                <AdminChatList
+                  chats={chats}
+                  selectedUserId={selectedUser?.user_id || null}
+                  onChatSelect={handleChatSelect}
+                />
+              </TabsContent>
+              
+              <TabsContent value="users">
+                <AdminUserList
+                  users={filteredUsers}
+                  searchQuery={searchQuery}
+                  selectedUserId={selectedUser?.user_id || null}
+                  onSearchChange={setSearchQuery}
+                  onUserSelect={handleUserSelect}
+                />
+              </TabsContent>
+            </Tabs>
+          </div>
 
-              <ScrollArea className="h-[600px]">
-                {activeTab === 'chats' ? (
-                  <div className="space-y-2">
-                    {chats.length === 0 ? (
-                      <p className="text-center text-muted-foreground py-8">Нет активных чатов</p>
-                    ) : (
-                      chats
-                        .filter(c => 
-                          !searchQuery.trim() || 
-                          c.name.toLowerCase().includes(searchQuery.toLowerCase())
-                        )
-                        .map((chat) => (
-                          <div
-                            key={chat.other_user_id}
-                            onClick={() => handleChatSelect(chat)}
-                            className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                              selectedUser?.user_id === chat.other_user_id
-                                ? 'bg-primary text-primary-foreground'
-                                : 'hover:bg-muted'
-                            }`}
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-purple-600 text-white flex items-center justify-center font-semibold">
-                                {chat.name.charAt(0)}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <p className="font-semibold truncate">{chat.name}</p>
-                                  {getRoleBadge(chat.role)}
-                                </div>
-                                <p className="text-sm truncate opacity-75">{chat.last_message}</p>
-                              </div>
-                              {chat.unread_count > 0 && (
-                                <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                                  {chat.unread_count}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        ))
-                    )}
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {filteredUsers.length === 0 ? (
-                      <p className="text-center text-muted-foreground py-8">Пользователи не найдены</p>
-                    ) : (
-                      filteredUsers.map((user) => (
-                        <div
-                          key={`${user.role}-${user.user_id}`}
-                          onClick={() => handleUserSelect(user)}
-                          className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                            selectedUser?.user_id === user.user_id
-                              ? 'bg-primary text-primary-foreground'
-                              : 'hover:bg-muted'
-                          }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-purple-600 text-white flex items-center justify-center font-semibold">
-                              {user.name.charAt(0)}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1">
-                                <p className="font-semibold truncate">{user.name}</p>
-                                {getRoleBadge(user.role)}
-                              </div>
-                              <p className="text-xs truncate opacity-75">{user.email}</p>
-                              {user.city && <p className="text-xs truncate opacity-75">{user.city}</p>}
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                )}
-              </ScrollArea>
-            </CardContent>
-          </Card>
-
-          <Card className="lg:col-span-2">
-            {selectedUser ? (
-              <>
-                <CardHeader className="border-b">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-purple-600 text-white flex items-center justify-center font-semibold text-lg">
-                      {selectedUser.name.charAt(0)}
-                    </div>
-                    <div>
-                      <CardTitle className="flex items-center gap-2">
-                        {selectedUser.name}
-                        {getRoleBadge(selectedUser.role)}
-                      </CardTitle>
-                      <p className="text-sm text-muted-foreground">{selectedUser.email}</p>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <ScrollArea className="h-[500px] p-4">
-                    <div className="space-y-4">
-                      {messages.length === 0 ? (
-                        <p className="text-center text-muted-foreground py-8">Нет сообщений</p>
-                      ) : (
-                        messages.map((msg) => {
-                          const isFromMe = msg.sender_id === currentUserId;
-                          return (
-                            <div key={msg.id} className={`flex ${isFromMe ? 'justify-end' : 'justify-start'}`}>
-                              <div
-                                className={`max-w-[70%] p-3 rounded-lg ${
-                                  isFromMe
-                                    ? 'bg-primary text-primary-foreground'
-                                    : 'bg-muted'
-                                }`}
-                              >
-                                <p className="whitespace-pre-wrap break-words">{msg.message_text}</p>
-                                <p className={`text-xs mt-1 ${isFromMe ? 'opacity-75' : 'text-muted-foreground'}`}>
-                                  {new Date(msg.created_at).toLocaleString('ru-RU', {
-                                    day: 'numeric',
-                                    month: 'short',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                  })}
-                                </p>
-                              </div>
-                            </div>
-                          );
-                        })
-                      )}
-                      <div ref={messagesEndRef} />
-                    </div>
-                  </ScrollArea>
-
-                  <div className="p-4 border-t space-y-2">
-                    {showTemplates && (
-                      <div className="flex flex-wrap gap-2 mb-2">
-                        {quickTemplates.map((template, idx) => (
-                          <Button
-                            key={idx}
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleTemplateClick(template)}
-                            className="text-xs"
-                          >
-                            {template}
-                          </Button>
-                        ))}
-                      </div>
-                    )}
-                    
-                    <div className="flex gap-2">
-                      <Popover open={showTemplates} onOpenChange={setShowTemplates}>
-                        <PopoverTrigger asChild>
-                          <Button variant="outline" size="icon">
-                            <Icon name="Zap" size={20} />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-80" align="start">
-                          <div className="space-y-2">
-                            <p className="text-sm font-medium mb-2">Быстрые ответы</p>
-                            {quickTemplates.map((template, idx) => (
-                              <Button
-                                key={idx}
-                                variant="ghost"
-                                className="w-full justify-start text-left h-auto py-2"
-                                onClick={() => handleTemplateClick(template)}
-                              >
-                                {template}
-                              </Button>
-                            ))}
-                          </div>
-                        </PopoverContent>
-                      </Popover>
-
-                      <Popover open={showEmojiPicker} onOpenChange={setShowEmojiPicker}>
-                        <PopoverTrigger asChild>
-                          <Button variant="outline" size="icon">
-                            <Icon name="Smile" size={20} />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-full p-0 border-0" align="start">
-                          <EmojiPicker 
-                            onEmojiClick={handleEmojiClick}
-                            width={350}
-                            height={400}
-                          />
-                        </PopoverContent>
-                      </Popover>
-
-                      <Input
-                        ref={inputRef}
-                        placeholder="Введите сообщение..."
-                        value={messageText}
-                        onChange={(e) => setMessageText(e.target.value)}
-                        onKeyPress={(e) => {
-                          if (e.key === 'Enter' && !e.shiftKey) {
-                            e.preventDefault();
-                            handleSendMessage();
-                          }
-                        }}
-                        disabled={sending}
-                        className="flex-1"
-                      />
-                      
-                      <Button onClick={handleSendMessage} disabled={sending || !messageText.trim()}>
-                        {sending ? (
-                          <Icon name="Loader2" className="animate-spin" size={20} />
-                        ) : (
-                          <Icon name="Send" size={20} />
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </>
-            ) : (
-              <CardContent className="flex items-center justify-center h-[600px]">
-                <div className="text-center">
-                  <Icon name="MessageSquare" size={64} className="mx-auto mb-4 text-muted-foreground" />
-                  <p className="text-lg font-medium mb-2">Выберите пользователя</p>
-                  <p className="text-muted-foreground">Выберите чат или пользователя слева, чтобы начать общение</p>
-                </div>
-              </CardContent>
-            )}
-          </Card>
+          <div className="lg:col-span-2">
+            <AdminChatMessages
+              selectedUser={selectedUser}
+              messages={messages}
+              currentUserId={currentUserId}
+              messageText={messageText}
+              sending={sending}
+              showEmojiPicker={showEmojiPicker}
+              showTemplates={showTemplates}
+              quickTemplates={quickTemplates}
+              onMessageTextChange={setMessageText}
+              onSendMessage={handleSendMessage}
+              onEmojiClick={handleEmojiClick}
+              onToggleEmojiPicker={setShowEmojiPicker}
+              onToggleTemplates={setShowTemplates}
+              onTemplateSelect={handleTemplateSelect}
+            />
+          </div>
         </div>
       </div>
     </div>
