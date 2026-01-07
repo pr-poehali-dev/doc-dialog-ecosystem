@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -5,11 +6,40 @@ import Icon from '@/components/ui/icon';
 import { useUnreadMessages } from '@/hooks/useUnreadMessages';
 import { useNewReviews } from '@/hooks/useNewReviews';
 import { useNewOrders } from '@/hooks/useNewOrders';
+import PromoteMasseurDialog from '@/components/masseur/PromoteMasseurDialog';
+
+const MASSEURS_API = 'https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436';
 
 export default function MasseurDashboard() {
   const { unreadCount } = useUnreadMessages();
   const { newReviewsCount } = useNewReviews();
   const { newOrdersCount } = useNewOrders();
+  const [promoteDialogOpen, setPromoteDialogOpen] = useState(false);
+  const [masseurData, setMasseurData] = useState<any>(null);
+
+  useEffect(() => {
+    loadMasseurData();
+  }, []);
+
+  const loadMasseurData = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const user = JSON.parse(atob(token.split('.')[1]));
+      const userId = user.user_id;
+
+      const response = await fetch(MASSEURS_API);
+      if (response.ok) {
+        const data = await response.json();
+        const masseurs = data.masseurs || data;
+        const found = masseurs.find((m: any) => m.user_id === userId);
+        setMasseurData(found);
+      }
+    } catch (error) {
+      console.error('Error loading masseur data:', error);
+    }
+  };
   
   return (
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -132,6 +162,23 @@ export default function MasseurDashboard() {
         </Link>
       </div>
 
+      <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 shadow-sm border-2 border-amber-200 hover:border-amber-300 transition-colors">
+        <div className="flex items-center gap-4 mb-4">
+          <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center">
+            <Icon name="TrendingUp" className="text-white" size={24} />
+          </div>
+          <h3 className="text-xl font-semibold">Попасть в топ</h3>
+        </div>
+        <p className="text-gray-600 mb-4">Продвиньте профиль и получайте больше клиентов</p>
+        <Button 
+          className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+          onClick={() => setPromoteDialogOpen(true)}
+        >
+          <Icon name="Crown" size={18} className="mr-2" />
+          Попасть в топ
+        </Button>
+      </div>
+
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
         <div className="flex items-center gap-4 mb-4">
           <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
@@ -157,6 +204,17 @@ export default function MasseurDashboard() {
           <Button className="w-full" variant="outline">Перейти к курсам</Button>
         </Link>
       </div>
+
+      {masseurData && (
+        <PromoteMasseurDialog
+          open={promoteDialogOpen}
+          onOpenChange={setPromoteDialogOpen}
+          masseurId={masseurData.id}
+          masseurName={masseurData.full_name}
+          city={masseurData.city}
+          onSuccess={loadMasseurData}
+        />
+      )}
     </div>
   );
 }
