@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Icon from "@/components/ui/icon";
@@ -44,9 +44,11 @@ const MasseurProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [masseur, setMasseur] = useState<Masseur | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('about');
 
   const handleSendMessage = () => {
     const token = localStorage.getItem('token');
@@ -72,7 +74,12 @@ const MasseurProfile = () => {
 
   useEffect(() => {
     loadMasseurProfile();
-  }, [id]);
+    
+    const shouldShowReview = searchParams.get('review') === 'true';
+    if (shouldShowReview) {
+      setActiveTab('reviews');
+    }
+  }, [id, searchParams]);
 
   const loadMasseurProfile = async () => {
     try {
@@ -213,7 +220,7 @@ const MasseurProfile = () => {
           </div>
 
           <div className="lg:col-span-2">
-            <Tabs defaultValue="about" className="w-full">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="about">О специалисте</TabsTrigger>
                 <TabsTrigger value="services">Услуги</TabsTrigger>
@@ -233,6 +240,7 @@ const MasseurProfile = () => {
                   masseur={masseur}
                   reviews={reviews}
                   renderStars={renderStars}
+                  orderId={searchParams.get('order') ? parseInt(searchParams.get('order')!) : undefined}
                 />
               </TabsContent>
             </Tabs>

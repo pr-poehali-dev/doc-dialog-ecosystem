@@ -161,6 +161,15 @@ export default function ClientOrders() {
                         <Icon name="MessageCircle" size={16} className="mr-2" />
                         Написать массажисту
                       </Button>
+                      {order.status === 'accepted' && (
+                        <Button
+                          onClick={() => navigate(`/masseurs/${order.masseur_id}?review=true&order=${order.id}`)}
+                          size="sm"
+                        >
+                          <Icon name="Star" size={16} className="mr-2" />
+                          Оценить визит
+                        </Button>
+                      )}
                       {order.status === 'completed' && (
                         <Button
                           onClick={() => navigate(`/masseurs/${order.masseur_id}`)}
@@ -168,7 +177,7 @@ export default function ClientOrders() {
                           size="sm"
                         >
                           <Icon name="Star" size={16} className="mr-2" />
-                          Оставить отзыв
+                          Смотреть отзыв
                         </Button>
                       )}
                     </div>

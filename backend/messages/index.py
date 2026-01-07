@@ -648,30 +648,39 @@ def update_order_status(user_id: int, body: dict) -> dict:
         if not order_id or not new_status:
             return error_response('Не указаны обязательные параметры', 400)
         
+        # Проверяем, массажист это или клиент
         cursor.execute("""
             SELECT id FROM t_p46047379_doc_dialog_ecosystem.masseur_profiles
             WHERE user_id = %s
         """, (user_id,))
         
         masseur = cursor.fetchone()
-        if not masseur:
-            return error_response('Профиль массажиста не найден', 404)
         
-        masseur_id = masseur['id']
+        if masseur:
+            # Массажист может обновлять свои заказы
+            masseur_id = masseur['id']
+            query = """
+                UPDATE t_p46047379_doc_dialog_ecosystem.service_orders
+                SET status = %s, updated_at = NOW()
+                WHERE id = %s AND masseur_id = %s
+                RETURNING id
+            """
+            cursor.execute(query, (new_status, order_id, masseur_id))
+        else:
+            # Клиент может завершать свои заказы (для оставления отзыва)
+            query = """
+                UPDATE t_p46047379_doc_dialog_ecosystem.service_orders
+                SET status = %s, updated_at = NOW()
+                WHERE id = %s AND client_id = %s AND status = 'accepted'
+                RETURNING id
+            """
+            cursor.execute(query, (new_status, order_id, user_id))
         
-        query = """
-            UPDATE t_p46047379_doc_dialog_ecosystem.service_orders
-            SET status = %s, updated_at = NOW()
-            WHERE id = %s AND masseur_id = %s
-            RETURNING id
-        """
-        
-        cursor.execute(query, (new_status, order_id, masseur_id))
         conn.commit()
         
         updated = cursor.fetchone()
         if not updated:
-            return error_response('Заказ не найден', 404)
+            return error_response('Заказ не найден или недоступен для обновления', 404)
         
         return success_response({'status': 'updated'})
         

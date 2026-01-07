@@ -44,9 +44,10 @@ interface ReviewsTabProps {
   masseur: Masseur;
   reviews: Review[];
   renderStars: (rating: number) => JSX.Element[];
+  orderId?: number;
 }
 
-export default function ReviewsTab({ masseur, reviews, renderStars }: ReviewsTabProps) {
+export default function ReviewsTab({ masseur, reviews, renderStars, orderId }: ReviewsTabProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [newReview, setNewReview] = useState({ rating: 5, massage_type: '', comment: '' });
@@ -160,11 +161,39 @@ export default function ReviewsTab({ masseur, reviews, renderStars }: ReviewsTab
                     const data = await response.json();
                     
                     if (response.ok) {
+                      // Если есть orderId, завершаем заказ
+                      if (orderId) {
+                        try {
+                          const orderResponse = await fetch('https://functions.poehali.dev/04d0b538-1cf5-4941-9c06-8d1bef5854ec?action=update-order-status', {
+                            method: 'POST',
+                            headers: {
+                              'Authorization': `Bearer ${token}`,
+                              'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                              orderId: orderId,
+                              status: 'completed'
+                            })
+                          });
+                          
+                          if (!orderResponse.ok) {
+                            console.error('Failed to update order status');
+                          }
+                        } catch (err) {
+                          console.error('Error updating order:', err);
+                        }
+                      }
+                      
                       toast({
                         title: 'Отзыв отправлен на модерацию',
                         description: 'Ваш отзыв появится после проверки администратором'
                       });
                       setNewReview({ rating: 5, massage_type: '', comment: '' });
+                      
+                      // Перенаправляем в заказы
+                      setTimeout(() => {
+                        navigate('/dashboard/my-orders');
+                      }, 1500);
                     } else {
                       toast({
                         title: 'Ошибка',
