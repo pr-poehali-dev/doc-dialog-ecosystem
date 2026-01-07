@@ -190,7 +190,16 @@ export default function ProfileSidebar({ masseur, onSendMessage, onBooking, rend
           )}
         </div>
 
-        <Button className="w-full" size="lg" onClick={onSendMessage}>
+        <Button 
+          className="w-full" 
+          size="lg" 
+          onClick={() => {
+            toast({
+              title: "Функция в разработке",
+              description: "Возможность отправки сообщений скоро будет доступна!",
+            });
+          }}
+        >
           <Icon name="MessageCircle" size={20} className="mr-2" />
           Написать
         </Button>

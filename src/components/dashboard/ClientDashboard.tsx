@@ -3,9 +3,18 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import { useUnreadMessages } from '@/hooks/useUnreadMessages';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ClientDashboard() {
   const { unreadCount } = useUnreadMessages();
+  const { toast } = useToast();
+
+  const handleInDevelopment = () => {
+    toast({
+      title: "Функция в разработке",
+      description: "Этот раздел скоро будет доступен. Следите за обновлениями!",
+    });
+  };
   
   return (
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -74,9 +83,7 @@ export default function ClientDashboard() {
           <h3 className="text-xl font-semibold">Записи в салоны</h3>
         </div>
         <p className="text-gray-600 mb-4">История бронирований в салонах</p>
-        <Link to="/dashboard/salon-bookings">
-          <Button className="w-full">Мои записи</Button>
-        </Link>
+        <Button className="w-full" onClick={handleInDevelopment}>Мои записи</Button>
       </div>
 
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
@@ -100,9 +107,7 @@ export default function ClientDashboard() {
           <h3 className="text-xl font-semibold">Салоны</h3>
         </div>
         <p className="text-gray-600 mb-4">Массажные салоны в вашем городе</p>
-        <Link to="/salons">
-          <Button className="w-full" variant="outline">Найти салон</Button>
-        </Link>
+        <Button className="w-full" variant="outline" onClick={handleInDevelopment}>Найти салон</Button>
       </div>
     </div>
   );
