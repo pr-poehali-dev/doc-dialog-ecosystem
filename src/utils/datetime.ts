@@ -43,16 +43,22 @@ export function formatRelativeTime(timestamp: string): string {
   const moscowDate = new Date(date.toLocaleString('en-US', { timeZone: 'Europe/Moscow' }));
   const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Moscow' }));
   
-  const diff = now.getTime() - moscowDate.getTime();
+  const moscowDateStart = new Date(moscowDate);
+  moscowDateStart.setHours(0, 0, 0, 0);
+  
+  const nowStart = new Date(now);
+  nowStart.setHours(0, 0, 0, 0);
+  
+  const diff = nowStart.getTime() - moscowDateStart.getTime();
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
   
   if (days === 0) {
-    return formatMoscowTime(timestamp);
+    return `Сегодня ${formatMoscowTime(timestamp)}`;
   } else if (days === 1) {
-    return 'Вчера';
+    return `Вчера ${formatMoscowTime(timestamp)}`;
   } else if (days < 7) {
-    return `${days} дня назад`;
+    return `${days} дн. назад ${formatMoscowTime(timestamp)}`;
   } else {
-    return formatMoscowDate(timestamp);
+    return formatMoscowDateTime(timestamp);
   }
 }
