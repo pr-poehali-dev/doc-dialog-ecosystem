@@ -126,7 +126,7 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
                 COALESCE(
                     mp.full_name, 
                     clp.full_name,
-                    sc.school_name,
+                    sc.name,
                     sl.name,
                     u.email
                 ) as name,
