@@ -83,6 +83,18 @@ const MasseurProfile = () => {
         
         if (foundMasseur) {
           setMasseur(foundMasseur);
+          
+          // Загружаем отзывы массажиста
+          try {
+            const reviewsResponse = await fetch(`https://functions.poehali.dev/8b4cf7f3-28ec-45d5-9c69-5d586d0f96c1?action=get-reviews&masseur_id=${foundMasseur.id}`);
+            if (reviewsResponse.ok) {
+              const reviewsData = await reviewsResponse.json();
+              setReviews(reviewsData.reviews || []);
+            }
+          } catch (error) {
+            console.error('Ошибка загрузки отзывов:', error);
+          }
+          
           return;
         }
       }

@@ -1,0 +1,20 @@
+{
+  "tests": [
+    {
+      "name": "Test get reviews without masseur_id",
+      "method": "GET",
+      "path": "/?action=get-reviews",
+      "expectedStatus": 400,
+      "expectedBody": {
+        "error": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Test OPTIONS request",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200
+    }
+  ]
+}

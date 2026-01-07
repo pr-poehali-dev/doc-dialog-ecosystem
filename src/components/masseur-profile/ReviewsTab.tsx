@@ -114,18 +114,55 @@ export default function ReviewsTab({ masseur, reviews, renderStars }: ReviewsTab
                     });
                     return;
                   }
+                  
                   setIsSubmittingReview(true);
-                  toast({
-                    title: 'Отзыв отправлен',
-                    description: 'Спасибо за ваш отзыв!'
-                  });
-                  setNewReview({ rating: 5, massage_type: '', comment: '' });
-                  setIsSubmittingReview(false);
+                  
+                  try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch('https://functions.poehali.dev/8b4cf7f3-28ec-45d5-9c69-5d586d0f96c1?action=submit-review', {
+                      method: 'POST',
+                      headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify({
+                        masseur_id: masseur.id,
+                        rating: newReview.rating,
+                        comment: newReview.comment,
+                        massage_type: newReview.massage_type
+                      })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                      toast({
+                        title: 'Отзыв отправлен на модерацию',
+                        description: 'Ваш отзыв появится после проверки администратором'
+                      });
+                      setNewReview({ rating: 5, massage_type: '', comment: '' });
+                    } else {
+                      toast({
+                        title: 'Ошибка',
+                        description: data.error || 'Не удалось отправить отзыв',
+                        variant: 'destructive'
+                      });
+                    }
+                  } catch (error) {
+                    console.error('Error submitting review:', error);
+                    toast({
+                      title: 'Ошибка',
+                      description: 'Не удалось отправить отзыв',
+                      variant: 'destructive'
+                    });
+                  } finally {
+                    setIsSubmittingReview(false);
+                  }
                 }}
                 disabled={isSubmittingReview}
               >
                 <Icon name="Send" size={18} className="mr-2" />
-                Отправить отзыв
+                {isSubmittingReview ? 'Отправка...' : 'Отправить отзыв'}
               </Button>
             </>
           ) : (

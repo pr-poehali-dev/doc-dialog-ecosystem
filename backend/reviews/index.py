@@ -142,16 +142,8 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
-        # Check if user is masseur or school (only they can leave reviews)
-        if user_role not in ['masseur', 'school', 'admin']:
-            cur.close()
-            conn.close()
-            return {
-                'statusCode': 403,
-                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Только зарегистрированные массажисты и школы могут оставлять отзывы'}),
-                'isBase64Encoded': False
-            }
+        # Любой авторизованный пользователь может оставить отзыв
+        # (массажисты, школы, клиенты и все остальные)
         
         # Get user name from email
         user_name = user_email.split('@')[0] if user_email else 'Аноним'
