@@ -98,11 +98,10 @@ def verify_token(token: str) -> dict:
 
 
 def get_favorites(user_id: int) -> dict:
-    '''Получение списка избранных массажистов'''
+    '''Получение списка ID избранных массажистов'''
     conn, cursor = get_db_connection()
     
     try:
-        # Получаем список избранных ID
         cursor.execute("""
             SELECT masseur_id, created_at
             FROM t_p46047379_doc_dialog_ecosystem.favorites
@@ -112,52 +111,13 @@ def get_favorites(user_id: int) -> dict:
         
         fav_list = cursor.fetchall()
         
-        if not fav_list:
-            return success_response({'favorites': []})
+        # Возвращаем только ID - фронтенд сам получит детали через API массажистов
+        result = [{
+            'masseur_id': f['masseur_id'],
+            'favorited_at': f['created_at'].isoformat()
+        } for f in fav_list]
         
-        # Формируем строку с ID через запятую для IN
-        masseur_ids_str = ','.join(str(f['masseur_id']) for f in fav_list)
-        
-        # Получаем информацию о массажистах одним запросом с IN
-        # Используем алиас mp как в функции masseurs
-        masseur_query = f"""
-            SELECT 
-                mp.id,
-                mp.full_name,
-                mp.specialization,
-                mp.experience_years,
-                mp.avatar_url,
-                mp.city,
-                mp.rating,
-                mp.reviews_count
-            FROM t_p46047379_doc_dialog_ecosystem.masseur_profiles mp
-            WHERE mp.id IN ({masseur_ids_str})
-        """
-        
-        cursor.execute(masseur_query)
-        masseurs = cursor.fetchall()
-        
-        # Создаем словарь для быстрого поиска
-        masseurs_dict = {m['id']: m for m in masseurs}
-        
-        # Собираем результат в правильном порядке
-        result = []
-        for fav in fav_list:
-            masseur = masseurs_dict.get(fav['masseur_id'])
-            if masseur:
-                result.append({
-                    'id': masseur['id'],
-                    'full_name': masseur['full_name'],
-                    'specialization': masseur['specialization'],
-                    'experience_years': masseur['experience_years'],
-                    'avatar_url': masseur['avatar_url'],
-                    'city': masseur['city'],
-                    'avg_rating': float(masseur['rating']) if masseur['rating'] else 0,
-                    'reviews_count': masseur['reviews_count'] or 0,
-                    'favorited_at': fav['created_at'].isoformat()
-                })
-        
-        return success_response({'favorites': result})
+        return success_response({'favorite_ids': result})
         
     except Exception as e:
         print(f"ERROR in get_favorites: {str(e)}")

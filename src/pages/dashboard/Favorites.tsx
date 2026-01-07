@@ -19,6 +19,7 @@ interface Favorite {
 }
 
 const FAVORITES_API = 'https://functions.poehali.dev/1babd863-d072-4116-9af2-df1166fc0f27';
+const MASSEURS_API = 'https://functions.poehali.dev/d4e0aa3d91qbfb10t0uf';
 
 export default function Favorites() {
   const navigate = useNavigate();
@@ -38,16 +39,57 @@ export default function Favorites() {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await fetch(FAVORITES_API, {
+      
+      // Получаем список ID избранных
+      const favResponse = await fetch(FAVORITES_API, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setFavorites(data.favorites || []);
+      if (!favResponse.ok) {
+        console.error('Ошибка загрузки избранных ID');
+        return;
       }
+
+      const favData = await favResponse.json();
+      const favoriteIds = favData.favorite_ids || [];
+
+      if (favoriteIds.length === 0) {
+        setFavorites([]);
+        return;
+      }
+
+      // Получаем список всех массажистов
+      const masseursResponse = await fetch(MASSEURS_API);
+      if (!masseursResponse.ok) {
+        console.error('Ошибка загрузки массажистов');
+        return;
+      }
+
+      const masseursData = await masseursResponse.json();
+      const allMasseurs = masseursData.masseurs || [];
+
+      // Фильтруем только избранных массажистов
+      const favoriteIdSet = new Set(favoriteIds.map((f: any) => f.masseur_id));
+      const favoriteMasseurs = allMasseurs
+        .filter((m: any) => favoriteIdSet.has(m.id))
+        .map((m: any) => {
+          const favInfo = favoriteIds.find((f: any) => f.masseur_id === m.id);
+          return {
+            id: m.id,
+            full_name: m.full_name,
+            specialization: m.specializations?.[0] || 'Массажист',
+            experience_years: m.experience_years,
+            avatar_url: m.avatar_url,
+            city: m.city,
+            avg_rating: m.rating || 0,
+            reviews_count: m.reviews_count || 0,
+            favorited_at: favInfo?.favorited_at || new Date().toISOString()
+          };
+        });
+
+      setFavorites(favoriteMasseurs);
     } catch (error) {
       console.error('Ошибка загрузки избранного:', error);
     } finally {
