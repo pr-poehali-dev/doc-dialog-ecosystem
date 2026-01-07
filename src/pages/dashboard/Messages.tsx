@@ -205,6 +205,24 @@ export default function Messages() {
         setMessageText('');
         await fetchMessages(selectedChat.other_user_id);
         await fetchChats();
+      } else if (response.status === 403) {
+        const errorData = await response.json();
+        
+        if (errorData.error === 'content_blocked') {
+          toast({
+            title: errorData.is_final_warning ? '⛔ ПОСЛЕДНЕЕ ПРЕДУПРЕЖДЕНИЕ' : '⚠️ Нарушение правил',
+            description: errorData.warning,
+            variant: 'destructive',
+            duration: 10000,
+          });
+        } else {
+          toast({
+            title: '❌ Аккаунт заблокирован',
+            description: errorData.error || 'Ваш аккаунт заблокирован за нарушение правил',
+            variant: 'destructive',
+            duration: 10000,
+          });
+        }
       } else {
         toast({
           title: 'Ошибка',

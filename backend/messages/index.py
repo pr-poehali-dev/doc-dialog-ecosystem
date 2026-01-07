@@ -4,6 +4,7 @@ import jwt
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from datetime import datetime
+from moderation import check_content_moderation, get_warning_message
 
 def handler(event: dict, context) -> dict:
     '''API для обмена сообщениями между пользователями'''
@@ -42,6 +43,10 @@ def handler(event: dict, context) -> dict:
                 if not other_user_id:
                     return error_response('Не указан chat_id', 400)
                 return get_chat_messages(user_data['user_id'], int(other_user_id))
+            elif action == 'get-violations':
+                if user_data.get('role') != 'admin':
+                    return error_response('Доступ запрещён', 403)
+                return get_content_violations()
         
         if method == 'POST':
             body = json.loads(event.get('body', '{}'))
@@ -250,6 +255,74 @@ def send_message(user_id: int, body: dict) -> dict:
         if not message_text:
             return error_response('Сообщение не может быть пустым', 400)
         
+        # Проверка пользователя на блокировку
+        check_user_query = """
+            SELECT is_content_blocked, content_block_reason, content_violation_count
+            FROM t_p46047379_doc_dialog_ecosystem.users
+            WHERE id = %s
+        """
+        cursor.execute(check_user_query, (user_id,))
+        user_status = cursor.fetchone()
+        
+        if user_status and user_status['is_content_blocked']:
+            return error_response(
+                f"❌ Ваш аккаунт заблокирован за нарушение правил.\nПричина: {user_status['content_block_reason']}\n\nСредства на балансе заморожены до решения модерации.",
+                403
+            )
+        
+        # Проверка контента на запрещённые темы
+        is_blocked, category, matched_words = check_content_moderation(message_text)
+        
+        if is_blocked:
+            # Записываем предупреждение
+            warning_query = """
+                INSERT INTO t_p46047379_doc_dialog_ecosystem.content_warnings 
+                (user_id, violation_category, message_text, matched_patterns, created_at)
+                VALUES (%s, %s, %s, %s, NOW())
+            """
+            cursor.execute(warning_query, (user_id, category, message_text, matched_words))
+            
+            # Обновляем счётчик нарушений
+            update_violation_query = """
+                UPDATE t_p46047379_doc_dialog_ecosystem.users
+                SET content_violation_count = content_violation_count + 1
+                WHERE id = %s
+                RETURNING content_violation_count
+            """
+            cursor.execute(update_violation_query, (user_id,))
+            violation_count = cursor.fetchone()['content_violation_count']
+            
+            # Если это второе нарушение - блокируем пользователя
+            if violation_count >= 2:
+                block_query = """
+                    UPDATE t_p46047379_doc_dialog_ecosystem.users
+                    SET is_content_blocked = TRUE,
+                        content_block_reason = %s
+                    WHERE id = %s
+                """
+                block_reason = f"Повторное нарушение правил: {category}"
+                cursor.execute(block_query, (block_reason, user_id))
+            
+            conn.commit()
+            
+            warning_message = get_warning_message(category)
+            
+            return {
+                'statusCode': 403,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                'body': json.dumps({
+                    'error': 'content_blocked',
+                    'warning': warning_message,
+                    'violation_count': violation_count,
+                    'is_final_warning': violation_count >= 1
+                }),
+                'isBase64Encoded': False
+            }
+        
+        # Сообщение прошло проверку - сохраняем
         query = """
             INSERT INTO t_p46047379_doc_dialog_ecosystem.messages (sender_id, receiver_id, message_text, created_at, is_read)
             VALUES (%s, %s, %s, NOW(), FALSE)
@@ -315,6 +388,63 @@ def delete_chat(user_id: int, body: dict) -> dict:
         traceback.print_exc()
         conn.rollback()
         return error_response(f"Ошибка удаления переписки: {str(e)}", 500)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_content_violations() -> dict:
+    '''Получение списка всех нарушений контента (только для админов)'''
+    conn, cursor = get_db_connection()
+    
+    try:
+        query = """
+            SELECT 
+                cw.id,
+                cw.user_id,
+                u.email,
+                u.role,
+                u.is_content_blocked,
+                u.content_violation_count,
+                cw.violation_category,
+                cw.message_text,
+                cw.matched_patterns,
+                cw.created_at,
+                COALESCE(mp.full_name, cp.full_name, u.email) as user_name
+            FROM t_p46047379_doc_dialog_ecosystem.content_warnings cw
+            JOIN t_p46047379_doc_dialog_ecosystem.users u ON cw.user_id = u.id
+            LEFT JOIN t_p46047379_doc_dialog_ecosystem.masseur_profiles mp ON u.id = mp.user_id
+            LEFT JOIN t_p46047379_doc_dialog_ecosystem.client_profiles cp ON u.id = cp.user_id
+            ORDER BY cw.created_at DESC
+            LIMIT 100
+        """
+        
+        cursor.execute(query)
+        violations = cursor.fetchall()
+        
+        result = []
+        for v in violations:
+            result.append({
+                'id': v['id'],
+                'user_id': v['user_id'],
+                'user_name': v['user_name'],
+                'email': v['email'],
+                'role': v['role'],
+                'is_blocked': v['is_content_blocked'],
+                'total_violations': v['content_violation_count'],
+                'category': v['violation_category'],
+                'message_text': v['message_text'],
+                'matched_patterns': v['matched_patterns'],
+                'created_at': v['created_at'].isoformat()
+            })
+        
+        return success_response({'violations': result})
+        
+    except Exception as e:
+        print(f"ERROR in get_content_violations: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return error_response(f"Ошибка получения нарушений: {str(e)}", 500)
     finally:
         cursor.close()
         conn.close()
