@@ -47,7 +47,13 @@ export default function CourseCard({ course, getStatusBadge, onEdit, onDelete, o
               <span>В топе {course.promotion_type === 'all_categories' ? 'во всех категориях' : 'в своей категории'}</span>
             </div>
             <div className="text-amber-700 mt-1">
-              До {new Date(course.promoted_until).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
+              До {new Date(course.promoted_until).toLocaleString('ru-RU', { 
+                day: 'numeric', 
+                month: 'long', 
+                hour: '2-digit', 
+                minute: '2-digit',
+                timeZone: 'Europe/Moscow'
+              })}
             </div>
           </div>
         )}
