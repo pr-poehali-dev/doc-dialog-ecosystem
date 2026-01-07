@@ -16,16 +16,24 @@ export function useUnreadMessages() {
         }
 
         const response = await fetch(`${API_URL}?action=get-chats`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include'
         });
 
         if (response.ok) {
           const data = await response.json();
           const total = data.chats?.reduce((sum: number, chat: any) => sum + (chat.unread_count || 0), 0) || 0;
           setUnreadCount(total);
+        } else {
+          console.warn(`Failed to fetch unread messages: ${response.status}`);
+          setUnreadCount(0);
         }
       } catch (error) {
         console.error('Error fetching unread messages:', error);
+        setUnreadCount(0);
       } finally {
         setLoading(false);
       }

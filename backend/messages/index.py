@@ -108,6 +108,7 @@ def verify_token(token: str) -> dict:
 
 def get_user_chats(user_id: int, user_role: str) -> dict:
     '''Получение списка чатов пользователя'''
+    print(f"DEBUG: Getting chats for user_id={user_id}, role={user_role}")
     conn, cursor = get_db_connection()
     
     try:
@@ -164,9 +165,12 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
             ORDER BY last_message_time DESC NULLS LAST
         """
         
+        print(f"DEBUG: Executing query with user_id={user_id}")
         cursor.execute(query, (user_id, user_id, user_id, user_id, user_id, user_id, user_id, user_id))
         
+        print("DEBUG: Query executed successfully")
         chats = cursor.fetchall()
+        print(f"DEBUG: Fetched {len(chats)} chats")
         
         result = []
         for chat in chats:
