@@ -2,7 +2,7 @@ import json
 import os
 import psycopg2
 import jwt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 
 # Цены на продвижение массажистов (только в своем городе)
@@ -161,7 +161,8 @@ def handler(event: dict, context) -> dict:
                 WHERE id = {masseur_id}
             """)
             current_promotion = cur.fetchone()
-            start_date = max(datetime.now(), current_promotion[0] if current_promotion[0] > datetime.now() else datetime.now())
+            now_utc = datetime.now(timezone.utc)
+            start_date = max(now_utc, current_promotion[0] if current_promotion[0] > now_utc else now_utc)
             promoted_until = start_date + timedelta(days=days)
             
             # Списываем средства
