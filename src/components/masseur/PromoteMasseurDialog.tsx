@@ -150,7 +150,7 @@ export default function PromoteMasseurDialog({
           </div>
 
           {balance < selectedPrice ? (
-            <Link to="/school/balance" className="block">
+            <Link to="/dashboard/balance" className="block">
               <Button className="w-full" variant="outline">
                 <Icon name="Wallet" className="mr-2" size={18} />
                 Пополнить баланс

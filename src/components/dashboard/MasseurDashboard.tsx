@@ -162,6 +162,19 @@ export default function MasseurDashboard() {
         </Link>
       </div>
 
+      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+        <div className="flex items-center gap-4 mb-4">
+          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+            <Icon name="Wallet" className="text-primary" size={24} />
+          </div>
+          <h3 className="text-xl font-semibold">Баланс</h3>
+        </div>
+        <p className="text-gray-600 mb-4">Пополните баланс для продвижения</p>
+        <Link to="/dashboard/balance">
+          <Button className="w-full">Управление балансом</Button>
+        </Link>
+      </div>
+
       <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 shadow-sm border-2 border-amber-200 hover:border-amber-300 transition-colors">
         <div className="flex items-center gap-4 mb-4">
           <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center">
