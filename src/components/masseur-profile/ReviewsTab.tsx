@@ -154,7 +154,8 @@ export default function ReviewsTab({ masseur, reviews, renderStars, orderId }: R
                         masseur_id: masseur.id,
                         rating: newReview.rating,
                         comment: newReview.comment,
-                        massage_type: newReview.massage_type
+                        massage_type: newReview.massage_type,
+                        order_id: orderId
                       })
                     });
                     

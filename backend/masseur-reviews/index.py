@@ -164,6 +164,7 @@ def submit_review(user_id: int, body: dict) -> dict:
         rating = body.get('rating')
         comment = body.get('comment', '').strip()
         massage_type = body.get('massage_type')
+        order_id = body.get('order_id')
         
         if not masseur_id:
             return error_response('Не указан masseur_id', 400)
@@ -194,22 +195,23 @@ def submit_review(user_id: int, body: dict) -> dict:
         if user_info['role'] in ('masseur', 'school'):
             return error_response('Только клиенты могут оставлять отзывы массажистам', 403)
         
-        # Проверяем, не оставлял ли пользователь уже отзыв этому массажисту
-        check_query = """
-            SELECT id FROM t_p46047379_doc_dialog_ecosystem.reviews
-            WHERE user_id = %s AND masseur_id = %s
-        """
-        cursor.execute(check_query, (user_id, masseur_id))
-        existing_review = cursor.fetchone()
-        
-        if existing_review:
-            return error_response('Вы уже оставили отзыв этому массажисту', 400)
+        # Если указан order_id, проверяем, не оставлен ли уже отзыв на этот заказ
+        if order_id:
+            check_query = """
+                SELECT id FROM t_p46047379_doc_dialog_ecosystem.reviews
+                WHERE order_id = %s
+            """
+            cursor.execute(check_query, (order_id,))
+            existing_review = cursor.fetchone()
+            
+            if existing_review:
+                return error_response('Вы уже оставили отзыв на эту услугу', 400)
         
         # Добавляем отзыв
         insert_query = """
             INSERT INTO t_p46047379_doc_dialog_ecosystem.reviews 
-            (masseur_id, user_id, author_name, author_avatar, rating, comment, massage_type, created_at, moderation_status)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, NOW(), 'pending')
+            (masseur_id, user_id, author_name, author_avatar, rating, comment, massage_type, order_id, created_at, moderation_status)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, NOW(), 'pending')
             RETURNING id, created_at
         """
         
@@ -220,7 +222,8 @@ def submit_review(user_id: int, body: dict) -> dict:
             user_info['avatar_url'],
             rating,
             comment,
-            massage_type
+            massage_type,
+            order_id
         ))
         
         result = cursor.fetchone()
