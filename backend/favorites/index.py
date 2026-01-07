@@ -116,30 +116,26 @@ def get_favorites(user_id: int) -> dict:
         if not fav_list:
             return success_response({'favorites': []})
         
-        masseur_ids = [f['masseur_id'] for f in fav_list]
-        
-        # Затем получаем информацию о массажистах
-        masseur_query = """
-            SELECT 
-                id,
-                full_name,
-                specialization,
-                experience_years,
-                avatar_url,
-                city
-            FROM t_p46047379_doc_dialog_ecosystem.masseur_profiles
-            WHERE id = ANY(%s)
-        """
-        
-        cursor.execute(masseur_query, (masseur_ids,))
-        masseurs = cursor.fetchall()
-        
-        # Объединяем данные
-        masseurs_dict = {m['id']: m for m in masseurs}
+        # Получаем информацию о каждом массажисте отдельным запросом
         result = []
-        
         for fav in fav_list:
-            masseur = masseurs_dict.get(fav['masseur_id'])
+            masseur_query = """
+                SELECT 
+                    id,
+                    full_name,
+                    specialization,
+                    experience_years,
+                    avatar_url,
+                    city,
+                    rating,
+                    reviews_count
+                FROM t_p46047379_doc_dialog_ecosystem.masseur_profiles
+                WHERE id = %s
+            """
+            
+            cursor.execute(masseur_query, (fav['masseur_id'],))
+            masseur = cursor.fetchone()
+            
             if masseur:
                 result.append({
                     'id': masseur['id'],
@@ -148,8 +144,8 @@ def get_favorites(user_id: int) -> dict:
                     'experience_years': masseur['experience_years'],
                     'avatar_url': masseur['avatar_url'],
                     'city': masseur['city'],
-                    'avg_rating': 0,
-                    'reviews_count': 0,
+                    'avg_rating': float(masseur['rating']) if masseur['rating'] else 0,
+                    'reviews_count': masseur['reviews_count'] or 0,
                     'favorited_at': fav['created_at'].isoformat()
                 })
         
