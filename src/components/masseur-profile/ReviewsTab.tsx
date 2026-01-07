@@ -36,6 +36,8 @@ interface Review {
   massage_type: string;
   created_at: string;
   is_verified: boolean;
+  masseur_reply?: string | null;
+  masseur_reply_at?: string | null;
 }
 
 interface ReviewsTabProps {
@@ -49,6 +51,7 @@ export default function ReviewsTab({ masseur, reviews, renderStars }: ReviewsTab
   const { toast } = useToast();
   const [newReview, setNewReview] = useState({ rating: 5, massage_type: '', comment: '' });
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [expandedReply, setExpandedReply] = useState<number | null>(null);
   const userRole = localStorage.getItem('userRole');
 
   return (
@@ -227,6 +230,37 @@ export default function ReviewsTab({ masseur, reviews, renderStars }: ReviewsTab
                   {review.massage_type}
                 </Badge>
                 <p className="text-muted-foreground leading-relaxed">{review.comment}</p>
+                
+                {review.masseur_reply && (
+                  <div className="mt-4">
+                    <button
+                      onClick={() => setExpandedReply(expandedReply === review.id ? null : review.id)}
+                      className="flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                    >
+                      <Icon 
+                        name={expandedReply === review.id ? "ChevronUp" : "ChevronDown"} 
+                        size={16} 
+                      />
+                      Ответ массажиста
+                    </button>
+                    
+                    {expandedReply === review.id && (
+                      <div className="mt-3 pl-4 border-l-2 border-primary/30 bg-primary/5 p-4 rounded-r-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Icon name="MessageCircle" className="text-primary" size={16} />
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(review.masseur_reply_at!).toLocaleDateString('ru-RU', { 
+                              year: 'numeric', 
+                              month: 'long', 
+                              day: 'numeric' 
+                            })}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-700">{review.masseur_reply}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </CardContent>
