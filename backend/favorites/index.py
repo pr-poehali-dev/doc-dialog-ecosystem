@@ -102,37 +102,56 @@ def get_favorites(user_id: int) -> dict:
     conn, cursor = get_db_connection()
     
     try:
-        query = """
-            SELECT 
-                mp.id,
-                mp.full_name,
-                mp.specialization,
-                mp.experience_years,
-                mp.avatar_url,
-                mp.city,
-                f.created_at as favorited_at
-            FROM t_p46047379_doc_dialog_ecosystem.favorites f
-            JOIN t_p46047379_doc_dialog_ecosystem.masseur_profiles mp ON f.masseur_id = mp.id
-            WHERE f.user_id = %s
-            ORDER BY f.created_at DESC
+        # Сначала получаем список избранных
+        fav_query = """
+            SELECT masseur_id, created_at
+            FROM t_p46047379_doc_dialog_ecosystem.favorites
+            WHERE user_id = %s
+            ORDER BY created_at DESC
         """
         
-        cursor.execute(query, (user_id,))
-        favorites = cursor.fetchall()
+        cursor.execute(fav_query, (user_id,))
+        fav_list = cursor.fetchall()
         
+        if not fav_list:
+            return success_response({'favorites': []})
+        
+        masseur_ids = [f['masseur_id'] for f in fav_list]
+        
+        # Затем получаем информацию о массажистах
+        masseur_query = """
+            SELECT 
+                id,
+                full_name,
+                specialization,
+                experience_years,
+                avatar_url,
+                city
+            FROM t_p46047379_doc_dialog_ecosystem.masseur_profiles
+            WHERE id = ANY(%s)
+        """
+        
+        cursor.execute(masseur_query, (masseur_ids,))
+        masseurs = cursor.fetchall()
+        
+        # Объединяем данные
+        masseurs_dict = {m['id']: m for m in masseurs}
         result = []
-        for fav in favorites:
-            result.append({
-                'id': fav['id'],
-                'full_name': fav['full_name'],
-                'specialization': fav['specialization'],
-                'experience_years': fav['experience_years'],
-                'avatar_url': fav['avatar_url'],
-                'city': fav['city'],
-                'avg_rating': 0,
-                'reviews_count': 0,
-                'favorited_at': fav['favorited_at'].isoformat()
-            })
+        
+        for fav in fav_list:
+            masseur = masseurs_dict.get(fav['masseur_id'])
+            if masseur:
+                result.append({
+                    'id': masseur['id'],
+                    'full_name': masseur['full_name'],
+                    'specialization': masseur['specialization'],
+                    'experience_years': masseur['experience_years'],
+                    'avatar_url': masseur['avatar_url'],
+                    'city': masseur['city'],
+                    'avg_rating': 0,
+                    'reviews_count': 0,
+                    'favorited_at': fav['created_at'].isoformat()
+                })
         
         return success_response({'favorites': result})
         
