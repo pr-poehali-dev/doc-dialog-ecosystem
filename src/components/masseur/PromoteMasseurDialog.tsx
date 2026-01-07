@@ -2,16 +2,13 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
+import { Link } from 'react-router-dom';
 
 const BALANCE_API_URL = 'https://functions.poehali.dev/8c82911e-481f-4a63-92ff-aae203e992cc';
 
-interface Prices {
-  own_city: { [key: number]: number };
-  all_cities: { [key: number]: number };
-}
+
 
 interface PromoteMasseurDialogProps {
   open: boolean;
@@ -33,13 +30,13 @@ export default function PromoteMasseurDialog({
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [balance, setBalance] = useState(0);
-  const [selectedType, setSelectedType] = useState<'own_city' | 'all_cities'>('own_city');
   const [selectedDays, setSelectedDays] = useState<1 | 3 | 7>(1);
 
-  // Фиксированные цены для массажистов
-  const prices: Prices = {
-    own_city: { 1: 150, 3: 400, 7: 800 },
-    all_cities: { 1: 500, 3: 1300, 7: 2500 }
+  // Фиксированные цены для продвижения в своем городе
+  const prices: { [key: number]: number } = {
+    1: 150,
+    3: 400,
+    7: 800
   };
 
   useEffect(() => {
@@ -69,7 +66,7 @@ export default function PromoteMasseurDialog({
   };
 
   const handlePromote = async () => {
-    const price = prices[selectedType][selectedDays];
+    const price = prices[selectedDays];
     
     if (balance < price) {
       toast({
@@ -86,7 +83,7 @@ export default function PromoteMasseurDialog({
     });
   };
 
-  const selectedPrice = prices[selectedType][selectedDays];
+  const selectedPrice = prices[selectedDays];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -101,24 +98,14 @@ export default function PromoteMasseurDialog({
             <p className="text-sm text-gray-500">Город: {city}</p>
           </div>
 
-          <div>
-            <Label className="mb-3 block">Тип продвижения</Label>
-            <RadioGroup value={selectedType} onValueChange={(v) => setSelectedType(v as any)}>
-              <div className="flex items-start space-x-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
-                <RadioGroupItem value="own_city" id="city" />
-                <Label htmlFor="city" className="flex-1 cursor-pointer">
-                  <div className="font-medium">В своём городе</div>
-                  <div className="text-sm text-gray-500">Ваш профиль будет выше в каталоге города "{city}"</div>
-                </Label>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <Icon name="Info" size={20} className="text-blue-600 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-blue-900">Продвижение в вашем городе</p>
+                <p className="text-sm text-blue-700 mt-1">Ваш профиль будет отображаться выше в каталоге города "{city}"</p>
               </div>
-              <div className="flex items-start space-x-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
-                <RadioGroupItem value="all_cities" id="all" />
-                <Label htmlFor="all" className="flex-1 cursor-pointer">
-                  <div className="font-medium">Во всех городах</div>
-                  <div className="text-sm text-gray-500">Ваш профиль будет выше во всех городах и на главной странице</div>
-                </Label>
-              </div>
-            </RadioGroup>
+            </div>
           </div>
 
           <div>
@@ -136,7 +123,7 @@ export default function PromoteMasseurDialog({
                 >
                   <div className="font-bold text-lg">{days} {days === 1 ? 'день' : days <= 4 ? 'дня' : 'дней'}</div>
                   <div className="text-sm text-gray-600 mt-1">
-                    {prices[selectedType][days].toLocaleString('ru-RU')} ₽
+                    {prices[days].toLocaleString('ru-RU')} ₽
                   </div>
                 </button>
               ))}
@@ -162,10 +149,19 @@ export default function PromoteMasseurDialog({
             </div>
           </div>
 
+          {balance < selectedPrice ? (
+            <Link to="/school/balance" className="block">
+              <Button className="w-full" variant="outline">
+                <Icon name="Wallet" className="mr-2" size={18} />
+                Пополнить баланс
+              </Button>
+            </Link>
+          ) : null}
+
           <Button
             className="w-full"
             onClick={handlePromote}
-            disabled={loading}
+            disabled={loading || balance < selectedPrice}
           >
             {loading ? (
               <>
