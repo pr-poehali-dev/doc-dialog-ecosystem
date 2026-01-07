@@ -25,7 +25,7 @@ export default function MasseurOrders() {
   const navigate = useNavigate();
   const [orders, setOrders] = useState<ServiceOrder[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all');
+  const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('pending');
 
   useEffect(() => {
     fetchOrders();
@@ -117,18 +117,18 @@ export default function MasseurOrders() {
 
       <div className="flex gap-2 mb-6">
         <Button
-          onClick={() => setFilter('all')}
-          variant={filter === 'all' ? 'default' : 'outline'}
-          size="sm"
-        >
-          Все ({orders.length})
-        </Button>
-        <Button
           onClick={() => setFilter('pending')}
           variant={filter === 'pending' ? 'default' : 'outline'}
           size="sm"
         >
           Новые ({orders.filter(o => o.status === 'pending').length})
+        </Button>
+        <Button
+          onClick={() => setFilter('all')}
+          variant={filter === 'all' ? 'default' : 'outline'}
+          size="sm"
+        >
+          Все ({orders.length})
         </Button>
         <Button
           onClick={() => setFilter('completed')}
