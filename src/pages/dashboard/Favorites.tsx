@@ -22,16 +22,21 @@ const FAVORITES_API = 'https://functions.poehali.dev/1babd863-d072-4116-9af2-df1
 const MASSEURS_API = 'https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436';
 
 export default function Favorites() {
+  console.log('🚀 Favorites компонент загружен');
   const navigate = useNavigate();
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('🔄 useEffect запущен');
     const token = localStorage.getItem('token');
+    console.log('🔑 Токен:', token ? 'есть' : 'нет');
     if (!token) {
+      console.log('❌ Нет токена, редирект на /login');
       navigate('/login');
       return;
     }
+    console.log('✅ Токен есть, загружаем избранное');
     loadFavorites();
   }, [navigate]);
 
