@@ -69,7 +69,7 @@ export default function Messages() {
   }, [navigate]);
 
   useEffect(() => {
-    const masseurId = searchParams.get('masseur');
+    const masseurId = searchParams.get('masseur') || searchParams.get('chat');
     const isBooking = searchParams.get('booking') === 'true';
     
     if (masseurId) {
