@@ -99,7 +99,7 @@ export default function Favorites() {
                 <Icon name="Heart" size={64} className="mx-auto mb-4 text-gray-300" />
                 <h3 className="text-xl font-semibold mb-2">Нет избранных специалистов</h3>
                 <p className="text-gray-600 mb-6">
-                  Массажисты автоматически добавляются в избранное, когда вы оставляете им положительный отзыв (4-5 звёзд)
+                  Добавляйте специалистов в избранное, чтобы потом выбрать, к кому записаться
                 </p>
                 <Link to="/masseurs">
                   <Button>

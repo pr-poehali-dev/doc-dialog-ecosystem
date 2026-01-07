@@ -1,7 +1,9 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useToast } from "@/hooks/use-toast";
 import Icon from "@/components/ui/icon";
 
 interface Masseur {
@@ -30,7 +32,96 @@ interface ProfileSidebarProps {
   renderStars: (rating: number) => JSX.Element[];
 }
 
+const FAVORITES_API = 'https://functions.poehali.dev/1babd863-d072-4116-9af2-df1166fc0f27';
+
 export default function ProfileSidebar({ masseur, onSendMessage, onBooking, renderStars }: ProfileSidebarProps) {
+  const { toast } = useToast();
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [loadingFavorite, setLoadingFavorite] = useState(false);
+
+  useEffect(() => {
+    checkIfFavorite();
+  }, [masseur.id]);
+
+  const checkIfFavorite = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+      const response = await fetch(FAVORITES_API, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const favorites = data.favorites || [];
+        setIsFavorite(favorites.some((f: any) => f.id === masseur.id));
+      }
+    } catch (error) {
+      console.error('Ошибка проверки избранного:', error);
+    }
+  };
+
+  const toggleFavorite = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast({
+        title: "Требуется авторизация",
+        description: "Войдите, чтобы добавить специалиста в избранное",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoadingFavorite(true);
+    try {
+      if (isFavorite) {
+        const response = await fetch(`${FAVORITES_API}?masseur_id=${masseur.id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          setIsFavorite(false);
+          toast({
+            title: "Удалено из избранного",
+            description: `${masseur.full_name} больше не в избранном`,
+          });
+        }
+      } else {
+        const response = await fetch(FAVORITES_API, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ masseur_id: masseur.id }),
+        });
+
+        if (response.ok) {
+          setIsFavorite(true);
+          toast({
+            title: "Добавлено в избранное",
+            description: `${masseur.full_name} добавлен в избранное`,
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Ошибка добавления в избранное:', error);
+      toast({
+        title: "Ошибка",
+        description: "Не удалось выполнить действие",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingFavorite(false);
+    }
+  };
+
   return (
     <Card className={`sticky top-24 ${masseur.is_premium ? 'border-amber-400 border-2' : ''}`}>
       <CardHeader className="text-center">
@@ -111,6 +202,20 @@ export default function ProfileSidebar({ masseur, onSendMessage, onBooking, rend
         >
           <Icon name="Calendar" size={20} className="mr-2" />
           Записаться
+        </Button>
+        <Button 
+          variant={isFavorite ? "default" : "outline"}
+          className="w-full" 
+          size="lg"
+          onClick={toggleFavorite}
+          disabled={loadingFavorite}
+        >
+          <Icon 
+            name="Heart" 
+            size={20} 
+            className={`mr-2 ${isFavorite ? 'fill-current' : ''}`} 
+          />
+          {isFavorite ? 'В избранном' : 'В избранное'}
         </Button>
       </CardContent>
     </Card>
