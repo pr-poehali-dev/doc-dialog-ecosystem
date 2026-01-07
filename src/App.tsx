@@ -47,6 +47,7 @@ import TrustBadges from "./pages/dashboard/TrustBadges";
 import ClientEducation from "./pages/dashboard/ClientEducation";
 import Community from "./pages/dashboard/Community";
 import Messages from "./pages/dashboard/Messages";
+import AdminMessages from "./pages/dashboard/AdminMessages";
 import PromoCodes from "./pages/dashboard/PromoCodes";
 import Verification from "./pages/dashboard/Verification";
 import MyReviews from "./pages/dashboard/MyReviews";
@@ -102,6 +103,7 @@ const App = () => (
           <Route path="/dashboard/education" element={<ClientEducation />} />
           <Route path="/dashboard/community" element={<Community />} />
           <Route path="/dashboard/messages" element={<Messages />} />
+          <Route path="/dashboard/admin-messages" element={<AdminMessages />} />
           <Route path="/dashboard/promo-codes" element={<PromoCodes />} />
           <Route path="/dashboard/verification" element={<Verification />} />
           <Route path="/dashboard/my-reviews" element={<MyReviews />} />

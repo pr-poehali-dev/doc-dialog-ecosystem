@@ -438,7 +438,13 @@ export default function Dashboard() {
                   <h3 className="text-xl font-semibold">Чат с клиентами</h3>
                 </div>
                 <p className="text-gray-600 mb-4">Сообщения и поддержка</p>
-                <Button className="w-full" variant="outline">Открыть чат</Button>
+                <Button 
+                  className="w-full" 
+                  variant="outline"
+                  onClick={() => navigate('/dashboard/admin-messages')}
+                >
+                  Открыть чат
+                </Button>
               </div>
 
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
