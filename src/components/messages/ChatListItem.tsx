@@ -5,7 +5,7 @@ import Icon from '@/components/ui/icon';
 interface Chat {
   other_user_id: number;
   name: string;
-  role: 'client' | 'masseur';
+  role: 'client' | 'masseur' | 'school' | 'salon';
   last_message: string;
   last_message_time: string;
   unread_count: number;
@@ -27,6 +27,10 @@ const getRoleBadge = (role: string) => {
       return <Badge variant="secondary" className="text-xs">Клиент</Badge>;
     case 'masseur':
       return <Badge variant="default" className="text-xs">Специалист</Badge>;
+    case 'school':
+      return <Badge variant="default" className="text-xs bg-purple-500">Школа</Badge>;
+    case 'salon':
+      return <Badge variant="default" className="text-xs bg-blue-500">Салон</Badge>;
     default:
       return null;
   }
@@ -38,6 +42,10 @@ const getRoleIcon = (role: string) => {
       return 'User';
     case 'masseur':
       return 'Heart';
+    case 'school':
+      return 'GraduationCap';
+    case 'salon':
+      return 'Building2';
     default:
       return 'User';
   }

@@ -27,7 +27,7 @@ interface Message {
 interface Chat {
   other_user_id: number;
   name: string;
-  role: 'client' | 'masseur';
+  role: 'client' | 'masseur' | 'school' | 'salon';
   last_message: string;
   last_message_time: string;
   unread_count: number;
