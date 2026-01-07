@@ -181,8 +181,8 @@ def handler(event: dict, context) -> dict:
             
             cur.execute(f"""
                 INSERT INTO {schema}.balance_transactions 
-                (masseur_id, amount, type, description, related_entity_type, related_entity_id, created_at)
-                VALUES ({masseur_id}, {price}, 'withdrawal', '{description_escaped}', 'promotion', {masseur_id}, NOW())
+                (school_id, masseur_id, amount, type, description, related_entity_type, related_entity_id, created_at)
+                VALUES (-1, {masseur_id}, {price}, 'withdrawal', '{description_escaped}', 'promotion', {masseur_id}, NOW())
             """)
             
             cur.close()
