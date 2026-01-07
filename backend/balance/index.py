@@ -212,8 +212,8 @@ def handler(event: dict, context) -> dict:
                 else:
                     cur.execute(f"""
                         INSERT INTO {schema}.balance_transactions 
-                        (masseur_id, amount, type, description, created_at)
-                        VALUES ({entity_id}, {amount}, 'deposit', '{description_escaped}', NOW())
+                        (school_id, masseur_id, amount, type, description, created_at)
+                        VALUES (NULL, {entity_id}, {amount}, 'deposit', '{description_escaped}', NOW())
                     """)
                     
                     cur.execute(f"""
