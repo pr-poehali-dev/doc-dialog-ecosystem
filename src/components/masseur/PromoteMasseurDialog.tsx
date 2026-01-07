@@ -51,7 +51,7 @@ export default function PromoteMasseurDialog({
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      const balanceRes = await fetch(`${BALANCE_API_URL}?action=balance`, {
+      const balanceRes = await fetch(`${BALANCE_API_URL}?action=get`, {
         headers: { 
           'Authorization': `Bearer ${token}`
         }
@@ -59,7 +59,7 @@ export default function PromoteMasseurDialog({
       
       if (balanceRes.ok) {
         const balanceData = await balanceRes.json();
-        setBalance(balanceData.balance || 0);
+        setBalance(balanceData.current_balance || 0);
       }
     } catch (error) {
       console.error('Error loading balance:', error);
