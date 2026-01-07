@@ -47,6 +47,8 @@ def handler(event: dict, context) -> dict:
                 if user_data.get('role') != 'admin':
                     return error_response('Доступ запрещён', 403)
                 return get_content_violations()
+            elif action == 'get-reviews':
+                return get_masseur_reviews(user_data['user_id'], user_data.get('role', 'client'))
         
         if method == 'POST':
             body = json.loads(event.get('body', '{}'))
@@ -55,6 +57,8 @@ def handler(event: dict, context) -> dict:
                 return send_message(user_data['user_id'], body)
             elif action == 'delete-chat':
                 return delete_chat(user_data['user_id'], body)
+            elif action == 'reply-review':
+                return reply_to_review(user_data['user_id'], user_data.get('role', 'client'), body)
         
         return error_response('Действие не поддерживается', 405)
     
@@ -396,6 +400,141 @@ def delete_chat(user_id: int, body: dict) -> dict:
         traceback.print_exc()
         conn.rollback()
         return error_response(f"Ошибка удаления переписки: {str(e)}", 500)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_masseur_reviews(user_id: int, role: str) -> dict:
+    '''Получение отзывов массажиста'''
+    conn, cursor = get_db_connection()
+    
+    try:
+        if role != 'masseur':
+            return error_response('Доступ запрещён', 403)
+        
+        # Получаем masseur_id по user_id
+        cursor.execute("""
+            SELECT id FROM t_p46047379_doc_dialog_ecosystem.masseur_profiles
+            WHERE user_id = %s
+        """, (user_id,))
+        
+        masseur = cursor.fetchone()
+        if not masseur:
+            return error_response('Профиль массажиста не найден', 404)
+        
+        masseur_id = masseur['id']
+        
+        # Получаем все одобренные отзывы
+        query = """
+            SELECT 
+                id,
+                author_name,
+                author_avatar,
+                rating,
+                comment,
+                massage_type,
+                created_at,
+                masseur_reply,
+                masseur_reply_at,
+                moderation_status
+            FROM t_p46047379_doc_dialog_ecosystem.reviews
+            WHERE masseur_id = %s AND moderation_status = 'approved'
+            ORDER BY created_at DESC
+        """
+        
+        cursor.execute(query, (masseur_id,))
+        reviews = cursor.fetchall()
+        
+        result = []
+        for review in reviews:
+            result.append({
+                'id': review['id'],
+                'author_name': review['author_name'],
+                'author_avatar': review['author_avatar'],
+                'rating': review['rating'],
+                'comment': review['comment'],
+                'massage_type': review['massage_type'],
+                'created_at': review['created_at'].isoformat(),
+                'masseur_reply': review['masseur_reply'],
+                'masseur_reply_at': review['masseur_reply_at'].isoformat() if review['masseur_reply_at'] else None,
+                'moderation_status': review['moderation_status']
+            })
+        
+        return success_response({'reviews': result})
+        
+    except Exception as e:
+        print(f"ERROR in get_masseur_reviews: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return error_response(f"Ошибка получения отзывов: {str(e)}", 500)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def reply_to_review(user_id: int, role: str, body: dict) -> dict:
+    '''Ответ массажиста на отзыв'''
+    conn, cursor = get_db_connection()
+    
+    try:
+        if role != 'masseur':
+            return error_response('Доступ запрещён', 403)
+        
+        review_id = body.get('reviewId')
+        reply = body.get('reply', '').strip()
+        
+        if not review_id:
+            return error_response('Не указан reviewId', 400)
+        
+        if not reply:
+            return error_response('Ответ не может быть пустым', 400)
+        
+        # Получаем masseur_id по user_id
+        cursor.execute("""
+            SELECT id FROM t_p46047379_doc_dialog_ecosystem.masseur_profiles
+            WHERE user_id = %s
+        """, (user_id,))
+        
+        masseur = cursor.fetchone()
+        if not masseur:
+            return error_response('Профиль массажиста не найден', 404)
+        
+        masseur_id = masseur['id']
+        
+        # Проверяем, что отзыв принадлежит этому массажисту
+        cursor.execute("""
+            SELECT id FROM t_p46047379_doc_dialog_ecosystem.reviews
+            WHERE id = %s AND masseur_id = %s
+        """, (review_id, masseur_id))
+        
+        review = cursor.fetchone()
+        if not review:
+            return error_response('Отзыв не найден', 404)
+        
+        # Обновляем отзыв с ответом
+        update_query = """
+            UPDATE t_p46047379_doc_dialog_ecosystem.reviews
+            SET masseur_reply = %s, masseur_reply_at = NOW()
+            WHERE id = %s
+            RETURNING masseur_reply_at
+        """
+        
+        cursor.execute(update_query, (reply, review_id))
+        result = cursor.fetchone()
+        conn.commit()
+        
+        return success_response({
+            'success': True,
+            'reply_at': result['masseur_reply_at'].isoformat()
+        })
+        
+    except Exception as e:
+        print(f"ERROR in reply_to_review: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        conn.rollback()
+        return error_response(f"Ошибка добавления ответа: {str(e)}", 500)
     finally:
         cursor.close()
         conn.close()

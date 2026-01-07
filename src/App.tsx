@@ -52,6 +52,7 @@ import PromoCodes from "./pages/dashboard/PromoCodes";
 import Verification from "./pages/dashboard/Verification";
 import MyReviews from "./pages/dashboard/MyReviews";
 import Bookings from "./pages/dashboard/Bookings";
+import MasseurReviews from "./pages/MasseurReviews";
 
 const queryClient = new QueryClient();
 
@@ -107,6 +108,7 @@ const App = () => (
           <Route path="/dashboard/promo-codes" element={<PromoCodes />} />
           <Route path="/dashboard/verification" element={<Verification />} />
           <Route path="/dashboard/my-reviews" element={<MyReviews />} />
+          <Route path="/dashboard/reviews" element={<MasseurReviews />} />
           <Route path="/dashboard/bookings" element={<Bookings />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
