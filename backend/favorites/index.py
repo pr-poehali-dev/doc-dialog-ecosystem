@@ -110,14 +110,10 @@ def get_favorites(user_id: int) -> dict:
                 mp.experience_years,
                 mp.avatar_url,
                 mp.city,
-                f.created_at as favorited_at,
-                COALESCE(AVG(r.rating), 0) as avg_rating,
-                COUNT(DISTINCT r.id) as reviews_count
+                f.created_at as favorited_at
             FROM t_p46047379_doc_dialog_ecosystem.favorites f
             JOIN t_p46047379_doc_dialog_ecosystem.masseur_profiles mp ON f.masseur_id = mp.id
-            LEFT JOIN t_p46047379_doc_dialog_ecosystem.reviews r ON mp.id = r.masseur_id AND r.moderation_status = 'approved'
             WHERE f.user_id = %s
-            GROUP BY mp.id, mp.full_name, mp.specialization, mp.experience_years, mp.avatar_url, mp.city, f.created_at
             ORDER BY f.created_at DESC
         """
         
@@ -133,8 +129,8 @@ def get_favorites(user_id: int) -> dict:
                 'experience_years': fav['experience_years'],
                 'avatar_url': fav['avatar_url'],
                 'city': fav['city'],
-                'avg_rating': float(fav['avg_rating']) if fav['avg_rating'] else 0,
-                'reviews_count': fav['reviews_count'],
+                'avg_rating': 0,
+                'reviews_count': 0,
                 'favorited_at': fav['favorited_at'].isoformat()
             })
         
