@@ -126,11 +126,11 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
                 COALESCE(
                     mp.full_name, 
                     clp.full_name,
-                    sp.school_name,
-                    slp.name,
+                    sc.school_name,
+                    sl.name,
                     u.email
                 ) as name,
-                COALESCE(mp.avatar_url, clp.avatar_url, sp.logo_url) as avatar,
+                COALESCE(mp.avatar_url, clp.avatar_url, sc.logo_url, sl.logo_url) as avatar,
                 u.role as role,
                 (
                     SELECT m.message_text 
@@ -159,8 +159,8 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
             JOIN t_p46047379_doc_dialog_ecosystem.users u ON cp.partner_id = u.id
             LEFT JOIN t_p46047379_doc_dialog_ecosystem.masseur_profiles mp ON cp.partner_id = mp.user_id
             LEFT JOIN t_p46047379_doc_dialog_ecosystem.client_profiles clp ON cp.partner_id = clp.user_id
-            LEFT JOIN t_p46047379_doc_dialog_ecosystem.school_profiles sp ON cp.partner_id = sp.user_id
-            LEFT JOIN t_p46047379_doc_dialog_ecosystem.salon_profiles slp ON cp.partner_id = slp.user_id
+            LEFT JOIN t_p46047379_doc_dialog_ecosystem.schools sc ON cp.partner_id = sc.user_id
+            LEFT JOIN t_p46047379_doc_dialog_ecosystem.salons sl ON cp.partner_id = sl.user_id
             ORDER BY last_message_time DESC NULLS LAST
         """
         
