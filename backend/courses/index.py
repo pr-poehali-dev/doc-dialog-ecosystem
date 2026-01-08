@@ -603,9 +603,9 @@ def handler(event: dict, context) -> dict:
             WHERE 1=1"""
         
         if school_id:
-            query += f" AND school_id = {school_id}"
+            query += f" AND m.school_id = {school_id}"
         if status_filter and status_filter != 'all':
-            query += f" AND status = '{status_filter}'"
+            query += f" AND m.status = '{status_filter}'"
         
         query += " ORDER BY event_date ASC"
         
@@ -1655,9 +1655,9 @@ def handler(event: dict, context) -> dict:
             WHERE 1=1"""
         
         if school_id:
-            query += f" AND school_id = {school_id}"
+            query += f" AND ot.school_id = {school_id}"
         if status_filter and status_filter != 'all':
-            query += f" AND status = '{status_filter}'"
+            query += f" AND ot.status = '{status_filter}'"
         
         query += " ORDER BY event_date ASC"
         
