@@ -466,27 +466,62 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
-    # DELETE /admin?action=delete_all_courses - Удалить все курсы (только для админов)
-    if method == 'DELETE' and action == 'delete_all_courses':
-        if not is_admin:
-            cur.close()
-            conn.close()
-            return {
-                'statusCode': 403,
-                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Only admins can delete all courses'}),
-                'isBase64Encoded': False
-            }
+    # GET /admin?action=all_courses - Получить все курсы со школами
+    if method == 'GET' and action == 'all_courses':
+        cur.execute(f"""
+            SELECT c.id, c.title, c.school_id, s.name as school_name, u.email as school_email,
+                   c.status, c.created_at, c.view_count, c.category
+            FROM {schema}.courses c
+            LEFT JOIN {schema}.schools s ON c.school_id = s.id
+            LEFT JOIN {schema}.users u ON s.user_id = u.id
+            ORDER BY c.created_at DESC
+        """)
         
-        # Удаляем все курсы
-        cur.execute(f"DELETE FROM {schema}.courses")
+        courses = []
+        for row in cur.fetchall():
+            courses.append({
+                'id': row[0],
+                'title': row[1],
+                'school_id': row[2],
+                'school_name': row[3],
+                'school_email': row[4],
+                'status': row[5],
+                'created_at': row[6].isoformat() if row[6] else None,
+                'view_count': row[7] or 0,
+                'category': row[8]
+            })
         
         cur.close()
         conn.close()
         return {
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'message': 'All courses deleted successfully'}),
+            'body': json.dumps(courses),
+            'isBase64Encoded': False
+        }
+    
+    # DELETE /admin?action=delete_course&id=X - Удалить курс
+    if method == 'DELETE' and action == 'delete_course':
+        course_id = query_params.get('id')
+        
+        if not course_id:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Course ID required'}),
+                'isBase64Encoded': False
+            }
+        
+        cur.execute(f"DELETE FROM {schema}.courses WHERE id = {course_id}")
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'message': 'Course deleted successfully'}),
             'isBase64Encoded': False
         }
     
