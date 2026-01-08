@@ -28,7 +28,7 @@ interface Message {
 interface Chat {
   other_user_id: number;
   name: string;
-  role: 'client' | 'masseur' | 'school' | 'salon';
+  role: 'client' | 'masseur' | 'school' | 'salon' | 'admin';
   last_message: string;
   last_message_time: string;
   unread_count: number;
@@ -52,6 +52,7 @@ export default function Messages() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<number>(0);
+  const [userRole, setUserRole] = useState<string>('');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -64,6 +65,7 @@ export default function Messages() {
     
     const user = JSON.parse(userStr);
     setCurrentUserId(user.id);
+    setUserRole(user.role || '');
     
     fetchChats();
   }, [navigate]);
@@ -426,6 +428,7 @@ export default function Messages() {
               messageText={messageText}
               sending={sending}
               currentUserId={currentUserId}
+              userRole={userRole}
               onMessageTextChange={setMessageText}
               onSendMessage={handleSendMessage}
               onBookingResponse={handleBookingResponse}

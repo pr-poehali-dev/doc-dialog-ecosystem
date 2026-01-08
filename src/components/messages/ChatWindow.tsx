@@ -27,7 +27,7 @@ interface Message {
 interface Chat {
   other_user_id: number;
   name: string;
-  role: 'client' | 'masseur';
+  role: 'client' | 'masseur' | 'admin' | 'school' | 'salon';
   last_message: string;
   last_message_time: string;
   unread_count: number;
@@ -42,6 +42,7 @@ interface ChatWindowProps {
   messageText: string;
   sending: boolean;
   currentUserId: number;
+  userRole?: string;
   onMessageTextChange: (text: string) => void;
   onSendMessage: () => void;
   onBookingResponse: (messageId: number, action: 'accept' | 'decline') => void;
@@ -54,6 +55,12 @@ const getRoleBadge = (role: string) => {
       return <Badge variant="secondary" className="text-xs">Клиент</Badge>;
     case 'masseur':
       return <Badge variant="default" className="text-xs">Специалист</Badge>;
+    case 'admin':
+      return <Badge variant="destructive" className="text-xs">Поддержка</Badge>;
+    case 'school':
+      return <Badge variant="outline" className="text-xs">Школа</Badge>;
+    case 'salon':
+      return <Badge variant="outline" className="text-xs">Салон</Badge>;
     default:
       return null;
   }
@@ -65,6 +72,12 @@ const getRoleIcon = (role: string) => {
       return 'User';
     case 'masseur':
       return 'Heart';
+    case 'admin':
+      return 'ShieldCheck';
+    case 'school':
+      return 'GraduationCap';
+    case 'salon':
+      return 'Store';
     default:
       return 'User';
   }
@@ -76,6 +89,7 @@ export default function ChatWindow({
   messageText,
   sending,
   currentUserId,
+  userRole,
   onMessageTextChange,
   onSendMessage,
   onBookingResponse,
@@ -86,6 +100,20 @@ export default function ChatWindow({
   const handleEmojiClick = (emojiData: EmojiClickData) => {
     onMessageTextChange(messageText + emojiData.emoji);
   };
+
+  // Подсчёт отправленных сообщений админу сегодня (для школ)
+  const isAdminChat = selectedChat?.role === 'admin' || selectedChat?.other_user_id === 2;
+  const messagesTodayCount = isAdminChat && userRole === 'school' 
+    ? messages.filter(m => {
+        const messageDate = new Date(m.created_at);
+        const today = new Date();
+        return m.sender_id === currentUserId && 
+               messageDate.toDateString() === today.toDateString();
+      }).length
+    : 0;
+  
+  const messagesLeft = Math.max(0, 5 - messagesTodayCount);
+  const isLimitReached = messagesTodayCount >= 5;
   if (!selectedChat) {
     return (
       <Card className="lg:col-span-2">
@@ -156,10 +184,65 @@ export default function ChatWindow({
         </ScrollArea>
 
         <div className="border-t p-4">
+          {isAdminChat && userRole === 'school' && (
+            <div className={`mb-3 p-3 rounded-lg border ${
+              isLimitReached 
+                ? 'bg-red-50 border-red-200' 
+                : messagesLeft <= 2 
+                ? 'bg-yellow-50 border-yellow-200' 
+                : 'bg-blue-50 border-blue-200'
+            }`}>
+              <div className="flex items-center gap-2">
+                <Icon 
+                  name={isLimitReached ? 'AlertCircle' : messagesLeft <= 2 ? 'AlertTriangle' : 'Info'} 
+                  size={18} 
+                  className={
+                    isLimitReached 
+                      ? 'text-red-600' 
+                      : messagesLeft <= 2 
+                      ? 'text-yellow-600' 
+                      : 'text-blue-600'
+                  }
+                />
+                <div className="flex-1">
+                  <p className={`text-sm font-medium ${
+                    isLimitReached 
+                      ? 'text-red-900' 
+                      : messagesLeft <= 2 
+                      ? 'text-yellow-900' 
+                      : 'text-blue-900'
+                  }`}>
+                    {isLimitReached 
+                      ? '❌ Лимит сообщений исчерпан (5/5)' 
+                      : `💬 Доступно сообщений: ${messagesLeft}/5`
+                    }
+                  </p>
+                  <p className={`text-xs mt-1 ${
+                    isLimitReached 
+                      ? 'text-red-700' 
+                      : messagesLeft <= 2 
+                      ? 'text-yellow-700' 
+                      : 'text-blue-700'
+                  }`}>
+                    {isLimitReached 
+                      ? 'По тарифу "Профессиональный" доступно 5 сообщений в сутки. Лимит обновится завтра. Для неограниченного общения обновите тариф до "Безлимит".'
+                      : 'Тариф "Профессиональный": до 5 сообщений в сутки администратору. Лимит обновляется каждый день.'
+                    }
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+          
           <div className="flex gap-2 items-end">
             <Popover open={showEmojiPicker} onOpenChange={setShowEmojiPicker}>
               <PopoverTrigger asChild>
-                <Button variant="outline" size="icon" className="self-end mb-1">
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  className="self-end mb-1"
+                  disabled={isLimitReached}
+                >
                   <Icon name="Smile" size={20} />
                 </Button>
               </PopoverTrigger>
@@ -173,24 +256,27 @@ export default function ChatWindow({
             </Popover>
             
             <Textarea
-              placeholder="Введите сообщение..."
+              placeholder={isLimitReached ? "Лимит сообщений исчерпан. Попробуйте завтра." : "Введите сообщение..."}
               value={messageText}
               onChange={(e) => onMessageTextChange(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
-                  onSendMessage();
-                  setShowEmojiPicker(false);
+                  if (!isLimitReached) {
+                    onSendMessage();
+                    setShowEmojiPicker(false);
+                  }
                 }
               }}
               className="min-h-[60px] resize-none flex-1"
+              disabled={isLimitReached}
             />
             <Button
               onClick={() => {
                 onSendMessage();
                 setShowEmojiPicker(false);
               }}
-              disabled={!messageText.trim() || sending}
+              disabled={!messageText.trim() || sending || isLimitReached}
               size="lg"
               className="self-end"
             >
