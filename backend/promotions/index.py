@@ -248,6 +248,38 @@ def handler(event: dict, context) -> dict:
             
             price = PROMOTION_PRICES[promotion_type][days]
             
+            # Проверяем лимит выводов в топ по тарифу
+            cur.execute("""
+                SELECT s.top_promotions_used_this_month, sp.top_promotions_limit
+                FROM schools s
+                LEFT JOIN school_subscriptions ss ON s.id = ss.school_id AND ss.is_active = true
+                LEFT JOIN subscription_plans sp ON ss.plan_id = sp.id
+                WHERE s.id = %s
+                LIMIT 1
+            """, (school_id,))
+            
+            limit_row = cur.fetchone()
+            
+            if limit_row:
+                promotions_used = limit_row[0] or 0
+                promotions_limit = limit_row[1]
+                
+                # Если есть лимит (не NULL) и он превышен
+                if promotions_limit is not None and promotions_used >= promotions_limit:
+                    cur.close()
+                    conn.close()
+                    return {
+                        'statusCode': 400,
+                        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                        'body': json.dumps({
+                            'error': 'Превышен лимит выводов в топ для вашего тарифа',
+                            'limit': promotions_limit,
+                            'used': promotions_used,
+                            'upgrade_needed': True
+                        }),
+                        'isBase64Encoded': False
+                    }
+            
             # Проверяем баланс
             cur.execute("SELECT balance FROM school_balance WHERE school_id = %s", (school_id,))
             balance_row = cur.fetchone()
@@ -283,6 +315,13 @@ def handler(event: dict, context) -> dict:
             """, (course_id, item_type, school_id, promotion_type, category, price, promoted_until))
             
             promotion_id = cur.fetchone()[0]
+            
+            # Увеличиваем счётчик выводов в топ
+            cur.execute("""
+                UPDATE schools 
+                SET top_promotions_used_this_month = top_promotions_used_this_month + 1
+                WHERE id = %s
+            """, (school_id,))
             
             # Записываем транзакцию
             cur.execute("""

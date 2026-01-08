@@ -12,6 +12,7 @@ interface SubscriptionPlan {
   messages_limit_per_day: number | null;
   promo_requests_allowed: boolean;
   description: string;
+  top_promotions_limit: number | null;
 }
 
 interface ActiveSubscription {
@@ -24,12 +25,13 @@ interface ActiveSubscription {
 interface SchoolUsage {
   courses_published_this_month: number;
   messages_sent_today: number;
+  top_promotions_used_this_month: number;
 }
 
 export default function SubscriptionTab() {
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [activeSubscription, setActiveSubscription] = useState<ActiveSubscription | null>(null);
-  const [usage, setUsage] = useState<SchoolUsage>({ courses_published_this_month: 0, messages_sent_today: 0 });
+  const [usage, setUsage] = useState<SchoolUsage>({ courses_published_this_month: 0, messages_sent_today: 0, top_promotions_used_this_month: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -51,7 +53,7 @@ export default function SubscriptionTab() {
       });
       const subData = await subRes.json();
       setActiveSubscription(subData.subscription || null);
-      setUsage(subData.usage || { courses_published_this_month: 0, messages_sent_today: 0 });
+      setUsage(subData.usage || { courses_published_this_month: 0, messages_sent_today: 0, top_promotions_used_this_month: 0 });
     } catch (error) {
       console.error('Failed to load subscription data:', error);
     } finally {
@@ -108,7 +110,7 @@ export default function SubscriptionTab() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="bg-white p-4 rounded-lg">
                 <div className="text-sm text-muted-foreground mb-1">Курсы в этом месяце</div>
                 <div className="text-2xl font-bold">
@@ -117,6 +119,19 @@ export default function SubscriptionTab() {
                 </div>
                 {currentPlan.courses_limit === null && (
                   <div className="text-xs text-green-600 mt-1">Безлимит</div>
+                )}
+              </div>
+              <div className="bg-white p-4 rounded-lg">
+                <div className="text-sm text-muted-foreground mb-1">Выводы в топ</div>
+                <div className="text-2xl font-bold">
+                  {usage.top_promotions_used_this_month}
+                  {currentPlan.top_promotions_limit && ` / ${currentPlan.top_promotions_limit}`}
+                </div>
+                {currentPlan.top_promotions_limit === null && (
+                  <div className="text-xs text-green-600 mt-1">Безлимит</div>
+                )}
+                {currentPlan.top_promotions_limit === null && currentPlan.top_promotions_limit !== 0 && (
+                  <div className="text-xs text-gray-400 mt-1">Недоступно</div>
                 )}
               </div>
               <div className="bg-white p-4 rounded-lg">
@@ -190,6 +205,13 @@ export default function SubscriptionTab() {
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
+                      <Icon name="TrendingUp" size={18} className={`mt-0.5 ${plan.top_promotions_limit ? 'text-orange-600' : 'text-gray-400'}`} />
+                      <div className="text-sm">
+                        <strong>Вывод в топ:</strong>{' '}
+                        {plan.top_promotions_limit === null ? 'Безлимит' : plan.top_promotions_limit > 0 ? `До ${plan.top_promotions_limit} раз/мес` : 'Недоступно'}
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
                       <Icon name="Tag" size={18} className={`mt-0.5 ${plan.promo_requests_allowed ? 'text-purple-600' : 'text-gray-400'}`} />
                       <div className="text-sm">
                         <strong>Запросы скидок:</strong>{' '}
@@ -223,9 +245,10 @@ export default function SubscriptionTab() {
         </CardHeader>
         <CardContent className="space-y-2 text-sm text-muted-foreground">
           <p>• <strong>Курсы:</strong> Лимит обновляется 1-го числа каждого месяца</p>
+          <p>• <strong>Вывод в топ:</strong> Лимит обновляется 1-го числа каждого месяца. Каждый вывод — это одна покупка продвижения курса в топ каталога</p>
           <p>• <strong>Сообщения:</strong> Лимит обновляется ежедневно в 00:00 по МСК</p>
           <p>• <strong>Запросы скидок:</strong> Доступны только на тарифе "Безлимит"</p>
-          <p>• <strong>Оплата:</strong> Тариф активируется сразу после оплаты и действует 30 дней</p>
+          <p>• <strong>Оплата:</strong> Тариф активируется сразу после оплаты и действует 30 дней. Деньги списываются с баланса</p>
           <p>• <strong>Понижение тарифа:</strong> Возможно в любой момент, новый тариф вступит в силу после окончания текущего периода</p>
         </CardContent>
       </Card>

@@ -45,7 +45,7 @@ def handler(event: dict, context) -> dict:
     if method == 'GET' and action == 'subscription_plans':
         cur.execute(f"""
             SELECT id, name, price, courses_limit, messages_limit_per_day, 
-                   promo_requests_allowed, description
+                   promo_requests_allowed, description, top_promotions_limit
             FROM {schema}.subscription_plans
             ORDER BY price ASC
         """)
@@ -59,7 +59,8 @@ def handler(event: dict, context) -> dict:
                 'courses_limit': row[3],
                 'messages_limit_per_day': row[4],
                 'promo_requests_allowed': row[5],
-                'description': row[6]
+                'description': row[6],
+                'top_promotions_limit': row[7]
             })
         
         cur.close()
@@ -84,7 +85,7 @@ def handler(event: dict, context) -> dict:
             }
         
         # Получаем school_id пользователя
-        cur.execute(f"SELECT id, courses_published_this_month, messages_sent_today FROM {schema}.schools WHERE user_id = {user_id}")
+        cur.execute(f"SELECT id, courses_published_this_month, messages_sent_today, top_promotions_used_this_month FROM {schema}.schools WHERE user_id = {user_id}")
         school_data = cur.fetchone()
         
         if not school_data:
@@ -100,12 +101,13 @@ def handler(event: dict, context) -> dict:
         school_id = school_data[0]
         courses_published_this_month = school_data[1] or 0
         messages_sent_today = school_data[2] or 0
+        top_promotions_used_this_month = school_data[3] or 0
         
         # Получаем активную подписку
         cur.execute(f"""
             SELECT ss.id, ss.started_at, ss.expires_at, ss.is_active,
                    sp.id, sp.name, sp.price, sp.courses_limit, 
-                   sp.messages_limit_per_day, sp.promo_requests_allowed, sp.description
+                   sp.messages_limit_per_day, sp.promo_requests_allowed, sp.description, sp.top_promotions_limit
             FROM {schema}.school_subscriptions ss
             JOIN {schema}.subscription_plans sp ON ss.plan_id = sp.id
             WHERE ss.school_id = {school_id} AND ss.is_active = true
@@ -128,7 +130,8 @@ def handler(event: dict, context) -> dict:
                     'courses_limit': sub_row[7],
                     'messages_limit_per_day': sub_row[8],
                     'promo_requests_allowed': sub_row[9],
-                    'description': sub_row[10]
+                    'description': sub_row[10],
+                    'top_promotions_limit': sub_row[11]
                 }
             }
         else:
@@ -146,7 +149,7 @@ def handler(event: dict, context) -> dict:
                 # Загружаем данные бесплатного плана
                 cur.execute(f"""
                     SELECT id, name, price, courses_limit, messages_limit_per_day, 
-                           promo_requests_allowed, description
+                           promo_requests_allowed, description, top_promotions_limit
                     FROM {schema}.subscription_plans WHERE id = {free_plan[0]}
                 """)
                 plan_data = cur.fetchone()
@@ -163,7 +166,8 @@ def handler(event: dict, context) -> dict:
                         'courses_limit': plan_data[3],
                         'messages_limit_per_day': plan_data[4],
                         'promo_requests_allowed': plan_data[5],
-                        'description': plan_data[6]
+                        'description': plan_data[6],
+                        'top_promotions_limit': plan_data[7]
                     }
                 }
         
@@ -176,7 +180,8 @@ def handler(event: dict, context) -> dict:
                 'subscription': subscription,
                 'usage': {
                     'courses_published_this_month': courses_published_this_month,
-                    'messages_sent_today': messages_sent_today
+                    'messages_sent_today': messages_sent_today,
+                    'top_promotions_used_this_month': top_promotions_used_this_month
                 }
             }),
             'isBase64Encoded': False
@@ -298,7 +303,7 @@ def handler(event: dict, context) -> dict:
         # Сбрасываем счётчики при активации нового тарифа
         cur.execute(f"""
             UPDATE {schema}.schools 
-            SET courses_published_this_month = 0, messages_sent_today = 0
+            SET courses_published_this_month = 0, messages_sent_today = 0, top_promotions_used_this_month = 0
             WHERE id = {school_id}
         """)
         
