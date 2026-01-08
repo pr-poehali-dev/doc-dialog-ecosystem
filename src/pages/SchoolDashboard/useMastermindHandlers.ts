@@ -123,17 +123,25 @@ export function useMastermindHandlers({
 
   const handleSubmitDraftMastermind = async (mastermindId: number) => {
     try {
-      const response = await fetch(`${COURSE_API_URL}?action=masterminds&id=${mastermindId}&submit_draft=true`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+      const response = await fetch(`${COURSE_API_URL}?type=masterminds&id=${mastermindId}&action=submit_draft`, {
+        method: 'POST'
       });
       
+      const data = await response.json();
+      
       if (response.ok) {
-        toast({ title: 'Успех', description: 'Мастермайнд отправлен на модерацию' });
+        if (data.status === 'pending') {
+          toast({ title: 'Мастермайнд отправлен на модерацию', description: 'Ваш мастермайнд будет проверен модераторами' });
+        } else if (data.status === 'draft') {
+          toast({ 
+            title: 'Превышен лимит публикаций', 
+            description: 'Обновите тариф для увеличения лимита публикаций',
+            variant: 'destructive'
+          });
+        }
         loadData();
       } else {
-        const errorData = await response.json();
-        toast({ title: 'Ошибка', description: errorData.error || 'Не удалось отправить на модерацию', variant: 'destructive' });
+        toast({ title: 'Ошибка', description: data.error || 'Не удалось отправить на модерацию', variant: 'destructive' });
       }
     } catch (error) {
       toast({ title: 'Ошибка', description: 'Не удалось отправить на модерацию', variant: 'destructive' });

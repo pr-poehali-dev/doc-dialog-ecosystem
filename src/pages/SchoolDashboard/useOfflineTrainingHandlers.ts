@@ -168,17 +168,25 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
 
   const handleSubmitDraftTraining = async (trainingId: number) => {
     try {
-      const response = await fetch(`${TRAINING_API_URL}?action=offline_trainings&id=${trainingId}&submit_draft=true`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+      const response = await fetch(`${TRAINING_API_URL}?type=offline_trainings&id=${trainingId}&action=submit_draft`, {
+        method: 'POST'
       });
       
+      const data = await response.json();
+      
       if (response.ok) {
-        toast({ title: 'Успех', description: 'Обучение отправлено на модерацию' });
+        if (data.status === 'pending') {
+          toast({ title: 'Обучение отправлено на модерацию', description: 'Ваше обучение будет проверено модераторами' });
+        } else if (data.status === 'draft') {
+          toast({ 
+            title: 'Превышен лимит публикаций', 
+            description: 'Обновите тариф для увеличения лимита публикаций',
+            variant: 'destructive'
+          });
+        }
         loadData();
       } else {
-        const errorData = await response.json();
-        toast({ title: 'Ошибка', description: errorData.error || 'Не удалось отправить на модерацию', variant: 'destructive' });
+        toast({ title: 'Ошибка', description: data.error || 'Не удалось отправить на модерацию', variant: 'destructive' });
       }
     } catch (error) {
       toast({ title: 'Ошибка', description: 'Не удалось отправить на модерацию', variant: 'destructive' });
