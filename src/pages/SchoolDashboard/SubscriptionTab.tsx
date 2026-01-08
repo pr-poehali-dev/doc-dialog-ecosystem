@@ -226,7 +226,7 @@ export default function SubscriptionTab() {
                     onClick={() => handleSelectPlan(plan.id)}
                     variant={isUpgrade ? 'default' : 'outline'}
                   >
-                    {isActive ? 'Активен' : isUpgrade ? 'Повысить тариф' : 'Выбрать тариф'}
+                    {isActive ? 'Активен' : 'Выбрать тариф'}
                   </Button>
                 </CardContent>
               </Card>

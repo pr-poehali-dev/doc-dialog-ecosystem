@@ -268,7 +268,8 @@ def handler(event: dict, context) -> dict:
             WHERE school_id = {school_id} AND is_active = true
         """)
         
-        # Создаём новую подписку
+        # Создаём новую подписку с новым 30-дневным периодом
+        started_at = datetime.now().isoformat()
         expires_at = None
         if plan_price > 0:
             expires_at = (datetime.now() + timedelta(days=30)).isoformat()
@@ -287,20 +288,20 @@ def handler(event: dict, context) -> dict:
         
         if expires_at:
             cur.execute(f"""
-                INSERT INTO {schema}.school_subscriptions (school_id, plan_id, expires_at, is_active)
-                VALUES ({school_id}, {plan_id}, '{expires_at}', true)
+                INSERT INTO {schema}.school_subscriptions (school_id, plan_id, started_at, expires_at, is_active)
+                VALUES ({school_id}, {plan_id}, '{started_at}', '{expires_at}', true)
                 RETURNING id
             """)
         else:
             cur.execute(f"""
-                INSERT INTO {schema}.school_subscriptions (school_id, plan_id, is_active)
-                VALUES ({school_id}, {plan_id}, true)
+                INSERT INTO {schema}.school_subscriptions (school_id, plan_id, started_at, is_active)
+                VALUES ({school_id}, {plan_id}, '{started_at}', true)
                 RETURNING id
             """)
         
         new_sub_id = cur.fetchone()[0]
         
-        # Сбрасываем счётчики при активации нового тарифа
+        # Сбрасываем счётчики при активации нового тарифа (начинается новый период)
         cur.execute(f"""
             UPDATE {schema}.schools 
             SET courses_published_this_month = 0, messages_sent_today = 0, top_promotions_used_this_month = 0
