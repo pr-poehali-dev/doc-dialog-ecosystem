@@ -126,16 +126,18 @@
   }
 
   @keyframes scroll-infinite {
-    0% {
+    from {
       transform: translateX(0);
     }
-    100% {
-      transform: translateX(-50%);
+    to {
+      transform: translateX(calc(-440px * 6 - 1.5rem * 6));
     }
   }
 
   .animate-scroll-infinite {
-    animation: scroll-infinite 60s linear infinite;
+    animation: scroll-infinite 40s linear infinite;
+    display: flex;
+    width: max-content;
   }
 
   .animate-scroll-infinite:hover {
