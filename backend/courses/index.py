@@ -871,49 +871,58 @@ def handler(event: dict, context) -> dict:
         
         new_course = cur.fetchone()
         
-        # Списываем 500 монет за публикацию курса
-        COIN_COST = 500
+        # Списываем 500₽ с баланса школы за публикацию курса
+        PUBLISH_COST = 500
         
-        # Проверяем баланс
-        cur.execute(f"SELECT coins FROM {schema}.users WHERE id = {user_id}")
-        user_coins = cur.fetchone()
+        # Получаем school_id
+        cur.execute(f"SELECT id FROM {schema}.schools WHERE user_id = {user_id}")
+        school_result = cur.fetchone()
         
-        if not user_coins or user_coins[0] < COIN_COST:
-            cur.close()
-            conn.close()
-            return {
-                'statusCode': 400,
-                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({
-                    'error': 'Недостаточно монет для публикации курса',
-                    'required': COIN_COST,
-                    'available': user_coins[0] if user_coins else 0
-                }),
-                'isBase64Encoded': False
-            }
-        
-        # Списываем монеты
-        cur.execute(f"""
-            UPDATE {schema}.users 
-            SET coins = coins - {COIN_COST}
-            WHERE id = {user_id}
-        """)
-        
-        # Записываем транзакцию
-        course_title = new_course[1].replace("'", "''")
-        cur.execute(f"""
-            INSERT INTO {schema}.coin_transactions 
-            (user_id, amount, type, action, description)
-            VALUES ({user_id}, {COIN_COST}, 'withdrawal', 'publish_course', 'Публикация курса: {course_title}')
-        """)
+        if school_result:
+            school_id_for_balance = school_result[0]
+            
+            # Проверяем баланс школы
+            cur.execute(f"SELECT balance FROM {schema}.schools WHERE id = {school_id_for_balance}")
+            balance_result = cur.fetchone()
+            current_balance = float(balance_result[0]) if balance_result and balance_result[0] else 0
+            
+            if current_balance < PUBLISH_COST:
+                # Удаляем только что созданный курс
+                cur.execute(f"DELETE FROM {schema}.courses WHERE id = {new_course[0]}")
+                cur.close()
+                conn.close()
+                return {
+                    'statusCode': 400,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({
+                        'error': 'Недостаточно средств для публикации курса',
+                        'required': PUBLISH_COST,
+                        'available': current_balance
+                    }),
+                    'isBase64Encoded': False
+                }
+            
+            # Списываем с баланса
+            cur.execute(f"""
+                UPDATE {schema}.schools 
+                SET balance = balance - {PUBLISH_COST}
+                WHERE id = {school_id_for_balance}
+            """)
+            
+            # Записываем транзакцию
+            course_title = new_course[1].replace("'", "''")
+            cur.execute(f"""
+                INSERT INTO {schema}.balance_transactions 
+                (school_id, masseur_id, amount, type, description, related_entity_type, related_entity_id, created_at)
+                VALUES ({school_id_for_balance}, -1, {PUBLISH_COST}, 'withdrawal', 'Публикация курса: {course_title}', 'course', {new_course[0]}, NOW())
+            """)
         
         result = {
             'id': new_course[0],
             'title': new_course[1],
             'slug': new_course[2],
             'status': new_course[3],
-            'created_at': new_course[4].isoformat() if new_course[4] else None,
-            'coins_withdrawn': COIN_COST
+            'created_at': new_course[4].isoformat() if new_course[4] else None
         }
         
         cur.close()
@@ -1050,49 +1059,58 @@ def handler(event: dict, context) -> dict:
         
         new_mastermind = cur.fetchone()
         
-        # Списываем 500 монет за публикацию мастермайнда
-        COIN_COST = 500
+        # Списываем 500₽ с баланса школы за публикацию мастермайнда
+        PUBLISH_COST = 500
         
-        # Проверяем баланс
-        cur.execute(f"SELECT coins FROM {schema}.users WHERE id = {user_id_mastermind}")
-        user_coins = cur.fetchone()
+        # Получаем school_id
+        cur.execute(f"SELECT id FROM {schema}.schools WHERE user_id = {user_id_mastermind}")
+        school_result = cur.fetchone()
         
-        if not user_coins or user_coins[0] < COIN_COST:
-            cur.close()
-            conn.close()
-            return {
-                'statusCode': 400,
-                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({
-                    'error': 'Недостаточно монет для публикации мастермайнда',
-                    'required': COIN_COST,
-                    'available': user_coins[0] if user_coins else 0
-                }),
-                'isBase64Encoded': False
-            }
-        
-        # Списываем монеты
-        cur.execute(f"""
-            UPDATE {schema}.users 
-            SET coins = coins - {COIN_COST}
-            WHERE id = {user_id_mastermind}
-        """)
-        
-        # Записываем транзакцию
-        mastermind_title = new_mastermind[1].replace("'", "''")
-        cur.execute(f"""
-            INSERT INTO {schema}.coin_transactions 
-            (user_id, amount, type, action, description)
-            VALUES ({user_id_mastermind}, {COIN_COST}, 'withdrawal', 'publish_course', 'Публикация мастермайнда: {mastermind_title}')
-        """)
+        if school_result:
+            school_id_for_balance = school_result[0]
+            
+            # Проверяем баланс школы
+            cur.execute(f"SELECT balance FROM {schema}.schools WHERE id = {school_id_for_balance}")
+            balance_result = cur.fetchone()
+            current_balance = float(balance_result[0]) if balance_result and balance_result[0] else 0
+            
+            if current_balance < PUBLISH_COST:
+                # Удаляем только что созданный мастермайнд
+                cur.execute(f"DELETE FROM {schema}.masterminds WHERE id = {new_mastermind[0]}")
+                cur.close()
+                conn.close()
+                return {
+                    'statusCode': 400,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({
+                        'error': 'Недостаточно средств для публикации мастермайнда',
+                        'required': PUBLISH_COST,
+                        'available': current_balance
+                    }),
+                    'isBase64Encoded': False
+                }
+            
+            # Списываем с баланса
+            cur.execute(f"""
+                UPDATE {schema}.schools 
+                SET balance = balance - {PUBLISH_COST}
+                WHERE id = {school_id_for_balance}
+            """)
+            
+            # Записываем транзакцию
+            mastermind_title = new_mastermind[1].replace("'", "''")
+            cur.execute(f"""
+                INSERT INTO {schema}.balance_transactions 
+                (school_id, masseur_id, amount, type, description, related_entity_type, related_entity_id, created_at)
+                VALUES ({school_id_for_balance}, -1, {PUBLISH_COST}, 'withdrawal', 'Публикация мастермайнда: {mastermind_title}', 'mastermind', {new_mastermind[0]}, NOW())
+            """)
         
         result = {
             'id': new_mastermind[0],
             'title': new_mastermind[1],
             'slug': new_mastermind[2],
             'status': new_mastermind[3],
-            'created_at': new_mastermind[4].isoformat() if new_mastermind[4] else None,
-            'coins_withdrawn': COIN_COST
+            'created_at': new_mastermind[4].isoformat() if new_mastermind[4] else None
         }
         
         cur.close()
