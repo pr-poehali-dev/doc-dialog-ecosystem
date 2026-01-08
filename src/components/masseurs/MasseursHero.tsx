@@ -26,7 +26,7 @@ export default function MasseursHero() {
           
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 sm:mb-7 leading-tight bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent animate-fade-in [animation-delay:100ms] px-2">
             Развивайтесь как специалист.<br className="hidden sm:block" />
-            Зарабатывайте достойно.
+            Зарабатывай достойно.
           </h1>
           
           <p className="text-xl sm:text-2xl lg:text-3xl text-muted-foreground mb-10 leading-relaxed animate-fade-in [animation-delay:200ms] px-4 max-w-4xl mx-auto">
