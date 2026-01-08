@@ -270,17 +270,35 @@ export default function MastermindLandingBuilder() {
       });
 
       if (!response.ok) {
-        throw new Error(editId ? 'Не удалось обновить мастермайнд' : 'Не удалось создать мастермайнд');
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Server error:', errorData);
+        throw new Error(errorData.error || (editId ? 'Не удалось обновить мастермайнд' : 'Не удалось создать мастермайнд'));
       }
 
-      toast({ 
-        title: 'Успешно!', 
-        description: editId ? 'Мастермайнд обновлен' : 'Мастермайнд отправлен на модерацию' 
-      });
+      const result = await response.json();
+      
+      // Проверяем, был ли создан черновик из-за лимита
+      if (result.status === 'draft' && result.limit_info) {
+        toast({ 
+          title: 'Сохранено как черновик', 
+          description: `Превышен лимит публикаций (${result.limit_info.used}/${result.limit_info.limit}). Мастермайнд сохранён и будет отправлен на модерацию после обновления тарифа.`,
+          variant: 'default'
+        });
+      } else {
+        toast({ 
+          title: 'Успешно!', 
+          description: editId ? 'Мастермайнд обновлен' : 'Мастермайнд отправлен на модерацию' 
+        });
+      }
+      
       navigate('/school/dashboard');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Save error:', error);
-      toast({ title: 'Ошибка', description: 'Не удалось сохранить мастермайнд', variant: 'destructive' });
+      toast({ 
+        title: 'Ошибка', 
+        description: error.message || 'Не удалось сохранить мастермайнд', 
+        variant: 'destructive' 
+      });
     } finally {
       setSaving(false);
     }
