@@ -58,7 +58,7 @@ def handler(event: dict, context) -> dict:
         table_name = 'courses'
         if entity_type == 'masterminds':
             table_name = 'masterminds'
-        elif entity_type == 'offline_training' or entity_type == 'offline-training':
+        elif entity_type in ('offline_training', 'offline-training', 'offline_trainings'):
             table_name = 'offline_training'
         
         # Получаем school_id курса
