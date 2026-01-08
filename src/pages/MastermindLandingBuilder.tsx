@@ -232,7 +232,10 @@ export default function MastermindLandingBuilder() {
       
       const response = await fetch(url, {
         method: editId ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({
           school_id: schoolId,
           title: data.title,
