@@ -201,41 +201,45 @@ export default function SchoolsCasesAndFAQ() {
           <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {[
               {
-                name: "Старт",
+                name: "Базовый",
                 price: "Бесплатно",
                 features: [
-                  { text: "1 курс", included: true },
+                  { text: "До 3 курсов в месяц", included: true },
                   { text: "Страница школы", included: true },
                   { text: "Базовая аналитика", included: true },
-                  { text: "Автовебинары", included: false },
-                  { text: "Промокоды", included: false },
+                  { text: "Сообщения", included: false },
+                  { text: "Вывод в топ", included: false },
+                  { text: "Запросы скидок", included: false },
                 ],
+                description: "Для старта и тестирования платформы",
                 cta: "Начать",
                 popular: false,
               },
               {
-                name: "Профи",
-                price: "2 990₽/мес",
+                name: "Стандарт",
+                price: "1 990₽/мес",
                 features: [
-                  { text: "До 10 курсов", included: true },
+                  { text: "До 10 курсов в месяц", included: true },
+                  { text: "До 50 сообщений в день", included: true },
+                  { text: "До 3 выводов в топ (от 100₽)", included: true },
                   { text: "Расширенная аналитика", included: true },
-                  { text: "Автовебинары", included: true },
-                  { text: "Промокоды", included: true },
-                  { text: "Приоритетная поддержка", included: true },
+                  { text: "Запросы скидок", included: false },
                 ],
+                description: "Для активных школ с регулярными запусками",
                 cta: "Подключить",
                 popular: true,
               },
               {
                 name: "Безлимит",
-                price: "9 990₽/мес",
+                price: "4 990₽/мес",
                 features: [
                   { text: "Безлимит курсов", included: true },
-                  { text: "Полная аналитика", included: true },
-                  { text: "Все инструменты", included: true },
-                  { text: "Персональный менеджер", included: true },
-                  { text: "Кастомизация школы", included: true },
+                  { text: "Безлимит сообщений", included: true },
+                  { text: "Безлимит выводов в топ (от 100₽)", included: true },
+                  { text: "Запросы скидок (увеличивает конверсию на 60%)", included: true },
+                  { text: "Приоритетная поддержка", included: true },
                 ],
+                description: "Для школ, которые растут и масштабируются",
                 cta: "Подключить",
                 popular: false,
               },
@@ -254,7 +258,8 @@ export default function SchoolsCasesAndFAQ() {
                 )}
                 <CardContent className="p-6 sm:p-8">
                   <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                  <p className="text-3xl sm:text-4xl font-bold text-primary mb-6">{plan.price}</p>
+                  <p className="text-3xl sm:text-4xl font-bold text-primary mb-2">{plan.price}</p>
+                  <p className="text-sm text-muted-foreground mb-6 min-h-[40px]">{plan.description}</p>
                   <ul className="space-y-3 mb-8">
                     {plan.features.map((feature, idx) => (
                       <li key={idx} className="flex items-start gap-3">
@@ -298,8 +303,16 @@ export default function SchoolsCasesAndFAQ() {
                   a: "Нет. Ученик оплачивает курс у вас на сайте. Мы не участвуем в денежных потоках, не забираем комиссию и не храним чужие деньги."
                 },
                 {
-                  q: "Как школа попадает к ученикам?",
-                  a: "Ваши курсы отображаются в каталоге, а также рекомендуются в зависимости от интересов пользователя. Профиль школы доступен всем."
+                  q: "Как работают тарифы?",
+                  a: "Тариф действует 30 дней с момента активации. Лимиты на курсы и выводы в топ обновляются автоматически каждые 30 дней. Лимит на сообщения обновляется ежедневно в 00:00 по МСК. Деньги списываются с баланса сразу при активации."
+                },
+                {
+                  q: "Что такое вывод в топ?",
+                  a: "Это продвижение курса в топ каталога. Каждый вывод стоит от 100₽ и оплачивается отдельно. На тарифе Стандарт доступно 3 вывода в месяц, на Безлимите — без ограничений."
+                },
+                {
+                  q: "Что дают запросы скидок?",
+                  a: "Это функция доступна только на тарифе Безлимит. Массажисты могут запрашивать индивидуальную скидку на ваши курсы — это увеличивает конверсию на 60%."
                 },
                 {
                   q: "Нужно ли переносить курс на вашу платформу?",
@@ -307,7 +320,7 @@ export default function SchoolsCasesAndFAQ() {
                 },
                 {
                   q: "Что нужно для старта?",
-                  a: "Регистрация, заполнение профиля школы, добавление курса. Всё занимает 10-15 минут."
+                  a: "Регистрация, заполнение профиля школы, добавление курса. Всё занимает 10-15 минут. Начать можно бесплатно на тарифе Базовый."
                 },
                 {
                   q: "Можно ли разместить мастермайнд или оффлайн?",
