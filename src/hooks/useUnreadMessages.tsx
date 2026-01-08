@@ -1,13 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const API_URL = 'https://functions.poehali.dev/04d0b538-1cf5-4941-9c06-8d1bef5854ec';
 
 export function useUnreadMessages() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const fetchUnreadCount = async () => {
+      if (document.hidden) return;
+      
       try {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -37,10 +40,34 @@ export function useUnreadMessages() {
       }
     };
 
-    fetchUnreadCount();
-    const interval = setInterval(fetchUnreadCount, 30000);
+    const startPolling = () => {
+      if (intervalRef.current) return;
+      fetchUnreadCount();
+      intervalRef.current = setInterval(fetchUnreadCount, 120000);
+    };
 
-    return () => clearInterval(interval);
+    const stopPolling = () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        stopPolling();
+      } else {
+        startPolling();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    startPolling();
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      stopPolling();
+    };
   }, []);
 
   return { unreadCount, loading };

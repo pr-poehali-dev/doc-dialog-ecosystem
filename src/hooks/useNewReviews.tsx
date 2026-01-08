@@ -1,13 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const API_URL = 'https://functions.poehali.dev/04d0b538-1cf5-4941-9c06-8d1bef5854ec';
 
 export function useNewReviews() {
   const [newReviewsCount, setNewReviewsCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const fetchNewReviews = async () => {
+      if (document.hidden) return;
+      
       try {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -46,10 +49,34 @@ export function useNewReviews() {
       }
     };
 
-    fetchNewReviews();
-    const interval = setInterval(fetchNewReviews, 60000);
+    const startPolling = () => {
+      if (intervalRef.current) return;
+      fetchNewReviews();
+      intervalRef.current = setInterval(fetchNewReviews, 120000);
+    };
 
-    return () => clearInterval(interval);
+    const stopPolling = () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        stopPolling();
+      } else {
+        startPolling();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    startPolling();
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      stopPolling();
+    };
   }, []);
 
   const markReviewsAsViewed = () => {
