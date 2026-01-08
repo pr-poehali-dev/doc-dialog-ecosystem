@@ -21,6 +21,7 @@ export interface Course {
   has_promotion?: boolean;
   promoted_until?: string | null;
   promotion_type?: string | null;
+  promo_requests_allowed?: boolean;
 }
 
 export interface Mastermind {
@@ -47,6 +48,7 @@ export interface Mastermind {
   promoted_until?: string | null;
   promotion_type?: string | null;
   category?: 'technique' | 'business' | 'soft_skills' | 'health' | 'digital';
+  promo_requests_allowed?: boolean;
 }
 
 export interface OfflineTraining {
@@ -73,6 +75,7 @@ export interface OfflineTraining {
   promoted_until?: string | null;
   promotion_type?: string | null;
   category?: 'technique' | 'business' | 'soft_skills' | 'health' | 'digital';
+  promo_requests_allowed?: boolean;
 }
 
 export type CatalogItem = (Course & { itemType: 'course' }) | (Mastermind & { itemType: 'mastermind'; category: string; course_type: string }) | (OfflineTraining & { itemType: 'offline_training'; category: string; course_type: string });

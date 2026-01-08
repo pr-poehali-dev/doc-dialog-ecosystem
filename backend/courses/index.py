@@ -445,8 +445,12 @@ def handler(event: dict, context) -> dict:
                       AND cp.item_type = 'course' 
                       AND cp.promoted_until > NOW() 
                     ORDER BY cp.promoted_until DESC 
-                    LIMIT 1) as promotion_type
+                    LIMIT 1) as promotion_type,
+                   COALESCE(sp.promo_requests_allowed, false) as promo_requests_allowed
             FROM {schema}.courses c
+            LEFT JOIN {schema}.schools s ON c.school_id = s.id
+            LEFT JOIN {schema}.school_subscriptions ss ON s.id = ss.school_id AND ss.is_active = true
+            LEFT JOIN {schema}.subscription_plans sp ON ss.plan_id = sp.id
         """
         
         conditions = ["1=1"]
@@ -487,7 +491,8 @@ def handler(event: dict, context) -> dict:
             'slug': c[17],
             'is_promoted': c[18] is not None,
             'promoted_until': c[18].isoformat() if c[18] else None,
-            'promotion_type': c[19]
+            'promotion_type': c[19],
+            'promo_requests_allowed': c[20]
         } for c in courses]
         
         cur.close()
@@ -586,7 +591,16 @@ def handler(event: dict, context) -> dict:
         school_id = query_params.get('school_id')
         status_filter = query_params.get('status', 'approved')
         
-        query = f"SELECT id, school_id, title, description, event_date, location, max_participants, current_participants, price, currency, image_url, external_url, status, original_price, discount_price, view_count, created_at, slug, moderation_comment, cover_url FROM {schema}.masterminds WHERE 1=1"
+        query = f"""SELECT m.id, m.school_id, m.title, m.description, m.event_date, m.location, 
+                   m.max_participants, m.current_participants, m.price, m.currency, m.image_url, 
+                   m.external_url, m.status, m.original_price, m.discount_price, m.view_count, 
+                   m.created_at, m.slug, m.moderation_comment, m.cover_url,
+                   COALESCE(sp.promo_requests_allowed, false) as promo_requests_allowed
+            FROM {schema}.masterminds m
+            LEFT JOIN {schema}.schools s ON m.school_id = s.id
+            LEFT JOIN {schema}.school_subscriptions ss ON s.id = ss.school_id AND ss.is_active = true
+            LEFT JOIN {schema}.subscription_plans sp ON ss.plan_id = sp.id
+            WHERE 1=1"""
         
         if school_id:
             query += f" AND school_id = {school_id}"
@@ -618,7 +632,8 @@ def handler(event: dict, context) -> dict:
             'created_at': m[16].isoformat() if m[16] else None,
             'slug': m[17],
             'moderation_comment': m[18],
-            'cover_url': m[19]
+            'cover_url': m[19],
+            'promo_requests_allowed': m[20]
         } for m in masterminds]
         
         cur.close()
@@ -1628,7 +1643,16 @@ def handler(event: dict, context) -> dict:
         school_id = query_params.get('school_id')
         status_filter = query_params.get('status', 'approved')
         
-        query = f"SELECT id, school_id, school_name, title, description, event_date, location, max_participants, current_participants, price, currency, image_url, external_url, status, original_price, discount_price, view_count, created_at, slug, moderation_comment, cover_url FROM {schema}.offline_training WHERE 1=1"
+        query = f"""SELECT ot.id, ot.school_id, ot.school_name, ot.title, ot.description, ot.event_date, 
+                   ot.location, ot.max_participants, ot.current_participants, ot.price, ot.currency, 
+                   ot.image_url, ot.external_url, ot.status, ot.original_price, ot.discount_price, 
+                   ot.view_count, ot.created_at, ot.slug, ot.moderation_comment, ot.cover_url,
+                   COALESCE(sp.promo_requests_allowed, false) as promo_requests_allowed
+            FROM {schema}.offline_training ot
+            LEFT JOIN {schema}.schools s ON ot.school_id = s.id
+            LEFT JOIN {schema}.school_subscriptions ss ON s.id = ss.school_id AND ss.is_active = true
+            LEFT JOIN {schema}.subscription_plans sp ON ss.plan_id = sp.id
+            WHERE 1=1"""
         
         if school_id:
             query += f" AND school_id = {school_id}"
@@ -1652,7 +1676,8 @@ def handler(event: dict, context) -> dict:
             'created_at': t[17].isoformat() if t[17] else None,
             'slug': t[18],
             'moderation_comment': t[19],
-            'cover_url': t[20]
+            'cover_url': t[20],
+            'promo_requests_allowed': t[21]
         } for t in trainings]
         
         cur.close()
