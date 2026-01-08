@@ -178,6 +178,44 @@ def handler(event: dict, context) -> dict:
         user_id = user[0]
         body = json.loads(event.get('body', '{}'))
         
+        # Проверяем лимиты тарифа ПЕРЕД созданием обучения
+        cur.execute(f"SELECT id, courses_published_this_month FROM {schema}.schools WHERE user_id = {user_id}")
+        school_check = cur.fetchone()
+        
+        if school_check:
+            school_id_check = school_check[0]
+            courses_published = school_check[1] or 0
+            
+            # Получаем активный тариф школы
+            cur.execute(f"""
+                SELECT sp.courses_limit
+                FROM {schema}.school_subscriptions ss
+                JOIN {schema}.subscription_plans sp ON ss.plan_id = sp.id
+                WHERE ss.school_id = {school_id_check} AND ss.is_active = true
+                LIMIT 1
+            """)
+            
+            plan_data = cur.fetchone()
+            
+            if plan_data:
+                courses_limit = plan_data[0]
+                
+                # Если есть лимит (не NULL) и он превышен
+                if courses_limit is not None and courses_published >= courses_limit:
+                    cur.close()
+                    conn.close()
+                    return {
+                        'statusCode': 400,
+                        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                        'body': json.dumps({
+                            'error': 'Превышен лимит публикаций для вашего тарифа',
+                            'limit': courses_limit,
+                            'used': courses_published,
+                            'upgrade_needed': True
+                        }),
+                        'isBase64Encoded': False
+                    }
+        
         cur.execute(f"""
             INSERT INTO {schema}.offline_training (
                 user_id, school_name, title, description, event_date, location,
@@ -204,6 +242,14 @@ def handler(event: dict, context) -> dict:
         ))
         
         training_id = cur.fetchone()[0]
+        
+        # Увеличиваем счётчик публикаций после успешного создания
+        if school_check:
+            cur.execute(f"""
+                UPDATE {schema}.schools 
+                SET courses_published_this_month = courses_published_this_month + 1
+                WHERE id = {school_id_check}
+            """)
         
         cur.close()
         conn.close()
