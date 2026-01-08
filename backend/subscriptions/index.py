@@ -287,11 +287,11 @@ def handler(event: dict, context) -> dict:
         expires_at = None
         if plan_price > 0:
             expires_at = (datetime.now() + timedelta(days=30)).isoformat()
-            # Списываем с баланса
+            # Списываем с баланса из таблицы school_balance
             cur.execute(f"""
-                UPDATE {schema}.schools 
+                UPDATE {schema}.school_balance 
                 SET balance = balance - {plan_price}
-                WHERE id = {school_id}
+                WHERE school_id = {school_id}
             """)
             # Записываем транзакцию
             cur.execute(f"""
