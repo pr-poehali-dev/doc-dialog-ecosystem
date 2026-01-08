@@ -236,7 +236,7 @@ export default function SubscriptionTab() {
                       <Icon name="TrendingUp" size={18} className={`mt-0.5 ${plan.top_promotions_limit ? 'text-orange-600' : 'text-gray-400'}`} />
                       <div className="text-sm">
                         <strong>Вывод в топ:</strong>{' '}
-                        {plan.top_promotions_limit === null ? 'Безлимит' : plan.top_promotions_limit > 0 ? `До ${plan.top_promotions_limit} раз/мес` : 'Недоступно'}
+                        {plan.top_promotions_limit === null ? 'Безлимит' : plan.top_promotions_limit > 0 ? `До ${plan.top_promotions_limit} раз/мес (от 100 ₽ за вывод)` : 'Недоступно'}
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
