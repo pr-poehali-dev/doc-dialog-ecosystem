@@ -196,7 +196,7 @@ export default function CourseLandingBuilder() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'X-Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           school_id: schoolId,
