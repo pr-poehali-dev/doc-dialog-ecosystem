@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import Icon from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+import { isAdmin } from '@/utils/auth';
 
 const SCHOOLS_API_URL = 'https://functions.poehali.dev/6ac6b552-624e-4960-a4f1-94f540394c86';
 
@@ -24,6 +26,8 @@ export default function SchoolCatalog() {
   const [loading, setLoading] = useState(true);
   const [cityFilter, setCityFilter] = useState<string>('');
   const [cities, setCities] = useState<string[]>([]);
+  const { toast } = useToast();
+  const userIsAdmin = isAdmin();
 
   useEffect(() => {
     fetchSchools();
@@ -47,6 +51,30 @@ export default function SchoolCatalog() {
       console.error('Ошибка загрузки каталога школ:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteSchool = async (e: React.MouseEvent, schoolId: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!confirm('Вы уверены, что хотите удалить эту школу?')) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`https://functions.poehali.dev/d9ed333b-313d-40b6-8ca2-016db5854f7c?action=delete_school&id=${schoolId}`, {
+        method: 'DELETE',
+        headers: { 'X-Authorization': `Bearer ${token}` }
+      });
+      
+      if (response.ok) {
+        toast({ title: 'Успешно', description: 'Школа удалена' });
+        fetchSchools();
+      } else {
+        throw new Error('Delete failed');
+      }
+    } catch (error) {
+      toast({ title: 'Ошибка', description: 'Не удалось удалить школу', variant: 'destructive' });
     }
   };
 
@@ -119,11 +147,21 @@ export default function SchoolCatalog() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {schools.map(school => (
-              <Link
-                key={school.id}
-                to={`/school/${school.slug}`}
-                className="bg-card rounded-2xl shadow-md hover:shadow-2xl transition-all duration-500 overflow-hidden group border border-transparent hover:border-primary/20"
-              >
+              <div key={school.id} className="relative">
+                {userIsAdmin && (
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    className="absolute top-2 right-2 z-10"
+                    onClick={(e) => handleDeleteSchool(e, school.id)}
+                  >
+                    <Icon name="Trash2" size={16} />
+                  </Button>
+                )}
+                <Link
+                  to={`/school/${school.slug}`}
+                  className="bg-card rounded-2xl shadow-md hover:shadow-2xl transition-all duration-500 overflow-hidden group border border-transparent hover:border-primary/20 block"
+                >
                 {/* Логотип с градиентом */}
                 <div className="relative h-56 bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5 flex items-center justify-center overflow-hidden">
                   {school.logo_url ? (
@@ -196,6 +234,7 @@ export default function SchoolCatalog() {
                   </div>
                 </div>
               </Link>
+              </div>
             ))}
           </div>
         )}

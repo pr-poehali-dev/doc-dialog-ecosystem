@@ -551,6 +551,31 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
+    # DELETE /admin?action=delete_school&id=X - Удалить школу
+    if method == 'DELETE' and action == 'delete_school':
+        school_id = query_params.get('id')
+        
+        if not school_id:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'School ID required'}),
+                'isBase64Encoded': False
+            }
+        
+        cur.execute(f"DELETE FROM {schema}.schools WHERE id = {school_id}")
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'message': 'School deleted successfully'}),
+            'isBase64Encoded': False
+        }
+    
     cur.close()
     conn.close()
     return {
