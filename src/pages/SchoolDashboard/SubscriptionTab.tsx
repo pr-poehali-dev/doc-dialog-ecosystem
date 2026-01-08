@@ -151,25 +151,26 @@ export default function SubscriptionTab() {
               <div className="bg-white p-4 rounded-lg">
                 <div className="text-sm text-muted-foreground mb-1">Выводы в топ</div>
                 <div className="text-2xl font-bold">
-                  {usage.top_promotions_used_this_month}
-                  {currentPlan.top_promotions_limit && ` / ${currentPlan.top_promotions_limit}`}
+                  {currentPlan.top_promotions_limit === 0 ? (
+                    <span className="text-gray-400">Недоступно</span>
+                  ) : currentPlan.top_promotions_limit === null ? (
+                    <span className="text-green-600">Безлимит</span>
+                  ) : (
+                    `${usage.top_promotions_used_this_month} / ${currentPlan.top_promotions_limit}`
+                  )}
                 </div>
-                {currentPlan.top_promotions_limit === null && (
-                  <div className="text-xs text-green-600 mt-1">Безлимит</div>
-                )}
-                {currentPlan.top_promotions_limit === null && currentPlan.top_promotions_limit !== 0 && (
-                  <div className="text-xs text-gray-400 mt-1">Недоступно</div>
-                )}
               </div>
               <div className="bg-white p-4 rounded-lg">
                 <div className="text-sm text-muted-foreground mb-1">Сообщения сегодня</div>
                 <div className="text-2xl font-bold">
-                  {usage.messages_sent_today}
-                  {currentPlan.messages_limit_per_day && ` / ${currentPlan.messages_limit_per_day}`}
+                  {currentPlan.messages_limit_per_day === 0 ? (
+                    <span className="text-gray-400">Недоступно</span>
+                  ) : currentPlan.messages_limit_per_day === null ? (
+                    <span className="text-green-600">Безлимит</span>
+                  ) : (
+                    `${usage.messages_sent_today} / ${currentPlan.messages_limit_per_day}`
+                  )}
                 </div>
-                {currentPlan.messages_limit_per_day === null && (
-                  <div className="text-xs text-green-600 mt-1">Безлимит</div>
-                )}
               </div>
               <div className="bg-white p-4 rounded-lg">
                 <div className="text-sm text-muted-foreground mb-1">Запросы скидок</div>
