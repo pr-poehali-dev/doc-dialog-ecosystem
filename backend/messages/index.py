@@ -3,7 +3,7 @@ import os
 import jwt
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from datetime import datetime
+from datetime import datetime, timedelta
 from moderation import check_content_moderation, get_warning_message
 
 def handler(event: dict, context) -> dict:
@@ -35,7 +35,21 @@ def handler(event: dict, context) -> dict:
     try:
         user_data = verify_token(token)
         
+        # Rate limiting для GET запросов
         if method == 'GET':
+            rate_limit_result = check_rate_limit(f"messages_get_{user_data['user_id']}", max_requests=40, window_seconds=60)
+            if not rate_limit_result['allowed']:
+                return {
+                    'statusCode': 429,
+                    'headers': {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*',
+                        'Retry-After': str(rate_limit_result.get('retry_after', 60))
+                    },
+                    'body': json.dumps({'error': 'Слишком много запросов, попробуйте позже'}),
+                    'isBase64Encoded': False
+                }
+            
             if action == 'get-chats':
                 return get_user_chats(user_data['user_id'], user_data.get('role', 'client'))
             elif action == 'get-messages':
@@ -116,6 +130,63 @@ def verify_token(token: str) -> dict:
     jwt_secret = os.environ['JWT_SECRET']
     payload = jwt.decode(token, jwt_secret, algorithms=['HS256'])
     return payload
+
+
+def check_rate_limit(identifier: str, max_requests: int = 30, window_seconds: int = 60) -> dict:
+    '''Проверка rate limit через PostgreSQL'''
+    try:
+        dsn = os.environ.get('DATABASE_URL')
+        schema = 't_p46047379_doc_dialog_ecosystem'
+        
+        conn = psycopg2.connect(dsn)
+        conn.autocommit = True
+        cur = conn.cursor()
+        
+        # Создаём таблицу если не существует
+        cur.execute(f"""
+            CREATE TABLE IF NOT EXISTS {schema}.rate_limits (
+                identifier VARCHAR(255) NOT NULL,
+                request_time TIMESTAMP NOT NULL DEFAULT NOW(),
+                PRIMARY KEY (identifier, request_time)
+            )
+        """)
+        
+        # Удаляем старые записи
+        window_start = datetime.utcnow() - timedelta(seconds=window_seconds)
+        cur.execute(f"""
+            DELETE FROM {schema}.rate_limits 
+            WHERE request_time < '{window_start.isoformat()}'::timestamp
+        """)
+        
+        # Проверяем количество запросов
+        identifier_escaped = identifier.replace("'", "''")
+        cur.execute(f"""
+            SELECT COUNT(*) FROM {schema}.rate_limits 
+            WHERE identifier = '{identifier_escaped}' 
+            AND request_time >= '{window_start.isoformat()}'::timestamp
+        """)
+        
+        count = cur.fetchone()[0]
+        
+        if count >= max_requests:
+            cur.close()
+            conn.close()
+            return {'allowed': False, 'retry_after': window_seconds, 'current_count': count}
+        
+        # Добавляем новую запись
+        cur.execute(f"""
+            INSERT INTO {schema}.rate_limits (identifier, request_time) 
+            VALUES ('{identifier_escaped}', NOW())
+        """)
+        
+        cur.close()
+        conn.close()
+        
+        return {'allowed': True, 'remaining': max_requests - count - 1}
+        
+    except Exception as e:
+        print(f"Rate limit check failed: {e}")
+        return {'allowed': True}
 
 
 def get_user_chats(user_id: int, user_role: str) -> dict:

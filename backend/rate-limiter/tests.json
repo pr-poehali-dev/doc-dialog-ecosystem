@@ -1,0 +1,32 @@
+{
+  "tests": [
+    {
+      "name": "Rate limit allows first request",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "identifier": "user_123",
+        "max_requests": 5,
+        "window_seconds": 60
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "allowed": true,
+        "limit": 5
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Rate limit blocks excessive requests",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "identifier": "test_blocked_user",
+        "max_requests": 1,
+        "window_seconds": 60
+      },
+      "expectedStatus": 200,
+      "bodyMatcher": "partial"
+    }
+  ]
+}

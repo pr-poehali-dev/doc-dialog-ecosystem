@@ -3,6 +3,7 @@ import os
 import psycopg2
 import random
 import jwt
+from datetime import datetime, timedelta
 
 def handler(event: dict, context) -> dict:
     """API для работы с отзывами к курсам и мастермайндам"""
@@ -33,6 +34,23 @@ def handler(event: dict, context) -> dict:
     
     # GET /reviews?entity_type=course&entity_id=1 - Get reviews for entity
     if method == 'GET' and not action:
+        # Rate limiting для GET запросов
+        source_ip = event.get('requestContext', {}).get('identity', {}).get('sourceIp', 'unknown')
+        rate_limit_result = check_rate_limit(f"reviews_get_{source_ip}", max_requests=60, window_seconds=60, cur=cur)
+        if not rate_limit_result['allowed']:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 429,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Retry-After': str(rate_limit_result.get('retry_after', 60))
+                },
+                'body': json.dumps({'error': 'Слишком много запросов'}),
+                'isBase64Encoded': False
+            }
+        
         entity_type = query_params.get('entity_type')
         entity_id = query_params.get('entity_id')
         
@@ -338,3 +356,50 @@ def handler(event: dict, context) -> dict:
         'body': json.dumps({'error': 'Endpoint not found'}),
         'isBase64Encoded': False
     }
+
+
+def check_rate_limit(identifier: str, max_requests: int, window_seconds: int, cur) -> dict:
+    '''Проверка rate limit через PostgreSQL'''
+    try:
+        schema = 't_p46047379_doc_dialog_ecosystem'
+        
+        # Создаём таблицу если не существует
+        cur.execute(f"""
+            CREATE TABLE IF NOT EXISTS {schema}.rate_limits (
+                identifier VARCHAR(255) NOT NULL,
+                request_time TIMESTAMP NOT NULL DEFAULT NOW(),
+                PRIMARY KEY (identifier, request_time)
+            )
+        """)
+        
+        # Удаляем старые записи
+        window_start = datetime.utcnow() - timedelta(seconds=window_seconds)
+        cur.execute(f"""
+            DELETE FROM {schema}.rate_limits 
+            WHERE request_time < '{window_start.isoformat()}'::timestamp
+        """)
+        
+        # Проверяем количество запросов
+        identifier_escaped = identifier.replace("'", "''")
+        cur.execute(f"""
+            SELECT COUNT(*) FROM {schema}.rate_limits 
+            WHERE identifier = '{identifier_escaped}' 
+            AND request_time >= '{window_start.isoformat()}'::timestamp
+        """)
+        
+        count = cur.fetchone()[0]
+        
+        if count >= max_requests:
+            return {'allowed': False, 'retry_after': window_seconds}
+        
+        # Добавляем новую запись
+        cur.execute(f"""
+            INSERT INTO {schema}.rate_limits (identifier, request_time) 
+            VALUES ('{identifier_escaped}', NOW())
+        """)
+        
+        return {'allowed': True, 'remaining': max_requests - count - 1}
+        
+    except Exception as e:
+        print(f"Rate limit check failed: {e}")
+        return {'allowed': True}
