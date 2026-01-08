@@ -1,0 +1,27 @@
+{
+  "tests": [
+    {
+      "name": "Get balance without auth",
+      "method": "GET",
+      "path": "/?action=balance",
+      "expectedStatus": 401,
+      "expectedBody": {
+        "error": "Требуется авторизация"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Get coin prices",
+      "method": "GET",
+      "path": "/?action=prices",
+      "headers": {
+        "X-Authorization": "Bearer test"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "prices": {}
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

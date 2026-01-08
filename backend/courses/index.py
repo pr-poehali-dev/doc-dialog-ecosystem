@@ -1,6 +1,7 @@
 import json
 import os
 import psycopg2
+import jwt
 from datetime import datetime
 
 def handler(event: dict, context) -> dict:
@@ -674,6 +675,33 @@ def handler(event: dict, context) -> dict:
     if method == 'POST' and entity_type == 'courses':
         body = json.loads(event.get('body', '{}'))
         
+        # Проверяем авторизацию
+        headers = event.get('headers', {})
+        token = headers.get('X-Authorization', headers.get('Authorization', '')).replace('Bearer ', '')
+        
+        if not token:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 401,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Требуется авторизация'}),
+                'isBase64Encoded': False
+            }
+        
+        try:
+            decoded = jwt.decode(token, options={"verify_signature": False})
+            user_id = decoded.get('user_id')
+        except jwt.InvalidTokenError:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 401,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Неверный токен'}),
+                'isBase64Encoded': False
+            }
+        
         # Определяем формат данных: простая форма или лендинг
         is_simple_form = body.get('school_name') is not None
         
@@ -843,12 +871,49 @@ def handler(event: dict, context) -> dict:
         
         new_course = cur.fetchone()
         
+        # Списываем 500 монет за публикацию курса
+        COIN_COST = 500
+        
+        # Проверяем баланс
+        cur.execute(f"SELECT coins FROM {schema}.users WHERE id = {user_id}")
+        user_coins = cur.fetchone()
+        
+        if not user_coins or user_coins[0] < COIN_COST:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({
+                    'error': 'Недостаточно монет для публикации курса',
+                    'required': COIN_COST,
+                    'available': user_coins[0] if user_coins else 0
+                }),
+                'isBase64Encoded': False
+            }
+        
+        # Списываем монеты
+        cur.execute(f"""
+            UPDATE {schema}.users 
+            SET coins = coins - {COIN_COST}
+            WHERE id = {user_id}
+        """)
+        
+        # Записываем транзакцию
+        course_title = new_course[1].replace("'", "''")
+        cur.execute(f"""
+            INSERT INTO {schema}.coin_transactions 
+            (user_id, amount, type, action, description)
+            VALUES ({user_id}, {COIN_COST}, 'withdrawal', 'publish_course', 'Публикация курса: {course_title}')
+        """)
+        
         result = {
             'id': new_course[0],
             'title': new_course[1],
             'slug': new_course[2],
             'status': new_course[3],
-            'created_at': new_course[4].isoformat() if new_course[4] else None
+            'created_at': new_course[4].isoformat() if new_course[4] else None,
+            'coins_withdrawn': COIN_COST
         }
         
         cur.close()
@@ -863,6 +928,33 @@ def handler(event: dict, context) -> dict:
     # POST /courses?type=masterminds - Create mastermind
     if method == 'POST' and entity_type == 'masterminds':
         body = json.loads(event.get('body', '{}'))
+        
+        # Проверяем авторизацию
+        headers = event.get('headers', {})
+        token = headers.get('X-Authorization', headers.get('Authorization', '')).replace('Bearer ', '')
+        
+        if not token:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 401,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Требуется авторизация'}),
+                'isBase64Encoded': False
+            }
+        
+        try:
+            decoded = jwt.decode(token, options={"verify_signature": False})
+            user_id_mastermind = decoded.get('user_id')
+        except jwt.InvalidTokenError:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 401,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Неверный токен'}),
+                'isBase64Encoded': False
+            }
         
         school_id = body.get('school_id')
         title = body.get('title')
@@ -958,12 +1050,49 @@ def handler(event: dict, context) -> dict:
         
         new_mastermind = cur.fetchone()
         
+        # Списываем 500 монет за публикацию мастермайнда
+        COIN_COST = 500
+        
+        # Проверяем баланс
+        cur.execute(f"SELECT coins FROM {schema}.users WHERE id = {user_id_mastermind}")
+        user_coins = cur.fetchone()
+        
+        if not user_coins or user_coins[0] < COIN_COST:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({
+                    'error': 'Недостаточно монет для публикации мастермайнда',
+                    'required': COIN_COST,
+                    'available': user_coins[0] if user_coins else 0
+                }),
+                'isBase64Encoded': False
+            }
+        
+        # Списываем монеты
+        cur.execute(f"""
+            UPDATE {schema}.users 
+            SET coins = coins - {COIN_COST}
+            WHERE id = {user_id_mastermind}
+        """)
+        
+        # Записываем транзакцию
+        mastermind_title = new_mastermind[1].replace("'", "''")
+        cur.execute(f"""
+            INSERT INTO {schema}.coin_transactions 
+            (user_id, amount, type, action, description)
+            VALUES ({user_id_mastermind}, {COIN_COST}, 'withdrawal', 'publish_course', 'Публикация мастермайнда: {mastermind_title}')
+        """)
+        
         result = {
             'id': new_mastermind[0],
             'title': new_mastermind[1],
             'slug': new_mastermind[2],
             'status': new_mastermind[3],
-            'created_at': new_mastermind[4].isoformat() if new_mastermind[4] else None
+            'created_at': new_mastermind[4].isoformat() if new_mastermind[4] else None,
+            'coins_withdrawn': COIN_COST
         }
         
         cur.close()

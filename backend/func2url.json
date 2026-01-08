@@ -1,4 +1,5 @@
 {
+  "coins": "https://functions.poehali.dev/932b9e21-131e-4c52-a414-a77b7dff1951",
   "rate-limiter": "https://functions.poehali.dev/856b4c0f-f4db-48d8-9fee-7036774ae585",
   "masseur-promotions": "https://functions.poehali.dev/71ef96ce-7019-4622-8253-573a2e8a6567",
   "favorites": "https://functions.poehali.dev/1babd863-d072-4116-9af2-df1166fc0f27",
