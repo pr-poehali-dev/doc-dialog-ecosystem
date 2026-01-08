@@ -178,6 +178,13 @@ export function useDashboardState(toast: any) {
   useEffect(() => {
     loadUserSchool();
     
+    // Обработка URL параметра для переключения вкладки
+    const params = new URLSearchParams(location.search);
+    const tabParam = params.get('tab');
+    if (tabParam && ['courses', 'masterminds', 'offline-training', 'specialists', 'landings', 'knowledge', 'promo-requests', 'subscription'].includes(tabParam)) {
+      setActiveTab(tabParam as typeof activeTab);
+    }
+    
     // Показываем сообщение об успешной отправке курса на модерацию
     if (location.state?.successMessage) {
       toast({
