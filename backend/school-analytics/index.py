@@ -100,7 +100,7 @@ def handler(event: dict, context) -> dict:
                    COALESCE(views_month, 0),
                    COALESCE(views_year, 0)
             FROM {schema}.courses 
-            WHERE school_id = {school_id}
+            WHERE school_id = {school_id} AND status != 'draft'
         """)
         for row in cur.fetchall():
             products.append({
@@ -120,7 +120,7 @@ def handler(event: dict, context) -> dict:
                    COALESCE(views_month, 0),
                    COALESCE(views_year, 0)
             FROM {schema}.masterminds 
-            WHERE school_id = {school_id}
+            WHERE school_id = {school_id} AND status != 'draft'
         """)
         for row in cur.fetchall():
             products.append({
@@ -140,7 +140,7 @@ def handler(event: dict, context) -> dict:
                    COALESCE(views_month, 0),
                    COALESCE(views_year, 0)
             FROM {schema}.offline_training 
-            WHERE school_id = {school_id}
+            WHERE school_id = {school_id} AND status != 'draft'
         """)
         for row in cur.fetchall():
             products.append({
