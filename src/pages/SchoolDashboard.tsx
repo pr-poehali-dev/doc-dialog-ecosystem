@@ -16,6 +16,7 @@ import DashboardTabs from './SchoolDashboard/DashboardTabs';
 import LandingsTab from './SchoolDashboard/LandingsTab';
 import KnowledgeBasePublic from '@/components/school/KnowledgeBasePublic';
 import PromoRequestsTab from '@/components/school/PromoRequestsTab';
+import SubscriptionTab from './SchoolDashboard/SubscriptionTab';
 import {
   Course,
   Mastermind,
@@ -34,7 +35,7 @@ export default function SchoolDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<'courses' | 'masterminds' | 'offline-training' | 'specialists' | 'landings' | 'knowledge' | 'promo-requests'>('courses');
+  const [activeTab, setActiveTab] = useState<'courses' | 'masterminds' | 'offline-training' | 'specialists' | 'landings' | 'knowledge' | 'promo-requests' | 'subscription'>('courses');
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingCourseId, setEditingCourseId] = useState<number | null>(null);
   const [editingMastermindId, setEditingMastermindId] = useState<number | null>(null);
@@ -434,6 +435,10 @@ export default function SchoolDashboard() {
 
         {activeTab === 'promo-requests' && (
           <PromoRequestsTab onRequestsCountChange={setPendingPromoRequestsCount} />
+        )}
+
+        {activeTab === 'subscription' && (
+          <SubscriptionTab />
         )}
       </div>
 

@@ -1,0 +1,14 @@
+{
+  "tests": [
+    {
+      "name": "Get subscription plans",
+      "method": "GET",
+      "path": "/?action=subscription_plans",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "plans": "array"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

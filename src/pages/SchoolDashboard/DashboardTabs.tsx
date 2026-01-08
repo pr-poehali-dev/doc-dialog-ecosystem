@@ -1,6 +1,6 @@
 import Icon from '@/components/ui/icon';
 
-type TabType = 'courses' | 'masterminds' | 'offline-training' | 'specialists' | 'landings' | 'knowledge' | 'promo-requests';
+type TabType = 'courses' | 'masterminds' | 'offline-training' | 'specialists' | 'landings' | 'knowledge' | 'promo-requests' | 'subscription';
 
 interface DashboardTabsProps {
   activeTab: TabType;
@@ -57,6 +57,13 @@ export default function DashboardTabs({ activeTab, onTabChange, pendingPromoRequ
             {pendingPromoRequestsCount}
           </span>
         )}
+      </button>
+      <button
+        onClick={() => onTabChange('subscription')}
+        className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${activeTab === 'subscription' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+      >
+        <Icon name="Crown" size={18} className="inline mr-2" />
+        Тарифы
       </button>
     </div>
   );

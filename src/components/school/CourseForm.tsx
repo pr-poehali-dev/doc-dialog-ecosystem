@@ -55,13 +55,13 @@ export default function CourseForm({ courseForm, setCourseForm, onSubmit, onCanc
       </CardHeader>
       <CardContent className="space-y-4">
         {!isEditing && (
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start gap-3">
-            <Icon name="AlertCircle" className="text-amber-600 mt-0.5" size={20} />
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
+            <Icon name="Info" className="text-blue-600 mt-0.5" size={20} />
             <div>
-              <p className="font-medium text-amber-900">Стоимость публикации курса</p>
-              <p className="text-sm text-amber-700 mt-1">
-                После отправки курса на модерацию с вашего баланса будет списано <strong>₽500</strong>. 
-                Убедитесь, что на балансе достаточно средств.
+              <p className="font-medium text-blue-900">Публикация курса</p>
+              <p className="text-sm text-blue-700 mt-1">
+                Количество публикаций зависит от вашего тарифного плана. 
+                Перейдите во вкладку <strong>"Тарифы"</strong>, чтобы посмотреть лимиты и повысить тариф.
               </p>
             </div>
           </div>

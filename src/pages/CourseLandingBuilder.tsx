@@ -256,10 +256,10 @@ export default function CourseLandingBuilder() {
                 Отправить на модерацию
               </Button>
             </div>
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2">
-              <Icon name="AlertCircle" className="text-amber-600 mt-0.5 flex-shrink-0" size={18} />
-              <p className="text-sm text-amber-800">
-                После отправки с вашего баланса будет списано <strong>₽500</strong> за публикацию курса
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
+              <Icon name="Info" className="text-blue-600 mt-0.5 flex-shrink-0" size={18} />
+              <p className="text-sm text-blue-800">
+                Количество публикаций курсов зависит от вашего тарифного плана. Проверьте лимиты во вкладке <strong>"Тарифы"</strong>
               </p>
             </div>
           </div>

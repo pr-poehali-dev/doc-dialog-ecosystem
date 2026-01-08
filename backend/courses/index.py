@@ -871,51 +871,52 @@ def handler(event: dict, context) -> dict:
         
         new_course = cur.fetchone()
         
-        # Списываем 500₽ с баланса школы за публикацию курса
-        PUBLISH_COST = 500
-        
-        # Получаем school_id
-        cur.execute(f"SELECT id FROM {schema}.schools WHERE user_id = {user_id}")
+        # Проверяем лимиты тарифа вместо списания 500₽
+        cur.execute(f"SELECT id, courses_published_this_month FROM {schema}.schools WHERE user_id = {user_id}")
         school_result = cur.fetchone()
         
         if school_result:
             school_id_for_balance = school_result[0]
+            courses_published = school_result[1] or 0
             
-            # Проверяем баланс школы
-            cur.execute(f"SELECT balance FROM {schema}.schools WHERE id = {school_id_for_balance}")
-            balance_result = cur.fetchone()
-            current_balance = float(balance_result[0]) if balance_result and balance_result[0] else 0
-            
-            if current_balance < PUBLISH_COST:
-                # Удаляем только что созданный курс
-                cur.execute(f"DELETE FROM {schema}.courses WHERE id = {new_course[0]}")
-                cur.close()
-                conn.close()
-                return {
-                    'statusCode': 400,
-                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                    'body': json.dumps({
-                        'error': 'Недостаточно средств для публикации курса',
-                        'required': PUBLISH_COST,
-                        'available': current_balance
-                    }),
-                    'isBase64Encoded': False
-                }
-            
-            # Списываем с баланса
+            # Получаем активный тариф школы
             cur.execute(f"""
-                UPDATE {schema}.schools 
-                SET balance = balance - {PUBLISH_COST}
-                WHERE id = {school_id_for_balance}
+                SELECT sp.courses_limit
+                FROM {schema}.school_subscriptions ss
+                JOIN {schema}.subscription_plans sp ON ss.plan_id = sp.id
+                WHERE ss.school_id = {school_id_for_balance} AND ss.is_active = true
+                LIMIT 1
             """)
             
-            # Записываем транзакцию
-            course_title = new_course[1].replace("'", "''")
-            cur.execute(f"""
-                INSERT INTO {schema}.balance_transactions 
-                (school_id, masseur_id, amount, type, description, related_entity_type, related_entity_id, created_at)
-                VALUES ({school_id_for_balance}, -1, {PUBLISH_COST}, 'withdrawal', 'Публикация курса: {course_title}', 'course', {new_course[0]}, NOW())
-            """)
+            plan_data = cur.fetchone()
+            
+            if plan_data:
+                courses_limit = plan_data[0]
+                
+                # Если есть лимит (не NULL) и он превышен
+                if courses_limit is not None and courses_published >= courses_limit:
+                    # Удаляем только что созданный курс
+                    cur.execute(f"DELETE FROM {schema}.courses WHERE id = {new_course[0]}")
+                    cur.close()
+                    conn.close()
+                    return {
+                        'statusCode': 400,
+                        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                        'body': json.dumps({
+                            'error': 'Превышен лимит курсов для вашего тарифа',
+                            'limit': courses_limit,
+                            'used': courses_published,
+                            'upgrade_needed': True
+                        }),
+                        'isBase64Encoded': False
+                    }
+                
+                # Увеличиваем счётчик опубликованных курсов
+                cur.execute(f"""
+                    UPDATE {schema}.schools 
+                    SET courses_published_this_month = courses_published_this_month + 1
+                    WHERE id = {school_id_for_balance}
+                """)
         
         result = {
             'id': new_course[0],
@@ -1059,51 +1060,52 @@ def handler(event: dict, context) -> dict:
         
         new_mastermind = cur.fetchone()
         
-        # Списываем 500₽ с баланса школы за публикацию мастермайнда
-        PUBLISH_COST = 500
-        
-        # Получаем school_id
-        cur.execute(f"SELECT id FROM {schema}.schools WHERE user_id = {user_id_mastermind}")
+        # Проверяем лимиты тарифа (мастермайнды считаются как курсы)
+        cur.execute(f"SELECT id, courses_published_this_month FROM {schema}.schools WHERE user_id = {user_id_mastermind}")
         school_result = cur.fetchone()
         
         if school_result:
             school_id_for_balance = school_result[0]
+            courses_published = school_result[1] or 0
             
-            # Проверяем баланс школы
-            cur.execute(f"SELECT balance FROM {schema}.schools WHERE id = {school_id_for_balance}")
-            balance_result = cur.fetchone()
-            current_balance = float(balance_result[0]) if balance_result and balance_result[0] else 0
-            
-            if current_balance < PUBLISH_COST:
-                # Удаляем только что созданный мастермайнд
-                cur.execute(f"DELETE FROM {schema}.masterminds WHERE id = {new_mastermind[0]}")
-                cur.close()
-                conn.close()
-                return {
-                    'statusCode': 400,
-                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                    'body': json.dumps({
-                        'error': 'Недостаточно средств для публикации мастермайнда',
-                        'required': PUBLISH_COST,
-                        'available': current_balance
-                    }),
-                    'isBase64Encoded': False
-                }
-            
-            # Списываем с баланса
+            # Получаем активный тариф школы
             cur.execute(f"""
-                UPDATE {schema}.schools 
-                SET balance = balance - {PUBLISH_COST}
-                WHERE id = {school_id_for_balance}
+                SELECT sp.courses_limit
+                FROM {schema}.school_subscriptions ss
+                JOIN {schema}.subscription_plans sp ON ss.plan_id = sp.id
+                WHERE ss.school_id = {school_id_for_balance} AND ss.is_active = true
+                LIMIT 1
             """)
             
-            # Записываем транзакцию
-            mastermind_title = new_mastermind[1].replace("'", "''")
-            cur.execute(f"""
-                INSERT INTO {schema}.balance_transactions 
-                (school_id, masseur_id, amount, type, description, related_entity_type, related_entity_id, created_at)
-                VALUES ({school_id_for_balance}, -1, {PUBLISH_COST}, 'withdrawal', 'Публикация мастермайнда: {mastermind_title}', 'mastermind', {new_mastermind[0]}, NOW())
-            """)
+            plan_data = cur.fetchone()
+            
+            if plan_data:
+                courses_limit = plan_data[0]
+                
+                # Если есть лимит (не NULL) и он превышен
+                if courses_limit is not None and courses_published >= courses_limit:
+                    # Удаляем только что созданный мастермайнд
+                    cur.execute(f"DELETE FROM {schema}.masterminds WHERE id = {new_mastermind[0]}")
+                    cur.close()
+                    conn.close()
+                    return {
+                        'statusCode': 400,
+                        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                        'body': json.dumps({
+                            'error': 'Превышен лимит курсов для вашего тарифа',
+                            'limit': courses_limit,
+                            'used': courses_published,
+                            'upgrade_needed': True
+                        }),
+                        'isBase64Encoded': False
+                    }
+                
+                # Увеличиваем счётчик опубликованных курсов
+                cur.execute(f"""
+                    UPDATE {schema}.schools 
+                    SET courses_published_this_month = courses_published_this_month + 1
+                    WHERE id = {school_id_for_balance}
+                """)
         
         result = {
             'id': new_mastermind[0],
