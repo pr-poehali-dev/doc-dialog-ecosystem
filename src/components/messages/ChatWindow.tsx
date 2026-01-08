@@ -43,6 +43,7 @@ interface ChatWindowProps {
   sending: boolean;
   currentUserId: number;
   userRole?: string;
+  messagesLimit?: number | null;
   onMessageTextChange: (text: string) => void;
   onSendMessage: () => void;
   onBookingResponse: (messageId: number, action: 'accept' | 'decline') => void;
@@ -90,6 +91,7 @@ export default function ChatWindow({
   sending,
   currentUserId,
   userRole,
+  messagesLimit,
   onMessageTextChange,
   onSendMessage,
   onBookingResponse,
@@ -103,7 +105,9 @@ export default function ChatWindow({
 
   // Подсчёт отправленных сообщений админу сегодня (для школ)
   const isAdminChat = selectedChat?.role === 'admin' || selectedChat?.other_user_id === 2;
-  const messagesTodayCount = isAdminChat && userRole === 'school' 
+  const hasMessageLimit = messagesLimit !== null && messagesLimit !== undefined;
+  
+  const messagesTodayCount = isAdminChat && userRole === 'school' && hasMessageLimit
     ? messages.filter(m => {
         const messageDate = new Date(m.created_at);
         const today = new Date();
@@ -112,8 +116,8 @@ export default function ChatWindow({
       }).length
     : 0;
   
-  const messagesLeft = Math.max(0, 5 - messagesTodayCount);
-  const isLimitReached = messagesTodayCount >= 5;
+  const messagesLeft = hasMessageLimit ? Math.max(0, (messagesLimit || 5) - messagesTodayCount) : Infinity;
+  const isLimitReached = hasMessageLimit && messagesTodayCount >= (messagesLimit || 5);
   if (!selectedChat) {
     return (
       <Card className="lg:col-span-2">
@@ -184,7 +188,7 @@ export default function ChatWindow({
         </ScrollArea>
 
         <div className="border-t p-4">
-          {isAdminChat && userRole === 'school' && (
+          {isAdminChat && userRole === 'school' && hasMessageLimit && (
             <div className={`mb-3 p-3 rounded-lg border ${
               isLimitReached 
                 ? 'bg-red-50 border-red-200' 
@@ -213,8 +217,8 @@ export default function ChatWindow({
                       : 'text-blue-900'
                   }`}>
                     {isLimitReached 
-                      ? '❌ Лимит сообщений исчерпан (5/5)' 
-                      : `💬 Доступно сообщений: ${messagesLeft}/5`
+                      ? `❌ Лимит сообщений исчерпан (${messagesLimit}/${messagesLimit})` 
+                      : `💬 Доступно сообщений: ${messagesLeft}/${messagesLimit}`
                     }
                   </p>
                   <p className={`text-xs mt-1 ${
@@ -225,8 +229,8 @@ export default function ChatWindow({
                       : 'text-blue-700'
                   }`}>
                     {isLimitReached 
-                      ? 'По тарифу "Профессиональный" доступно 5 сообщений в сутки. Лимит обновится завтра. Для неограниченного общения обновите тариф до "Безлимит".'
-                      : 'Тариф "Профессиональный": до 5 сообщений в сутки администратору. Лимит обновляется каждый день.'
+                      ? `По вашему тарифу доступно ${messagesLimit} сообщений в сутки администратору. Лимит обновится завтра. Для неограниченного общения обновите тариф до "Безлимит".`
+                      : `По вашему тарифу доступно до ${messagesLimit} сообщений в сутки администратору. Лимит обновляется каждый день.`
                     }
                   </p>
                 </div>

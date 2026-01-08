@@ -53,6 +53,7 @@ export default function Messages() {
   const [sending, setSending] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<number>(0);
   const [userRole, setUserRole] = useState<string>('');
+  const [messagesLimit, setMessagesLimit] = useState<number | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -68,6 +69,11 @@ export default function Messages() {
     setUserRole(user.role || '');
     
     fetchChats();
+    
+    // Загружаем лимит сообщений для школ
+    if (user.role === 'school') {
+      loadSchoolMessagesLimit(user.id);
+    }
   }, [navigate]);
 
   useEffect(() => {
@@ -147,6 +153,21 @@ export default function Messages() {
       }
     } catch (error) {
       console.error('Error loading masseur:', error);
+    }
+  };
+
+  const loadSchoolMessagesLimit = async (userId: string) => {
+    try {
+      const response = await fetch(`https://functions.poehali.dev/f81f82f7-d9c7-4858-87bc-6701c67f2187?action=my_subscription`, {
+        headers: { 'X-User-Id': userId }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        const limit = data.subscription?.plan?.messages_limit_per_day;
+        setMessagesLimit(limit === undefined ? null : limit);
+      }
+    } catch (error) {
+      console.error('Error loading messages limit:', error);
     }
   };
 
@@ -429,6 +450,7 @@ export default function Messages() {
               sending={sending}
               currentUserId={currentUserId}
               userRole={userRole}
+              messagesLimit={messagesLimit}
               onMessageTextChange={setMessageText}
               onSendMessage={handleSendMessage}
               onBookingResponse={handleBookingResponse}
