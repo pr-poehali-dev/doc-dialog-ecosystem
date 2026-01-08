@@ -178,9 +178,13 @@ def handler(event: dict, context) -> dict:
         user_id = user[0]
         body = json.loads(event.get('body', '{}'))
         
-        # Проверяем лимиты тарифа ПЕРЕД созданием обучения
+        # Проверяем лимиты тарифа для определения статуса
         cur.execute(f"SELECT id, courses_published_this_month FROM {schema}.schools WHERE user_id = {user_id}")
         school_check = cur.fetchone()
+        
+        # По умолчанию статус - на модерации
+        initial_status = 'pending'
+        limit_exceeded = False
         
         if school_check:
             school_id_check = school_check[0]
@@ -200,28 +204,17 @@ def handler(event: dict, context) -> dict:
             if plan_data:
                 courses_limit = plan_data[0]
                 
-                # Если есть лимит (не NULL) и он превышен
+                # Если есть лимит (не NULL) и он превышен - сохраняем как черновик
                 if courses_limit is not None and courses_published >= courses_limit:
-                    cur.close()
-                    conn.close()
-                    return {
-                        'statusCode': 400,
-                        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                        'body': json.dumps({
-                            'error': 'Превышен лимит публикаций для вашего тарифа',
-                            'limit': courses_limit,
-                            'used': courses_published,
-                            'upgrade_needed': True
-                        }),
-                        'isBase64Encoded': False
-                    }
+                    initial_status = 'draft'
+                    limit_exceeded = True
         
         cur.execute(f"""
             INSERT INTO {schema}.offline_training (
                 user_id, school_name, title, description, event_date, location,
                 max_participants, price, image_url, external_url, original_price,
-                discount_price, author_name, author_photo, event_content
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                discount_price, author_name, author_photo, event_content, status
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         """, (
             user_id,
@@ -238,13 +231,14 @@ def handler(event: dict, context) -> dict:
             body.get('discount_price'),
             body.get('author_name'),
             body.get('author_photo'),
-            body.get('event_content')
+            body.get('event_content'),
+            initial_status
         ))
         
         training_id = cur.fetchone()[0]
         
-        # Увеличиваем счётчик публикаций после успешного создания
-        if school_check:
+        # Увеличиваем счётчик ТОЛЬКО если отправлено на модерацию (не черновик)
+        if school_check and not limit_exceeded:
             cur.execute(f"""
                 UPDATE {schema}.schools 
                 SET courses_published_this_month = courses_published_this_month + 1
@@ -253,10 +247,24 @@ def handler(event: dict, context) -> dict:
         
         cur.close()
         conn.close()
+        
+        response_body = {
+            'id': training_id,
+            'status': initial_status,
+            'message': 'Training created as draft' if limit_exceeded else 'Training sent to moderation'
+        }
+        
+        if limit_exceeded and plan_data:
+            response_body['limit_info'] = {
+                'limit': courses_limit,
+                'used': courses_published,
+                'upgrade_needed': True
+            }
+        
         return {
             'statusCode': 201,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'id': training_id, 'message': 'Training created'}),
+            'body': json.dumps(response_body),
             'isBase64Encoded': False
         }
     

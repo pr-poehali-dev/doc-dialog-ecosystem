@@ -836,9 +836,15 @@ def handler(event: dict, context) -> dict:
             ON CONFLICT (school_id) DO NOTHING
         """)
         
-        # Проверяем лимиты тарифа ПЕРЕД созданием курса
+        # Проверяем лимиты тарифа для определения статуса
         cur.execute(f"SELECT id, courses_published_this_month FROM {schema}.schools WHERE user_id = {user_id}")
         school_check = cur.fetchone()
+        
+        # По умолчанию статус - на модерации
+        initial_status = 'pending'
+        limit_exceeded = False
+        courses_limit = None
+        courses_published = 0
         
         if school_check:
             school_id_check = school_check[0]
@@ -858,21 +864,10 @@ def handler(event: dict, context) -> dict:
             if plan_data:
                 courses_limit = plan_data[0]
                 
-                # Если есть лимит (не NULL) и он превышен
+                # Если есть лимит (не NULL) и он превышен - сохраняем как черновик
                 if courses_limit is not None and courses_published >= courses_limit:
-                    cur.close()
-                    conn.close()
-                    return {
-                        'statusCode': 400,
-                        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                        'body': json.dumps({
-                            'error': 'Превышен лимит курсов для вашего тарифа',
-                            'limit': courses_limit,
-                            'used': courses_published,
-                            'upgrade_needed': True
-                        }),
-                        'isBase64Encoded': False
-                    }
+                    initial_status = 'draft'
+                    limit_exceeded = True
         
         cur.execute(f"""
             INSERT INTO {schema}.courses (
@@ -902,27 +897,36 @@ def handler(event: dict, context) -> dict:
                 {f"'{start_date}'" if start_date else 'NULL'}, {f"'{end_date}'" if end_date else 'NULL'},
                 {f"'{location}'" if location else 'NULL'}, {f"'{image_url}'" if image_url else 'NULL'},
                 {original_price if original_price else 'NULL'}, {discount_price if discount_price else 'NULL'},
-                '{course_content.replace("'", "''")}', '{school_name.replace("'", "''")}', 'pending'
+                '{course_content.replace("'", "''")}', '{school_name.replace("'", "''")}', '{initial_status}'
             )
             RETURNING id, title, slug, status, created_at
         """)
         
         new_course = cur.fetchone()
         
-        # Увеличиваем счётчик опубликованных курсов после успешного создания
-        cur.execute(f"""
-            UPDATE {schema}.schools 
-            SET courses_published_this_month = courses_published_this_month + 1
-            WHERE id = {school_id}
-        """)
+        # Увеличиваем счётчик ТОЛЬКО если отправлено на модерацию (не черновик)
+        if not limit_exceeded:
+            cur.execute(f"""
+                UPDATE {schema}.schools 
+                SET courses_published_this_month = courses_published_this_month + 1
+                WHERE id = {school_id}
+            """)
         
         result = {
             'id': new_course[0],
             'title': new_course[1],
             'slug': new_course[2],
             'status': new_course[3],
-            'created_at': new_course[4].isoformat() if new_course[4] else None
+            'created_at': new_course[4].isoformat() if new_course[4] else None,
+            'message': 'Курс сохранен как черновик' if limit_exceeded else 'Курс отправлен на модерацию'
         }
+        
+        if limit_exceeded:
+            result['limit_info'] = {
+                'limit': courses_limit,
+                'used': courses_published,
+                'upgrade_needed': True
+            }
         
         cur.close()
         conn.close()
@@ -1007,13 +1011,19 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
-        # Проверяем лимиты тарифа ПЕРЕД созданием мастермайнда
+        # Проверяем лимиты тарифа для определения статуса
         cur.execute(f"SELECT id, courses_published_this_month FROM {schema}.schools WHERE user_id = {user_id_mastermind}")
         school_check = cur.fetchone()
         
+        # По умолчанию статус - на модерации
+        initial_status_mm = 'pending'
+        limit_exceeded_mm = False
+        courses_limit_mm = None
+        courses_published_mm = 0
+        
         if school_check:
             school_id_check = school_check[0]
-            courses_published = school_check[1] or 0
+            courses_published_mm = school_check[1] or 0
             
             # Получаем активный тариф школы
             cur.execute(f"""
@@ -1027,23 +1037,12 @@ def handler(event: dict, context) -> dict:
             plan_data = cur.fetchone()
             
             if plan_data:
-                courses_limit = plan_data[0]
+                courses_limit_mm = plan_data[0]
                 
-                # Если есть лимит (не NULL) и он превышен
-                if courses_limit is not None and courses_published >= courses_limit:
-                    cur.close()
-                    conn.close()
-                    return {
-                        'statusCode': 400,
-                        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                        'body': json.dumps({
-                            'error': 'Превышен лимит публикаций для вашего тарифа',
-                            'limit': courses_limit,
-                            'used': courses_published,
-                            'upgrade_needed': True
-                        }),
-                        'isBase64Encoded': False
-                    }
+                # Если есть лимит (не NULL) и он превышен - сохраняем как черновик
+                if courses_limit_mm is not None and courses_published_mm >= courses_limit_mm:
+                    initial_status_mm = 'draft'
+                    limit_exceeded_mm = True
         
         # Генерація slug
         import re
@@ -1089,27 +1088,36 @@ def handler(event: dict, context) -> dict:
                 '{slug}', '{gallery}',
                 {f"'{cover_url}'" if cover_url else 'NULL'},
                 {f"'{school_logo_url}'" if school_logo_url else 'NULL'},
-                'pending'
+                '{initial_status_mm}'
             )
             RETURNING id, title, slug, status, created_at
         """)
         
         new_mastermind = cur.fetchone()
         
-        # Увеличиваем счётчик публикаций после успешного создания
-        cur.execute(f"""
-            UPDATE {schema}.schools 
-            SET courses_published_this_month = courses_published_this_month + 1
-            WHERE id = {school_id}
-        """)
+        # Увеличиваем счётчик ТОЛЬКО если отправлено на модерацию (не черновик)
+        if not limit_exceeded_mm:
+            cur.execute(f"""
+                UPDATE {schema}.schools 
+                SET courses_published_this_month = courses_published_this_month + 1
+                WHERE id = {school_id}
+            """)
         
         result = {
             'id': new_mastermind[0],
             'title': new_mastermind[1],
             'slug': new_mastermind[2],
             'status': new_mastermind[3],
-            'created_at': new_mastermind[4].isoformat() if new_mastermind[4] else None
+            'created_at': new_mastermind[4].isoformat() if new_mastermind[4] else None,
+            'message': 'Мастермайнд сохранен как черновик' if limit_exceeded_mm else 'Мастермайнд отправлен на модерацию'
         }
+        
+        if limit_exceeded_mm:
+            result['limit_info'] = {
+                'limit': courses_limit_mm,
+                'used': courses_published_mm,
+                'upgrade_needed': True
+            }
         
         cur.close()
         conn.close()
