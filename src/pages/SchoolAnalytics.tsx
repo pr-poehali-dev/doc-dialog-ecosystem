@@ -235,7 +235,7 @@ export default function SchoolAnalytics() {
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Статистика по продуктам</CardTitle>
+              <CardTitle>Статистика по продуктам в ТОП</CardTitle>
               <Select value={period} onValueChange={(v) => setPeriod(v as 'day' | 'month' | 'year')}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue />
