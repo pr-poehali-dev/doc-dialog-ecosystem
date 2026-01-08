@@ -267,6 +267,34 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
                 'unread_count': chat['unread_count']
             })
         
+        # Для школ с тарифом "Профессиональный" добавляем виртуальный чат с админом
+        if user_role == 'school':
+            cursor.execute("""
+                SELECT sp.name
+                FROM t_p46047379_doc_dialog_ecosystem.schools s
+                LEFT JOIN t_p46047379_doc_dialog_ecosystem.school_subscriptions ss ON s.id = ss.school_id AND ss.is_active = true
+                LEFT JOIN t_p46047379_doc_dialog_ecosystem.subscription_plans sp ON ss.plan_id = sp.id
+                WHERE s.user_id = %s
+            """, (user_id,))
+            
+            subscription_data = cursor.fetchone()
+            if subscription_data and subscription_data['name'] == 'Профессиональный':
+                # Проверяем, нет ли уже чата с админом
+                admin_user_id = 2  # ID админа из базы
+                has_admin_chat = any(chat['other_user_id'] == admin_user_id for chat in result)
+                
+                if not has_admin_chat:
+                    # Добавляем виртуальный чат с админом
+                    result.insert(0, {
+                        'other_user_id': admin_user_id,
+                        'name': '👨‍💼 Поддержка (Тариф Профессиональный)',
+                        'avatar': None,
+                        'role': 'admin',
+                        'last_message': 'Здравствуйте! Я ваш персональный менеджер. Готов ответить на вопросы по тарифу 🚀',
+                        'last_message_time': datetime.now().isoformat(),
+                        'unread_count': 0
+                    })
+        
         return success_response({'chats': result})
         
     except Exception as e:
@@ -348,7 +376,7 @@ def send_message(user_id: int, body: dict) -> dict:
         
         # Проверка пользователя на блокировку
         check_user_query = """
-            SELECT is_content_blocked, content_block_reason, content_violation_count
+            SELECT is_content_blocked, content_block_reason, content_violation_count, role
             FROM t_p46047379_doc_dialog_ecosystem.users
             WHERE id = %s
         """
@@ -360,6 +388,36 @@ def send_message(user_id: int, body: dict) -> dict:
                 f"❌ Ваш аккаунт заблокирован за нарушение правил.\nПричина: {user_status['content_block_reason']}\n\nСредства на балансе заморожены до решения модерации.",
                 403
             )
+        
+        # Проверка лимита сообщений для школ с тарифом "Профессиональный"
+        if user_status and user_status['role'] == 'school' and receiver_id == 2:  # 2 = admin_user_id
+            # Проверяем тариф школы
+            cursor.execute("""
+                SELECT sp.name
+                FROM t_p46047379_doc_dialog_ecosystem.schools s
+                LEFT JOIN t_p46047379_doc_dialog_ecosystem.school_subscriptions ss ON s.id = ss.school_id AND ss.is_active = true
+                LEFT JOIN t_p46047379_doc_dialog_ecosystem.subscription_plans sp ON ss.plan_id = sp.id
+                WHERE s.user_id = %s
+            """, (user_id,))
+            
+            subscription_data = cursor.fetchone()
+            if subscription_data and subscription_data['name'] == 'Профессиональный':
+                # Считаем сообщения за сегодня
+                cursor.execute("""
+                    SELECT COUNT(*) as messages_today
+                    FROM t_p46047379_doc_dialog_ecosystem.messages
+                    WHERE sender_id = %s 
+                      AND receiver_id = %s
+                      AND created_at >= CURRENT_DATE
+                """, (user_id, receiver_id))
+                
+                messages_count = cursor.fetchone()['messages_today']
+                
+                if messages_count >= 5:
+                    return error_response(
+                        '❌ Достигнут дневной лимит сообщений администратору (5 в сутки по тарифу "Профессиональный"). Попробуйте завтра или обновите тариф до "Безлимит" для неограниченного общения.',
+                        429
+                    )
         
         # Проверка контента на запрещённые темы
         is_blocked, category, matched_words = check_content_moderation(message_text)
