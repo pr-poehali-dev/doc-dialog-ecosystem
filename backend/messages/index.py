@@ -269,6 +269,7 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
         
         # Для школ с активными тарифами добавляем виртуальный чат с админом
         if user_role == 'school':
+            print(f"DEBUG: Checking admin chat for school user_id={user_id}")
             cursor.execute("""
                 SELECT sp.name, sp.messages_limit_per_day
                 FROM t_p46047379_doc_dialog_ecosystem.schools s
@@ -278,14 +279,19 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
             """, (user_id,))
             
             subscription_data = cursor.fetchone()
+            print(f"DEBUG: Subscription data: {subscription_data}")
+            
             # Показываем чат админа для школ с тарифами, где доступны сообщения (не 0)
             if subscription_data and (subscription_data['messages_limit_per_day'] is None or subscription_data['messages_limit_per_day'] > 0):
+                print(f"DEBUG: Subscription check passed, limit={subscription_data['messages_limit_per_day']}")
                 # Проверяем, нет ли уже чата с админом
                 admin_user_id = 2  # ID админа из базы
                 has_admin_chat = any(chat['other_user_id'] == admin_user_id for chat in result)
+                print(f"DEBUG: Has admin chat already: {has_admin_chat}")
                 
                 if not has_admin_chat:
                     plan_name = subscription_data['name']
+                    print(f"DEBUG: Adding virtual admin chat for plan '{plan_name}'")
                     # Добавляем виртуальный чат с админом
                     result.insert(0, {
                         'other_user_id': admin_user_id,
@@ -296,6 +302,9 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
                         'last_message_time': datetime.now().isoformat(),
                         'unread_count': 0
                     })
+                    print(f"DEBUG: Admin chat added to result")
+            else:
+                print(f"DEBUG: Subscription check failed or no messages available")
         
         return success_response({'chats': result})
         
