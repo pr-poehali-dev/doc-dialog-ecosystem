@@ -173,6 +173,13 @@ export default function SchoolDashboard() {
                   <span className="text-sm text-gray-700">
                     Запросы скидок: {subscriptionPlan.promo_requests_allowed ? 'Доступно' : 'Недоступно'}
                   </span>
+                  <div className="relative group">
+                    <Icon name="HelpCircle" size={16} className="text-gray-400 cursor-help" />
+                    <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg z-50">
+                      <p className="font-semibold">Увеличивает конверсию на 60%</p>
+                      <p className="text-gray-300 mt-1">Массажисты могут запрашивать индивидуальную скидку на ваши курсы, что значительно повышает продажи</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
