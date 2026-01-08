@@ -267,10 +267,10 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
                 'unread_count': chat['unread_count']
             })
         
-        # Для школ с тарифом "Профессиональный" добавляем виртуальный чат с админом
+        # Для школ с активными тарифами добавляем виртуальный чат с админом
         if user_role == 'school':
             cursor.execute("""
-                SELECT sp.name
+                SELECT sp.name, sp.messages_limit_per_day
                 FROM t_p46047379_doc_dialog_ecosystem.schools s
                 LEFT JOIN t_p46047379_doc_dialog_ecosystem.school_subscriptions ss ON s.id = ss.school_id AND ss.is_active = true
                 LEFT JOIN t_p46047379_doc_dialog_ecosystem.subscription_plans sp ON ss.plan_id = sp.id
@@ -278,16 +278,18 @@ def get_user_chats(user_id: int, user_role: str) -> dict:
             """, (user_id,))
             
             subscription_data = cursor.fetchone()
-            if subscription_data and subscription_data['name'] == 'Профессиональный':
+            # Показываем чат админа для школ с тарифами, где доступны сообщения (не 0)
+            if subscription_data and (subscription_data['messages_limit_per_day'] is None or subscription_data['messages_limit_per_day'] > 0):
                 # Проверяем, нет ли уже чата с админом
                 admin_user_id = 2  # ID админа из базы
                 has_admin_chat = any(chat['other_user_id'] == admin_user_id for chat in result)
                 
                 if not has_admin_chat:
+                    plan_name = subscription_data['name']
                     # Добавляем виртуальный чат с админом
                     result.insert(0, {
                         'other_user_id': admin_user_id,
-                        'name': '👨‍💼 Поддержка (Тариф Профессиональный)',
+                        'name': f'👨‍💼 Поддержка (Тариф {plan_name})',
                         'avatar': None,
                         'role': 'admin',
                         'last_message': 'Здравствуйте! Я ваш персональный менеджер. Готов ответить на вопросы по тарифу 🚀',
@@ -389,11 +391,11 @@ def send_message(user_id: int, body: dict) -> dict:
                 403
             )
         
-        # Проверка лимита сообщений для школ с тарифом "Профессиональный"
+        # Проверка лимита сообщений для школ с ограниченным тарифом
         if user_status and user_status['role'] == 'school' and receiver_id == 2:  # 2 = admin_user_id
             # Проверяем тариф школы
             cursor.execute("""
-                SELECT sp.name
+                SELECT sp.name, sp.messages_limit_per_day
                 FROM t_p46047379_doc_dialog_ecosystem.schools s
                 LEFT JOIN t_p46047379_doc_dialog_ecosystem.school_subscriptions ss ON s.id = ss.school_id AND ss.is_active = true
                 LEFT JOIN t_p46047379_doc_dialog_ecosystem.subscription_plans sp ON ss.plan_id = sp.id
@@ -401,7 +403,10 @@ def send_message(user_id: int, body: dict) -> dict:
             """, (user_id,))
             
             subscription_data = cursor.fetchone()
-            if subscription_data and subscription_data['name'] == 'Профессиональный':
+            # Проверяем лимит только если он установлен (не NULL и > 0)
+            if subscription_data and subscription_data['messages_limit_per_day'] is not None and subscription_data['messages_limit_per_day'] > 0:
+                limit = subscription_data['messages_limit_per_day']
+                
                 # Считаем сообщения за сегодня
                 cursor.execute("""
                     SELECT COUNT(*) as messages_today
@@ -413,9 +418,9 @@ def send_message(user_id: int, body: dict) -> dict:
                 
                 messages_count = cursor.fetchone()['messages_today']
                 
-                if messages_count >= 5:
+                if messages_count >= limit:
                     return error_response(
-                        '❌ Достигнут дневной лимит сообщений администратору (5 в сутки по тарифу "Профессиональный"). Попробуйте завтра или обновите тариф до "Безлимит" для неограниченного общения.',
+                        f'❌ Достигнут дневной лимит сообщений администратору ({limit} в сутки по тарифу "{subscription_data["name"]}"). Попробуйте завтра или обновите тариф до "Безлимит" для неограниченного общения.',
                         429
                     )
         
