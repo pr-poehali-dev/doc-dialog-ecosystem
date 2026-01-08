@@ -99,7 +99,17 @@ def handler(event: dict, context) -> dict:
             }
         
         school_id = school_data[0]
-        courses_published_this_month = school_data[1] or 0
+        
+        # Считаем реальное количество активных курсов (approved + pending)
+        cur.execute(f"""
+            SELECT 
+                (SELECT COUNT(*) FROM {schema}.courses WHERE school_id = {school_id} AND status IN ('approved', 'pending')) +
+                (SELECT COUNT(*) FROM {schema}.masterminds WHERE school_id = {school_id} AND status IN ('approved', 'pending')) +
+                (SELECT COUNT(*) FROM {schema}.offline_training WHERE school_id = {school_id} AND status IN ('approved', 'pending'))
+        """)
+        courses_published_this_month = cur.fetchone()[0] or 0
+        
+        # Сообщения и промо берём из таблицы schools (эти счётчики сбрасываются по расписанию)
         messages_sent_today = school_data[2] or 0
         top_promotions_used_this_month = school_data[3] or 0
         
