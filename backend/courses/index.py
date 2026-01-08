@@ -42,7 +42,7 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
-    # POST /courses?action=submit_draft - Submit draft for moderation
+    # POST /courses?action=submit_draft - Submit draft for moderation (check BEFORE body parsing!)
     if method == 'POST' and action == 'submit_draft':
         if not course_id:
             cur.close()
@@ -762,7 +762,7 @@ def handler(event: dict, context) -> dict:
         }
     
     # POST /courses - Create new course with full landing data or simple form
-    if method == 'POST' and entity_type == 'courses':
+    if method == 'POST' and entity_type == 'courses' and action != 'submit_draft':
         body = json.loads(event.get('body', '{}'))
         
         # Проверяем авторизацию
