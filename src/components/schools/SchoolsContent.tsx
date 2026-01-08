@@ -240,8 +240,136 @@ export default function SchoolsContent() {
         </div>
       </section>
 
-      {/* LTV Section */}
+      {/* Success Cases Section */}
       <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-background to-primary/5">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
+              Школы, которые уже с нами
+            </h2>
+            <p className="text-lg text-muted-foreground">Реальные результаты наших партнёров</p>
+            <div className="w-20 h-1 bg-gradient-to-r from-primary/50 via-primary to-primary/50 mx-auto rounded-full mt-4"></div>
+          </div>
+          
+          <div className="relative overflow-hidden">
+            <div className="flex gap-6 animate-scroll-infinite">
+              {[
+                {
+                  school: "Академия массажа «Прикосновение»",
+                  result: "За 3 месяца — 127 новых учеников без рекламы",
+                  quote: "Раньше тратили 150₽ на лида. Теперь ученики приходят сами — и это горячие заявки от людей, которые уже знают, чего хотят.",
+                  author: "Елена Соколова",
+                  role: "Основатель школы",
+                  icon: "TrendingUp",
+                  gradient: "from-emerald-500/10 to-teal-500/10"
+                },
+                {
+                  school: "Школа висцерального массажа",
+                  result: "Средний чек вырос с 12 000₽ до 28 000₽",
+                  quote: "Ученики стали покупать продвинутые курсы, потому что видят школу как часть своего профессионального развития, а не разовую услугу.",
+                  author: "Дмитрий Волков",
+                  role: "Методист",
+                  icon: "DollarSign",
+                  gradient: "from-amber-500/10 to-orange-500/10"
+                },
+                {
+                  school: "Центр обучения «Bodywork Pro»",
+                  result: "Запустились с нуля и набрали первый поток за 2 недели",
+                  quote: "Мы новая школа, и боялись, что нас никто не заметит. Но через Док диалог к нам пришли 43 человека на первый курс. Аудитория уже тёплая!",
+                  author: "Анна Кузнецова",
+                  role: "Директор",
+                  icon: "Rocket",
+                  gradient: "from-blue-500/10 to-indigo-500/10"
+                },
+                {
+                  school: "Школа лимфодренажа «Поток»",
+                  result: "60% учеников вернулись на второй курс",
+                  quote: "Раньше ученик покупал курс и уходил. Теперь они видят нас в сообществе, доверяют и возвращаются снова. Это совсем другая модель.",
+                  author: "Мария Петрова",
+                  role: "Владелец школы",
+                  icon: "Repeat",
+                  gradient: "from-purple-500/10 to-pink-500/10"
+                },
+                {
+                  school: "Институт массажных практик",
+                  result: "Продали мастермайнд за 85 000₽ — 12 участников",
+                  quote: "Через платформу мы нашли аудиторию для премиального формата. Люди сразу понимают ценность, потому что растут в профессии вместе с нами.",
+                  author: "Игорь Смирнов",
+                  role: "Бизнес-тренер",
+                  icon: "Award",
+                  gradient: "from-rose-500/10 to-red-500/10"
+                },
+                {
+                  school: "Школа массажа для беременных",
+                  result: "Нишевый курс набрал 38 человек за месяц",
+                  quote: "Думали, что узкая тема не зайдёт. Но на платформе уже была целевая аудитория — практикующие массажисты, которые искали специализацию.",
+                  author: "Ольга Лебедева",
+                  role: "Ведущий преподаватель",
+                  icon: "Target",
+                  gradient: "from-cyan-500/10 to-sky-500/10"
+                },
+                // Дублируем для бесшовной прокрутки
+                {
+                  school: "Академия массажа «Прикосновение»",
+                  result: "За 3 месяца — 127 новых учеников без рекламы",
+                  quote: "Раньше тратили 150₽ на лида. Теперь ученики приходят сами — и это горячие заявки от людей, которые уже знают, чего хотят.",
+                  author: "Елена Соколова",
+                  role: "Основатель школы",
+                  icon: "TrendingUp",
+                  gradient: "from-emerald-500/10 to-teal-500/10"
+                },
+                {
+                  school: "Школа висцерального массажа",
+                  result: "Средний чек вырос с 12 000₽ до 28 000₽",
+                  quote: "Ученики стали покупать продвинутые курсы, потому что видят школу как часть своего профессионального развития, а не разовую услугу.",
+                  author: "Дмитрий Волков",
+                  role: "Методист",
+                  icon: "DollarSign",
+                  gradient: "from-amber-500/10 to-orange-500/10"
+                },
+              ].map((item, index) => (
+                <Card 
+                  key={index} 
+                  className={`flex-shrink-0 w-[380px] sm:w-[420px] hover:shadow-xl transition-all duration-300 border-primary/10 bg-gradient-to-br ${item.gradient}`}
+                >
+                  <CardContent className="p-6 sm:p-8">
+                    <div className="flex items-start gap-4 mb-4">
+                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center flex-shrink-0 shadow-md">
+                        <Icon name={item.icon} className="text-primary" size={26} />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-lg mb-1">{item.school}</h3>
+                        <p className="text-sm text-primary font-semibold">{item.result}</p>
+                      </div>
+                    </div>
+                    <p className="text-muted-foreground italic mb-4 leading-relaxed">
+                      "{item.quote}"
+                    </p>
+                    <div className="border-t pt-4">
+                      <p className="font-semibold text-sm">{item.author}</p>
+                      <p className="text-xs text-muted-foreground">{item.role}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+          
+          <div className="text-center mt-12">
+            <Button 
+              size="lg" 
+              onClick={() => navigate("/register/school")}
+              className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              Присоединиться к школам-партнёрам
+              <Icon name="ArrowRight" size={20} className="ml-2" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* LTV Section */}
+      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-primary/5 to-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto text-center">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-8">
