@@ -35,7 +35,8 @@ export default function SchoolDashboard() {
           const plan = data.subscription?.plan;
           if (plan) {
             setSubscriptionPlan(plan);
-            setCanSendMessages(plan.messages_limit_per_day > 0);
+            // Сообщения доступны, если лимит не равен 0 (NULL = безлимит, >0 = ограничен, 0 = недоступно)
+            setCanSendMessages(plan.messages_limit_per_day !== 0);
           }
         }
       } catch (error) {
