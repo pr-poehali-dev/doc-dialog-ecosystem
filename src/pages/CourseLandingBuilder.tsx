@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
-import { getUserId } from '@/utils/auth';
+import { getUserId, getToken } from '@/utils/auth';
 
 interface CourseLandingData {
   title: string;
@@ -185,10 +185,18 @@ export default function CourseLandingBuilder() {
 
       const slug = generateSlug(data.title) + `-${Date.now()}`;
 
+      const token = getToken();
+      if (!token) {
+        alert('Необходимо войти в систему');
+        navigate('/login');
+        return;
+      }
+
       const response = await fetch('https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?type=courses', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           school_id: schoolId,
@@ -237,15 +245,23 @@ export default function CourseLandingBuilder() {
       <div className="min-h-screen bg-white">
         {/* Навигация */}
         <div className="sticky top-0 z-50 bg-white border-b shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <Button variant="outline" onClick={() => setPreview(false)}>
-              <Icon name="ArrowLeft" size={18} className="mr-2" />
-              Редактировать
-            </Button>
-            <Button onClick={handleSubmit} className="bg-blue-600 hover:bg-blue-700">
-              <Icon name="Send" size={18} className="mr-2" />
-              Отправить на модерацию
-            </Button>
+          <div className="max-w-7xl mx-auto px-4 py-4">
+            <div className="flex justify-between items-center mb-3">
+              <Button variant="outline" onClick={() => setPreview(false)}>
+                <Icon name="ArrowLeft" size={18} className="mr-2" />
+                Редактировать
+              </Button>
+              <Button onClick={handleSubmit} className="bg-blue-600 hover:bg-blue-700">
+                <Icon name="Send" size={18} className="mr-2" />
+                Отправить на модерацию
+              </Button>
+            </div>
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2">
+              <Icon name="AlertCircle" className="text-amber-600 mt-0.5 flex-shrink-0" size={18} />
+              <p className="text-sm text-amber-800">
+                После отправки с вашего баланса будет списано <strong>₽500</strong> за публикацию курса
+              </p>
+            </div>
           </div>
         </div>
 
