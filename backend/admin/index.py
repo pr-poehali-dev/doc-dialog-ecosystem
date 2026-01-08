@@ -525,6 +525,32 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
+    # DELETE /admin?action=delete_all_masterminds - Удалить все мастермайнды
+    if method == 'DELETE' and action == 'delete_all_masterminds':
+        cur.execute(f"DELETE FROM {schema}.masterminds")
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'message': 'All masterminds deleted successfully'}),
+            'isBase64Encoded': False
+        }
+    
+    # DELETE /admin?action=delete_all_offline_training - Удалить все очные обучения
+    if method == 'DELETE' and action == 'delete_all_offline_training':
+        cur.execute(f"DELETE FROM {schema}.offline_training")
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'message': 'All offline trainings deleted successfully'}),
+            'isBase64Encoded': False
+        }
+    
     cur.close()
     conn.close()
     return {
