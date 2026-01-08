@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
-import { getUserId } from '@/utils/auth';
+import { getUserId, getToken } from '@/utils/auth';
 
 interface MastermindLandingData {
   title: string;
@@ -222,6 +222,13 @@ export default function MastermindLandingBuilder() {
 
       if (!schoolId) {
         toast({ title: 'Ошибка', description: 'Школа не найдена', variant: 'destructive' });
+        return;
+      }
+
+      const token = getToken();
+      if (!token) {
+        toast({ title: 'Требуется авторизация', variant: 'destructive' });
+        navigate('/login');
         return;
       }
 
