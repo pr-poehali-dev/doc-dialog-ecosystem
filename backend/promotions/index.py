@@ -259,50 +259,49 @@ def handler(event: dict, context) -> dict:
             """, (school_id,))
             
             limit_row = cur.fetchone()
+            promotions_used = 0
+            promotions_limit = 0
+            is_free_promo = False
             
             if limit_row:
                 promotions_used = limit_row[0] or 0
-                promotions_limit = limit_row[1]
+                promotions_limit = limit_row[1] or 0
                 
-                # Если есть лимит (не NULL) и он превышен
-                if promotions_limit is not None and promotions_used >= promotions_limit:
+                # Если лимит больше 0 и еще не использован - промо бесплатно
+                if promotions_limit > 0 and promotions_used < promotions_limit:
+                    is_free_promo = True
+                    price = Decimal('0')
+            
+            # Проверяем баланс только если промо платное
+            if not is_free_promo:
+                cur.execute("SELECT balance FROM school_balance WHERE school_id = %s", (school_id,))
+                balance_row = cur.fetchone()
+                
+                if not balance_row or balance_row[0] < price:
                     cur.close()
                     conn.close()
                     return {
-                        'statusCode': 400,
+                        'statusCode': 402,
                         'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                        'body': json.dumps({
-                            'error': 'Превышен лимит выводов в топ для вашего тарифа',
-                            'limit': promotions_limit,
-                            'used': promotions_used,
-                            'upgrade_needed': True
-                        }),
+                        'body': json.dumps({'error': 'Недостаточно средств на балансе', 'required': float(price)}),
                         'isBase64Encoded': False
                     }
             
-            # Проверяем баланс
-            cur.execute("SELECT balance FROM school_balance WHERE school_id = %s", (school_id,))
-            balance_row = cur.fetchone()
-            
-            if not balance_row or balance_row[0] < price:
-                cur.close()
-                conn.close()
-                return {
-                    'statusCode': 402,
-                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                    'body': json.dumps({'error': 'Недостаточно средств на балансе', 'required': float(price)}),
-                    'isBase64Encoded': False
-                }
-            
-            # Списываем с баланса
-            cur.execute("""
-                UPDATE school_balance 
-                SET balance = balance - %s 
-                WHERE school_id = %s
-                RETURNING balance
-            """, (price, school_id))
-            
-            new_balance = cur.fetchone()[0]
+            # Списываем с баланса только если промо платное
+            new_balance = None
+            if not is_free_promo:
+                cur.execute("""
+                    UPDATE school_balance 
+                    SET balance = balance - %s 
+                    WHERE school_id = %s
+                    RETURNING balance
+                """, (price, school_id))
+                new_balance = cur.fetchone()[0]
+            else:
+                # Получаем текущий баланс без изменений
+                cur.execute("SELECT balance FROM school_balance WHERE school_id = %s", (school_id,))
+                balance_row = cur.fetchone()
+                new_balance = balance_row[0] if balance_row else 0
             
             # Создаём промо-позицию
             promoted_until = datetime.now() + timedelta(days=days)
@@ -323,12 +322,13 @@ def handler(event: dict, context) -> dict:
                 WHERE id = %s
             """, (school_id,))
             
-            # Записываем транзакцию
-            cur.execute("""
-                INSERT INTO balance_transactions 
-                (school_id, amount, type, description, related_entity_type, related_entity_id)
-                VALUES (%s, %s, 'withdrawal', %s, 'promotion', %s)
-            """, (school_id, -price, f'Подъём курса на {days} дн.', promotion_id))
+            # Записываем транзакцию только если промо платное
+            if not is_free_promo:
+                cur.execute("""
+                    INSERT INTO balance_transactions 
+                    (school_id, amount, type, description, related_entity_type, related_entity_id)
+                    VALUES (%s, %s, 'withdrawal', %s, 'promotion', %s)
+                """, (school_id, -price, f'Подъём курса на {days} дн.', promotion_id))
             
             conn.commit()
             
@@ -337,7 +337,8 @@ def handler(event: dict, context) -> dict:
                 'promotion_id': promotion_id,
                 'new_balance': float(new_balance),
                 'price_paid': float(price),
-                'promoted_until': promoted_until.isoformat()
+                'promoted_until': promoted_until.isoformat(),
+                'is_free': is_free_promo
             }
         
         else:

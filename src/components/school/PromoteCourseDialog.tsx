@@ -38,6 +38,8 @@ export default function PromoteCourseDialog({
   const [prices, setPrices] = useState<Prices | null>(null);
   const [selectedType, setSelectedType] = useState<'own_category' | 'all_categories'>('own_category');
   const [selectedDays, setSelectedDays] = useState<1 | 3 | 7>(1);
+  const [freePromosUsed, setFreePromosUsed] = useState(0);
+  const [freePromosLimit, setFreePromosLimit] = useState(0);
 
   useEffect(() => {
     if (open) {
@@ -57,19 +59,37 @@ export default function PromoteCourseDialog({
       const userId = getUserId();
       console.log('Loading data for user:', userId);
       
-      // Загружаем баланс
+      // Загружаем баланс и информацию о тарифе
       try {
-        const balanceRes = await fetch(`${BALANCE_API_URL}?action=balance`, {
-          headers: { 'X-User-Id': userId }
-        });
-        
-        if (balanceRes.ok) {
-          const balanceData = await balanceRes.json();
-          setBalance(balanceData.balance);
-          console.log('Balance loaded:', balanceData.balance);
+        const token = localStorage.getItem('token');
+        if (token) {
+          const balanceRes = await fetch(`${BALANCE_API_URL}?action=get&token=${encodeURIComponent(token)}`);
+          
+          if (balanceRes.ok) {
+            const balanceData = await balanceRes.json();
+            setBalance(balanceData.current_balance || 0);
+            console.log('Balance loaded:', balanceData.current_balance);
+          }
         }
       } catch (balanceError) {
         console.log('Balance load failed, using 0:', balanceError);
+      }
+
+      // Загружаем информацию о тарифе (для лимита бесплатных промо)
+      try {
+        const subRes = await fetch('https://functions.poehali.dev/f81f82f7-d9c7-4858-87bc-6701c67f2187?action=my_subscription', {
+          headers: { 'X-User-Id': userId }
+        });
+        if (subRes.ok) {
+          const subData = await subRes.json();
+          const topPromosLimit = subData.subscription?.plan?.top_promotions_limit || 0;
+          const topPromosUsed = subData.usage?.top_promotions_used_this_month || 0;
+          setFreePromosLimit(topPromosLimit);
+          setFreePromosUsed(topPromosUsed);
+          console.log('Free promos:', topPromosUsed, '/', topPromosLimit);
+        }
+      } catch (subError) {
+        console.log('Subscription load failed:', subError);
       }
 
       // Загружаем прайс-лист
@@ -96,17 +116,18 @@ export default function PromoteCourseDialog({
   const handlePromote = async () => {
     if (!prices) return;
 
-    const price = prices[selectedType][selectedDays];
+    const basePrice = prices[selectedType][selectedDays];
+    const isFree = freePromosUsed < freePromosLimit;
+    const finalPrice = isFree ? 0 : basePrice;
     
-    // Проверка баланса отключена - бэкенд сам проверит при запросе
-    // if (balance < price) {
-    //   toast({
-    //     title: 'Недостаточно средств',
-    //     description: `Необходимо ${price} ₽, доступно ${balance} ₽`,
-    //     variant: 'destructive'
-    //   });
-    //   return;
-    // }
+    if (!isFree && balance < finalPrice) {
+      toast({
+        title: 'Недостаточно средств',
+        description: `Необходимо ${finalPrice} ₽, доступно ${balance} ₽`,
+        variant: 'destructive'
+      });
+      return;
+    }
 
     setLoading(true);
     try {
@@ -151,7 +172,9 @@ export default function PromoteCourseDialog({
     }
   };
 
-  const selectedPrice = prices ? prices[selectedType][selectedDays] : 0;
+  const basePrice = prices ? prices[selectedType][selectedDays] : 0;
+  const isFree = freePromosUsed < freePromosLimit;
+  const selectedPrice = isFree ? 0 : basePrice;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -209,34 +232,50 @@ export default function PromoteCourseDialog({
           </div>
 
           <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+            {freePromosLimit > 0 && (
+              <div className="flex justify-between text-sm mb-2 pb-2 border-b">
+                <span className="text-gray-600">Бесплатные промо:</span>
+                <span className="font-semibold">{freePromosUsed} / {freePromosLimit}</span>
+              </div>
+            )}
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Стоимость:</span>
-              <span className="font-semibold">{selectedPrice.toLocaleString('ru-RU')} ₽</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Текущий баланс:</span>
-              <span className={balance >= selectedPrice ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
-                {balance.toLocaleString('ru-RU')} ₽
+              <span className="font-semibold">
+                {isFree ? (
+                  <span className="text-green-600">Бесплатно ✓</span>
+                ) : (
+                  <span>{selectedPrice.toLocaleString('ru-RU')} ₽</span>
+                )}
               </span>
             </div>
-            <div className="border-t pt-2 flex justify-between">
-              <span className="font-semibold">Останется после оплаты:</span>
-              <span className={`font-bold ${balance >= selectedPrice ? 'text-gray-900' : 'text-red-600'}`}>
-                {(balance - selectedPrice).toLocaleString('ru-RU')} ₽
-              </span>
-            </div>
+            {!isFree && (
+              <>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Текущий баланс:</span>
+                  <span className={balance >= selectedPrice ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
+                    {balance.toLocaleString('ru-RU')} ₽
+                  </span>
+                </div>
+                <div className="border-t pt-2 flex justify-between">
+                  <span className="font-semibold">Останется после оплаты:</span>
+                  <span className={`font-bold ${balance >= selectedPrice ? 'text-gray-900' : 'text-red-600'}`}>
+                    {(balance - selectedPrice).toLocaleString('ru-RU')} ₽
+                  </span>
+                </div>
+              </>
+            )}
           </div>
 
           <Button
             className="w-full"
             onClick={handlePromote}
-            disabled={loading}
+            disabled={loading || (!isFree && balance < selectedPrice)}
           >
             <Icon name="TrendingUp" size={16} className="mr-2" />
-            {loading ? 'Обработка...' : `Поднять курс за ${selectedPrice.toLocaleString('ru-RU')} ₽`}
+            {loading ? 'Обработка...' : isFree ? 'Поднять курс бесплатно' : `Поднять курс за ${selectedPrice.toLocaleString('ru-RU')} ₽`}
           </Button>
 
-          {balance > 0 && balance < selectedPrice && (
+          {!isFree && balance < selectedPrice && (
             <p className="text-sm text-red-600 text-center">
               Недостаточно средств. Пополните баланс на {(selectedPrice - balance).toLocaleString('ru-RU')} ₽
             </p>
