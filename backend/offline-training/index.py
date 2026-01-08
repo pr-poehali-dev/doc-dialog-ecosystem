@@ -179,16 +179,17 @@ def handler(event: dict, context) -> dict:
         body = json.loads(event.get('body', '{}'))
         
         # Проверяем лимиты тарифа для определения статуса
-        cur.execute(f"SELECT id, courses_published_this_month FROM {schema}.schools WHERE user_id = {user_id}")
+        cur.execute(f"SELECT id FROM {schema}.schools WHERE user_id = {user_id}")
         school_check = cur.fetchone()
         
         # По умолчанию статус - на модерации
         initial_status = 'pending'
         limit_exceeded = False
+        courses_limit = None
+        total_active = 0
         
         if school_check:
             school_id_check = school_check[0]
-            courses_published = school_check[1] or 0
             
             # Получаем активный тариф школы
             cur.execute(f"""
@@ -204,8 +205,17 @@ def handler(event: dict, context) -> dict:
             if plan_data:
                 courses_limit = plan_data[0]
                 
+                # Считаем РЕАЛЬНОЕ количество активных публикаций (approved + pending)
+                cur.execute(f"""
+                    SELECT 
+                        (SELECT COUNT(*) FROM {schema}.courses WHERE school_id = {school_id_check} AND status IN ('approved', 'pending')) +
+                        (SELECT COUNT(*) FROM {schema}.masterminds WHERE school_id = {school_id_check} AND status IN ('approved', 'pending')) +
+                        (SELECT COUNT(*) FROM {schema}.offline_training WHERE school_id = {school_id_check} AND status IN ('approved', 'pending'))
+                """)
+                total_active = cur.fetchone()[0] or 0
+                
                 # Если есть лимит (не NULL) и он превышен - сохраняем как черновик
-                if courses_limit is not None and courses_published >= courses_limit:
+                if courses_limit is not None and total_active >= courses_limit:
                     initial_status = 'draft'
                     limit_exceeded = True
         
