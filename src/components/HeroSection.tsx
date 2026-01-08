@@ -62,7 +62,7 @@ const HeroSection = ({ openDialog }: HeroSectionProps) => {
                 size="lg" 
                 variant="outline" 
                 className="text-lg px-8 bg-white/80 backdrop-blur-sm hover:bg-secondary hover:text-white border-secondary text-secondary transition-all" 
-                onClick={() => openDialog('salon')}
+                onClick={() => navigate('/salons-info')}
               >
                 Я салон
               </Button>
