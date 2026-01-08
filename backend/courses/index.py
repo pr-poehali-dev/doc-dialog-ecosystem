@@ -1710,6 +1710,40 @@ def handler(event: dict, context) -> dict:
         school_name = school_data[0]
         user_id = school_data[1]
         
+        # Проверяем лимиты тарифа для определения статуса
+        initial_status_ot = 'pending'
+        limit_exceeded_ot = False
+        courses_limit_ot = None
+        total_active_ot = 0
+        
+        # Получаем активный тариф школы
+        cur.execute(f"""
+            SELECT sp.courses_limit
+            FROM {schema}.school_subscriptions ss
+            JOIN {schema}.subscription_plans sp ON ss.plan_id = sp.id
+            WHERE ss.school_id = {school_id} AND ss.is_active = true
+            LIMIT 1
+        """)
+        
+        plan_data = cur.fetchone()
+        
+        if plan_data:
+            courses_limit_ot = plan_data[0]
+            
+            # Считаем РЕАЛЬНОЕ количество активных публикаций (approved + pending)
+            cur.execute(f"""
+                SELECT 
+                    (SELECT COUNT(*) FROM {schema}.courses WHERE school_id = {school_id} AND status IN ('approved', 'pending')) +
+                    (SELECT COUNT(*) FROM {schema}.masterminds WHERE school_id = {school_id} AND status IN ('approved', 'pending')) +
+                    (SELECT COUNT(*) FROM {schema}.offline_training WHERE school_id = {school_id} AND status IN ('approved', 'pending'))
+            """)
+            total_active_ot = cur.fetchone()[0] or 0
+            
+            # Если есть лимит (не NULL) и он превышен - сохраняем как черновик
+            if courses_limit_ot is not None and total_active_ot >= courses_limit_ot:
+                initial_status_ot = 'draft'
+                limit_exceeded_ot = True
+        
         import re
         slug = re.sub(r'[^a-zA-Z0-9а-яА-Я\-]', '-', title.lower()).strip('-')
         slug = re.sub(r'-+', '-', slug)
@@ -1746,16 +1780,26 @@ def handler(event: dict, context) -> dict:
                 '{faq}', '{cta_button_text.replace("'", "''")}', '{slug}',
                 {f"'{cover_url}'" if cover_url else 'NULL'},
                 {f"'{school_logo_url}'" if school_logo_url else 'NULL'},
-                'pending'
+                '{initial_status_ot}'
             )
             RETURNING id, title, slug, status, created_at
         """)
         
         new_training = cur.fetchone()
+        
         result = {
             'id': new_training[0], 'title': new_training[1], 'slug': new_training[2],
-            'status': new_training[3], 'created_at': new_training[4].isoformat() if new_training[4] else None
+            'status': new_training[3], 
+            'created_at': new_training[4].isoformat() if new_training[4] else None,
+            'message': 'Обучение сохранено как черновик' if limit_exceeded_ot else 'Обучение отправлено на модерацию'
         }
+        
+        if limit_exceeded_ot:
+            result['limit_info'] = {
+                'limit': courses_limit_ot,
+                'used': total_active_ot,
+                'upgrade_needed': True
+            }
         
         cur.close()
         conn.close()

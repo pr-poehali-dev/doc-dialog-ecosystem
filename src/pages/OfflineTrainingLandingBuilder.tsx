@@ -257,13 +257,27 @@ export default function OfflineTrainingLandingBuilder() {
       });
 
       if (!response.ok) {
-        throw new Error(editId ? 'Не удалось обновить обучение' : 'Не удалось создать обучение');
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Server error:', errorData);
+        throw new Error(errorData.error || (editId ? 'Не удалось обновить обучение' : 'Не удалось создать обучение'));
       }
 
-      toast({ 
-        title: 'Успешно!', 
-        description: editId ? 'Обучение обновлено' : 'Обучение отправлено на модерацию' 
-      });
+      const result = await response.json();
+      
+      // Проверяем, был ли создан черновик из-за лимита
+      if (result.status === 'draft' && result.limit_info) {
+        toast({ 
+          title: 'Сохранено как черновик', 
+          description: `Превышен лимит публикаций (${result.limit_info.used}/${result.limit_info.limit}). Обучение сохранено и будет отправлено на модерацию после обновления тарифа.`,
+          variant: 'default'
+        });
+      } else {
+        toast({ 
+          title: 'Успешно!', 
+          description: editId ? 'Обучение обновлено' : 'Обучение отправлено на модерацию' 
+        });
+      }
+      
       navigate('/school/dashboard');
     } catch (error) {
       console.error('Save error:', error);
