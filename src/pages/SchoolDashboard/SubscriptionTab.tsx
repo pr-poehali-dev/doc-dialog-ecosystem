@@ -67,11 +67,14 @@ export default function SubscriptionTab() {
       setUsage(subData.usage || { courses_published_this_month: 0, messages_sent_today: 0, top_promotions_used_this_month: 0 });
 
       // Загружаем баланс школы
-      const balanceRes = await fetch('https://functions.poehali.dev/da7e3de6-b82e-41a5-8be4-6b3b0fb15deb?action=get_balance', {
-        headers: { 'X-User-Id': userId }
-      });
-      const balanceData = await balanceRes.json();
-      setSchoolBalance(balanceData.balance || 0);
+      const token = localStorage.getItem('token');
+      if (token) {
+        const balanceRes = await fetch(`https://functions.poehali.dev/da7e3de6-b82e-41a5-8be4-6b3b0fb15deb?action=get&token=${encodeURIComponent(token)}`);
+        if (balanceRes.ok) {
+          const balanceData = await balanceRes.json();
+          setSchoolBalance(balanceData.current_balance || 0);
+        }
+      }
     } catch (error) {
       console.error('Failed to load subscription data:', error);
     } finally {
