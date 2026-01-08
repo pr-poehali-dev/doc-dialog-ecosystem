@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import Icon from '@/components/ui/icon';
 
 interface MastermindFormProps {
   mastermindForm: {
@@ -51,6 +52,18 @@ export default function MastermindForm({ mastermindForm, setMastermindForm, onSu
         <CardTitle>{isEditing ? 'Редактировать мастермайнд' : 'Добавить мастермайнд'}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {!isEditing && (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start gap-3">
+            <Icon name="AlertCircle" className="text-amber-600 mt-0.5" size={20} />
+            <div>
+              <p className="font-medium text-amber-900">Стоимость публикации мастермайнда</p>
+              <p className="text-sm text-amber-700 mt-1">
+                После отправки мастермайнда на модерацию с вашего баланса будет списано <strong>₽500</strong>. 
+                Убедитесь, что на балансе достаточно средств.
+              </p>
+            </div>
+          </div>
+        )}
         <div>
           <Label>Название школы*</Label>
           <Input value={mastermindForm.school_name} onChange={(e) => setMastermindForm({...mastermindForm, school_name: e.target.value})} placeholder="Школа массажа 'Название'" />
