@@ -82,9 +82,12 @@ interface ItemsListProps {
   onDeleteTraining?: (trainingId: number) => void;
   onEditSpecialist?: (specialist: SpecialistRequest) => void;
   onDeleteSpecialist?: (specialistId: number) => void;
+  onSubmitDraftCourse?: (courseId: number) => void;
+  onSubmitDraftMastermind?: (mastermindId: number) => void;
+  onSubmitDraftTraining?: (trainingId: number) => void;
 }
 
-export default function ItemsList({ activeTab, courses, masterminds, offlineTrainings = [], specialists, canPromoteToTop, getStatusBadge, onEditCourse, onDeleteCourse, onPromoteCourse, onPromoteMastermind, onPromoteTraining, onEditMastermind, onDeleteMastermind, onEditTraining, onDeleteTraining, onEditSpecialist, onDeleteSpecialist }: ItemsListProps) {
+export default function ItemsList({ activeTab, courses, masterminds, offlineTrainings = [], specialists, canPromoteToTop, getStatusBadge, onEditCourse, onDeleteCourse, onPromoteCourse, onPromoteMastermind, onPromoteTraining, onEditMastermind, onDeleteMastermind, onEditTraining, onDeleteTraining, onEditSpecialist, onDeleteSpecialist, onSubmitDraftCourse, onSubmitDraftMastermind, onSubmitDraftTraining }: ItemsListProps) {
   return (
     <>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -97,6 +100,7 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
             onEdit={onEditCourse}
             onDelete={onDeleteCourse}
             onPromote={onPromoteCourse}
+            onSubmitDraft={onSubmitDraftCourse}
           />
         ))}
 
@@ -109,6 +113,7 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
             onEdit={onEditMastermind}
             onDelete={onDeleteMastermind}
             onPromote={onPromoteMastermind}
+            onSubmitDraft={onSubmitDraftMastermind}
           />
         ))}
 
@@ -121,6 +126,7 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
             onEdit={onEditTraining}
             onDelete={onDeleteTraining}
             onPromote={onPromoteTraining}
+            onSubmitDraft={onSubmitDraftTraining}
           />
         ))}
 

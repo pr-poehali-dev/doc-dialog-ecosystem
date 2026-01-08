@@ -121,10 +121,30 @@ export function useMastermindHandlers({
     }
   };
 
+  const handleSubmitDraftMastermind = async (mastermindId: number) => {
+    try {
+      const response = await fetch(`${COURSE_API_URL}?action=masterminds&id=${mastermindId}&submit_draft=true`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      if (response.ok) {
+        toast({ title: 'Успех', description: 'Мастермайнд отправлен на модерацию' });
+        loadData();
+      } else {
+        const errorData = await response.json();
+        toast({ title: 'Ошибка', description: errorData.error || 'Не удалось отправить на модерацию', variant: 'destructive' });
+      }
+    } catch (error) {
+      toast({ title: 'Ошибка', description: 'Не удалось отправить на модерацию', variant: 'destructive' });
+    }
+  };
+
   return {
     handleAddMastermind,
     handleEditMastermind,
     handleUpdateMastermind,
-    handleDeleteMastermind
+    handleDeleteMastermind,
+    handleSubmitDraftMastermind
   };
 }

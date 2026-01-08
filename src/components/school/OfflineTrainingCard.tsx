@@ -8,9 +8,10 @@ interface OfflineTrainingCardProps {
   onEdit?: (training: any) => void;
   onDelete?: (trainingId: number) => void;
   onPromote?: (trainingId: number, title: string) => void;
+  onSubmitDraft?: (trainingId: number) => void;
 }
 
-export default function OfflineTrainingCard({ training, canPromoteToTop, getStatusBadge, onEdit, onDelete, onPromote }: OfflineTrainingCardProps) {
+export default function OfflineTrainingCard({ training, canPromoteToTop, getStatusBadge, onEdit, onDelete, onPromote, onSubmitDraft }: OfflineTrainingCardProps) {
   return (
     <Card key={training.id}>
       <CardHeader>
@@ -91,6 +92,15 @@ export default function OfflineTrainingCard({ training, canPromoteToTop, getStat
           )}
         </div>
         <div className="space-y-2 mt-4 pt-4 border-t">
+          {training.status === 'draft' && onSubmitDraft && (
+            <button
+              onClick={() => onSubmitDraft(training.id)}
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors font-medium"
+            >
+              <Icon name="Send" size={16} />
+              Отправить на модерацию
+            </button>
+          )}
           {training.status === 'approved' && training.slug && (
             <a
               href={`/offline-training/landing/${training.slug}`}

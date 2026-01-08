@@ -42,6 +42,81 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
+    # POST /courses?action=submit_draft - Submit draft for moderation
+    if method == 'POST' and action == 'submit_draft':
+        if not course_id:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Missing course ID'}),
+                'isBase64Encoded': False
+            }
+        
+        # Определяем таблицу по entity_type
+        table_name = 'courses'
+        if entity_type == 'masterminds':
+            table_name = 'masterminds'
+        elif entity_type == 'offline_training' or entity_type == 'offline-training':
+            table_name = 'offline_training'
+        
+        # Получаем school_id курса
+        cur.execute(f"SELECT school_id FROM {schema}.{table_name} WHERE id = {course_id}")
+        course_data = cur.fetchone()
+        
+        if not course_data:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Course not found'}),
+                'isBase64Encoded': False
+            }
+        
+        school_id = course_data[0]
+        
+        # Проверяем лимиты тарифа
+        cur.execute(f"""
+            SELECT sp.courses_limit
+            FROM {schema}.school_subscriptions ss
+            JOIN {schema}.subscription_plans sp ON ss.plan_id = sp.id
+            WHERE ss.school_id = {school_id} AND ss.is_active = true
+            LIMIT 1
+        """)
+        
+        plan_data = cur.fetchone()
+        new_status = 'pending'
+        
+        if plan_data:
+            courses_limit = plan_data[0]
+            
+            # Считаем активные публикации
+            cur.execute(f"""
+                SELECT 
+                    (SELECT COUNT(*) FROM {schema}.courses WHERE school_id = {school_id} AND status IN ('approved', 'pending')) +
+                    (SELECT COUNT(*) FROM {schema}.masterminds WHERE school_id = {school_id} AND status IN ('approved', 'pending')) +
+                    (SELECT COUNT(*) FROM {schema}.offline_training WHERE school_id = {school_id} AND status IN ('approved', 'pending'))
+            """)
+            total_active = cur.fetchone()[0] or 0
+            
+            # Если лимит превышен - оставляем черновиком
+            if courses_limit is not None and total_active >= courses_limit:
+                new_status = 'draft'
+        
+        # Обновляем статус
+        cur.execute(f"UPDATE {schema}.{table_name} SET status = '{new_status}' WHERE id = {course_id}")
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'status': new_status, 'message': 'Status updated'}),
+            'isBase64Encoded': False
+        }
+    
     # GET /courses?action=get_reviews - Get all approved reviews
     if method == 'GET' and action == 'get_reviews':
         item_type = query_params.get('item_type')

@@ -30,9 +30,10 @@ interface CourseCardProps {
   onEdit?: (course: Course) => void;
   onDelete?: (courseId: number) => void;
   onPromote?: (courseId: number, title: string, category: string) => void;
+  onSubmitDraft?: (courseId: number) => void;
 }
 
-export default function CourseCard({ course, canPromoteToTop, getStatusBadge, onEdit, onDelete, onPromote }: CourseCardProps) {
+export default function CourseCard({ course, canPromoteToTop, getStatusBadge, onEdit, onDelete, onPromote, onSubmitDraft }: CourseCardProps) {
   return (
     <Card key={course.id}>
       <CardHeader>
@@ -106,6 +107,15 @@ export default function CourseCard({ course, canPromoteToTop, getStatusBadge, on
           )}
         </div>
         <div className="space-y-2 mt-4 pt-4 border-t">
+          {course.status === 'draft' && (
+            <button
+              onClick={() => onSubmitDraft?.(course.id)}
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors font-medium"
+            >
+              <Icon name="Send" size={16} />
+              Отправить на модерацию
+            </button>
+          )}
           {(course.status === 'approved' || course.status === 'moderation') && course.slug && (
             <a
               href={`/course/landing/${course.slug}?preview=true`}

@@ -122,10 +122,38 @@ export function useCourseHandlers({
     }
   };
 
+  const handleSubmitDraftCourse = async (courseId: number) => {
+    try {
+      const response = await fetch(`${COURSE_API_URL}?type=courses&id=${courseId}&action=submit_draft`, {
+        method: 'POST'
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        if (data.status === 'pending') {
+          toast({ title: 'Курс отправлен на модерацию', description: 'Ваш курс будет проверен модераторами' });
+        } else if (data.status === 'draft') {
+          toast({ 
+            title: 'Превышен лимит публикаций', 
+            description: 'Обновите тариф для увеличения лимита публикаций',
+            variant: 'destructive'
+          });
+        }
+        loadData();
+      } else {
+        toast({ title: 'Ошибка', description: data.error || 'Не удалось отправить курс на модерацию', variant: 'destructive' });
+      }
+    } catch (error) {
+      toast({ title: 'Ошибка', description: 'Не удалось отправить курс на модерацию', variant: 'destructive' });
+    }
+  };
+
   return {
     handleAddCourse,
     handleEditCourse,
     handleUpdateCourse,
-    handleDeleteCourse
+    handleDeleteCourse,
+    handleSubmitDraftCourse
   };
 }

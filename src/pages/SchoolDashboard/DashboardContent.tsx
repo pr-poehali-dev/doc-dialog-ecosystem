@@ -26,6 +26,9 @@ interface DashboardContentProps {
   onDeleteTraining: (id: number) => void;
   onEditSpecialist: (id: number) => void;
   onDeleteSpecialist: (id: number) => void;
+  onSubmitDraftCourse: (id: number) => void;
+  onSubmitDraftMastermind: (id: number) => void;
+  onSubmitDraftTraining: (id: number) => void;
   onReloadLandings: () => void;
   setPendingPromoRequestsCount: (count: number) => void;
 }
@@ -94,6 +97,9 @@ export default function DashboardContent({
   onDeleteTraining,
   onEditSpecialist,
   onDeleteSpecialist,
+  onSubmitDraftCourse,
+  onSubmitDraftMastermind,
+  onSubmitDraftTraining,
   onReloadLandings,
   setPendingPromoRequestsCount
 }: DashboardContentProps) {
@@ -118,6 +124,9 @@ export default function DashboardContent({
         onDeleteTraining={onDeleteTraining}
         onEditSpecialist={onEditSpecialist}
         onDeleteSpecialist={onDeleteSpecialist}
+        onSubmitDraftCourse={onSubmitDraftCourse}
+        onSubmitDraftMastermind={onSubmitDraftMastermind}
+        onSubmitDraftTraining={onSubmitDraftTraining}
       />
     );
   }

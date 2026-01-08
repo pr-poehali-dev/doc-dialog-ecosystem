@@ -68,7 +68,8 @@ export default function SchoolDashboard() {
     handleAddCourse,
     handleEditCourse,
     handleUpdateCourse,
-    handleDeleteCourse
+    handleDeleteCourse,
+    handleSubmitDraftCourse
   } = useCourseHandlers({
     schoolId,
     courseForm,
@@ -84,7 +85,8 @@ export default function SchoolDashboard() {
     handleAddMastermind,
     handleEditMastermind,
     handleUpdateMastermind,
-    handleDeleteMastermind
+    handleDeleteMastermind,
+    handleSubmitDraftMastermind
   } = useMastermindHandlers({
     schoolId,
     mastermindForm,
@@ -100,7 +102,8 @@ export default function SchoolDashboard() {
     handleAddTraining,
     handleEditTraining,
     handleUpdateTraining,
-    handleDeleteTraining
+    handleDeleteTraining,
+    handleSubmitDraftTraining
   } = useOfflineTrainingHandlers({
     schoolId,
     trainingForm,
@@ -201,6 +204,9 @@ export default function SchoolDashboard() {
           onDeleteTraining={handleDeleteTraining}
           onEditSpecialist={handleEditSpecialist}
           onDeleteSpecialist={handleDeleteSpecialist}
+          onSubmitDraftCourse={handleSubmitDraftCourse}
+          onSubmitDraftMastermind={handleSubmitDraftMastermind}
+          onSubmitDraftTraining={handleSubmitDraftTraining}
           onReloadLandings={loadData}
           setPendingPromoRequestsCount={setPendingPromoRequestsCount}
         />

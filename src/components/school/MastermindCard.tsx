@@ -32,9 +32,10 @@ interface MastermindCardProps {
   onEdit?: (mastermind: Mastermind) => void;
   onDelete?: (mastermindId: number) => void;
   onPromote?: (mastermindId: number, title: string) => void;
+  onSubmitDraft?: (mastermindId: number) => void;
 }
 
-export default function MastermindCard({ mastermind: mm, canPromoteToTop, getStatusBadge, onEdit, onDelete, onPromote }: MastermindCardProps) {
+export default function MastermindCard({ mastermind: mm, canPromoteToTop, getStatusBadge, onEdit, onDelete, onPromote, onSubmitDraft }: MastermindCardProps) {
   return (
     <Card key={mm.id}>
       <CardHeader>
@@ -121,6 +122,15 @@ export default function MastermindCard({ mastermind: mm, canPromoteToTop, getSta
           )}
         </div>
         <div className="space-y-2 mt-4 pt-4 border-t">
+          {mm.status === 'draft' && (
+            <button
+              onClick={() => onSubmitDraft?.(mm.id)}
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors font-medium"
+            >
+              <Icon name="Send" size={16} />
+              Отправить на модерацию
+            </button>
+          )}
           {mm.status === 'approved' && mm.slug && (
             <a
               href={`/mastermind/landing/${mm.slug}`}
