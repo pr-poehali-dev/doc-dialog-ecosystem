@@ -81,3 +81,10 @@ export function getUserEmail(): string {
   }
   return '';
 }
+
+/**
+ * Получает JWT токен из localStorage
+ */
+export function getToken(): string | null {
+  return localStorage.getItem('token');
+}
