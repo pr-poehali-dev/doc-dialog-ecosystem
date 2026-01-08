@@ -31,7 +31,7 @@ export function useDashboardState(toast: any) {
   const [promoteTrainingId, setPromoteTrainingId] = useState<number | null>(null);
   const [promoteTrainingTitle, setPromoteTrainingTitle] = useState('');
   const [pendingPromoRequestsCount, setPendingPromoRequestsCount] = useState(0);
-  const [canPromoteToTop, setCanPromoteToTop] = useState(true);
+  const [canPromoteToTop, setCanPromoteToTop] = useState(false);
 
   const loadUserSchool = async () => {
     try {
@@ -61,8 +61,9 @@ export function useDashboardState(toast: any) {
       if (subRes.ok) {
         const subData = await subRes.json();
         const plan = subData.subscription?.plan;
-        // Базовый тариф (price=0) не может поднимать в топ (top_promotions_limit=0)
-        setCanPromoteToTop(plan?.top_promotions_limit !== 0);
+        // Базовый тариф не может поднимать в топ (top_promotions_limit=0 или null)
+        // Доступно только если top_promotions_limit > 0
+        setCanPromoteToTop(plan?.top_promotions_limit > 0);
       }
     } catch (error) {
       console.error('Load school error:', error);
