@@ -297,7 +297,7 @@ def handler(event: dict, context) -> dict:
             cur.execute(f"""
                 INSERT INTO {schema}.balance_transactions 
                 (school_id, masseur_id, amount, type, description, created_at)
-                VALUES ({school_id}, -1, {plan_price}, 'withdrawal', 'Оплата тарифа: {plan_name}', NOW())
+                VALUES ({school_id}, NULL, {plan_price}, 'withdrawal', 'Оплата тарифа: {plan_name}', NOW())
             """)
         
         if expires_at:
