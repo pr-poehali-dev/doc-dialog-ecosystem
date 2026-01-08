@@ -141,9 +141,9 @@ export default function SchoolDashboard() {
               
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                 <div className="flex items-center gap-2">
-                  <Icon name={subscriptionPlan.courses_limit ? 'Check' : 'X'} 
+                  <Icon name="Check" 
                         size={18} 
-                        className={subscriptionPlan.courses_limit ? 'text-green-600' : 'text-red-500'} />
+                        className="text-green-600" />
                   <span className="text-sm text-gray-700">
                     Курсов: {subscriptionPlan.courses_limit || 'Безлимит'}
                   </span>
