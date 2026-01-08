@@ -466,6 +466,30 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
+    # DELETE /admin?action=delete_all_courses - Удалить все курсы (только для админов)
+    if method == 'DELETE' and action == 'delete_all_courses':
+        if not is_admin:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 403,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Only admins can delete all courses'}),
+                'isBase64Encoded': False
+            }
+        
+        # Удаляем все курсы
+        cur.execute(f"DELETE FROM {schema}.courses")
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'message': 'All courses deleted successfully'}),
+            'isBase64Encoded': False
+        }
+    
     cur.close()
     conn.close()
     return {
