@@ -7,8 +7,8 @@ export default function MasseursFooter() {
   return (
     <footer className="bg-gradient-to-br from-gray-900 to-gray-800 text-white py-12 sm:py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-4 gap-8 mb-10">
-          <div>
+        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+          <div className="sm:col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg">
                 <span className="text-white font-bold text-lg">Д</span>

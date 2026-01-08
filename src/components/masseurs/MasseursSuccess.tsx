@@ -6,17 +6,17 @@ export default function MasseursSuccess() {
     <section className="py-20 sm:py-24 lg:py-28 bg-gradient-to-b from-primary/5 to-muted/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-5">
+          <div className="text-center mb-12 sm:mb-16 px-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-5">
               Истории тех, кто уже растёт с нами
             </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
               Реальные результаты специалистов, которые выбрали развитие
             </p>
-            <div className="w-24 h-1 bg-gradient-to-r from-primary/50 via-primary to-primary/50 mx-auto rounded-full mt-6"></div>
+            <div className="w-24 h-1 bg-gradient-to-r from-primary/50 via-primary to-primary/50 mx-auto rounded-full mt-4 sm:mt-6"></div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
             {[
               {
                 name: "Анна Кузнецова",
@@ -93,12 +93,12 @@ export default function MasseursSuccess() {
             ))}
           </div>
 
-          <div className="mt-12 bg-gradient-to-br from-primary/10 to-primary/5 rounded-3xl p-8 sm:p-12 text-center shadow-xl border border-primary/20">
-            <Icon name="TrendingUp" className="text-primary mx-auto mb-5" size={48} />
-            <h3 className="text-2xl sm:text-3xl font-bold mb-4">
+          <div className="mt-8 sm:mt-12 bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 text-center shadow-xl border border-primary/20">
+            <Icon name="TrendingUp" className="text-primary mx-auto mb-4 sm:mb-5" size={40} />
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">
               Ваша история успеха начинается сегодня
             </h3>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
               Присоединяйтесь к тысячам специалистов, которые выбрали профессиональный рост и стабильный доход
             </p>
           </div>

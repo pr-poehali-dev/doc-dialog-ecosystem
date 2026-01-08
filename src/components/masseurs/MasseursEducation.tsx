@@ -10,27 +10,27 @@ export default function MasseursEducation() {
     <section className="py-20 sm:py-24 lg:py-28 bg-gradient-to-b from-muted/30 to-primary/5">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
-            <div>
-              <div className="inline-flex items-center gap-2 bg-primary/10 backdrop-blur-sm px-4 py-2 rounded-full mb-6 border border-primary/20">
+          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center mb-12 sm:mb-16">
+            <div className="px-4 sm:px-0">
+              <div className="inline-flex items-center gap-2 bg-primary/10 backdrop-blur-sm px-4 py-2 rounded-full mb-4 sm:mb-6 border border-primary/20">
                 <Icon name="Sparkles" className="text-primary" size={16} />
                 <span className="text-sm font-semibold text-primary">Непрерывное обучение</span>
               </div>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 leading-tight">
                 Учитесь у лучших школ индустрии
               </h2>
-              <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+              <p className="text-base sm:text-lg text-muted-foreground mb-4 sm:mb-6 leading-relaxed">
                 Док диалог объединяет топовые школы массажа и телесных практик. Выбирайте курсы по вашим целям — от базовых техник до экспертных специализаций.
               </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
                 Каждая школа проходит отбор. Вы учитесь только у профессионалов с репутацией.
               </p>
             </div>
-            <div>
+            <div className="px-4 sm:px-0">
               <img 
                 src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/f0120964-b695-4872-88fd-9023380a2ac1.jpg"
                 alt="Профессиональное обучение"
-                className="rounded-3xl shadow-2xl w-full h-auto object-cover"
+                className="rounded-2xl sm:rounded-3xl shadow-2xl w-full h-auto object-cover"
               />
             </div>
           </div>

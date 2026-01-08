@@ -6,23 +6,23 @@ export default function MasseursCommunity() {
     <section className="py-20 sm:py-24 lg:py-28 bg-gradient-to-b from-white to-primary/5">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="order-2 lg:order-1">
+          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
+            <div className="order-2 lg:order-1 px-4 sm:px-0">
               <img 
                 src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/cb94208c-0e85-4837-bc48-8283536d0020.jpg"
                 alt="Сообщество профессионалов"
-                className="rounded-3xl shadow-2xl w-full h-auto object-cover"
+                className="rounded-2xl sm:rounded-3xl shadow-2xl w-full h-auto object-cover"
               />
             </div>
-            <div className="order-1 lg:order-2">
-              <div className="inline-flex items-center gap-2 bg-primary/10 backdrop-blur-sm px-4 py-2 rounded-full mb-6 border border-primary/20">
+            <div className="order-1 lg:order-2 px-4 sm:px-0">
+              <div className="inline-flex items-center gap-2 bg-primary/10 backdrop-blur-sm px-4 py-2 rounded-full mb-4 sm:mb-6 border border-primary/20">
                 <Icon name="Users" className="text-primary" size={16} />
                 <span className="text-sm font-semibold text-primary">Сильное комьюнити</span>
               </div>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 leading-tight">
                 Растите вместе с профессионалами
               </h2>
-              <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+              <p className="text-base sm:text-lg text-muted-foreground mb-4 sm:mb-6 leading-relaxed">
                 Док диалог — это не просто платформа. Это живое сообщество специалистов, которые помогают друг другу расти.
               </p>
 

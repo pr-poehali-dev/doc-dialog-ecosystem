@@ -6,15 +6,15 @@ export default function MasseursTools() {
     <section className="py-20 sm:py-24 lg:py-28 bg-gradient-to-b from-muted/30 to-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 bg-primary/10 backdrop-blur-sm px-4 py-2 rounded-full mb-6 border border-primary/20">
+          <div className="text-center mb-12 sm:mb-16 px-4">
+            <div className="inline-flex items-center gap-2 bg-primary/10 backdrop-blur-sm px-4 py-2 rounded-full mb-4 sm:mb-6 border border-primary/20">
               <Icon name="Zap" className="text-primary" size={16} />
               <span className="text-sm font-semibold text-primary">Эксклюзивные инструменты</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-5">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-5">
               Инструменты, которых нет у других
             </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
               Док диалог даёт вам конкурентное преимущество
             </p>
           </div>
@@ -87,11 +87,11 @@ export default function MasseursTools() {
             ))}
           </div>
 
-          <div className="bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 rounded-3xl p-8 sm:p-10 text-center shadow-lg border border-primary/20">
-            <h3 className="text-2xl sm:text-3xl font-bold mb-4">
+          <div className="bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 text-center shadow-lg border border-primary/20">
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">
               Всё для профессиональной работы в одном месте
             </h3>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
               Не нужно покупать десяток сервисов. Док диалог — это полная инфраструктура для развития вашей практики.
             </p>
           </div>
