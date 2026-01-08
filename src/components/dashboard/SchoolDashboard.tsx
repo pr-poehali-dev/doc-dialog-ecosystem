@@ -8,7 +8,7 @@ import { getUserId } from '@/utils/auth';
 
 export default function SchoolDashboard() {
   const { unreadCount } = useUnreadMessages();
-  const [canSendMessages, setCanSendMessages] = useState(true);
+  const [canSendMessages, setCanSendMessages] = useState(false);
   
   useEffect(() => {
     const loadMessagingPermission = async () => {
@@ -23,8 +23,9 @@ export default function SchoolDashboard() {
         if (response.ok) {
           const data = await response.json();
           const plan = data.subscription?.plan;
-          // Базовый тариф не может отправлять сообщения (messages_limit_per_day=0)
-          setCanSendMessages(plan?.messages_limit_per_day !== 0);
+          // Базовый тариф не может отправлять сообщения (messages_limit_per_day=0 или null)
+          // Доступно только если messages_limit_per_day > 0
+          setCanSendMessages(plan?.messages_limit_per_day > 0);
         }
       } catch (error) {
         console.error('Failed to load messaging permission:', error);
