@@ -109,8 +109,17 @@ def handler(event: dict, context) -> dict:
         """)
         courses_published_this_month = cur.fetchone()[0] or 0
         
-        # Сообщения и промо берём из таблицы schools (эти счётчики сбрасываются по расписанию)
-        messages_sent_today = school_data[2] or 0
+        # Считаем реальные сообщения админу за сегодня (admin user_id = 2)
+        cur.execute(f"""
+            SELECT COUNT(*) 
+            FROM {schema}.messages 
+            WHERE sender_id = {user_id} 
+              AND receiver_id = 2
+              AND created_at >= CURRENT_DATE
+        """)
+        messages_sent_today = cur.fetchone()[0] or 0
+        
+        # Промо берём из таблицы schools (счётчик сбрасывается по расписанию)
         top_promotions_used_this_month = school_data[3] or 0
         
         # Получаем активную подписку
