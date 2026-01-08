@@ -150,11 +150,11 @@ export default function SchoolDashboard() {
                 </div>
                 
                 <div className="flex items-center gap-2">
-                  <Icon name={subscriptionPlan.messages_limit_per_day ? 'Check' : 'X'} 
+                  <Icon name={subscriptionPlan.messages_limit_per_day !== 0 ? 'Check' : 'X'} 
                         size={18} 
-                        className={subscriptionPlan.messages_limit_per_day ? 'text-green-600' : 'text-red-500'} />
+                        className={subscriptionPlan.messages_limit_per_day !== 0 ? 'text-green-600' : 'text-red-500'} />
                   <span className="text-sm text-gray-700">
-                    Сообщения: {subscriptionPlan.messages_limit_per_day ? `${subscriptionPlan.messages_limit_per_day}/день` : 'Недоступно'}
+                    Сообщения: {subscriptionPlan.messages_limit_per_day === null ? 'Безлимит' : subscriptionPlan.messages_limit_per_day > 0 ? `${subscriptionPlan.messages_limit_per_day}/день` : 'Недоступно'}
                   </span>
                 </div>
                 
