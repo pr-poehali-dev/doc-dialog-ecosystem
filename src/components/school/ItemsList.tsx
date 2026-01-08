@@ -69,6 +69,7 @@ interface ItemsListProps {
   masterminds: Mastermind[];
   offlineTrainings?: any[];
   specialists: SpecialistRequest[];
+  canPromoteToTop: boolean;
   getStatusBadge: (status: string) => JSX.Element;
   onEditCourse?: (course: Course) => void;
   onDeleteCourse?: (courseId: number) => void;
@@ -83,7 +84,7 @@ interface ItemsListProps {
   onDeleteSpecialist?: (specialistId: number) => void;
 }
 
-export default function ItemsList({ activeTab, courses, masterminds, offlineTrainings = [], specialists, getStatusBadge, onEditCourse, onDeleteCourse, onPromoteCourse, onPromoteMastermind, onPromoteTraining, onEditMastermind, onDeleteMastermind, onEditTraining, onDeleteTraining, onEditSpecialist, onDeleteSpecialist }: ItemsListProps) {
+export default function ItemsList({ activeTab, courses, masterminds, offlineTrainings = [], specialists, canPromoteToTop, getStatusBadge, onEditCourse, onDeleteCourse, onPromoteCourse, onPromoteMastermind, onPromoteTraining, onEditMastermind, onDeleteMastermind, onEditTraining, onDeleteTraining, onEditSpecialist, onDeleteSpecialist }: ItemsListProps) {
   return (
     <>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -91,6 +92,7 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
           <CourseCard
             key={course.id}
             course={course}
+            canPromoteToTop={canPromoteToTop}
             getStatusBadge={getStatusBadge}
             onEdit={onEditCourse}
             onDelete={onDeleteCourse}
@@ -102,6 +104,7 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
           <MastermindCard
             key={mm.id}
             mastermind={mm}
+            canPromoteToTop={canPromoteToTop}
             getStatusBadge={getStatusBadge}
             onEdit={onEditMastermind}
             onDelete={onDeleteMastermind}
@@ -113,6 +116,7 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
           <OfflineTrainingCard
             key={training.id}
             training={training}
+            canPromoteToTop={canPromoteToTop}
             getStatusBadge={getStatusBadge}
             onEdit={onEditTraining}
             onDelete={onDeleteTraining}

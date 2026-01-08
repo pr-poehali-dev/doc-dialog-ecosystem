@@ -3,13 +3,14 @@ import Icon from '@/components/ui/icon';
 
 interface OfflineTrainingCardProps {
   training: any;
+  canPromoteToTop: boolean;
   getStatusBadge: (status: string) => JSX.Element;
   onEdit?: (training: any) => void;
   onDelete?: (trainingId: number) => void;
   onPromote?: (trainingId: number, title: string) => void;
 }
 
-export default function OfflineTrainingCard({ training, getStatusBadge, onEdit, onDelete, onPromote }: OfflineTrainingCardProps) {
+export default function OfflineTrainingCard({ training, canPromoteToTop, getStatusBadge, onEdit, onDelete, onPromote }: OfflineTrainingCardProps) {
   return (
     <Card key={training.id}>
       <CardHeader>
@@ -103,11 +104,17 @@ export default function OfflineTrainingCard({ training, getStatusBadge, onEdit, 
           )}
           {training.status === 'approved' && (
             <button
-              onClick={() => onPromote?.(training.id, training.title)}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-md hover:from-amber-600 hover:to-orange-600 transition-colors font-medium"
+              onClick={() => canPromoteToTop && onPromote?.(training.id, training.title)}
+              disabled={!canPromoteToTop}
+              className={`w-full flex items-center justify-center gap-2 px-3 py-2 text-sm rounded-md font-medium ${
+                canPromoteToTop 
+                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 transition-colors' 
+                  : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+              }`}
+              title={!canPromoteToTop ? 'Недоступно на базовом тарифе. Обновите тариф в разделе "Подписка"' : ''}
             >
               <Icon name="TrendingUp" size={16} />
-              Поднять в топ (от 100 ₽)
+              Поднять в топ
             </button>
           )}
           <div className="flex gap-2">

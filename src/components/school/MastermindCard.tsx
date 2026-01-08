@@ -27,13 +27,14 @@ interface Mastermind {
 
 interface MastermindCardProps {
   mastermind: Mastermind;
+  canPromoteToTop: boolean;
   getStatusBadge: (status: string) => JSX.Element;
   onEdit?: (mastermind: Mastermind) => void;
   onDelete?: (mastermindId: number) => void;
   onPromote?: (mastermindId: number, title: string) => void;
 }
 
-export default function MastermindCard({ mastermind: mm, getStatusBadge, onEdit, onDelete, onPromote }: MastermindCardProps) {
+export default function MastermindCard({ mastermind: mm, canPromoteToTop, getStatusBadge, onEdit, onDelete, onPromote }: MastermindCardProps) {
   return (
     <Card key={mm.id}>
       <CardHeader>
@@ -133,11 +134,17 @@ export default function MastermindCard({ mastermind: mm, getStatusBadge, onEdit,
           )}
           {mm.status === 'approved' && (
             <button
-              onClick={() => onPromote?.(mm.id, mm.title)}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-md hover:from-amber-600 hover:to-orange-600 transition-colors font-medium"
+              onClick={() => canPromoteToTop && onPromote?.(mm.id, mm.title)}
+              disabled={!canPromoteToTop}
+              className={`w-full flex items-center justify-center gap-2 px-3 py-2 text-sm rounded-md font-medium ${
+                canPromoteToTop 
+                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 transition-colors' 
+                  : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+              }`}
+              title={!canPromoteToTop ? 'Недоступно на базовом тарифе. Обновите тариф в разделе "Подписка"' : ''}
             >
               <Icon name="TrendingUp" size={16} />
-              Поднять в топ (от 100 ₽)
+              Поднять в топ
             </button>
           )}
           <div className="flex gap-2">

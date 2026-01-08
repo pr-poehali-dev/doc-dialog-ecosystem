@@ -25,13 +25,14 @@ interface Course {
 
 interface CourseCardProps {
   course: Course;
+  canPromoteToTop: boolean;
   getStatusBadge: (status: string) => JSX.Element;
   onEdit?: (course: Course) => void;
   onDelete?: (courseId: number) => void;
   onPromote?: (courseId: number, title: string, category: string) => void;
 }
 
-export default function CourseCard({ course, getStatusBadge, onEdit, onDelete, onPromote }: CourseCardProps) {
+export default function CourseCard({ course, canPromoteToTop, getStatusBadge, onEdit, onDelete, onPromote }: CourseCardProps) {
   return (
     <Card key={course.id}>
       <CardHeader>
@@ -118,11 +119,17 @@ export default function CourseCard({ course, getStatusBadge, onEdit, onDelete, o
           )}
           {course.status === 'approved' && (
             <button
-              onClick={() => onPromote?.(course.id, course.title, course.category)}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-md hover:from-amber-600 hover:to-orange-600 transition-colors font-medium"
+              onClick={() => canPromoteToTop && onPromote?.(course.id, course.title, course.category)}
+              disabled={!canPromoteToTop}
+              className={`w-full flex items-center justify-center gap-2 px-3 py-2 text-sm rounded-md font-medium ${
+                canPromoteToTop 
+                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 transition-colors' 
+                  : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+              }`}
+              title={!canPromoteToTop ? 'Недоступно на базовом тарифе. Обновите тариф в разделе "Подписка"' : ''}
             >
               <Icon name="TrendingUp" size={16} />
-              Поднять в топ (от 100 ₽)
+              Поднять в топ
             </button>
           )}
           <div className="flex gap-2">

@@ -54,6 +54,7 @@ export default function SchoolDashboard() {
     setPromoteTrainingTitle,
     pendingPromoRequestsCount,
     setPendingPromoRequestsCount,
+    canPromoteToTop,
     loadData,
     handleTabChange
   } = useDashboardState(toast);
@@ -178,6 +179,7 @@ export default function SchoolDashboard() {
           offlineTrainings={offlineTrainings}
           specialists={specialists}
           landings={landings}
+          canPromoteToTop={canPromoteToTop}
           onEditCourse={handleEditCourse}
           onPromoteCourse={(id, title, category) => {
             setPromoteCourseId(id);

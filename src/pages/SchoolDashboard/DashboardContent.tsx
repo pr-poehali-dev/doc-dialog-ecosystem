@@ -14,6 +14,7 @@ interface DashboardContentProps {
   offlineTrainings: any[];
   specialists: SpecialistRequest[];
   landings: any[];
+  canPromoteToTop: boolean;
   onEditCourse: (id: number) => void;
   onPromoteCourse: (id: number, title: string, category: string) => void;
   onDeleteCourse: (id: number) => void;
@@ -81,6 +82,7 @@ export default function DashboardContent({
   offlineTrainings,
   specialists,
   landings,
+  canPromoteToTop,
   onEditCourse,
   onPromoteCourse,
   onDeleteCourse,
@@ -103,6 +105,7 @@ export default function DashboardContent({
         masterminds={masterminds}
         offlineTrainings={offlineTrainings}
         specialists={specialists}
+        canPromoteToTop={canPromoteToTop}
         getStatusBadge={getStatusBadge}
         onEditCourse={onEditCourse}
         onPromoteCourse={onPromoteCourse}

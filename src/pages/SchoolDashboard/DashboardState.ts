@@ -31,6 +31,7 @@ export function useDashboardState(toast: any) {
   const [promoteTrainingId, setPromoteTrainingId] = useState<number | null>(null);
   const [promoteTrainingTitle, setPromoteTrainingTitle] = useState('');
   const [pendingPromoRequestsCount, setPendingPromoRequestsCount] = useState(0);
+  const [canPromoteToTop, setCanPromoteToTop] = useState(true);
 
   const loadUserSchool = async () => {
     try {
@@ -51,6 +52,17 @@ export function useDashboardState(toast: any) {
         if (data.schools && data.schools.length > 0) {
           setSchoolId(data.schools[0].id);
         }
+      }
+
+      // Загружаем тариф школы
+      const subRes = await fetch(`https://functions.poehali.dev/f81f82f7-d9c7-4858-87bc-6701c67f2187?action=my_subscription`, {
+        headers: { 'X-User-Id': userId }
+      });
+      if (subRes.ok) {
+        const subData = await subRes.json();
+        const plan = subData.subscription?.plan;
+        // Базовый тариф (price=0) не может поднимать в топ (top_promotions_limit=0)
+        setCanPromoteToTop(plan?.top_promotions_limit !== 0);
       }
     } catch (error) {
       console.error('Load school error:', error);
@@ -224,6 +236,7 @@ export function useDashboardState(toast: any) {
     setPromoteTrainingTitle,
     pendingPromoRequestsCount,
     setPendingPromoRequestsCount,
+    canPromoteToTop,
     loadData,
     handleTabChange
   };
