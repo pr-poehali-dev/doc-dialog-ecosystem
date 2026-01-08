@@ -3,6 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
 import { getUserId } from '@/utils/auth';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 interface SubscriptionPlan {
   id: number;
@@ -33,6 +41,9 @@ export default function SubscriptionTab() {
   const [activeSubscription, setActiveSubscription] = useState<ActiveSubscription | null>(null);
   const [usage, setUsage] = useState<SchoolUsage>({ courses_published_this_month: 0, messages_sent_today: 0, top_promotions_used_this_month: 0 });
   const [loading, setLoading] = useState(true);
+  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [schoolBalance, setSchoolBalance] = useState(0);
 
   useEffect(() => {
     loadData();
@@ -54,6 +65,13 @@ export default function SubscriptionTab() {
       const subData = await subRes.json();
       setActiveSubscription(subData.subscription || null);
       setUsage(subData.usage || { courses_published_this_month: 0, messages_sent_today: 0, top_promotions_used_this_month: 0 });
+
+      // Загружаем баланс школы
+      const balanceRes = await fetch('https://functions.poehali.dev/da7e3de6-b82e-41a5-8be4-6b3b0fb15deb?action=get_balance', {
+        headers: { 'X-User-Id': userId }
+      });
+      const balanceData = await balanceRes.json();
+      setSchoolBalance(balanceData.balance || 0);
     } catch (error) {
       console.error('Failed to load subscription data:', error);
     } finally {
@@ -61,7 +79,14 @@ export default function SubscriptionTab() {
     }
   };
 
-  const handleSelectPlan = async (planId: number) => {
+  const handleSelectPlan = (plan: SubscriptionPlan) => {
+    setSelectedPlan(plan);
+    setShowConfirmDialog(true);
+  };
+
+  const confirmActivation = async () => {
+    if (!selectedPlan) return;
+
     try {
       const userId = getUserId();
       const res = await fetch('https://functions.poehali.dev/f81f82f7-d9c7-4858-87bc-6701c67f2187?action=activate_subscription', {
@@ -70,11 +95,13 @@ export default function SubscriptionTab() {
           'Content-Type': 'application/json',
           'X-User-Id': userId
         },
-        body: JSON.stringify({ plan_id: planId })
+        body: JSON.stringify({ plan_id: selectedPlan.id })
       });
 
       if (res.ok) {
         alert('Тариф успешно активирован!');
+        setShowConfirmDialog(false);
+        setSelectedPlan(null);
         loadData();
       } else {
         const error = await res.json();
@@ -223,7 +250,7 @@ export default function SubscriptionTab() {
                   <Button 
                     className="w-full mt-4"
                     disabled={isActive}
-                    onClick={() => handleSelectPlan(plan.id)}
+                    onClick={() => handleSelectPlan(plan)}
                     variant={isUpgrade ? 'default' : 'outline'}
                   >
                     {isActive ? 'Активен' : 'Выбрать тариф'}
@@ -252,6 +279,71 @@ export default function SubscriptionTab() {
           <p>• <strong>Понижение тарифа:</strong> Возможно в любой момент, новый тариф вступит в силу после окончания текущего периода</p>
         </CardContent>
       </Card>
+
+      {/* Модальное окно подтверждения */}
+      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Подтверждение активации тарифа</DialogTitle>
+            <DialogDescription>
+              Вы собираетесь активировать тариф <strong>{selectedPlan?.name}</strong>
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Стоимость тарифа:</span>
+                <span className="font-semibold">{selectedPlan?.price.toLocaleString('ru-RU')} ₽</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Ваш баланс:</span>
+                <span className={schoolBalance >= (selectedPlan?.price || 0) ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
+                  {schoolBalance.toLocaleString('ru-RU')} ₽
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Период действия:</span>
+                <span className="font-semibold">30 дней</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Начало действия:</span>
+                <span className="font-semibold">Сразу после активации</span>
+              </div>
+            </div>
+
+            <div className="border-t pt-4 space-y-2">
+              <p className="text-sm font-medium">Что вы получаете:</p>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• Курсы: {selectedPlan?.courses_limit === null ? 'Безлимит' : `До ${selectedPlan?.courses_limit} в месяц`}</li>
+                <li>• Вывод в топ: {selectedPlan?.top_promotions_limit === null ? 'Безлимит' : selectedPlan?.top_promotions_limit ? `До ${selectedPlan?.top_promotions_limit} раз/мес` : 'Недоступно'}</li>
+                <li>• Сообщения: {selectedPlan?.messages_limit_per_day === null ? 'Безлимит' : `До ${selectedPlan?.messages_limit_per_day} в день`}</li>
+                <li>• Запросы скидок: {selectedPlan?.promo_requests_allowed ? 'Доступны (повышают конверсию продаж)' : 'Недоступны'}</li>
+              </ul>
+            </div>
+
+            {schoolBalance < (selectedPlan?.price || 0) && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <p className="text-sm text-red-600">
+                  ⚠️ Недостаточно средств на балансе. Пополните баланс для активации тарифа.
+                </p>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
+              Отмена
+            </Button>
+            <Button 
+              onClick={confirmActivation}
+              disabled={schoolBalance < (selectedPlan?.price || 0)}
+            >
+              Активировать тариф
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

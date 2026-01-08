@@ -285,6 +285,31 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
+        # Проверяем, доступны ли запросы скидок для школы
+        cur.execute(f"""
+            SELECT sp.promo_requests_allowed
+            FROM {schema}.school_subscriptions ss
+            JOIN {schema}.subscription_plans sp ON ss.plan_id = sp.id
+            WHERE ss.school_id = (SELECT id FROM {schema}.schools WHERE user_id = {user_id})
+            AND ss.is_active = true
+            LIMIT 1
+        """)
+        
+        plan_data = cur.fetchone()
+        if not plan_data or not plan_data[0]:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 403,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({
+                    'error': 'Запросы скидок недоступны на вашем тарифе',
+                    'upgrade_needed': True,
+                    'feature': 'promo_requests'
+                }),
+                'isBase64Encoded': False
+            }
+        
         body = json.loads(event.get('body', '{}'))
         request_id = body.get('request_id')
         action_type = body.get('action')  # 'approve' or 'reject'
