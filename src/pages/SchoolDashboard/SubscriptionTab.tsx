@@ -69,7 +69,7 @@ export default function SubscriptionTab() {
       // Загружаем баланс школы
       const token = localStorage.getItem('token');
       if (token) {
-        const balanceRes = await fetch(`https://functions.poehali.dev/da7e3de6-b82e-41a5-8be4-6b3b0fb15deb?action=get&token=${encodeURIComponent(token)}`);
+        const balanceRes = await fetch(`https://functions.poehali.dev/8c82911e-481f-4a63-92ff-aae203e992cc?action=get&token=${encodeURIComponent(token)}`);
         if (balanceRes.ok) {
           const balanceData = await balanceRes.json();
           setSchoolBalance(balanceData.current_balance || 0);
