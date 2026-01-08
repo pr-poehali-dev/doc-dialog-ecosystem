@@ -114,11 +114,15 @@
 
 @layer utilities {
   .scrollbar-thin::-webkit-scrollbar {
-    height: 6px;
+    height: 8px;
   }
 
   .scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
     @apply bg-gray-300 rounded-full;
+  }
+
+  .scrollbar-thumb-gray-300::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
   }
 
   .scrollbar-track-transparent::-webkit-scrollbar-track {

@@ -251,8 +251,8 @@ export default function SchoolsContent() {
             <div className="w-20 h-1 bg-gradient-to-r from-primary/50 via-primary to-primary/50 mx-auto rounded-full mt-4"></div>
           </div>
           
-          <div className="relative overflow-hidden max-w-full">
-            <div className="flex gap-6 animate-scroll-infinite will-change-transform">
+          <div className="relative overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+            <div className="flex gap-6 animate-scroll-infinite will-change-transform hover:animate-none">
               {[
                 {
                   school: "Академия массажа «Прикосновение»",
