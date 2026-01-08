@@ -6,12 +6,22 @@ import Icon from '@/components/ui/icon';
 import { useUnreadMessages } from '@/hooks/useUnreadMessages';
 import { getUserId } from '@/utils/auth';
 
+interface SubscriptionPlan {
+  name: string;
+  price: number;
+  courses_limit: number | null;
+  messages_limit_per_day: number | null;
+  promo_requests_allowed: boolean;
+  top_promotions_limit: number | null;
+}
+
 export default function SchoolDashboard() {
   const { unreadCount } = useUnreadMessages();
   const [canSendMessages, setCanSendMessages] = useState(false);
+  const [subscriptionPlan, setSubscriptionPlan] = useState<SubscriptionPlan | null>(null);
   
   useEffect(() => {
-    const loadMessagingPermission = async () => {
+    const loadSubscription = async () => {
       try {
         const userId = getUserId();
         if (!userId) return;
@@ -23,16 +33,17 @@ export default function SchoolDashboard() {
         if (response.ok) {
           const data = await response.json();
           const plan = data.subscription?.plan;
-          // Базовый тариф не может отправлять сообщения (messages_limit_per_day=0 или null)
-          // Доступно только если messages_limit_per_day > 0
-          setCanSendMessages(plan?.messages_limit_per_day > 0);
+          if (plan) {
+            setSubscriptionPlan(plan);
+            setCanSendMessages(plan.messages_limit_per_day > 0);
+          }
         }
       } catch (error) {
-        console.error('Failed to load messaging permission:', error);
+        console.error('Failed to load subscription:', error);
       }
     };
     
-    loadMessagingPermission();
+    loadSubscription();
   }, []);
   
   return (
@@ -110,6 +121,71 @@ export default function SchoolDashboard() {
           </div>
         )}
       </div>
+
+      {subscriptionPlan && (
+        <div className="md:col-span-2 lg:col-span-3 bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 rounded-xl p-6 shadow-sm border-2 border-primary/20">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
+                  <Icon name="Crown" className="text-white" size={24} />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900">Тариф: {subscriptionPlan.name}</h3>
+                  <p className="text-sm text-gray-600">
+                    {subscriptionPlan.price === 0 ? 'Бесплатный тариф' : `${subscriptionPlan.price.toLocaleString()} ₽/мес`}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                <div className="flex items-center gap-2">
+                  <Icon name={subscriptionPlan.courses_limit ? 'Check' : 'X'} 
+                        size={18} 
+                        className={subscriptionPlan.courses_limit ? 'text-green-600' : 'text-red-500'} />
+                  <span className="text-sm text-gray-700">
+                    Курсов: {subscriptionPlan.courses_limit || 'Безлимит'}
+                  </span>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <Icon name={subscriptionPlan.messages_limit_per_day ? 'Check' : 'X'} 
+                        size={18} 
+                        className={subscriptionPlan.messages_limit_per_day ? 'text-green-600' : 'text-red-500'} />
+                  <span className="text-sm text-gray-700">
+                    Сообщения: {subscriptionPlan.messages_limit_per_day ? `${subscriptionPlan.messages_limit_per_day}/день` : 'Недоступно'}
+                  </span>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <Icon name={subscriptionPlan.top_promotions_limit ? 'Check' : 'X'} 
+                        size={18} 
+                        className={subscriptionPlan.top_promotions_limit ? 'text-green-600' : 'text-red-500'} />
+                  <span className="text-sm text-gray-700">
+                    Продвижение: {subscriptionPlan.top_promotions_limit ? `${subscriptionPlan.top_promotions_limit}/мес` : 'Недоступно'}
+                  </span>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <Icon name={subscriptionPlan.promo_requests_allowed ? 'Check' : 'X'} 
+                        size={18} 
+                        className={subscriptionPlan.promo_requests_allowed ? 'text-green-600' : 'text-red-500'} />
+                  <span className="text-sm text-gray-700">
+                    Запросы скидок: {subscriptionPlan.promo_requests_allowed ? 'Доступно' : 'Недоступно'}
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <Link to="/school/dashboard?tab=subscription">
+              <Button variant="outline" className="bg-white hover:bg-gray-50">
+                <Icon name="Settings" size={16} className="mr-2" />
+                Управление тарифом
+              </Button>
+            </Link>
+          </div>
+        </div>
+      )}
 
     </div>
   );
