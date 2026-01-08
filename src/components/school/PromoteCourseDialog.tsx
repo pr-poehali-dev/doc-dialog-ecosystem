@@ -212,22 +212,33 @@ export default function PromoteCourseDialog({
           <div>
             <Label className="mb-3 block">Срок продвижения</Label>
             <div className="grid grid-cols-3 gap-3">
-              {[1, 3, 7].map((days) => (
-                <button
-                  key={days}
-                  onClick={() => setSelectedDays(days as any)}
-                  className={`p-4 border-2 rounded-lg text-center transition-all ${
-                    selectedDays === days
-                      ? 'border-primary bg-primary/5'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <div className="font-bold text-lg">{days} {days === 1 ? 'день' : 'дня'}</div>
-                  <div className="text-sm text-gray-600 mt-1">
-                    {prices ? prices[selectedType][days].toLocaleString('ru-RU') : '---'} ₽
-                  </div>
-                </button>
-              ))}
+              {[1, 3, 7].map((days) => {
+                // Если бесплатные промо доступны - только 1 день активен
+                const isDisabled = isFree && days !== 1;
+                
+                return (
+                  <button
+                    key={days}
+                    onClick={() => !isDisabled && setSelectedDays(days as any)}
+                    disabled={isDisabled}
+                    className={`p-4 border-2 rounded-lg text-center transition-all ${
+                      isDisabled
+                        ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed'
+                        : selectedDays === days
+                        ? 'border-primary bg-primary/5'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="font-bold text-lg">{days} {days === 1 ? 'день' : 'дня'}</div>
+                    <div className="text-sm mt-1">
+                      {prices ? prices[selectedType][days].toLocaleString('ru-RU') : '---'} ₽
+                    </div>
+                    {isDisabled && (
+                      <div className="text-xs text-gray-400 mt-1">Только платно</div>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
