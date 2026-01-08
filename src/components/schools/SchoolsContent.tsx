@@ -48,13 +48,24 @@ export default function SchoolsContent() {
       {/* Solution Section */}
       <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-background to-primary/5">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-5xl mx-auto text-center">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 leading-tight">
-              Мы не продаём курсы.<br className="hidden sm:block" /> Мы приводим к вам целевых учеников.
-            </h2>
-            <p className="text-lg sm:text-xl text-muted-foreground mb-12 leading-relaxed">
-              Док диалог — это экосистема, где массажисты учатся, работают и развиваются. Курсы здесь — часть профессионального пути, а не разовая покупка.
-            </p>
+          <div className="max-w-6xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-12">
+              <div className="order-2 lg:order-1">
+                <img 
+                  src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/e89e4fdc-bd02-4f2a-90d3-7e48bd2f7778.jpg"
+                  alt="Целевая аудитория"
+                  className="rounded-2xl shadow-2xl w-full h-auto object-cover"
+                />
+              </div>
+              <div className="order-1 lg:order-2 text-center lg:text-left">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 leading-tight">
+                  Мы не продаём курсы.<br className="hidden sm:block" /> Мы приводим к вам целевых учеников.
+                </h2>
+                <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed">
+                  Док диалог — это экосистема, где массажисты учатся, работают и развиваются. Курсы здесь — часть профессионального пути, а не разовая покупка.
+                </p>
+              </div>
+            </div>
             <div className="grid sm:grid-cols-3 gap-6 sm:gap-8">
               {[
                 { icon: "Users", text: "Уже заинтересованная аудитория" },
@@ -181,11 +192,22 @@ export default function SchoolsContent() {
       {/* Tools Section */}
       <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-primary/5 to-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3">
-              Инструменты, которые приводят к покупке
-            </h2>
-            <p className="text-muted-foreground text-lg">Механики привлечения учеников</p>
+          <div className="max-w-6xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-12">
+              <div>
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
+                  Инструменты, которые приводят к покупке
+                </h2>
+                <p className="text-lg text-muted-foreground mb-6">Механики привлечения учеников</p>
+              </div>
+              <div>
+                <img 
+                  src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/de47048b-c766-442e-bda1-6ecdbc711d61.jpg"
+                  alt="Инструменты платформы"
+                  className="rounded-2xl shadow-2xl w-full h-auto object-cover"
+                />
+              </div>
+            </div>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {[

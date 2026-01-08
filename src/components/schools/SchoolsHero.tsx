@@ -6,11 +6,12 @@ export default function SchoolsHero() {
   const navigate = useNavigate();
 
   return (
-    <section className="relative py-16 sm:py-24 lg:py-32 animate-fade-in overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+    <section className="relative py-16 sm:py-24 lg:py-32 animate-fade-in overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-blue-50/30"></div>
       <div 
-        className="absolute inset-0 opacity-[0.08]"
+        className="absolute inset-0 opacity-[0.15]"
         style={{
-          backgroundImage: `url('https://cdn.poehali.dev/files/17976.jpg')`,
+          backgroundImage: `url('https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/6b773823-05e3-4d3a-922b-5b27a56101f1.jpg')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
