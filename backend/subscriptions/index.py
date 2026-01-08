@@ -223,7 +223,7 @@ def handler(event: dict, context) -> dict:
             }
         
         # Получаем school_id
-        cur.execute(f"SELECT id, balance FROM {schema}.schools WHERE user_id = {user_id}")
+        cur.execute(f"SELECT id FROM {schema}.schools WHERE user_id = {user_id}")
         school_data = cur.fetchone()
         
         if not school_data:
@@ -237,7 +237,11 @@ def handler(event: dict, context) -> dict:
             }
         
         school_id = school_data[0]
-        balance = float(school_data[1] or 0)
+        
+        # Получаем баланс из school_balance
+        cur.execute(f"SELECT COALESCE(balance, 0) FROM {schema}.school_balance WHERE school_id = {school_id}")
+        balance_data = cur.fetchone()
+        balance = float(balance_data[0]) if balance_data else 0
         
         # Получаем данные тарифа
         cur.execute(f"SELECT price, name FROM {schema}.subscription_plans WHERE id = {plan_id}")
