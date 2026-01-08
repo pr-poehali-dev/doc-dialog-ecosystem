@@ -177,7 +177,7 @@ export default function SchoolDashboard() {
               </div>
             </div>
             
-            <Link to="/school/dashboard?tab=subscription">
+            <Link to="/school/dashboard#subscription">
               <Button variant="outline" className="bg-white hover:bg-gray-50">
                 <Icon name="Settings" size={16} className="mr-2" />
                 Управление тарифом
