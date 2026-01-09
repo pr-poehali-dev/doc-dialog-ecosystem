@@ -17,6 +17,7 @@ export default function SalonDashboard() {
   const { unreadCount } = useUnreadMessages();
   const { toast } = useToast();
   const [isVerified, setIsVerified] = useState<boolean | null>(null);
+  const [salonExists, setSalonExists] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -49,8 +50,22 @@ export default function SalonDashboard() {
       if (res.ok) {
         const data = await res.json();
         if (data.salon) {
+          setSalonExists(true);
           setIsVerified(data.salon.is_verified);
+          setFormData({
+            name: data.salon.name || '',
+            description: data.salon.description || '',
+            logo_url: data.salon.logo_url || '',
+            website: data.salon.website || '',
+            phone: data.salon.phone || '',
+            email: data.salon.email || '',
+            city: data.salon.city || '',
+            address: data.salon.address || '',
+            photos: data.salon.photos || []
+          });
         }
+      } else if (res.status === 404) {
+        setSalonExists(false);
       }
     } catch (error) {
       console.error('Ошибка загрузки статуса салона:', error);
@@ -366,7 +381,7 @@ export default function SalonDashboard() {
                   try {
                     const token = localStorage.getItem('token');
                     const res = await fetch(SALON_API, {
-                      method: 'POST',
+                      method: salonExists ? 'PUT' : 'POST',
                       headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
@@ -376,11 +391,16 @@ export default function SalonDashboard() {
 
                     const data = await res.json();
                     if (res.ok && data.salon) {
-                      toast({ title: 'Профиль салона создан!', description: 'Ожидайте модерацию' });
+                      toast({ 
+                        title: salonExists ? 'Профиль обновлён!' : 'Профиль салона создан!', 
+                        description: salonExists ? 'Изменения сохранены' : 'Ожидайте модерацию' 
+                      });
                       setShowForm(false);
-                      setIsVerified(false);
+                      setSalonExists(true);
+                      setIsVerified(data.salon.is_verified);
+                      await loadSalonStatus();
                     } else {
-                      toast({ title: data.error || 'Ошибка создания', variant: 'destructive' });
+                      toast({ title: data.error || 'Ошибка сохранения', variant: 'destructive' });
                     }
                   } catch (error) {
                     toast({ title: 'Ошибка сервера', variant: 'destructive' });
