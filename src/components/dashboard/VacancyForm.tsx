@@ -86,7 +86,16 @@ export default function VacancyForm({ open, onClose, onSuccess }: VacancyFormPro
     if (formData.specializations.length === 0) {
       toast({
         title: 'Ошибка',
-        description: 'Выберите хотя бы одну специализацию',
+        description: 'Выберите специализацию',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (formData.specializations.length > 1) {
+      toast({
+        title: 'Ошибка',
+        description: 'Можно выбрать только одну специализацию на вакансию',
         variant: 'destructive',
       });
       return;
@@ -122,19 +131,26 @@ export default function VacancyForm({ open, onClose, onSuccess }: VacancyFormPro
       if (res.ok) {
         toast({
           title: 'Успех',
-          description: needsPayment 
-            ? 'Вакансия добавлена (тестовый режим - без оплаты)' 
-            : 'Вакансия успешно добавлена',
+          description: 'Вакансия успешно добавлена',
         });
         onSuccess?.();
         onClose();
       } else {
         const error = await res.json();
-        toast({
-          title: 'Ошибка',
-          description: error.error || 'Не удалось добавить вакансию',
-          variant: 'destructive',
-        });
+        
+        if (res.status === 403 && error.requires_payment) {
+          toast({
+            title: 'Лимит исчерпан',
+            description: `${error.message} У вас уже есть ${error.current_count} активных вакансий.`,
+            variant: 'destructive',
+          });
+        } else {
+          toast({
+            title: 'Ошибка',
+            description: error.message || error.error || 'Не удалось добавить вакансию',
+            variant: 'destructive',
+          });
+        }
       }
     } catch (error) {
       toast({
@@ -151,8 +167,8 @@ export default function VacancyForm({ open, onClose, onSuccess }: VacancyFormPro
     setFormData((prev) => ({
       ...prev,
       specializations: prev.specializations.includes(spec)
-        ? prev.specializations.filter((s) => s !== spec)
-        : [...prev.specializations, spec],
+        ? []
+        : [spec],
     }));
   };
 
@@ -162,16 +178,16 @@ export default function VacancyForm({ open, onClose, onSuccess }: VacancyFormPro
         <DialogHeader>
           <DialogTitle>Добавить вакансию</DialogTitle>
           <DialogDescription>
-            <span className="text-blue-600 font-medium">
-              <Icon name="TestTube" size={14} className="inline mr-1" />
-              Тестовый режим: все вакансии бесплатны
+            <span className="text-green-600 font-medium">
+              <Icon name="Gift" size={14} className="inline mr-1" />
+              Первая вакансия бесплатно
             </span>
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <Label>Специализации *</Label>
+            <Label>Специализация * (выберите одну)</Label>
             <div className="grid grid-cols-2 gap-2 mt-2">
               {SPECIALIZATIONS.map((spec) => (
                 <div key={spec} className="flex items-center space-x-2">
@@ -186,6 +202,10 @@ export default function VacancyForm({ open, onClose, onSuccess }: VacancyFormPro
                 </div>
               ))}
             </div>
+            <p className="text-xs text-gray-500 mt-2">
+              <Icon name="Info" size={12} className="inline mr-1" />
+              Одна вакансия = один вид массажа. Для других видов создайте отдельные вакансии.
+            </p>
           </div>
 
           <div>

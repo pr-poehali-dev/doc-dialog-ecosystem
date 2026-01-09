@@ -414,6 +414,32 @@ def handler(event: dict, context) -> dict:
                     
                     salon_id = salon['id']
                     
+                    # Проверяем количество активных вакансий
+                    cur.execute("""
+                        SELECT COUNT(*) as count FROM t_p46047379_doc_dialog_ecosystem.salon_vacancies
+                        WHERE salon_id = %s AND is_active = true
+                    """, (salon_id,))
+                    vacancy_count = cur.fetchone()['count']
+                    
+                    # Первая вакансия бесплатно, остальные требуют оплаты
+                    if vacancy_count >= 1:
+                        conn.close()
+                        return response(403, {
+                            'error': 'Лимит бесплатных вакансий исчерпан',
+                            'message': 'Первая вакансия бесплатна. Для размещения дополнительных вакансий требуется оплата.',
+                            'current_count': vacancy_count,
+                            'requires_payment': True
+                        })
+                    
+                    # Проверяем что выбрана только одна специализация
+                    specializations = body.get('specializations', [])
+                    if len(specializations) != 1:
+                        conn.close()
+                        return response(400, {
+                            'error': 'Выберите одну специализацию',
+                            'message': 'Одна вакансия = один вид массажа'
+                        })
+                    
                     # Добавляем вакансию
                     cur.execute("""
                         INSERT INTO t_p46047379_doc_dialog_ecosystem.salon_vacancies
@@ -423,7 +449,7 @@ def handler(event: dict, context) -> dict:
                         RETURNING id
                     """, (
                         salon_id,
-                        body.get('specializations', []),
+                        specializations,
                         body.get('schedule', ''),
                         body.get('salary_from'),
                         body.get('salary_to'),
