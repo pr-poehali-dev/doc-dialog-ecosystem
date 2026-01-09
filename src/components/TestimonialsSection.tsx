@@ -136,39 +136,51 @@ const TestimonialsSection = () => {
 
     const handleMouseDown = (e: MouseEvent) => {
       isDraggingRef.current = true;
-      startXRef.current = e.pageX - scrollContainer.offsetLeft;
+      isPausedRef.current = true;
+      startXRef.current = e.pageX;
       scrollLeftRef.current = scrollContainer.scrollLeft;
       scrollContainer.style.cursor = 'grabbing';
+      scrollContainer.style.userSelect = 'none';
     };
 
     const handleMouseUp = () => {
       isDraggingRef.current = false;
       scrollContainer.style.cursor = 'grab';
+      scrollContainer.style.userSelect = '';
     };
 
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDraggingRef.current) return;
       e.preventDefault();
-      const x = e.pageX - scrollContainer.offsetLeft;
-      const walk = (x - startXRef.current) * 2;
+      const x = e.pageX;
+      const walk = x - startXRef.current;
       scrollContainer.scrollLeft = scrollLeftRef.current - walk;
     };
 
+    const handleMouseLeaveWhileDragging = () => {
+      if (isDraggingRef.current) {
+        isDraggingRef.current = false;
+        scrollContainer.style.cursor = 'grab';
+        scrollContainer.style.userSelect = '';
+      }
+      isPausedRef.current = false;
+    };
+
     scrollContainer.addEventListener('mouseenter', handleMouseEnter);
-    scrollContainer.addEventListener('mouseleave', handleMouseLeave);
+    scrollContainer.addEventListener('mouseleave', handleMouseLeaveWhileDragging);
     scrollContainer.addEventListener('mousedown', handleMouseDown);
-    scrollContainer.addEventListener('mouseup', handleMouseUp);
-    scrollContainer.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('mousemove', handleMouseMove);
 
     animationFrameId = requestAnimationFrame(animate);
 
     return () => {
       cancelAnimationFrame(animationFrameId);
       scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
-      scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
+      scrollContainer.removeEventListener('mouseleave', handleMouseLeaveWhileDragging);
       scrollContainer.removeEventListener('mousedown', handleMouseDown);
-      scrollContainer.removeEventListener('mouseup', handleMouseUp);
-      scrollContainer.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
 
