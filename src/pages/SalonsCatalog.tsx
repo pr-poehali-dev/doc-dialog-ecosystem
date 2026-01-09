@@ -279,35 +279,67 @@ export default function SalonsCatalog() {
                     </div>
                   )}
 
-                  <div className="flex flex-wrap gap-2 pt-2 text-sm text-muted-foreground">
-                    {salon.phone && (
-                      <a href={`tel:${salon.phone}`} className="flex items-center gap-1 hover:text-purple-600">
-                        <Icon name="Phone" size={14} />
-                        {salon.phone}
-                      </a>
+                  <div className="space-y-2 pt-2">
+                    {salon.address && (
+                      <div className="flex items-start gap-2 text-sm">
+                        <Icon name="MapPin" size={14} className="text-muted-foreground mt-0.5" />
+                        <span className="text-muted-foreground flex-1">{salon.address}</span>
+                      </div>
                     )}
-                    {salon.email && (
-                      <a
-                        href={`mailto:${salon.email}`}
-                        className="flex items-center gap-1 hover:text-purple-600"
-                      >
-                        <Icon name="Mail" size={14} />
-                        {salon.email}
-                      </a>
-                    )}
+                    
+                    <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
+                      {salon.phone && (
+                        <a href={`tel:${salon.phone}`} className="flex items-center gap-1 hover:text-purple-600">
+                          <Icon name="Phone" size={14} />
+                          {salon.phone}
+                        </a>
+                      )}
+                      {salon.email && (
+                        <a
+                          href={`mailto:${salon.email}`}
+                          className="flex items-center gap-1 hover:text-purple-600"
+                        >
+                          <Icon name="Mail" size={14} />
+                          {salon.email}
+                        </a>
+                      )}
+                    </div>
                   </div>
 
-                  {salon.website ? (
-                    <Button className="w-full" onClick={() => window.open(salon.website, '_blank')}>
-                      <Icon name="ExternalLink" size={16} className="mr-2" />
-                      Перейти на сайт
-                    </Button>
-                  ) : (
-                    <Button className="w-full" onClick={() => window.open(`tel:${salon.phone}`, '_self')}>
-                      <Icon name="Phone" size={16} className="mr-2" />
-                      Связаться
-                    </Button>
-                  )}
+                  <div className="flex gap-2">
+                    {salon.address && (
+                      <Button
+                        variant="outline"
+                        className="flex-1"
+                        onClick={() =>
+                          window.open(
+                            `https://yandex.ru/maps/?text=${encodeURIComponent(salon.address)}`,
+                            '_blank'
+                          )
+                        }
+                      >
+                        <Icon name="Map" size={16} className="mr-2" />
+                        На карте
+                      </Button>
+                    )}
+                    {salon.website ? (
+                      <Button
+                        className={salon.address ? 'flex-1' : 'w-full'}
+                        onClick={() => window.open(salon.website, '_blank')}
+                      >
+                        <Icon name="ExternalLink" size={16} className="mr-2" />
+                        Сайт
+                      </Button>
+                    ) : (
+                      <Button
+                        className={salon.address ? 'flex-1' : 'w-full'}
+                        onClick={() => window.open(`tel:${salon.phone}`, '_self')}
+                      >
+                        <Icon name="Phone" size={16} className="mr-2" />
+                        Связаться
+                      </Button>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             ))}
