@@ -318,39 +318,50 @@ export default function SalonsCatalog() {
                     </div>
                   </div>
 
-                  <div className="flex gap-2">
-                    {salon.address && (
+                  <div className="flex gap-2 flex-col">
+                    {salon.vacancies && salon.vacancies.length > 0 && (
                       <Button
-                        variant="outline"
-                        className="flex-1"
-                        onClick={() =>
-                          window.open(
-                            `https://yandex.ru/maps/?text=${encodeURIComponent(`${salon.city}, ${salon.address}`)}`,
-                            '_blank'
-                          )
-                        }
+                        className="w-full"
+                        onClick={() => navigate(`/salons/${salon.id}`)}
                       >
-                        <Icon name="Map" size={16} className="mr-2" />
-                        На карте
+                        <Icon name="FileText" size={16} className="mr-2" />
+                        Посмотреть условия вакансий
                       </Button>
                     )}
-                    {salon.website ? (
-                      <Button
-                        className={salon.address ? 'flex-1' : 'w-full'}
-                        onClick={() => window.open(salon.website, '_blank')}
-                      >
-                        <Icon name="ExternalLink" size={16} className="mr-2" />
-                        Сайт
-                      </Button>
-                    ) : (
-                      <Button
-                        className={salon.address ? 'flex-1' : 'w-full'}
-                        onClick={() => window.open(`tel:${salon.phone}`, '_self')}
-                      >
-                        <Icon name="Phone" size={16} className="mr-2" />
-                        Связаться
-                      </Button>
-                    )}
+                    <div className="flex gap-2">
+                      {salon.address && (
+                        <Button
+                          variant="outline"
+                          className="flex-1"
+                          onClick={() =>
+                            window.open(
+                              `https://yandex.ru/maps/?text=${encodeURIComponent(`${salon.city}, ${salon.address}`)}`,
+                              '_blank'
+                            )
+                          }
+                        >
+                          <Icon name="Map" size={16} className="mr-2" />
+                          На карте
+                        </Button>
+                      )}
+                      {salon.website ? (
+                        <Button
+                          className={salon.address ? 'flex-1' : 'w-full'}
+                          onClick={() => window.open(salon.website, '_blank')}
+                        >
+                          <Icon name="ExternalLink" size={16} className="mr-2" />
+                          Сайт
+                        </Button>
+                      ) : (
+                        <Button
+                          className={salon.address ? 'flex-1' : 'w-full'}
+                          onClick={() => window.open(`tel:${salon.phone}`, '_self')}
+                        >
+                          <Icon name="Phone" size={16} className="mr-2" />
+                          Связаться
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
