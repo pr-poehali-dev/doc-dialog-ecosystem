@@ -12,6 +12,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 interface Vacancy {
   id: number;
@@ -56,6 +63,8 @@ export default function SalonsCatalog() {
   const [cityFilter, setCityFilter] = useState('');
   const [specializationFilter, setSpecializationFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedSalon, setSelectedSalon] = useState<Salon | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     fetchSalons();
@@ -322,7 +331,10 @@ export default function SalonsCatalog() {
                     {salon.vacancies && salon.vacancies.length > 0 && (
                       <Button
                         className="w-full"
-                        onClick={() => navigate(`/salons/${salon.id}`)}
+                        onClick={() => {
+                          setSelectedSalon(salon);
+                          setIsDialogOpen(true);
+                        }}
                       >
                         <Icon name="FileText" size={16} className="mr-2" />
                         Посмотреть условия вакансий
@@ -369,6 +381,112 @@ export default function SalonsCatalog() {
           </div>
         )}
       </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">{selectedSalon?.name}</DialogTitle>
+            <DialogDescription>
+              {selectedSalon?.city}, {selectedSalon?.address}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6 mt-4">
+            {selectedSalon?.vacancies.map((vacancy, index) => (
+              <Card key={vacancy.id} className="border-l-4 border-l-purple-500">
+                <CardHeader>
+                  <CardTitle className="text-lg">
+                    Вакансия #{index + 1}
+                  </CardTitle>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {vacancy.specializations.map((spec) => (
+                      <Badge key={spec} variant="secondary">
+                        {spec}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {(vacancy.salary_from || vacancy.salary_to) && (
+                    <div className="flex items-center gap-2">
+                      <Icon name="Coins" size={18} className="text-purple-600" />
+                      <div>
+                        <div className="font-semibold">Зарплата</div>
+                        <div className="text-muted-foreground">
+                          {vacancy.salary_from && vacancy.salary_to
+                            ? `${vacancy.salary_from.toLocaleString()} - ${vacancy.salary_to.toLocaleString()} ${vacancy.salary_currency}`
+                            : vacancy.salary_from
+                            ? `от ${vacancy.salary_from.toLocaleString()} ${vacancy.salary_currency}`
+                            : `до ${vacancy.salary_to?.toLocaleString()} ${vacancy.salary_currency}`}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {vacancy.schedule && (
+                    <div className="flex items-center gap-2">
+                      <Icon name="Calendar" size={18} className="text-purple-600" />
+                      <div>
+                        <div className="font-semibold">График работы</div>
+                        <div className="text-muted-foreground">{vacancy.schedule}</div>
+                      </div>
+                    </div>
+                  )}
+
+                  {vacancy.requirements && (
+                    <div className="flex items-start gap-2">
+                      <Icon name="ClipboardList" size={18} className="text-purple-600 mt-0.5" />
+                      <div>
+                        <div className="font-semibold">Требования</div>
+                        <div className="text-muted-foreground whitespace-pre-line">
+                          {vacancy.requirements}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {vacancy.requires_partner_courses && (
+                    <div className="flex items-start gap-2 bg-purple-50 p-3 rounded-lg">
+                      <Icon name="GraduationCap" size={18} className="text-purple-600 mt-0.5" />
+                      <div>
+                        <div className="font-semibold text-purple-900">
+                          Требуется обучение в школах-партнерах
+                        </div>
+                        <div className="text-sm text-purple-700">
+                          Салон принимает на работу только специалистов с сертификатом 
+                          об обучении в школах-партнерах платформы
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+
+            <div className="flex gap-3 pt-4 border-t">
+              {selectedSalon?.phone && (
+                <Button
+                  className="flex-1"
+                  onClick={() => window.open(`tel:${selectedSalon.phone}`, '_self')}
+                >
+                  <Icon name="Phone" size={16} className="mr-2" />
+                  Позвонить
+                </Button>
+              )}
+              {selectedSalon?.email && (
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => window.open(`mailto:${selectedSalon.email}`, '_self')}
+                >
+                  <Icon name="Mail" size={16} className="mr-2" />
+                  Написать
+                </Button>
+              )}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
