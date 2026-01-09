@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
 import MainContent from "@/components/MainContent";
+import TestimonialsSection from "@/components/TestimonialsSection";
 import RegistrationDialog from "@/components/RegistrationDialog";
 
 type UserType = 'masseur' | 'school' | 'salon' | null;
@@ -56,6 +57,7 @@ const Index = () => {
       <Navigation scrollToSection={scrollToSection} />
       <HeroSection openDialog={openDialog} />
       <MainContent openDialog={openDialog} />
+      <TestimonialsSection />
       <RegistrationDialog
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
