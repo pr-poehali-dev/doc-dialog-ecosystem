@@ -68,6 +68,7 @@ export default function SalonCabinet() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -93,7 +94,30 @@ export default function SalonCabinet() {
     }
     loadSalon();
     loadRequests();
+    loadUnreadCount();
   }, [token, navigate]);
+
+  const loadUnreadCount = async () => {
+    try {
+      if (!token) return;
+
+      const response = await fetch('https://functions.poehali.dev/04d0b538-1cf5-4941-9c06-8d1bef5854ec?action=get-chats', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const total = data.chats?.reduce((sum: number, chat: any) => sum + (chat.unread_count || 0), 0) || 0;
+        setUnreadCount(total);
+      }
+    } catch (error) {
+      console.error('Error loading unread count:', error);
+    }
+  };
 
   const loadSalon = async () => {
     try {
@@ -235,9 +259,14 @@ export default function SalonCabinet() {
 
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="mb-6 flex gap-4">
-          <Button onClick={() => navigate('/dashboard/messages')} size="lg">
+          <Button onClick={() => navigate('/dashboard/messages')} size="lg" className="relative">
             <Icon name="MessageSquare" size={20} className="mr-2" />
             Сообщения
+            {unreadCount > 0 && (
+              <Badge className="absolute -top-2 -right-2 bg-red-500 text-white min-w-[20px] h-5 flex items-center justify-center px-1.5 text-xs">
+                {unreadCount}
+              </Badge>
+            )}
           </Button>
           <Button onClick={() => navigate('/masseurs')} variant="outline" size="lg">
             <Icon name="Search" size={20} className="mr-2" />
