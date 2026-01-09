@@ -313,7 +313,7 @@ export default function SalonsCatalog() {
                         className="flex-1"
                         onClick={() =>
                           window.open(
-                            `https://yandex.ru/maps/?text=${encodeURIComponent(salon.address)}`,
+                            `https://yandex.ru/maps/?text=${encodeURIComponent(`${salon.city}, ${salon.address}`)}`,
                             '_blank'
                           )
                         }
