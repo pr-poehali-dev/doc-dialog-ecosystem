@@ -376,6 +376,58 @@ def handler(event: dict, context) -> dict:
                 conn.close()
                 return response(401, {'error': 'Неверный токен'})
         
+        # POST /?action=add_vacancy - добавить вакансию
+        if method == 'POST' and action == 'add_vacancy':
+            if not token:
+                conn.close()
+                return response(401, {'error': 'Требуется авторизация'})
+            
+            try:
+                jwt_secret = os.environ.get('JWT_SECRET', 'your-secret-key')
+                decoded = jwt.decode(token, jwt_secret, algorithms=['HS256'])
+                user_id = decoded.get('user_id')
+                
+                body = json.loads(event.get('body', '{}'))
+                
+                with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                    # Получаем салон пользователя
+                    cur.execute("""
+                        SELECT id FROM t_p46047379_doc_dialog_ecosystem.salons WHERE user_id = %s
+                    """, (user_id,))
+                    salon = cur.fetchone()
+                    
+                    if not salon:
+                        conn.close()
+                        return response(404, {'error': 'Сначала создайте профиль салона'})
+                    
+                    salon_id = salon['id']
+                    
+                    # Добавляем вакансию
+                    cur.execute("""
+                        INSERT INTO t_p46047379_doc_dialog_ecosystem.salon_vacancies
+                        (salon_id, specializations, schedule, salary_from, salary_to, 
+                         salary_currency, requirements, requires_partner_courses, is_active)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, true)
+                        RETURNING id
+                    """, (
+                        salon_id,
+                        body.get('specializations', []),
+                        body.get('schedule', ''),
+                        body.get('salary_from'),
+                        body.get('salary_to'),
+                        body.get('salary_currency', 'RUB'),
+                        body.get('requirements', ''),
+                        body.get('requires_partner_courses', False)
+                    ))
+                    
+                    vacancy = cur.fetchone()
+                    conn.commit()
+                    conn.close()
+                    return response(201, {'vacancy_id': vacancy['id'], 'message': 'Вакансия добавлена'})
+            except jwt.InvalidTokenError:
+                conn.close()
+                return response(401, {'error': 'Неверный токен'})
+        
         # GET /?action=requests - получить заявки для салона (specialist_requests)
         if method == 'GET' and event.get('queryStringParameters', {}).get('action') == 'requests':
             if not token:
