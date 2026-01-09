@@ -12,7 +12,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
-const SALON_API = 'https://functions.poehali.dev/52eebce8-8e99-4f55-9a82-79eb2e14d13b';
+const SALON_API = 'https://functions.poehali.dev/01aa5a2f-6476-4fbc-ba10-6808960c8a21';
 
 interface Salon {
   id: number;
