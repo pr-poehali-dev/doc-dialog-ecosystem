@@ -82,16 +82,42 @@ const serviceDescriptions: Record<string, { description: string; icon: string; d
 export default function ServicesTab({ masseur }: ServicesTabProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
+  
+  const userStr = localStorage.getItem('user');
+  const userRole = userStr ? JSON.parse(userStr).role : null;
 
   const handleBookService = async (serviceName: string, serviceInfo: any) => {
     const token = localStorage.getItem('token');
-    if (!token) {
+    const userStr = localStorage.getItem('user');
+    
+    if (!token || !userStr) {
       toast({
         title: 'Требуется авторизация',
         description: 'Войдите в систему, чтобы записаться на услугу',
         variant: 'destructive'
       });
       navigate('/login');
+      return;
+    }
+
+    const user = JSON.parse(userStr);
+    
+    // Проверка: только клиенты могут заказывать услуги
+    if (user.role === 'salon') {
+      toast({
+        title: 'Недоступно для салонов',
+        description: 'Заказывать услуги могут только клиенты. Салоны могут писать напрямую через кнопку "Написать".',
+        variant: 'destructive'
+      });
+      return;
+    }
+    
+    if (user.role !== 'client') {
+      toast({
+        title: 'Недоступно',
+        description: 'Заказывать услуги могут только клиенты',
+        variant: 'destructive'
+      });
       return;
     }
 
@@ -169,14 +195,22 @@ export default function ServicesTab({ masseur }: ServicesTabProps) {
                     <p className="text-sm text-muted-foreground leading-relaxed mb-3">
                       {serviceInfo.description}
                     </p>
-                    <Button
-                      onClick={() => handleBookService(spec, serviceInfo)}
-                      className="w-full"
-                      size="sm"
-                    >
-                      <Icon name="Calendar" size={16} className="mr-2" />
-                      Хочу записаться
-                    </Button>
+                    {userRole === 'client' && (
+                      <Button
+                        onClick={() => handleBookService(spec, serviceInfo)}
+                        className="w-full"
+                        size="sm"
+                      >
+                        <Icon name="Calendar" size={16} className="mr-2" />
+                        Хочу записаться
+                      </Button>
+                    )}
+                    {userRole === 'salon' && (
+                      <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-700">
+                        <Icon name="Info" size={16} className="inline mr-2" />
+                        Для связи используйте кнопку "Написать"
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

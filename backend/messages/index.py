@@ -629,6 +629,16 @@ def create_service_order(user_id: int, body: dict) -> dict:
     conn, cursor = get_db_connection()
     
     try:
+        # Проверка роли пользователя - только клиенты могут заказывать услуги
+        cursor.execute("""
+            SELECT role FROM t_p46047379_doc_dialog_ecosystem.users
+            WHERE id = %s
+        """, (user_id,))
+        
+        user = cursor.fetchone()
+        if user and user['role'] in ['salon', 'masseur', 'school']:
+            return error_response('Заказывать услуги могут только клиенты', 403)
+        
         masseur_id = body.get('masseur_id')
         service_name = body.get('service_name')
         service_description = body.get('service_description')
