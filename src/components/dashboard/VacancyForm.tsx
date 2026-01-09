@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/select';
 import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
+import VacancyPaymentModal from './VacancyPaymentModal';
 
 const SALON_API = 'https://functions.poehali.dev/01aa5a2f-6476-4fbc-ba10-6808960c8a21';
 const PAYMENT_API = 'https://functions.poehali.dev/7497cf71-d442-407d-99d7-d6ec11e01322';
@@ -44,8 +45,8 @@ interface VacancyFormProps {
 export default function VacancyForm({ open, onClose, onSuccess }: VacancyFormProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [needsPayment, setNeedsPayment] = useState(false);
-  const [vacancyCount, setVacancyCount] = useState(0);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [salonName, setSalonName] = useState('');
   const [formData, setFormData] = useState({
     specializations: [] as string[],
     schedule: '',
@@ -139,10 +140,12 @@ export default function VacancyForm({ open, onClose, onSuccess }: VacancyFormPro
         const error = await res.json();
         
         if (res.status === 403 && error.requires_payment) {
+          setSalonName(formData.salon_name);
+          setShowPaymentModal(true);
           toast({
-            title: 'Лимит исчерпан',
-            description: `${error.message} У вас уже есть ${error.current_count} активных вакансий.`,
-            variant: 'destructive',
+            title: 'Требуется оплата',
+            description: error.message,
+            variant: 'default',
           });
         } else {
           toast({
@@ -290,6 +293,16 @@ export default function VacancyForm({ open, onClose, onSuccess }: VacancyFormPro
           </div>
         </form>
       </DialogContent>
+
+      <VacancyPaymentModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        salonName={salonName}
+        onPaymentSuccess={() => {
+          setShowPaymentModal(false);
+          onSuccess?.();
+        }}
+      />
     </Dialog>
   );
 }

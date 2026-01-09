@@ -414,20 +414,30 @@ def handler(event: dict, context) -> dict:
                     
                     salon_id = salon['id']
                     
-                    # Проверяем количество активных вакансий
+                    # Проверяем количество активных вакансий и оплаченных слотов
                     cur.execute("""
                         SELECT COUNT(*) as count FROM t_p46047379_doc_dialog_ecosystem.salon_vacancies
                         WHERE salon_id = %s AND is_active = true
                     """, (salon_id,))
                     vacancy_count = cur.fetchone()['count']
                     
+                    # Получаем количество оплаченных слотов
+                    cur.execute("""
+                        SELECT COALESCE(paid_vacancy_slots, 0) as paid_slots
+                        FROM t_p46047379_doc_dialog_ecosystem.salons
+                        WHERE id = %s
+                    """, (salon_id,))
+                    paid_slots = cur.fetchone()['paid_slots']
+                    
                     # Первая вакансия бесплатно, остальные требуют оплаты
-                    if vacancy_count >= 1:
+                    available_slots = 1 + paid_slots
+                    if vacancy_count >= available_slots:
                         conn.close()
                         return response(403, {
-                            'error': 'Лимит бесплатных вакансий исчерпан',
-                            'message': 'Первая вакансия бесплатна. Для размещения дополнительных вакансий требуется оплата.',
+                            'error': 'Лимит вакансий исчерпан',
+                            'message': f'У вас {vacancy_count} активных вакансий. Доступно: {available_slots} (1 бесплатная + {paid_slots} оплаченных)',
                             'current_count': vacancy_count,
+                            'available_slots': available_slots,
                             'requires_payment': True
                         })
                     
