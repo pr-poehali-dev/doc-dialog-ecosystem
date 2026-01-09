@@ -154,6 +154,7 @@ export default function SalonDashboard() {
           <Button className="w-full" variant="outline">Найти массажиста</Button>
         </Link>
       </div>
+      </div>
     </>
   );
 }
