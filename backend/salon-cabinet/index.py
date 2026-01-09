@@ -396,9 +396,15 @@ def handler(event: dict, context) -> dict:
                     """, (user_id,))
                     salon = cur.fetchone()
                     
+                    # Если салона нет - создаем автоматически с минимальными данными
                     if not salon:
-                        conn.close()
-                        return response(404, {'error': 'Сначала создайте профиль салона'})
+                        cur.execute("""
+                            INSERT INTO t_p46047379_doc_dialog_ecosystem.salons 
+                            (user_id, name, is_verified, subscription_type, created_at)
+                            VALUES (%s, %s, false, 'free', NOW())
+                            RETURNING id
+                        """, (user_id, 'Мой салон'))
+                        salon = cur.fetchone()
                     
                     salon_id = salon['id']
                     
