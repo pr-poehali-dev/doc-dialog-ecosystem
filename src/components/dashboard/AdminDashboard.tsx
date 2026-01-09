@@ -36,46 +36,46 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-blue-500/10 rounded-full flex items-center justify-center">
-            <Icon name="Shield" className="text-blue-600" size={24} />
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-500/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Shield" className="text-blue-600" size={20} />
           </div>
-          <h3 className="text-xl font-semibold">Админ-панель</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Админ-панель</h3>
         </div>
-        <p className="text-gray-600 mb-4">Управление платформой и модерация</p>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Управление платформой и модерация</p>
         <Button className="w-full" onClick={() => navigate('/admin')}>
           Открыть панель
         </Button>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-amber-500/10 rounded-full flex items-center justify-center">
-            <Icon name="CheckCircle" className="text-amber-600" size={24} />
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-amber-500/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="CheckCircle" className="text-amber-600" size={20} />
           </div>
-          <h3 className="text-xl font-semibold">Верификация</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Верификация</h3>
         </div>
-        <p className="text-gray-600 mb-4">Проверка заявок на верификацию</p>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Проверка заявок на верификацию</p>
         <Button className="w-full" variant="outline" onClick={() => navigate('/admin')}>
           Проверить заявки
         </Button>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center relative">
-            <Icon name="MessageSquare" className="text-primary" size={24} />
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 relative">
+            <Icon name="MessageSquare" className="text-primary" size={20} />
             {unreadCount > 0 && (
               <Badge className="absolute -top-1 -right-1 bg-red-500 text-white min-w-[20px] h-5 flex items-center justify-center px-1.5 text-xs">
                 {unreadCount}
               </Badge>
             )}
           </div>
-          <h3 className="text-xl font-semibold">Чат с пользователями</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Чат с пользователями</h3>
         </div>
-        <p className="text-gray-600 mb-4">
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
           {unreadCount > 0 ? (
             <span className="font-semibold text-red-600">{unreadCount} новых сообщений</span>
           ) : (
@@ -87,40 +87,40 @@ export default function AdminDashboard() {
         </Button>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center">
-            <Icon name="Users" className="text-green-600" size={24} />
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-green-500/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Users" className="text-green-600" size={20} />
           </div>
-          <h3 className="text-xl font-semibold">Пользователи</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Пользователи</h3>
         </div>
-        <p className="text-gray-600 mb-4">Управление базой пользователей</p>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Управление базой пользователей</p>
         <Button className="w-full" variant="outline" onClick={() => navigate('/admin')}>
           База пользователей
         </Button>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-purple-500/10 rounded-full flex items-center justify-center">
-            <Icon name="FileText" className="text-purple-600" size={24} />
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-purple-500/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="FileText" className="text-purple-600" size={20} />
           </div>
-          <h3 className="text-xl font-semibold">База знаний</h3>
+          <h3 className="text-lg md:text-xl font-semibold">База знаний</h3>
         </div>
-        <p className="text-gray-600 mb-4">Управление статьями и материалами</p>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Управление статьями и материалами</p>
         <Button className="w-full" variant="outline" onClick={() => navigate('/admin')}>
           Редактировать базу
         </Button>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-red-500/10 rounded-full flex items-center justify-center">
-            <Icon name="BarChart3" className="text-red-600" size={24} />
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-red-500/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="BarChart3" className="text-red-600" size={20} />
           </div>
-          <h3 className="text-xl font-semibold">Аналитика</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Аналитика</h3>
         </div>
-        <p className="text-gray-600 mb-4">Статистика платформы</p>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Статистика платформы</p>
         <Button className="w-full" variant="outline" onClick={() => navigate('/admin')}>
           Смотреть отчёты
         </Button>

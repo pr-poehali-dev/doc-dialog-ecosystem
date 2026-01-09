@@ -63,24 +63,25 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-blue-50">
       <Navigation />
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-8 md:py-16">
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1 className="text-4xl font-bold mb-2">Личный кабинет</h1>
-              <p className="text-gray-600">{user.email} • {getRoleTitle()}</p>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 md:mb-8">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-2xl md:text-4xl font-bold mb-1 md:mb-2">Личный кабинет</h1>
+              <p className="text-sm md:text-base text-gray-600 truncate">{user.email} • {getRoleTitle()}</p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 w-full sm:w-auto">
               {isAdminOrModerator && (
-                <Link to="/admin">
-                  <Button variant="secondary">
-                    <Icon name="Shield" size={18} className="mr-2" />
-                    Админ-панель
+                <Link to="/admin" className="flex-1 sm:flex-initial">
+                  <Button variant="secondary" className="w-full sm:w-auto" size="sm">
+                    <Icon name="Shield" size={16} className="mr-2" />
+                    <span className="hidden sm:inline">Админ-панель</span>
+                    <span className="sm:hidden">Админ</span>
                   </Button>
                 </Link>
               )}
-              <Button onClick={handleLogout} variant="outline">
-                <Icon name="LogOut" size={18} className="mr-2" />
+              <Button onClick={handleLogout} variant="outline" className="flex-1 sm:flex-initial" size="sm">
+                <Icon name="LogOut" size={16} className="mr-2" />
                 Выйти
               </Button>
             </div>

@@ -42,192 +42,161 @@ export default function MasseurDashboard() {
   };
   
   return (
-    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-            <Icon name="Globe" className="text-primary" size={24} />
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Globe" className="text-primary" size={20} />
           </div>
-          <h3 className="text-xl font-semibold">Публичный профиль</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Публичный профиль</h3>
         </div>
-        <p className="text-gray-600 mb-4">Ваша страница для клиентов в каталоге</p>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Ваша страница для клиентов в каталоге</p>
         <Link to="/dashboard/public-profile">
           <Button className="w-full">Настроить профиль</Button>
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-            <Icon name="Layout" className="text-primary" size={24} />
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Layout" className="text-primary" size={20} />
           </div>
-          <h3 className="text-xl font-semibold">Личная страница</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Личная страница</h3>
         </div>
-        <p className="text-gray-600 mb-4">Конструктор лендинга для клиентов</p>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Конструктор лендинга для клиентов</p>
         <Link to="/dashboard/page-builder">
           <Button className="w-full">Создать страницу</Button>
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center relative">
-            <Icon name="Star" className="text-primary" size={24} />
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 relative">
+            <Icon name="Star" className="text-primary" size={20} />
             {newReviewsCount > 0 && (
               <Badge className="absolute -top-1 -right-1 h-5 min-w-5 flex items-center justify-center p-0 px-1.5 text-xs bg-primary border-2 border-white">
                 {newReviewsCount}
               </Badge>
             )}
           </div>
-          <h3 className="text-xl font-semibold">Мои отзывы</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Мои отзывы</h3>
         </div>
-        <p className="text-gray-600 mb-4">Отзывы клиентов о вашей работе</p>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Отзывы клиентов о вашей работе</p>
         <Link to="/dashboard/reviews">
           <Button className="w-full">Посмотреть отзывы</Button>
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center relative">
-            <Icon name="MessageSquare" className="text-primary" size={24} />
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 relative">
+            <Icon name="MessageSquare" className="text-primary" size={20} />
             {unreadCount > 0 && (
               <Badge className="absolute -top-1 -right-1 h-5 min-w-5 flex items-center justify-center p-0 px-1.5 text-xs bg-primary border-2 border-white">
                 {unreadCount}
               </Badge>
             )}
           </div>
-          <h3 className="text-xl font-semibold">Сообщения</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Сообщения</h3>
         </div>
-        <p className="text-gray-600 mb-4">Чаты с клиентами</p>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Чаты с клиентами</p>
         <Link to="/dashboard/messages">
           <Button className="w-full">Открыть чаты</Button>
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center relative">
-            <Icon name="ShoppingBag" className="text-primary" size={24} />
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 relative">
+            <Icon name="ShoppingBag" className="text-primary" size={20} />
             {newOrdersCount > 0 && (
               <Badge className="absolute -top-1 -right-1 h-5 min-w-5 flex items-center justify-center p-0 px-1.5 text-xs bg-primary border-2 border-white">
                 {newOrdersCount}
               </Badge>
             )}
           </div>
-          <h3 className="text-xl font-semibold">Заказы услуг</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Заказы услуг</h3>
         </div>
-        <p className="text-gray-600 mb-4">Запросы клиентов на ваши услуги</p>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Запросы клиентов на ваши услуги</p>
         <Link to="/dashboard/orders">
           <Button className="w-full">Смотреть заказы</Button>
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-            <Icon name="Calendar" className="text-primary" size={24} />
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Calendar" className="text-primary" size={20} />
           </div>
-          <h3 className="text-xl font-semibold">Записи клиентов</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Записи клиентов</h3>
         </div>
-        <p className="text-gray-600 mb-4">Управление записями на сеансы</p>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Управление записями на сеансы</p>
         <Link to="/dashboard/bookings">
           <Button className="w-full" variant="outline">Мои записи</Button>
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-            <Icon name="Search" className="text-primary" size={24} />
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Search" className="text-primary" size={20} />
           </div>
-          <h3 className="text-xl font-semibold">Каталог массажистов</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Каталог массажистов</h3>
         </div>
-        <p className="text-gray-600 mb-4">Узнайте о коллегах по цеху</p>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Узнайте о коллегах по цеху</p>
         <Link to="/masseurs">
           <Button className="w-full" variant="outline">Перейти в каталог</Button>
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-            <Icon name="Briefcase" className="text-primary" size={24} />
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Briefcase" className="text-primary" size={20} />
           </div>
-          <h3 className="text-xl font-semibold">Вакансии в салонах</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Вакансии в салонах</h3>
         </div>
-        <p className="text-gray-600 mb-4">Найти работу в проверенных салонах</p>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Найти работу в проверенных салонах</p>
         <Link to="/salons">
           <Button className="w-full" variant="outline">Смотреть вакансии</Button>
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-            <Icon name="Wallet" className="text-primary" size={24} />
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Wallet" className="text-primary" size={20} />
           </div>
-          <h3 className="text-xl font-semibold">Баланс</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Баланс</h3>
         </div>
-        <p className="text-gray-600 mb-4">Пополните баланс для продвижения</p>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Пополните баланс для продвижения</p>
         <Link to="/dashboard/balance">
           <Button className="w-full">Управление балансом</Button>
         </Link>
       </div>
 
-      <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 shadow-sm border-2 border-amber-200 hover:border-amber-300 transition-colors">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center">
-            <Icon name="TrendingUp" className="text-white" size={24} />
+      <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 md:p-6 shadow-sm border-2 border-amber-200 hover:border-amber-300 transition-colors">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="TrendingUp" className="text-white" size={20} />
           </div>
-          <h3 className="text-xl font-semibold">Попасть в топ</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Продвижение</h3>
         </div>
-        <p className="text-gray-600 mb-4">Продвиньте профиль и получайте больше клиентов</p>
+        <p className="text-sm md:text-base text-gray-700 mb-3 md:mb-4">Поднимите профиль в ТОП и привлеките больше клиентов</p>
         <Button 
           className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
           onClick={() => setPromoteDialogOpen(true)}
         >
-          <Icon name="Crown" size={18} className="mr-2" />
-          Попасть в топ
+          <Icon name="Zap" size={16} className="mr-2" />
+          Продвинуть профиль
         </Button>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
-            <Icon name="Tag" className="text-amber-600" size={24} />
-          </div>
-          <h3 className="text-xl font-semibold">Мои промокоды</h3>
-        </div>
-        <p className="text-gray-600 mb-4">Скидки на курсы от школ</p>
-        <Link to="/dashboard/promo-codes">
-          <Button className="w-full">Мои скидки</Button>
-        </Link>
-      </div>
-
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-            <Icon name="BookOpen" className="text-primary" size={24} />
-          </div>
-          <h3 className="text-xl font-semibold">Каталог курсов</h3>
-        </div>
-        <p className="text-gray-600 mb-4">Обучающие курсы от школ-партнёров</p>
-        <Link to="/courses">
-          <Button className="w-full" variant="outline">Перейти к курсам</Button>
-        </Link>
-      </div>
-
-      {masseurData && (
-        <PromoteMasseurDialog
-          open={promoteDialogOpen}
-          onOpenChange={setPromoteDialogOpen}
-          masseurId={masseurData.id}
-          masseurName={masseurData.full_name}
-          city={masseurData.city}
-          onSuccess={loadMasseurData}
-        />
-      )}
+      <PromoteMasseurDialog
+        isOpen={promoteDialogOpen}
+        onClose={() => setPromoteDialogOpen(false)}
+        masseurData={masseurData}
+      />
     </div>
   );
 }

@@ -79,15 +79,15 @@ export default function SalonDashboard() {
   return (
     <>
       {!loading && isVerified === false && (
-        <Card className="mb-6 bg-blue-50 border-blue-200">
-          <CardContent className="pt-6">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <Icon name="AlertCircle" className="text-blue-600" size={24} />
+        <Card className="mb-4 md:mb-6 bg-blue-50 border-blue-200">
+          <CardContent className="pt-4 md:pt-6 px-4 md:px-6">
+            <div className="flex items-start gap-3 md:gap-4">
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <Icon name="AlertCircle" className="text-blue-600" size={20} />
               </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-blue-900 mb-2">Профиль не заполнен</h3>
-                <p className="text-sm text-blue-800 mb-3">
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-blue-900 mb-2 text-sm md:text-base">Профиль не заполнен</h3>
+                <p className="text-xs md:text-sm text-blue-800 mb-3">
                   {salonExists 
                     ? 'Ваш профиль салона находится на модерации. После успешной верификации вы появитесь в каталоге салонов и сможете получить значок "Verified". Обычно проверка занимает 1-2 рабочих дня.'
                     : 'Заполните информацию о вашем салоне, чтобы отправить профиль на модерацию. После одобрения администратором вы появитесь в каталоге салонов и получите значок "Verified".'
@@ -100,7 +100,7 @@ export default function SalonDashboard() {
                     : 'Вам нужно указать: название, описание, адрес, контакты и фотографии салона'
                   }
                 </p>
-                <Button size="sm" className="bg-blue-600 hover:bg-blue-700" onClick={() => setShowForm(true)}>
+                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto" onClick={() => setShowForm(true)}>
                   <Icon name="Edit" size={16} className="mr-2" />
                   {salonExists ? 'Редактировать профиль' : 'Заполнить профиль салона'}
                 </Button>
@@ -111,18 +111,18 @@ export default function SalonDashboard() {
       )}
 
       {!loading && isVerified === true && (
-        <Card className="mb-6 bg-green-50 border-green-200">
-          <CardContent className="pt-6">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <Icon name="CheckCircle" className="text-green-600" size={24} />
+        <Card className="mb-4 md:mb-6 bg-green-50 border-green-200">
+          <CardContent className="pt-4 md:pt-6 px-4 md:px-6">
+            <div className="flex items-start gap-3 md:gap-4">
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <Icon name="CheckCircle" className="text-green-600" size={20} />
               </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-green-900 mb-2">Профиль верифицирован</h3>
-                <p className="text-sm text-green-800 mb-3">
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-green-900 mb-2 text-sm md:text-base">Профиль верифицирован</h3>
+                <p className="text-xs md:text-sm text-green-800 mb-3">
                   Ваш салон прошел модерацию и доступен в каталоге. Вы можете редактировать информацию о салоне в любое время.
                 </p>
-                <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => setShowForm(true)}>
+                <Button size="sm" className="bg-green-600 hover:bg-green-700 w-full sm:w-auto" onClick={() => setShowForm(true)}>
                   <Icon name="Edit" size={16} className="mr-2" />
                   Редактировать профиль салона
                 </Button>
@@ -132,290 +132,271 @@ export default function SalonDashboard() {
         </Card>
       )}
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-            <Icon name="Settings" className="text-primary" size={24} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Settings" className="text-primary" size={20} />
           </div>
-          <h3 className="text-xl font-semibold">Профиль салона</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Профиль салона</h3>
         </div>
-        <p className="text-gray-600 mb-4">Редактировать информацию о салоне</p>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Редактировать информацию о салоне</p>
         <Button className="w-full" onClick={() => setShowForm(true)} variant="outline">
           <Icon name="Edit" size={16} className="mr-2" />
           Редактировать профиль
         </Button>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-            <Icon name="Briefcase" className="text-primary" size={24} />
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Briefcase" className="text-primary" size={20} />
           </div>
-          <h3 className="text-xl font-semibold">Вакансии</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Вакансии</h3>
         </div>
-        <p className="text-gray-600 mb-4">Управление вакансиями салона</p>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Управление вакансиями салона</p>
         <Button className="w-full" onClick={() => setShowVacancyForm(true)}>Добавить вакансию</Button>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-            <Icon name="Store" className="text-primary" size={24} />
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Store" className="text-primary" size={20} />
           </div>
-          <h3 className="text-xl font-semibold">Каталог салонов</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Каталог салонов</h3>
         </div>
-        <p className="text-gray-600 mb-4">Смотреть салоны в каталоге</p>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Смотреть салоны в каталоге</p>
         <Link to="/salons">
           <Button className="w-full" variant="outline">Перейти в каталог</Button>
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-            <Icon name="BarChart" className="text-primary" size={24} />
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="BarChart" className="text-primary" size={20} />
           </div>
-          <h3 className="text-xl font-semibold">Аналитика</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Аналитика</h3>
         </div>
-        <p className="text-gray-600 mb-4">Отчеты и статистика</p>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Отчеты и статистика</p>
         <Button className="w-full" variant="outline">Отчёты</Button>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-            <Icon name="Calendar" className="text-primary" size={24} />
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Calendar" className="text-primary" size={20} />
           </div>
-          <h3 className="text-xl font-semibold">Записи клиентов</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Записи клиентов</h3>
         </div>
-        <p className="text-gray-600 mb-4">Управление записями</p>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Управление записями</p>
         <Link to="/dashboard/bookings">
           <Button className="w-full">Посмотреть записи</Button>
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center relative">
-            <Icon name="MessageSquare" className="text-primary" size={24} />
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 relative">
+            <Icon name="MessageSquare" className="text-primary" size={20} />
             {unreadCount > 0 && (
               <Badge className="absolute -top-1 -right-1 h-5 min-w-5 flex items-center justify-center p-0 px-1.5 text-xs bg-primary border-2 border-white">
                 {unreadCount}
               </Badge>
             )}
           </div>
-          <h3 className="text-xl font-semibold">Сообщения</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Сообщения</h3>
         </div>
-        <p className="text-gray-600 mb-4">Чаты с клиентами</p>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Чаты с клиентами</p>
         <Link to="/dashboard/messages">
           <Button className="w-full">Открыть чаты</Button>
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-            <Icon name="Star" className="text-primary" size={24} />
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Star" className="text-primary" size={20} />
           </div>
-          <h3 className="text-xl font-semibold">Отзывы</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Отзывы</h3>
         </div>
-        <p className="text-gray-600 mb-4">Отзывы клиентов о салоне</p>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Отзывы клиентов о салоне</p>
         <Button className="w-full">Посмотреть отзывы</Button>
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-            <Icon name="Search" className="text-primary" size={24} />
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Users" className="text-primary" size={20} />
           </div>
-          <h3 className="text-xl font-semibold">Поиск специалистов</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Сотрудники</h3>
         </div>
-        <p className="text-gray-600 mb-4">Найти новых сотрудников</p>
-        <Link to="/masseurs">
-          <Button className="w-full" variant="outline">Найти массажиста</Button>
-        </Link>
-      </div>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Управление командой</p>
+        <Button className="w-full" variant="outline">Команда</Button>
       </div>
 
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Settings" className="text-primary" size={20} />
+          </div>
+          <h3 className="text-lg md:text-xl font-semibold">Настройки</h3>
+        </div>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Параметры салона</p>
+        <Button className="w-full" variant="outline">Настроить</Button>
+      </div>
+    </div>
+
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-2xl flex items-center gap-2">
-              <Icon name="Building2" className="text-primary" size={28} />
-              Профиль салона
-            </DialogTitle>
+            <DialogTitle>{salonExists ? 'Редактировать профиль салона' : 'Создать профиль салона'}</DialogTitle>
             <DialogDescription>
-              Заполните информацию о вашем салоне для публикации в каталоге
+              {salonExists 
+                ? 'Обновите информацию о вашем салоне. Изменения будут отправлены на повторную модерацию.'
+                : 'Заполните информацию о салоне. После отправки профиль будет рассмотрен администратором.'
+              }
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-6 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-base font-semibold">
-                Название салона *
-              </Label>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="name">Название салона *</Label>
               <Input
                 id="name"
-                placeholder="Название вашего салона"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                placeholder="Например: Салон массажа «Релакс»"
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="description" className="text-base font-semibold">
-                Описание салона *
-              </Label>
+            <div>
+              <Label htmlFor="description">Описание *</Label>
               <Textarea
                 id="description"
-                placeholder="Расскажите о вашем салоне, услугах, атмосфере..."
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) => setFormData({...formData, description: e.target.value})}
+                placeholder="Расскажите о вашем салоне, услугах, специализации..."
                 rows={4}
               />
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="city" className="text-base font-semibold">
-                  Город *
-                </Label>
-                <Input
-                  id="city"
-                  placeholder="Москва"
-                  value={formData.city}
-                  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="address" className="text-base font-semibold">
-                  Адрес *
-                </Label>
-                <Input
-                  id="address"
-                  placeholder="ул. Примерная, д. 1"
-                  value={formData.address}
-                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                />
-              </div>
+            <div>
+              <Label htmlFor="city">Город *</Label>
+              <Input
+                id="city"
+                value={formData.city}
+                onChange={(e) => setFormData({...formData, city: e.target.value})}
+                placeholder="Например: Москва"
+              />
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="phone" className="text-base font-semibold">
-                  Телефон *
-                </Label>
-                <Input
-                  id="phone"
-                  placeholder="+7 (999) 123-45-67"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-base font-semibold">
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="salon@example.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                />
-              </div>
+            <div>
+              <Label htmlFor="address">Адрес *</Label>
+              <Input
+                id="address"
+                value={formData.address}
+                onChange={(e) => setFormData({...formData, address: e.target.value})}
+                placeholder="Например: ул. Ленина, д. 10"
+              />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="website" className="text-base font-semibold">
-                Сайт
-              </Label>
+            <div>
+              <Label htmlFor="phone">Телефон *</Label>
+              <Input
+                id="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                placeholder="+7 (999) 123-45-67"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                placeholder="salon@example.com"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="website">Сайт</Label>
               <Input
                 id="website"
-                placeholder="https://your-salon.com"
                 value={formData.website}
-                onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                onChange={(e) => setFormData({...formData, website: e.target.value})}
+                placeholder="https://example.com"
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="logo_url" className="text-base font-semibold">
-                Логотип (ссылка)
-              </Label>
+            <div>
+              <Label htmlFor="logo_url">URL логотипа</Label>
               <Input
                 id="logo_url"
-                placeholder="https://example.com/logo.png"
                 value={formData.logo_url}
-                onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
+                onChange={(e) => setFormData({...formData, logo_url: e.target.value})}
+                placeholder="https://example.com/logo.png"
               />
-              {formData.logo_url && (
-                <div className="mt-2">
-                  <img src={formData.logo_url} alt="Logo preview" className="w-24 h-24 object-cover rounded-lg border" />
-                </div>
-              )}
             </div>
 
-            <div className="space-y-2">
-              <Label className="text-base font-semibold flex items-center gap-2">
-                <Icon name="Image" size={18} />
-                Фотографии салона (ссылки)
-              </Label>
-              <div className="flex gap-2">
-                <Input
-                  placeholder="https://example.com/photo.jpg"
-                  value={photoInput}
-                  onChange={(e) => setPhotoInput(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter' && photoInput.trim()) {
-                      e.preventDefault();
-                      setFormData({ ...formData, photos: [...formData.photos, photoInput.trim()] });
-                      setPhotoInput('');
-                    }
-                  }}
-                />
-                <Button
-                  type="button"
-                  onClick={() => {
-                    if (photoInput.trim()) {
-                      setFormData({ ...formData, photos: [...formData.photos, photoInput.trim()] });
-                      setPhotoInput('');
-                    }
-                  }}
-                  variant="outline"
-                >
-                  <Icon name="Plus" size={18} />
-                </Button>
+            <div>
+              <Label>Фотографии салона</Label>
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  <Input
+                    value={photoInput}
+                    onChange={(e) => setPhotoInput(e.target.value)}
+                    placeholder="URL фотографии"
+                  />
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      if (photoInput.trim()) {
+                        setFormData({...formData, photos: [...formData.photos, photoInput.trim()]});
+                        setPhotoInput('');
+                      }
+                    }}
+                  >
+                    Добавить
+                  </Button>
+                </div>
+                {formData.photos.length > 0 && (
+                  <div className="space-y-1">
+                    {formData.photos.map((photo, index) => (
+                      <div key={index} className="flex items-center gap-2 text-sm">
+                        <span className="flex-1 truncate">{photo}</span>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => {
+                            setFormData({
+                              ...formData,
+                              photos: formData.photos.filter((_, i) => i !== index)
+                            });
+                          }}
+                        >
+                          Удалить
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-              {formData.photos.length > 0 && (
-                <div className="grid grid-cols-4 gap-2 mt-3">
-                  {formData.photos.map((photo, idx) => (
-                    <div key={idx} className="relative group">
-                      <img src={photo} alt={`Photo ${idx + 1}`} className="w-full h-24 object-cover rounded-lg border" />
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0"
-                        onClick={() => setFormData({ ...formData, photos: formData.photos.filter((_, i) => i !== idx) })}
-                      >
-                        <Icon name="X" size={14} />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
 
-            <div className="flex gap-3 pt-4 border-t">
+            <div className="flex gap-2 pt-4">
               <Button
                 onClick={async () => {
-                  if (!formData.name.trim() || !formData.description.trim() || !formData.city.trim() || !formData.address.trim() || !formData.phone.trim()) {
+                  if (!formData.name || !formData.description || !formData.city || !formData.address || !formData.phone) {
                     toast({
-                      title: 'Заполните обязательные поля',
-                      description: 'Название, описание, город, адрес и телефон обязательны',
-                      variant: 'destructive'
+                      title: 'Ошибка',
+                      description: 'Заполните все обязательные поля',
+                      variant: 'destructive',
                     });
                     return;
                   }
@@ -423,8 +404,8 @@ export default function SalonDashboard() {
                   setSaving(true);
                   try {
                     const token = localStorage.getItem('token');
-                    const res = await fetch(SALON_API, {
-                      method: salonExists ? 'PUT' : 'POST',
+                    const res = await fetch(`${SALON_API}?action=update_salon`, {
+                      method: 'POST',
                       headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
@@ -432,35 +413,38 @@ export default function SalonDashboard() {
                       body: JSON.stringify(formData)
                     });
 
-                    const data = await res.json();
-                    if (res.ok && data.salon) {
-                      toast({ 
-                        title: salonExists ? 'Профиль обновлён!' : 'Профиль салона создан!', 
-                        description: salonExists ? 'Изменения сохранены' : 'Ожидайте модерацию' 
+                    if (res.ok) {
+                      toast({
+                        title: 'Успешно',
+                        description: salonExists 
+                          ? 'Профиль обновлен и отправлен на модерацию'
+                          : 'Профиль создан и отправлен на модерацию',
                       });
                       setShowForm(false);
-                      setSalonExists(true);
-                      setIsVerified(data.salon.is_verified);
-                      await loadSalonStatus();
+                      loadSalonStatus();
                     } else {
-                      toast({ title: data.error || 'Ошибка сохранения', variant: 'destructive' });
+                      const error = await res.json();
+                      toast({
+                        title: 'Ошибка',
+                        description: error.error || 'Не удалось сохранить профиль',
+                        variant: 'destructive',
+                      });
                     }
                   } catch (error) {
-                    toast({ title: 'Ошибка сервера', variant: 'destructive' });
+                    toast({
+                      title: 'Ошибка',
+                      description: 'Произошла ошибка при сохранении',
+                      variant: 'destructive',
+                    });
                   } finally {
                     setSaving(false);
                   }
                 }}
                 disabled={saving}
-                className="flex-1"
               >
-                {saving ? (
-                  <><Icon name="Loader2" className="animate-spin mr-2" size={18} />Сохранение...</>
-                ) : (
-                  <><Icon name="Save" size={18} className="mr-2" />Сохранить профиль</>
-                )}
+                {saving ? 'Сохранение...' : (salonExists ? 'Обновить профиль' : 'Создать профиль')}
               </Button>
-              <Button onClick={() => setShowForm(false)} variant="outline">
+              <Button variant="outline" onClick={() => setShowForm(false)}>
                 Отмена
               </Button>
             </div>
@@ -468,12 +452,10 @@ export default function SalonDashboard() {
         </DialogContent>
       </Dialog>
 
-      <VacancyForm 
-        open={showVacancyForm} 
+      <VacancyForm
+        isOpen={showVacancyForm}
         onClose={() => setShowVacancyForm(false)}
-        onSuccess={() => {
-          toast({ title: 'Вакансия добавлена!', description: 'Она теперь видна в каталоге' });
-        }}
+        salonName={formData.name}
       />
     </>
   );
