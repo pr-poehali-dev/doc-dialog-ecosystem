@@ -193,10 +193,10 @@ export default function ProfileSidebar({ masseur, onSendMessage, onBooking, rend
         <Button 
           className="w-full" 
           size="lg"
-          onClick={onBooking}
+          onClick={onSendMessage}
         >
-          <Icon name="Calendar" size={20} className="mr-2" />
-          Записаться
+          <Icon name="MessageCircle" size={20} className="mr-2" />
+          Написать
         </Button>
         <Button 
           variant={isFavorite ? "default" : "outline"}

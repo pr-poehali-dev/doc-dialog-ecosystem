@@ -52,12 +52,24 @@ const MasseurProfile = () => {
 
   const handleSendMessage = () => {
     const token = localStorage.getItem('token');
-    if (!token) {
+    const userStr = localStorage.getItem('user');
+    
+    if (!token || !userStr) {
       navigate('/login');
       return;
     }
+    
+    const user = JSON.parse(userStr);
+    const userRole = user.role;
+    
     if (masseur) {
-      navigate(`/dashboard/messages?masseur=${masseur.id}`);
+      // Для салонов используем обычный путь к сообщениям
+      if (userRole === 'salon') {
+        navigate(`/dashboard/messages?masseur=${masseur.id}`);
+      } else {
+        // Для клиентов сохраняем booking=true
+        navigate(`/dashboard/messages?masseur=${masseur.id}&booking=true`);
+      }
     }
   };
 
