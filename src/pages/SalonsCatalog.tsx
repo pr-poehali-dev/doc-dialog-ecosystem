@@ -297,10 +297,17 @@ export default function SalonsCatalog() {
                     )}
                   </div>
 
-                  <Button className="w-full" onClick={() => window.open(`tel:${salon.phone}`, '_self')}>
-                    <Icon name="Phone" size={16} className="mr-2" />
-                    Связаться
-                  </Button>
+                  {salon.website ? (
+                    <Button className="w-full" onClick={() => window.open(salon.website, '_blank')}>
+                      <Icon name="ExternalLink" size={16} className="mr-2" />
+                      Перейти на сайт
+                    </Button>
+                  ) : (
+                    <Button className="w-full" onClick={() => window.open(`tel:${salon.phone}`, '_self')}>
+                      <Icon name="Phone" size={16} className="mr-2" />
+                      Связаться
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             ))}
