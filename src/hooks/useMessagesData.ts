@@ -187,8 +187,13 @@ export function useMessagesData() {
             console.log('Ответ от API:', adminsResponse.status);
             
             if (adminsResponse.ok) {
-              const allUsers = await adminsResponse.json();
-              console.log('Все пользователи:', allUsers.length);
+              const responseData = await adminsResponse.json();
+              console.log('Полный ответ API:', responseData);
+              console.log('Тип ответа:', typeof responseData);
+              console.log('Это массив?', Array.isArray(responseData));
+              
+              const allUsers = Array.isArray(responseData) ? responseData : (responseData.users || responseData.data || []);
+              console.log('Все пользователи:', allUsers.length, allUsers);
               
               const admins = allUsers.filter((u: any) => u.role === 'admin');
               console.log('Найдено админов:', admins.length, admins);
