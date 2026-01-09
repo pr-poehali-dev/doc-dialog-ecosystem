@@ -12,12 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 
 interface Vacancy {
   id: number;
@@ -274,23 +268,23 @@ export default function SalonsCatalog() {
                           </div>
                         )}
                         {salon.vacancies.some((v) => v.requires_partner_courses) && (
-                          <div className="flex items-center gap-2">
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Badge variant="outline" className="text-xs cursor-help">
-                                    <Icon name="GraduationCap" size={12} className="mr-1" />
-                                    Обучение в школах-партнерах
-                                  </Badge>
-                                </TooltipTrigger>
-                                <TooltipContent className="max-w-xs">
-                                  <p className="text-sm">
-                                    Салон требует наличие сертификата об обучении в школах-партнерах платформы. 
-                                    Это гарантирует высокий уровень квалификации специалистов.
-                                  </p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
+                          <div className="flex items-center gap-2 group relative">
+                            <Badge 
+                              variant="outline" 
+                              className="text-xs cursor-help"
+                              title="Салон требует наличие сертификата об обучении в школах-партнерах платформы"
+                            >
+                              <Icon name="GraduationCap" size={12} className="mr-1" />
+                              Обучение в школах-партнерах
+                            </Badge>
+                            <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-72 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg z-50">
+                              <p className="font-semibold mb-1">Требуется обучение в школах-партнерах</p>
+                              <p className="text-gray-300">
+                                Салон принимает на работу только специалистов с сертификатом об обучении в школах-партнерах платформы. 
+                                Это гарантирует высокий уровень квалификации и соответствие стандартам качества.
+                              </p>
+                              <div className="absolute top-full left-6 -mt-1 border-4 border-transparent border-t-gray-900"></div>
+                            </div>
                           </div>
                         )}
                       </div>
