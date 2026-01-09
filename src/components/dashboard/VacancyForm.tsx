@@ -56,7 +56,7 @@ export default function VacancyForm({ isOpen, onClose, onSuccess, salonName: pro
     salary_from: '',
     salary_to: '',
     requirements: '',
-    requires_partner_courses: false,
+    requires_partner_courses: true,
   });
 
   useEffect(() => {
