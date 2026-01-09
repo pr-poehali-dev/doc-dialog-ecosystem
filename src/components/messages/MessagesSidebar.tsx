@@ -2,6 +2,7 @@ import { Input } from '@/components/ui/input';
 import Icon from '@/components/ui/icon';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import ChatListItem from '@/components/messages/ChatListItem';
+import { formatRelativeTime } from '@/utils/datetime';
 import type { Chat } from '@/hooks/useMessagesData';
 
 interface MessagesSidebarProps {
@@ -52,8 +53,9 @@ export default function MessagesSidebar({
               <ChatListItem
                 key={chat.other_user_id}
                 chat={chat}
-                isActive={selectedChat?.other_user_id === chat.other_user_id}
-                onClick={() => onSelectChat(chat)}
+                isSelected={selectedChat?.other_user_id === chat.other_user_id}
+                onSelect={onSelectChat}
+                formatTime={formatRelativeTime}
               />
             ))}
           </div>
