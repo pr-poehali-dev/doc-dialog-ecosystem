@@ -182,17 +182,23 @@ export function useMessagesData() {
         
         if (user?.role === 'salon') {
           try {
+            console.log('Загружаю админов для салона...');
             const adminsResponse = await fetch('https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436');
+            console.log('Ответ от API:', adminsResponse.status);
+            
             if (adminsResponse.ok) {
               const allUsers = await adminsResponse.json();
+              console.log('Все пользователи:', allUsers.length);
+              
               const admins = allUsers.filter((u: any) => u.role === 'admin');
+              console.log('Найдено админов:', admins.length, admins);
               
               if (admins.length > 0) {
                 const adminChats = admins.map((admin: any) => ({
                   other_user_id: admin.user_id,
                   name: admin.full_name || 'Администратор',
                   role: 'admin' as const,
-                  last_message: '',
+                  last_message: 'Напишите нам',
                   last_message_time: new Date().toISOString(),
                   unread_count: 0,
                   avatar: admin.avatar_url,
@@ -200,10 +206,18 @@ export function useMessagesData() {
                   booking_id: 0
                 }));
                 
+                console.log('Создано чатов с админами:', adminChats.length);
+                
                 const existingIds = allChats.map((c: Chat) => c.other_user_id);
                 const newAdminChats = adminChats.filter((ac: Chat) => !existingIds.includes(ac.other_user_id));
+                console.log('Новых админов для добавления:', newAdminChats.length);
+                
                 allChats = [...newAdminChats, ...allChats];
+              } else {
+                console.log('Админы не найдены в ответе API');
               }
+            } else {
+              console.error('Ошибка загрузки пользователей:', adminsResponse.status);
             }
           } catch (error) {
             console.error('Error loading admins:', error);
