@@ -97,6 +97,10 @@ const testimonials: Testimonial[] = [
 
 const TestimonialsSection = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const isPausedRef = useRef(false);
+  const isDraggingRef = useRef(false);
+  const startXRef = useRef(0);
+  const scrollLeftRef = useRef(0);
 
   useEffect(() => {
     const scrollContainer = scrollRef.current;
@@ -107,20 +111,64 @@ const TestimonialsSection = () => {
     const scrollSpeed = 0.5;
 
     const animate = () => {
-      scrollPosition += scrollSpeed;
-      
-      if (scrollPosition >= scrollContainer.scrollWidth / 2) {
-        scrollPosition = 0;
+      if (!isPausedRef.current && !isDraggingRef.current) {
+        scrollPosition += scrollSpeed;
+        
+        if (scrollPosition >= scrollContainer.scrollWidth / 2) {
+          scrollPosition = 0;
+        }
+        
+        scrollContainer.scrollLeft = scrollPosition;
+      } else {
+        scrollPosition = scrollContainer.scrollLeft;
       }
       
-      scrollContainer.scrollLeft = scrollPosition;
       animationFrameId = requestAnimationFrame(animate);
     };
+
+    const handleMouseEnter = () => {
+      isPausedRef.current = true;
+    };
+
+    const handleMouseLeave = () => {
+      isPausedRef.current = false;
+    };
+
+    const handleMouseDown = (e: MouseEvent) => {
+      isDraggingRef.current = true;
+      startXRef.current = e.pageX - scrollContainer.offsetLeft;
+      scrollLeftRef.current = scrollContainer.scrollLeft;
+      scrollContainer.style.cursor = 'grabbing';
+    };
+
+    const handleMouseUp = () => {
+      isDraggingRef.current = false;
+      scrollContainer.style.cursor = 'grab';
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDraggingRef.current) return;
+      e.preventDefault();
+      const x = e.pageX - scrollContainer.offsetLeft;
+      const walk = (x - startXRef.current) * 2;
+      scrollContainer.scrollLeft = scrollLeftRef.current - walk;
+    };
+
+    scrollContainer.addEventListener('mouseenter', handleMouseEnter);
+    scrollContainer.addEventListener('mouseleave', handleMouseLeave);
+    scrollContainer.addEventListener('mousedown', handleMouseDown);
+    scrollContainer.addEventListener('mouseup', handleMouseUp);
+    scrollContainer.addEventListener('mousemove', handleMouseMove);
 
     animationFrameId = requestAnimationFrame(animate);
 
     return () => {
       cancelAnimationFrame(animationFrameId);
+      scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
+      scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
+      scrollContainer.removeEventListener('mousedown', handleMouseDown);
+      scrollContainer.removeEventListener('mouseup', handleMouseUp);
+      scrollContainer.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
 
@@ -172,7 +220,7 @@ const TestimonialsSection = () => {
 
       <div 
         ref={scrollRef}
-        className="flex gap-6 overflow-x-hidden px-4"
+        className="flex gap-6 overflow-x-hidden px-4 cursor-grab select-none"
         style={{ scrollBehavior: 'auto' }}
       >
         {duplicatedTestimonials.map((testimonial, index) => (

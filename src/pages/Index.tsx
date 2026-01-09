@@ -56,8 +56,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Navigation scrollToSection={scrollToSection} />
       <HeroSection openDialog={openDialog} />
-      <MainContent openDialog={openDialog} />
-      <TestimonialsSection />
+      <MainContent openDialog={openDialog} openTestimonials={() => {}} />
       <RegistrationDialog
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}

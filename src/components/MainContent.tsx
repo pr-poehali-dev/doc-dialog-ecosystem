@@ -1,11 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
+import TestimonialsSection from "@/components/TestimonialsSection";
 
 type UserType = 'masseur' | 'school' | 'salon' | null;
 
 interface MainContentProps {
   openDialog: (type: UserType) => void;
+  openTestimonials: () => void;
 }
 
 const MainContent = ({ openDialog }: MainContentProps) => {
@@ -419,6 +421,9 @@ const MainContent = ({ openDialog }: MainContentProps) => {
           </div>
         </div>
       </section>
+
+      {/* Testimonials Section */}
+      <TestimonialsSection />
 
       {/* CTA Section */}
       <section className="py-20">
