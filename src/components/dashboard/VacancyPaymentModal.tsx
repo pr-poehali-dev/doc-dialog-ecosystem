@@ -2,26 +2,60 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import Icon from '@/components/ui/icon';
 
 interface VacancyPaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  salonName: string;
+  salonName?: string;
   onPaymentSuccess: () => void;
 }
 
 export default function VacancyPaymentModal({
   isOpen,
   onClose,
-  salonName,
+  salonName: propSalonName,
   onPaymentSuccess,
 }: VacancyPaymentModalProps) {
   const [vacancyCount, setVacancyCount] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [salonName, setSalonName] = useState(propSalonName || '');
   const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchSalonName = async () => {
+      if (propSalonName) {
+        setSalonName(propSalonName);
+        return;
+      }
+
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        const res = await fetch('https://functions.poehali.dev/01aa5a2f-6476-4fbc-ba10-6808960c8a21?action=get_profile', {
+          headers: {
+            'X-Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.salon?.name) {
+            setSalonName(data.salon.name);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch salon name:', error);
+      }
+    };
+
+    if (isOpen) {
+      fetchSalonName();
+    }
+  }, [isOpen, propSalonName]);
 
   const pricePerVacancy = 500;
   const totalAmount = pricePerVacancy * vacancyCount;
