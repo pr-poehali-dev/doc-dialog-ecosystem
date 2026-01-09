@@ -24,8 +24,8 @@ export default function SalonsQuality() {
             </div>
             <div className="px-4 sm:px-0">
               <img 
-                src="https://cdn.poehali.dev/files/woman-getting-back-massage-from-female-masseur (1).jpg"
-                alt="Профессиональный массажист за работой в салоне"
+                src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/e6f2c149-79c5-4ae6-99aa-929e3b1c7e02.jpg"
+                alt="Рост выручки салона с проверенными специалистами"
                 className="rounded-2xl sm:rounded-3xl shadow-2xl w-full h-auto object-cover"
               />
             </div>
