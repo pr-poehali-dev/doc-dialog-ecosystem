@@ -37,16 +37,19 @@ const SPECIALIZATIONS = [
 ];
 
 interface VacancyFormProps {
-  open: boolean;
+  isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
+  salonName?: string;
 }
 
-export default function VacancyForm({ open, onClose, onSuccess }: VacancyFormProps) {
+export default function VacancyForm({ isOpen, onClose, onSuccess, salonName: propSalonName }: VacancyFormProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [salonName, setSalonName] = useState('');
+  const [vacancyCount, setVacancyCount] = useState(0);
+  const [needsPayment, setNeedsPayment] = useState(false);
   const [formData, setFormData] = useState({
     specializations: [] as string[],
     schedule: '',
@@ -57,10 +60,13 @@ export default function VacancyForm({ open, onClose, onSuccess }: VacancyFormPro
   });
 
   useEffect(() => {
-    if (open) {
+    if (isOpen) {
       checkVacancyCount();
+      if (propSalonName) {
+        setSalonName(propSalonName);
+      }
     }
-  }, [open]);
+  }, [isOpen, propSalonName]);
 
   const checkVacancyCount = async () => {
     try {
@@ -176,7 +182,7 @@ export default function VacancyForm({ open, onClose, onSuccess }: VacancyFormPro
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Добавить вакансию</DialogTitle>
