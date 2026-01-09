@@ -110,7 +110,43 @@ export default function SalonDashboard() {
         </Card>
       )}
 
+      {!loading && isVerified === true && (
+        <Card className="mb-6 bg-green-50 border-green-200">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <Icon name="CheckCircle" className="text-green-600" size={24} />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-green-900 mb-2">Профиль верифицирован</h3>
+                <p className="text-sm text-green-800 mb-3">
+                  Ваш салон прошел модерацию и доступен в каталоге. Вы можете редактировать информацию о салоне в любое время.
+                </p>
+                <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => setShowForm(true)}>
+                  <Icon name="Edit" size={16} className="mr-2" />
+                  Редактировать профиль салона
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+        <div className="flex items-center gap-4 mb-4">
+          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+            <Icon name="Settings" className="text-primary" size={24} />
+          </div>
+          <h3 className="text-xl font-semibold">Профиль салона</h3>
+        </div>
+        <p className="text-gray-600 mb-4">Редактировать информацию о салоне</p>
+        <Button className="w-full" onClick={() => setShowForm(true)} variant="outline">
+          <Icon name="Edit" size={16} className="mr-2" />
+          Редактировать профиль
+        </Button>
+      </div>
+
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
         <div className="flex items-center gap-4 mb-4">
           <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
