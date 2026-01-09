@@ -20,6 +20,7 @@ export default function Messages() {
     handleSelectChat,
     handleSendMessage,
     handleBookingResponse,
+    handleDeleteChat,
   } = useMessagesData();
 
   return (
@@ -42,6 +43,7 @@ export default function Messages() {
           onMessageTextChange={setMessageText}
           onSendMessage={handleSendMessage}
           onBookingResponse={handleBookingResponse}
+          onDeleteChat={handleDeleteChat}
           sending={sending}
           userRole={userRole}
           messagesLimit={messagesLimit}

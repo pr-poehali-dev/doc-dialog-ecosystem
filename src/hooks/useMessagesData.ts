@@ -362,6 +362,11 @@ export function useMessagesData() {
     }
   };
 
+  const handleDeleteChat = () => {
+    setSelectedChat(null);
+    setMessages([]);
+  };
+
   const filteredChats = chats.filter(chat =>
     chat.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -382,5 +387,6 @@ export function useMessagesData() {
     handleSelectChat,
     handleSendMessage,
     handleBookingResponse,
+    handleDeleteChat,
   };
 }

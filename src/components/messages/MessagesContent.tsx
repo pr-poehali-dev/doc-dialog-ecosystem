@@ -10,6 +10,7 @@ interface MessagesContentProps {
   onMessageTextChange: (text: string) => void;
   onSendMessage: () => void;
   onBookingResponse: (messageId: number, action: 'accept' | 'decline') => void;
+  onDeleteChat: () => void;
   sending: boolean;
   userRole: string;
   messagesLimit: number | null;
@@ -23,6 +24,7 @@ export default function MessagesContent({
   onMessageTextChange,
   onSendMessage,
   onBookingResponse,
+  onDeleteChat,
   sending,
   userRole,
   messagesLimit,
@@ -46,13 +48,14 @@ export default function MessagesContent({
   return (
     <div className="flex-1 flex flex-col">
       <ChatWindow
-        chat={selectedChat}
+        selectedChat={selectedChat}
         messages={messages}
         currentUserId={currentUserId}
         messageText={messageText}
         onMessageTextChange={onMessageTextChange}
         onSendMessage={onSendMessage}
         onBookingResponse={onBookingResponse}
+        onDeleteChat={onDeleteChat}
         sending={sending}
         userRole={userRole}
         messagesLimit={messagesLimit}
