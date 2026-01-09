@@ -12,6 +12,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface Vacancy {
   id: number;
@@ -269,10 +275,22 @@ export default function SalonsCatalog() {
                         )}
                         {salon.vacancies.some((v) => v.requires_partner_courses) && (
                           <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="text-xs">
-                              <Icon name="GraduationCap" size={12} className="mr-1" />
-                              Обучение в школах-партнерах
-                            </Badge>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Badge variant="outline" className="text-xs cursor-help">
+                                    <Icon name="GraduationCap" size={12} className="mr-1" />
+                                    Обучение в школах-партнерах
+                                  </Badge>
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-xs">
+                                  <p className="text-sm">
+                                    Салон требует наличие сертификата об обучении в школах-партнерах платформы. 
+                                    Это гарантирует высокий уровень квалификации специалистов.
+                                  </p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                           </div>
                         )}
                       </div>
