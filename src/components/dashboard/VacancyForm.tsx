@@ -105,66 +105,36 @@ export default function VacancyForm({ open, onClose, onSuccess }: VacancyFormPro
         return;
       }
 
-      if (needsPayment) {
-        // Создаём платёж через Юкассу
-        const paymentRes = await fetch(PAYMENT_API, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            action: 'create_vacancy_payment',
-            vacancy_data: {
-              ...formData,
-              salary_from: formData.salary_from ? parseFloat(formData.salary_from) : null,
-              salary_to: formData.salary_to ? parseFloat(formData.salary_to) : null,
-            },
-          }),
-        });
+      // Тестовый режим - все вакансии создаются бесплатно
+      const res = await fetch(`${SALON_API}?action=add_vacancy`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          ...formData,
+          salary_from: formData.salary_from ? parseFloat(formData.salary_from) : null,
+          salary_to: formData.salary_to ? parseFloat(formData.salary_to) : null,
+        }),
+      });
 
-        if (paymentRes.ok) {
-          const paymentData = await paymentRes.json();
-          // Перенаправляем на страницу оплаты Юкассы
-          window.location.href = paymentData.confirmation_url;
-        } else {
-          const error = await paymentRes.json();
-          toast({
-            title: 'Ошибка создания платежа',
-            description: error.error || 'Попробуйте позже',
-            variant: 'destructive',
-          });
-        }
+      if (res.ok) {
+        toast({
+          title: 'Успех',
+          description: needsPayment 
+            ? 'Вакансия добавлена (тестовый режим - без оплаты)' 
+            : 'Вакансия успешно добавлена',
+        });
+        onSuccess?.();
+        onClose();
       } else {
-        // Первая вакансия бесплатная
-        const res = await fetch(`${SALON_API}?action=add_vacancy`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            ...formData,
-            salary_from: formData.salary_from ? parseFloat(formData.salary_from) : null,
-            salary_to: formData.salary_to ? parseFloat(formData.salary_to) : null,
-          }),
+        const error = await res.json();
+        toast({
+          title: 'Ошибка',
+          description: error.error || 'Не удалось добавить вакансию',
+          variant: 'destructive',
         });
-
-        if (res.ok) {
-          toast({
-            title: 'Успех',
-            description: 'Вакансия успешно добавлена',
-          });
-          onSuccess?.();
-          onClose();
-        } else {
-          const error = await res.json();
-          toast({
-            title: 'Ошибка',
-            description: error.error || 'Не удалось добавить вакансию',
-            variant: 'destructive',
-          });
-        }
       }
     } catch (error) {
       toast({
@@ -192,17 +162,10 @@ export default function VacancyForm({ open, onClose, onSuccess }: VacancyFormPro
         <DialogHeader>
           <DialogTitle>Добавить вакансию</DialogTitle>
           <DialogDescription>
-            {vacancyCount === 0 ? (
-              <span className="text-green-600 font-medium">
-                <Icon name="Gift" size={14} className="inline mr-1" />
-                Первая вакансия бесплатная!
-              </span>
-            ) : (
-              <span className="text-orange-600 font-medium">
-                <Icon name="CreditCard" size={14} className="inline mr-1" />
-                Стоимость: 500₽ на 3 суток
-              </span>
-            )}
+            <span className="text-blue-600 font-medium">
+              <Icon name="TestTube" size={14} className="inline mr-1" />
+              Тестовый режим: все вакансии бесплатны
+            </span>
           </DialogDescription>
         </DialogHeader>
 
@@ -296,11 +259,6 @@ export default function VacancyForm({ open, onClose, onSuccess }: VacancyFormPro
                 <>
                   <Icon name="Loader2" size={16} className="mr-2 animate-spin" />
                   Обработка...
-                </>
-              ) : needsPayment ? (
-                <>
-                  <Icon name="CreditCard" size={16} className="mr-2" />
-                  Оплатить 500₽
                 </>
               ) : (
                 <>
