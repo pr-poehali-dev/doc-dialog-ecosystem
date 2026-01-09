@@ -15,6 +15,7 @@ import AdminModerationTab from "@/components/admin/AdminModerationTab";
 import AdminSchoolsTab from "@/components/admin/AdminSchoolsTab";
 import KnowledgeBaseManagement from "@/components/admin/KnowledgeBaseManagement";
 import VerificationModerationTab from "@/components/admin/VerificationModerationTab";
+import SalonModerationTab from "@/components/admin/SalonModerationTab";
 
 interface Stats {
   total_users: number;
@@ -52,7 +53,7 @@ interface ModerationItem {
 export default function AdminPanel() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'moderation' | 'verifications' | 'courses' | 'masterminds' | 'offline-training' | 'reviews' | 'schools' | 'knowledge'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'moderation' | 'verifications' | 'salons' | 'courses' | 'masterminds' | 'offline-training' | 'reviews' | 'schools' | 'knowledge'>('dashboard');
   const [loading, setLoading] = useState(false);
   
   const [stats, setStats] = useState<Stats | null>(null);
@@ -371,6 +372,14 @@ export default function AdminPanel() {
                 <Badge className="ml-1 sm:ml-2" variant="destructive">{pendingVerifications}</Badge>
               )}
             </Button>
+            <Button 
+              variant={activeTab === 'salons' ? 'default' : 'outline'}
+              onClick={() => setActiveTab('salons')}
+              className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm"
+            >
+              <Icon name="Store" size={16} className="sm:mr-2" />
+              <span className="hidden sm:inline">Салоны</span>
+            </Button>
           </div>
 
           {/* Dashboard Tab */}
@@ -414,6 +423,9 @@ export default function AdminPanel() {
           
           {/* Verifications Tab */}
           {activeTab === 'verifications' && <VerificationModerationTab onModerationComplete={loadVerificationCount} />}
+
+          {/* Salons Tab */}
+          {activeTab === 'salons' && <SalonModerationTab />}
         </div>
       </div>
     </div>

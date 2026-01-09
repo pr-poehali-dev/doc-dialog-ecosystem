@@ -34,6 +34,7 @@ def handler(event: dict, context) -> dict:
     '''API личного кабинета для салонов красоты - управление профилем и заявками'''
     
     method = event.get('httpMethod', 'GET')
+    action = event.get('queryStringParameters', {}).get('action', '')
     
     if method == 'OPTIONS':
         return response(200, {})
@@ -54,8 +55,76 @@ def handler(event: dict, context) -> dict:
     token = auth_header.replace('Bearer ', '').strip()
     
     try:
+        # GET /?action=admin_list - список всех салонов для админа
+        if method == 'GET' and action == 'admin_list':
+            if not token:
+                conn.close()
+                return response(401, {'error': 'Требуется авторизация'})
+            
+            try:
+                jwt_secret = os.environ.get('JWT_SECRET', 'your-secret-key')
+                decoded = jwt.decode(token, jwt_secret, algorithms=['HS256'])
+                user_id = decoded.get('user_id')
+                
+                if not is_admin_user(conn, user_id):
+                    conn.close()
+                    return response(403, {'error': 'Доступ запрещен'})
+                
+                with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                    cur.execute("""
+                        SELECT s.id, s.user_id, s.name, s.description, s.logo_url, s.website, 
+                               s.phone, s.email, s.city, s.address, s.is_verified, 
+                               s.subscription_type, s.photos, s.created_at, s.updated_at,
+                               u.email as owner_email
+                        FROM t_p46047379_doc_dialog_ecosystem.salons s
+                        LEFT JOIN t_p46047379_doc_dialog_ecosystem.users u ON s.user_id = u.id
+                        ORDER BY s.is_verified ASC, s.created_at DESC
+                    """)
+                    salons = cur.fetchall()
+                    conn.close()
+                    return response(200, {'salons': [dict(s) for s in salons]})
+            except jwt.InvalidTokenError:
+                conn.close()
+                return response(401, {'error': 'Неверный токен'})
+        
+        # POST /?action=verify - верифицировать/отменить верификацию салона (админ)
+        if method == 'POST' and action == 'verify':
+            if not token:
+                conn.close()
+                return response(401, {'error': 'Требуется авторизация'})
+            
+            try:
+                jwt_secret = os.environ.get('JWT_SECRET', 'your-secret-key')
+                decoded = jwt.decode(token, jwt_secret, algorithms=['HS256'])
+                user_id = decoded.get('user_id')
+                
+                if not is_admin_user(conn, user_id):
+                    conn.close()
+                    return response(403, {'error': 'Доступ запрещен'})
+                
+                body = json.loads(event.get('body', '{}'))
+                salon_id = body.get('salon_id')
+                verify = body.get('verify', True)
+                
+                if not salon_id:
+                    conn.close()
+                    return response(400, {'error': 'salon_id обязателен'})
+                
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        UPDATE t_p46047379_doc_dialog_ecosystem.salons
+                        SET is_verified = %s, updated_at = NOW()
+                        WHERE id = %s
+                    """, (verify, salon_id))
+                    conn.commit()
+                    conn.close()
+                    return response(200, {'success': True, 'verified': verify})
+            except jwt.InvalidTokenError:
+                conn.close()
+                return response(401, {'error': 'Неверный токен'})
+        
         # GET /?action=salon_profile - получить профиль салона текущего пользователя
-        if method == 'GET' and event.get('queryStringParameters', {}).get('action') == 'salon_profile':
+        if method == 'GET' and action == 'salon_profile':
             if not token:
                 conn.close()
                 return response(401, {'error': 'Требуется авторизация'})
