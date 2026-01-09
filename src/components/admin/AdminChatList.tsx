@@ -59,28 +59,30 @@ export default function AdminChatList({ chats, selectedUserId, onChatSelect }: A
                 <div
                   key={chat.other_user_id}
                   onClick={() => onChatSelect(chat)}
-                  className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                  className={`p-4 rounded-lg border cursor-pointer transition-colors ${
                     selectedUserId === chat.other_user_id
                       ? 'bg-primary/10 border-primary'
                       : 'hover:bg-muted'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="flex-shrink-0">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 mt-1">
                       <Icon name={getRoleIcon(chat.role)} size={24} className="text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1">
-                        <p className="font-semibold truncate">{chat.name}</p>
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <p className="font-semibold text-base">{chat.name}</p>
                         {chat.unread_count > 0 && (
-                          <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                          <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full flex-shrink-0">
                             {chat.unread_count}
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-muted-foreground mb-1">{getRoleName(chat.role)}</p>
-                      <p className="text-sm text-muted-foreground truncate">{chat.last_message}</p>
-                      <p className="text-xs text-muted-foreground mt-1">
+                      <p className="text-xs text-muted-foreground mb-2">{getRoleName(chat.role)}</p>
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-2 leading-relaxed">
+                        {chat.last_message}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
                         {formatRelativeTime(chat.last_message_time)}
                       </p>
                     </div>
