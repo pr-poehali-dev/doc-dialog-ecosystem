@@ -27,16 +27,26 @@ export default function VacancyPaymentModal({
   const totalAmount = pricePerVacancy * vacancyCount;
 
   const handlePayment = async () => {
+    if (!salonName) {
+      toast({
+        title: 'Ошибка',
+        description: 'Название салона не указано',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const token = localStorage.getItem('auth_token');
+      const token = localStorage.getItem('token');
       if (!token) {
         toast({
           title: 'Ошибка',
           description: 'Необходима авторизация',
           variant: 'destructive',
         });
+        setIsLoading(false);
         return;
       }
 
