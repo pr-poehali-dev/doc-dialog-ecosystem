@@ -24,7 +24,7 @@ export default function SalonsQuality() {
             </div>
             <div className="px-4 sm:px-0">
               <img 
-                src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/b368291c-2a9c-469a-b897-c85c46a317f2.jpg"
+                src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/0acf70a7-934f-4f23-9a95-4a1b45fa88d7.jpg"
                 alt="Рост выручки салона с проверенными специалистами"
                 className="rounded-2xl sm:rounded-3xl shadow-2xl w-full h-auto object-cover"
               />
