@@ -26,7 +26,7 @@ export default function SalonsQuality() {
               <img 
                 src="https://cdn.poehali.dev/files/medium-shot-woman-getting-massage.jpg"
                 alt="Профессиональный массажист за работой в премиум салоне"
-                className="rounded-2xl sm:rounded-3xl shadow-2xl w-full h-auto object-cover"
+                className="rounded-2xl sm:rounded-3xl shadow-2xl w-full aspect-square object-cover"
               />
             </div>
           </div>
