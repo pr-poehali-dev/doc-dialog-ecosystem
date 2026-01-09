@@ -396,14 +396,20 @@ def handler(event: dict, context) -> dict:
                     """, (user_id,))
                     salon = cur.fetchone()
                     
-                    # Если салона нет - создаем автоматически с минимальными данными
+                    # Если салона нет - создаем автоматически с данными из профиля пользователя
                     if not salon:
+                        cur.execute("""
+                            SELECT email FROM t_p46047379_doc_dialog_ecosystem.users WHERE id = %s
+                        """, (user_id,))
+                        user = cur.fetchone()
+                        salon_name = f"Салон {user['email'].split('@')[0]}" if user else 'Мой салон'
+                        
                         cur.execute("""
                             INSERT INTO t_p46047379_doc_dialog_ecosystem.salons 
                             (user_id, name, is_verified, subscription_type, created_at)
                             VALUES (%s, %s, false, 'free', NOW())
                             RETURNING id
-                        """, (user_id, 'Мой салон'))
+                        """, (user_id, salon_name))
                         salon = cur.fetchone()
                     
                     salon_id = salon['id']
