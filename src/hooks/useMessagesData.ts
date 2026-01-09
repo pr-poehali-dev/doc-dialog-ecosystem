@@ -182,24 +182,28 @@ export function useMessagesData() {
         
         if (user?.role === 'salon') {
           try {
-            const adminsResponse = await fetch('https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436?role=admin');
+            const adminsResponse = await fetch('https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436');
             if (adminsResponse.ok) {
-              const admins = await adminsResponse.json();
-              const adminChats = admins.map((admin: any) => ({
-                other_user_id: admin.user_id,
-                name: admin.full_name || 'Администратор',
-                role: 'admin' as const,
-                last_message: '',
-                last_message_time: new Date().toISOString(),
-                unread_count: 0,
-                avatar: admin.avatar_url,
-                verified: true,
-                booking_id: 0
-              }));
+              const allUsers = await adminsResponse.json();
+              const admins = allUsers.filter((u: any) => u.role === 'admin');
               
-              const existingIds = allChats.map((c: Chat) => c.other_user_id);
-              const newAdminChats = adminChats.filter((ac: Chat) => !existingIds.includes(ac.other_user_id));
-              allChats = [...newAdminChats, ...allChats];
+              if (admins.length > 0) {
+                const adminChats = admins.map((admin: any) => ({
+                  other_user_id: admin.user_id,
+                  name: admin.full_name || 'Администратор',
+                  role: 'admin' as const,
+                  last_message: '',
+                  last_message_time: new Date().toISOString(),
+                  unread_count: 0,
+                  avatar: admin.avatar_url,
+                  verified: true,
+                  booking_id: 0
+                }));
+                
+                const existingIds = allChats.map((c: Chat) => c.other_user_id);
+                const newAdminChats = adminChats.filter((ac: Chat) => !existingIds.includes(ac.other_user_id));
+                allChats = [...newAdminChats, ...allChats];
+              }
             }
           } catch (error) {
             console.error('Error loading admins:', error);
