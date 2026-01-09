@@ -54,10 +54,16 @@ export default function SalonDashboard() {
                   Ваш профиль салона находится на проверке. После успешной верификации вы появитесь в каталоге салонов 
                   и сможете получить значок "Verified". Обычно проверка занимает 1-2 рабочих дня.
                 </p>
-                <p className="text-xs text-amber-700">
+                <p className="text-xs text-amber-700 mb-4">
                   <Icon name="Info" size={14} className="inline mr-1" />
                   До верификации ваш профиль не виден другим пользователям в каталоге
                 </p>
+                <Link to="/salon-cabinet">
+                  <Button size="sm" className="bg-amber-600 hover:bg-amber-700">
+                    <Icon name="Edit" size={16} className="mr-2" />
+                    Заполнить профиль салона
+                  </Button>
+                </Link>
               </div>
             </div>
           </CardContent>
