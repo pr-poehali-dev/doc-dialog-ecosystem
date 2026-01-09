@@ -70,8 +70,8 @@ export default function Messages() {
     
     fetchChats();
     
-    // Загружаем лимит сообщений для школ
-    if (user.role === 'school') {
+    // Загружаем лимит сообщений для школ и салонов
+    if (user.role === 'school' || user.role === 'salon') {
       loadSchoolMessagesLimit(user.id);
     }
   }, [navigate]);
@@ -175,6 +175,8 @@ export default function Messages() {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
+      const userStr = localStorage.getItem('user');
+      const user = userStr ? JSON.parse(userStr) : null;
       
       const response = await fetch(`${API_URL}?action=get-chats`, {
         method: 'GET',
@@ -186,7 +188,37 @@ export default function Messages() {
 
       if (response.ok) {
         const data = await response.json();
-        setChats(data.chats || []);
+        let allChats = data.chats || [];
+        
+        // Если роль salon, добавляем админов
+        if (user?.role === 'salon') {
+          try {
+            const adminsResponse = await fetch('https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436?role=admin');
+            if (adminsResponse.ok) {
+              const admins = await adminsResponse.json();
+              const adminChats = admins.map((admin: any) => ({
+                other_user_id: admin.user_id,
+                name: admin.full_name || 'Администратор',
+                role: 'admin' as const,
+                last_message: '',
+                last_message_time: new Date().toISOString(),
+                unread_count: 0,
+                avatar: admin.avatar_url,
+                verified: true,
+                booking_id: 0
+              }));
+              
+              // Добавляем админов в начало списка, если их еще нет
+              const existingIds = allChats.map((c: Chat) => c.other_user_id);
+              const newAdminChats = adminChats.filter((ac: Chat) => !existingIds.includes(ac.other_user_id));
+              allChats = [...newAdminChats, ...allChats];
+            }
+          } catch (error) {
+            console.error('Error loading admins:', error);
+          }
+        }
+        
+        setChats(allChats);
       }
     } catch (error) {
       console.error('Error fetching chats:', error);
@@ -224,6 +256,16 @@ export default function Messages() {
   const handleSendMessage = async () => {
     if (!messageText.trim() || !selectedChat || sending) return;
 
+    // Проверка лимита для салонов (10 сообщений в сутки)
+    if (userRole === 'salon' && messagesLimit !== null && messagesLimit <= 0) {
+      toast({
+        title: '⚠️ Лимит сообщений исчерпан',
+        description: 'Вы достигли лимита в 10 сообщений в сутки. Попробуйте завтра.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     try {
       setSending(true);
       const token = localStorage.getItem('token');
@@ -244,6 +286,11 @@ export default function Messages() {
         setMessageText('');
         await fetchMessages(selectedChat.other_user_id);
         await fetchChats();
+        
+        // Обновляем лимит для салонов
+        if (userRole === 'salon' && messagesLimit !== null) {
+          setMessagesLimit(messagesLimit - 1);
+        }
       } else if (response.status === 403) {
         const errorData = await response.json();
         
