@@ -15,7 +15,6 @@ export default function SalonsFooter() {
                 alt="Док диалог" 
                 className="h-10 w-auto"
               />
-              <span className="text-xl font-bold">Док диалог</span>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed">
               Находим проверенных специалистов для вашего салона
