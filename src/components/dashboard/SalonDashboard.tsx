@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import Icon from '@/components/ui/icon';
 import { useUnreadMessages } from '@/hooks/useUnreadMessages';
 import { useToast } from '@/hooks/use-toast';
+import VacancyForm from '@/components/dashboard/VacancyForm';
 
 const SALON_API = 'https://functions.poehali.dev/01aa5a2f-6476-4fbc-ba10-6808960c8a21';
 
@@ -33,6 +34,7 @@ export default function SalonDashboard() {
     photos: [] as string[]
   });
   const [photoInput, setPhotoInput] = useState('');
+  const [showVacancyForm, setShowVacancyForm] = useState(false);
 
   useEffect(() => {
     loadSalonStatus();
@@ -117,7 +119,7 @@ export default function SalonDashboard() {
           <h3 className="text-xl font-semibold">Вакансии</h3>
         </div>
         <p className="text-gray-600 mb-4">Управление вакансиями салона</p>
-        <Button className="w-full">Добавить вакансию</Button>
+        <Button className="w-full" onClick={() => setShowVacancyForm(true)}>Добавить вакансию</Button>
       </div>
 
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
@@ -429,6 +431,14 @@ export default function SalonDashboard() {
           </div>
         </DialogContent>
       </Dialog>
+
+      <VacancyForm 
+        open={showVacancyForm} 
+        onClose={() => setShowVacancyForm(false)}
+        onSuccess={() => {
+          toast({ title: 'Вакансия добавлена!', description: 'Она теперь видна в каталоге' });
+        }}
+      />
     </>
   );
 }
