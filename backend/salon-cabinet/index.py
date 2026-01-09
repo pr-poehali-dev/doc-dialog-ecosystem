@@ -179,7 +179,7 @@ def handler(event: dict, context) -> dict:
                 return response(401, {'error': 'Неверный токен'})
         
         # POST / - создать профиль салона
-        if method == 'POST':
+        if method == 'POST' and not action:
             if not token:
                 conn.close()
                 return response(401, {'error': 'Требуется авторизация'})
