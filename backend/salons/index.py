@@ -55,7 +55,7 @@ def handler(event: dict, context) -> dict:
                     ) as vacancies
                 FROM salons s
                 LEFT JOIN salon_vacancies v ON s.id = v.salon_id
-                WHERE 1=1
+                WHERE s.is_verified = true
             '''
             
             params = []

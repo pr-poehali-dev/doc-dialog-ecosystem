@@ -258,6 +258,29 @@ export default function SalonCabinet() {
       </div>
 
       <div className="container mx-auto px-4 py-8 max-w-6xl">
+        {!salon?.is_verified && salon && (
+          <Card className="mb-6 bg-amber-50 border-amber-200">
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Icon name="Clock" className="text-amber-600" size={24} />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-amber-900 mb-2">Ожидает модерации</h3>
+                  <p className="text-sm text-amber-800 mb-3">
+                    Ваш профиль салона находится на проверке. После успешной верификации вы появитесь в каталоге салонов 
+                    и сможете получить значок "Verified". Обычно проверка занимает 1-2 рабочих дня.
+                  </p>
+                  <p className="text-xs text-amber-700">
+                    <Icon name="Info" size={14} className="inline mr-1" />
+                    До верификации ваш профиль не виден другим пользователям в каталоге
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         <div className="mb-6 flex gap-4">
           <Button onClick={() => navigate('/dashboard/messages')} size="lg" className="relative">
             <Icon name="MessageSquare" size={20} className="mr-2" />
