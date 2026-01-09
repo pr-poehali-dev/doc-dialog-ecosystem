@@ -77,25 +77,30 @@ export default function SalonDashboard() {
   return (
     <>
       {!loading && isVerified === false && (
-        <Card className="mb-6 bg-amber-50 border-amber-200">
+        <Card className="mb-6 bg-blue-50 border-blue-200">
           <CardContent className="pt-6">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <Icon name="Clock" className="text-amber-600" size={24} />
+              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <Icon name="AlertCircle" className="text-blue-600" size={24} />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-amber-900 mb-2">Ожидает модерации</h3>
-                <p className="text-sm text-amber-800 mb-3">
-                  Ваш профиль салона находится на проверке. После успешной верификации вы появитесь в каталоге салонов 
-                  и сможете получить значок "Verified". Обычно проверка занимает 1-2 рабочих дня.
+                <h3 className="font-semibold text-blue-900 mb-2">Профиль не заполнен</h3>
+                <p className="text-sm text-blue-800 mb-3">
+                  {salonExists 
+                    ? 'Ваш профиль салона находится на модерации. После успешной верификации вы появитесь в каталоге салонов и сможете получить значок "Verified". Обычно проверка занимает 1-2 рабочих дня.'
+                    : 'Заполните информацию о вашем салоне, чтобы отправить профиль на модерацию. После одобрения администратором вы появитесь в каталоге салонов и получите значок "Verified".'
+                  }
                 </p>
-                <p className="text-xs text-amber-700 mb-4">
+                <p className="text-xs text-blue-700 mb-4">
                   <Icon name="Info" size={14} className="inline mr-1" />
-                  До верификации ваш профиль не виден другим пользователям в каталоге
+                  {salonExists 
+                    ? 'До верификации ваш профиль не виден другим пользователям в каталоге'
+                    : 'Вам нужно указать: название, описание, адрес, контакты и фотографии салона'
+                  }
                 </p>
-                <Button size="sm" className="bg-amber-600 hover:bg-amber-700" onClick={() => setShowForm(true)}>
+                <Button size="sm" className="bg-blue-600 hover:bg-blue-700" onClick={() => setShowForm(true)}>
                   <Icon name="Edit" size={16} className="mr-2" />
-                  Заполнить профиль салона
+                  {salonExists ? 'Редактировать профиль' : 'Заполнить профиль салона'}
                 </Button>
               </div>
             </div>
