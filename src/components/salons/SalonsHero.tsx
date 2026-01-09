@@ -11,7 +11,7 @@ export default function SalonsHero() {
       <div 
         className="absolute inset-0 opacity-[0.08]"
         style={{
-          backgroundImage: `url('https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/bcea1f53-5ab3-4409-b39b-afa0d3413084.jpg')`,
+          backgroundImage: `url('https://cdn.poehali.dev/files/woman-getting-back-massage-from-female-masseur (1).jpg')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
