@@ -1,4 +1,5 @@
 {
+  "payment-settings": "https://functions.poehali.dev/e47da0bb-23a7-45be-b985-3c4e6a87db0d",
   "vacancy-payment": "https://functions.poehali.dev/7497cf71-d442-407d-99d7-d6ec11e01322",
   "subscriptions": "https://functions.poehali.dev/f81f82f7-d9c7-4858-87bc-6701c67f2187",
   "rate-limiter": "https://functions.poehali.dev/856b4c0f-f4db-48d8-9fee-7036774ae585",

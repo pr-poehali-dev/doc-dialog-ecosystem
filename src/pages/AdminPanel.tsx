@@ -16,6 +16,7 @@ import AdminSchoolsTab from "@/components/admin/AdminSchoolsTab";
 import KnowledgeBaseManagement from "@/components/admin/KnowledgeBaseManagement";
 import VerificationModerationTab from "@/components/admin/VerificationModerationTab";
 import SalonModerationTab from "@/components/admin/SalonModerationTab";
+import PaymentSettingsTab from "@/components/admin/PaymentSettingsTab";
 
 interface Stats {
   total_users: number;
@@ -53,7 +54,7 @@ interface ModerationItem {
 export default function AdminPanel() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'moderation' | 'verifications' | 'salons' | 'courses' | 'masterminds' | 'offline-training' | 'reviews' | 'schools' | 'knowledge'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'moderation' | 'verifications' | 'salons' | 'courses' | 'masterminds' | 'offline-training' | 'reviews' | 'schools' | 'knowledge' | 'payments'>('dashboard');
   const [loading, setLoading] = useState(false);
   
   const [stats, setStats] = useState<Stats | null>(null);
@@ -377,8 +378,16 @@ export default function AdminPanel() {
               onClick={() => setActiveTab('salons')}
               className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm"
             >
-              <Icon name="Store" size={16} className="sm:mr-2" />
+              <Icon name="Building" size={16} className="sm:mr-2" />
               <span className="hidden sm:inline">Салоны</span>
+            </Button>
+            <Button 
+              variant={activeTab === 'payments' ? 'default' : 'outline'}
+              onClick={() => setActiveTab('payments')}
+              className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm"
+            >
+              <Icon name="CreditCard" size={16} className="sm:mr-2" />
+              <span className="hidden sm:inline">Платежи</span>
             </Button>
           </div>
 
@@ -426,6 +435,9 @@ export default function AdminPanel() {
 
           {/* Salons Tab */}
           {activeTab === 'salons' && <SalonModerationTab />}
+
+          {/* Payment Settings Tab */}
+          {activeTab === 'payments' && <PaymentSettingsTab />}
         </div>
       </div>
     </div>

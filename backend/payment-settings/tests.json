@@ -1,0 +1,29 @@
+{
+  "tests": [
+    {
+      "name": "Get payment settings",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "yoomoney_shop_id": "string",
+        "yoomoney_secret_key": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Save payment settings",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "yoomoney_shop_id": "123456",
+        "yoomoney_secret_key": "test_secret_key"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
