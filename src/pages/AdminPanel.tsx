@@ -17,6 +17,7 @@ import KnowledgeBaseManagement from "@/components/admin/KnowledgeBaseManagement"
 import VerificationModerationTab from "@/components/admin/VerificationModerationTab";
 import SalonModerationTab from "@/components/admin/SalonModerationTab";
 import PaymentSettingsTab from "@/components/admin/PaymentSettingsTab";
+import Tools from "@/pages/admin/Tools";
 
 interface Stats {
   total_users: number;
@@ -54,7 +55,7 @@ interface ModerationItem {
 export default function AdminPanel() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'moderation' | 'verifications' | 'salons' | 'courses' | 'masterminds' | 'offline-training' | 'reviews' | 'schools' | 'knowledge' | 'payments'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'moderation' | 'verifications' | 'salons' | 'courses' | 'masterminds' | 'offline-training' | 'reviews' | 'schools' | 'knowledge' | 'payments' | 'tools'>('dashboard');
   const [loading, setLoading] = useState(false);
   
   const [stats, setStats] = useState<Stats | null>(null);
@@ -389,6 +390,14 @@ export default function AdminPanel() {
               <Icon name="CreditCard" size={16} className="sm:mr-2" />
               <span className="hidden sm:inline">Платежи</span>
             </Button>
+            <Button 
+              variant={activeTab === 'tools' ? 'default' : 'outline'}
+              onClick={() => setActiveTab('tools')}
+              className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm"
+            >
+              <Icon name="Wrench" size={16} className="sm:mr-2" />
+              <span className="hidden sm:inline">Инструменты</span>
+            </Button>
           </div>
 
           {/* Dashboard Tab */}
@@ -438,6 +447,9 @@ export default function AdminPanel() {
 
           {/* Payment Settings Tab */}
           {activeTab === 'payments' && <PaymentSettingsTab />}
+
+          {/* Tools Tab */}
+          {activeTab === 'tools' && <Tools />}
         </div>
       </div>
     </div>

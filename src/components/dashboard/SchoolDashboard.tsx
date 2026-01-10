@@ -90,6 +90,19 @@ export default function SchoolDashboard() {
 
         <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
           <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+              <Icon name="Wrench" className="text-primary" size={20} />
+            </div>
+            <h3 className="text-lg md:text-xl font-semibold">Инструменты</h3>
+          </div>
+          <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Полезные инструменты для автоматизации работы</p>
+          <Link to="/dashboard/tools">
+            <Button className="w-full" variant="outline">Открыть инструменты</Button>
+          </Link>
+        </div>
+
+        <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+          <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
             <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 relative">
               <Icon name="MessageSquare" className="text-primary" size={20} />
               {unreadCount > 0 && (
