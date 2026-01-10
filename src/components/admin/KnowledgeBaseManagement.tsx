@@ -1,32 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import TypeSelector from './kb/TypeSelector';
+import SettingsCard from './kb/SettingsCard';
+import FAQList from './kb/FAQList';
+import FAQDialog from './kb/FAQDialog';
 
 interface FAQItem {
   id: number;
@@ -37,18 +14,6 @@ interface FAQItem {
   order_index: number;
   created_at: string;
 }
-
-interface KBSettings {
-  target_type: 'masseur' | 'salon' | 'school' | 'user';
-  telegram_support_url: string;
-}
-
-const TARGET_TYPES = [
-  { value: 'masseur', label: 'Массажисты', icon: 'User' },
-  { value: 'salon', label: 'Салоны', icon: 'Building' },
-  { value: 'school', label: 'Школы', icon: 'GraduationCap' },
-  { value: 'user', label: 'Пользователи', icon: 'Users' }
-];
 
 export default function KnowledgeBaseManagement() {
   const { toast } = useToast();
@@ -297,220 +262,67 @@ export default function KnowledgeBaseManagement() {
   };
 
   const categories = Array.from(new Set(faqItems.map(item => item.category)));
-  const filteredItems = faqItems.filter(item =>
-    item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.answer.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  
+  const faqCounts = {
+    masseur: faqItems.filter(i => i.target_type === 'masseur').length,
+    salon: faqItems.filter(i => i.target_type === 'salon').length,
+    school: faqItems.filter(i => i.target_type === 'school').length,
+    user: faqItems.filter(i => i.target_type === 'user').length,
+  };
+
+  const handleAddNew = () => {
+    setEditingItem(null);
+    setFormData({ category: '', question: '', answer: '' });
+    setShowDialog(true);
+  };
+
+  const handleEdit = (item: FAQItem) => {
+    setEditingItem(item);
+    setFormData({
+      category: item.category,
+      question: item.question,
+      answer: item.answer
+    });
+    setShowDialog(true);
+  };
 
   return (
     <div className="space-y-6">
-      {/* Выбор типа */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {TARGET_TYPES.map(type => (
-          <Card
-            key={type.value}
-            className={`cursor-pointer transition-all hover:shadow-lg ${
-              selectedType === type.value ? 'ring-2 ring-primary' : ''
-            }`}
-            onClick={() => setSelectedType(type.value as any)}
-          >
-            <CardContent className="pt-6 text-center">
-              <Icon name={type.icon as any} size={32} className="mx-auto mb-2 text-primary" />
-              <h3 className="font-semibold">{type.label}</h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                {faqItems.filter(i => i.target_type === type.value).length} вопросов
-              </p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <TypeSelector
+        selectedType={selectedType}
+        onTypeChange={setSelectedType}
+        faqCounts={faqCounts}
+      />
 
-      {/* Настройки Telegram */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Icon name="Settings" size={20} />
-            Настройки поддержки
-          </CardTitle>
-          <CardDescription>
-            Ссылка на Telegram-канал поддержки для {TARGET_TYPES.find(t => t.value === selectedType)?.label}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-2">
-            <Input
-              value={telegramUrl}
-              onChange={(e) => setTelegramUrl(e.target.value)}
-              placeholder="https://t.me/..."
-            />
-            <Button onClick={saveSettings}>
-              <Icon name="Save" size={18} className="mr-2" />
-              Сохранить
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <SettingsCard
+        selectedType={selectedType}
+        telegramUrl={telegramUrl}
+        onTelegramUrlChange={setTelegramUrl}
+        onSave={saveSettings}
+      />
 
-      {/* Управление FAQ */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>База знаний для {TARGET_TYPES.find(t => t.value === selectedType)?.label}</CardTitle>
-              <CardDescription>
-                Всего {faqItems.length} вопросов в {categories.length} категориях
-              </CardDescription>
-            </div>
-            <div className="flex gap-2">
-              {selectedType === 'masseur' && faqItems.length === 0 && (
-                <Button onClick={importDefaultFAQ} variant="outline">
-                  <Icon name="Download" size={18} className="mr-2" />
-                  Импортировать 25 вопросов
-                </Button>
-              )}
-              <Button onClick={() => {
-                setEditingItem(null);
-                setFormData({ category: '', question: '', answer: '' });
-                setShowDialog(true);
-              }}>
-                <Icon name="Plus" size={18} className="mr-2" />
-                Добавить вопрос
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Поиск */}
-          <div className="relative">
-            <Icon name="Search" size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Поиск по вопросам..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
+      <FAQList
+        selectedType={selectedType}
+        faqItems={faqItems}
+        loading={loading}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        onAddNew={handleAddNew}
+        onEdit={handleEdit}
+        onDelete={deleteFAQ}
+        onImportDefault={importDefaultFAQ}
+      />
 
-          {/* Список вопросов */}
-          {loading ? (
-            <div className="text-center py-12">
-              <Icon name="Loader2" size={48} className="animate-spin mx-auto text-muted-foreground" />
-            </div>
-          ) : filteredItems.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
-              <Icon name="HelpCircle" size={48} className="mx-auto mb-4 opacity-50" />
-              <p>Нет вопросов в базе знаний</p>
-            </div>
-          ) : (
-            <Accordion type="single" collapsible className="w-full">
-              {filteredItems.map((item) => (
-                <AccordionItem key={item.id} value={`item-${item.id}`}>
-                  <AccordionTrigger className="text-left hover:no-underline">
-                    <div className="flex items-start gap-3 pr-4 flex-1">
-                      <Icon name="HelpCircle" size={20} className="text-primary mt-0.5 flex-shrink-0" />
-                      <div className="flex-1">
-                        <div className="font-medium">{item.question}</div>
-                        <div className="text-xs text-muted-foreground mt-1">{item.category}</div>
-                      </div>
-                      <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => {
-                            setEditingItem(item);
-                            setFormData({
-                              category: item.category,
-                              question: item.question,
-                              answer: item.answer
-                            });
-                            setShowDialog(true);
-                          }}
-                        >
-                          <Icon name="Edit" size={16} />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => deleteFAQ(item.id)}
-                        >
-                          <Icon name="Trash2" size={16} className="text-destructive" />
-                        </Button>
-                      </div>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground pl-8 pr-4">
-                    {item.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Диалог добавления/редактирования */}
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>
-              {editingItem ? 'Редактировать вопрос' : 'Добавить вопрос'}
-            </DialogTitle>
-            <DialogDescription>
-              Для {TARGET_TYPES.find(t => t.value === selectedType)?.label}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label>Категория</Label>
-              <Input
-                value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                placeholder="Общие вопросы"
-              />
-              {categories.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {categories.map(cat => (
-                    <Button
-                      key={cat}
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setFormData({ ...formData, category: cat })}
-                    >
-                      {cat}
-                    </Button>
-                  ))}
-                </div>
-              )}
-            </div>
-            <div>
-              <Label>Вопрос</Label>
-              <Input
-                value={formData.question}
-                onChange={(e) => setFormData({ ...formData, question: e.target.value })}
-                placeholder="Как начать работу?"
-              />
-            </div>
-            <div>
-              <Label>Ответ</Label>
-              <Textarea
-                value={formData.answer}
-                onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
-                placeholder="Подробный ответ на вопрос..."
-                rows={6}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowDialog(false)}>
-              Отмена
-            </Button>
-            <Button onClick={saveFAQ}>
-              <Icon name="Save" size={18} className="mr-2" />
-              Сохранить
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <FAQDialog
+        open={showDialog}
+        onOpenChange={setShowDialog}
+        editingItem={editingItem}
+        selectedType={selectedType}
+        formData={formData}
+        onFormChange={setFormData}
+        categories={categories}
+        onSave={saveFAQ}
+      />
     </div>
   );
 }
