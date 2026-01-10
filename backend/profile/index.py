@@ -66,7 +66,7 @@ def handler(event: dict, context) -> dict:
         if method == 'GET':
             cur.execute(f"""
                 SELECT 
-                    id, user_id, full_name, phone, telegram, city, 
+                    id, user_id, full_name, phone, telegram, city, address,
                     experience_years, specializations, about,
                     avatar_url, education, languages, 
                     certificates, portfolio_images, rating, reviews_count,
@@ -99,6 +99,7 @@ def handler(event: dict, context) -> dict:
             phone = body.get('phone', '')
             telegram = body.get('telegram', '')
             city = body.get('city', '')
+            address = body.get('address', '')
             experience_years = body.get('experience_years', 0)
             about = body.get('about', '')
             education = body.get('education', '')
@@ -132,6 +133,7 @@ def handler(event: dict, context) -> dict:
                         phone = '{phone}',
                         telegram = '{telegram}',
                         city = '{city}',
+                        address = '{address}',
                         experience_years = {experience_years},
                         about = '{about}',
                         education = '{education}',
@@ -149,8 +151,8 @@ def handler(event: dict, context) -> dict:
                 
                 cur.execute(f"""
                     INSERT INTO {schema}.masseur_profiles 
-                    (user_id, full_name, phone, telegram, city, experience_years, about, education, avatar_url, languages, specializations, certificates)
-                    VALUES ({user_id}, '{full_name}', '{phone}', '{telegram}', '{city}', {experience_years}, '{about}', '{education}', '{avatar_url}',
+                    (user_id, full_name, phone, telegram, city, address, experience_years, about, education, avatar_url, languages, specializations, certificates)
+                    VALUES ({user_id}, '{full_name}', '{phone}', '{telegram}', '{city}', '{address}', {experience_years}, '{about}', '{education}', '{avatar_url}',
                             '{languages_str}', '{specs_str}', '{certs_str}')
                     RETURNING id
                 """)

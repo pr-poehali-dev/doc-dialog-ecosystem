@@ -18,6 +18,7 @@ export default function PublicProfile() {
   const [profileData, setProfileData] = useState({
     fullName: '',
     city: '',
+    address: '',
     specialization: '',
     workFormats: [] as string[],
     experience: '',
@@ -47,6 +48,7 @@ export default function PublicProfile() {
         setProfileData({
           fullName: data.full_name || '',
           city: data.city || '',
+          address: data.address || '',
           specialization: (data.specializations || []).join(', '),
           workFormats: data.specializations || [],
           experience: String(data.experience_years || ''),
@@ -139,6 +141,7 @@ export default function PublicProfile() {
           phone: profileData.phone,
           telegram: profileData.telegram,
           city: profileData.city,
+          address: profileData.address,
           experience_years: parseInt(profileData.experience) || 0,
           about: profileData.about,
           education: profileData.education,
@@ -242,6 +245,18 @@ export default function PublicProfile() {
                       onChange={(e) => setProfileData({ ...profileData, city: e.target.value })}
                     />
                   </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Адрес приёма</Label>
+                  <Input
+                    placeholder="ул. Пушкина, д. 10, офис 5"
+                    value={profileData.address}
+                    onChange={(e) => setProfileData({ ...profileData, address: e.target.value })}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    💡 Укажите полный адрес для показа на Яндекс.Картах
+                  </p>
                 </div>
 
                 <div className="space-y-2">

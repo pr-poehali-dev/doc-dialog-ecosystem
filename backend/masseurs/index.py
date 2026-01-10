@@ -39,6 +39,7 @@ def handler(event: dict, context) -> dict:
                 mp.full_name,
                 mp.user_id,
                 mp.city,
+                mp.address,
                 mp.phone,
                 mp.about,
                 mp.avatar_url,
@@ -64,7 +65,7 @@ def handler(event: dict, context) -> dict:
         
         for row in rows:
             # Парсим verification_badges из JSONB
-            badges = row[11] if row[11] else []
+            badges = row[12] if row[12] else []
             if isinstance(badges, str):
                 try:
                     badges = json.loads(badges)
@@ -72,7 +73,7 @@ def handler(event: dict, context) -> dict:
                     badges = []
             
             # Парсим specializations из массива PostgreSQL
-            specializations = row[8] if row[8] else []
+            specializations = row[9] if row[9] else []
             if isinstance(specializations, str):
                 try:
                     specializations = json.loads(specializations)
@@ -84,17 +85,18 @@ def handler(event: dict, context) -> dict:
                 'full_name': row[1],
                 'user_id': row[2],
                 'city': row[3] or 'Не указан',
-                'phone': row[4],
-                'about': row[5] or 'Профессиональный массажист',
-                'avatar_url': row[6],
-                'experience_years': row[7] or 5,
+                'address': row[4] or '',
+                'phone': row[5],
+                'about': row[6] or 'Профессиональный массажист',
+                'avatar_url': row[7],
+                'experience_years': row[8] or 5,
                 'specializations': specializations if specializations else ['Классический массаж'],
-                'rating': float(row[9]) if row[9] else 0.0,
-                'reviews_count': row[10] if row[10] else 0,
+                'rating': float(row[10]) if row[10] else 0.0,
+                'reviews_count': row[11] if row[11] else 0,
                 'verification_badges': badges,
-                'is_premium': row[12] or False,
-                'premium_until': row[13].isoformat() if row[13] else None,
-                'promoted_until': row[14].isoformat() if row[14] else None
+                'is_premium': row[13] or False,
+                'premium_until': row[14].isoformat() if row[14] else None,
+                'promoted_until': row[15].isoformat() if row[15] else None
             })
         
         return {

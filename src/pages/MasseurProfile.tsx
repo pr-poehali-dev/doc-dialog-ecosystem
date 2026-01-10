@@ -14,6 +14,7 @@ interface Masseur {
   id: number;
   full_name: string;
   city: string;
+  address?: string;
   experience_years: number;
   specializations: string[];
   avatar_url: string | null;

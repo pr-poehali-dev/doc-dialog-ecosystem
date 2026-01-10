@@ -11,6 +11,7 @@ interface Masseur {
   id: number;
   full_name: string;
   city: string;
+  address?: string;
   experience_years: number;
   specializations: string[];
   avatar_url: string | null;
@@ -237,6 +238,22 @@ const MasseursDirectory = () => {
                       </Badge>
                     )}
                   </div>
+
+                  {masseur.address && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full mt-2"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const address = encodeURIComponent(`${masseur.city}, ${masseur.address}`);
+                        window.open(`https://yandex.ru/maps/?text=${address}`, '_blank');
+                      }}
+                    >
+                      <Icon name="MapPin" size={14} className="mr-2" />
+                      Показать на карте
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             </Link>

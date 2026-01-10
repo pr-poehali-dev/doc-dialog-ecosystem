@@ -10,6 +10,7 @@ interface Masseur {
   id: number;
   full_name: string;
   city: string;
+  address?: string;
   experience_years: number;
   specializations: string[];
   avatar_url: string | null;
@@ -212,6 +213,21 @@ export default function ProfileSidebar({ masseur, onSendMessage, onBooking, rend
           />
           {isFavorite ? 'В избранном' : 'В избранное'}
         </Button>
+        
+        {masseur.address && (
+          <Button 
+            variant="outline"
+            className="w-full" 
+            size="lg"
+            onClick={() => {
+              const address = encodeURIComponent(`${masseur.city}, ${masseur.address}`);
+              window.open(`https://yandex.ru/maps/?text=${address}`, '_blank');
+            }}
+          >
+            <Icon name="MapPin" size={20} className="mr-2" />
+            Показать на карте
+          </Button>
+        )}
       </CardContent>
     </Card>
   );
