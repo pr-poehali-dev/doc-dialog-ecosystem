@@ -52,7 +52,7 @@ def handler(event: dict, context) -> dict:
         
         if method == 'GET':
             cur.execute("""
-                SELECT id, name, description, url, icon, target_role, is_active, display_order, created_at
+                SELECT id, name, description, url, video_url, icon, target_role, is_active, display_order, created_at
                 FROM t_p46047379_doc_dialog_ecosystem.tools
                 ORDER BY target_role, display_order, created_at DESC
             """)
@@ -70,14 +70,13 @@ def handler(event: dict, context) -> dict:
             
             cur.execute("""
                 INSERT INTO t_p46047379_doc_dialog_ecosystem.tools 
-                (name, description, url, icon, target_role, is_active, display_order)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
-                RETURNING id, name, description, url, icon, target_role, is_active, display_order, created_at
+                (description, url, video_url, target_role, is_active, display_order)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                RETURNING id, name, description, url, video_url, icon, target_role, is_active, display_order, created_at
             """, (
-                data['name'],
                 data['description'],
                 data['url'],
-                data.get('icon', 'Wrench'),
+                data.get('video_url'),
                 data['target_role'],
                 data.get('is_active', True),
                 data.get('display_order', 0)
@@ -107,16 +106,15 @@ def handler(event: dict, context) -> dict:
             
             cur.execute("""
                 UPDATE t_p46047379_doc_dialog_ecosystem.tools
-                SET name = %s, description = %s, url = %s, icon = %s, 
+                SET description = %s, url = %s, video_url = %s,
                     target_role = %s, is_active = %s, display_order = %s,
                     updated_at = CURRENT_TIMESTAMP
                 WHERE id = %s
-                RETURNING id, name, description, url, icon, target_role, is_active, display_order, created_at
+                RETURNING id, name, description, url, video_url, icon, target_role, is_active, display_order, created_at
             """, (
-                data['name'],
                 data['description'],
                 data['url'],
-                data.get('icon', 'Wrench'),
+                data.get('video_url'),
                 data['target_role'],
                 data.get('is_active', True),
                 data.get('display_order', 0),

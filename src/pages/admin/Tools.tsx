@@ -19,10 +19,11 @@ import {
 
 interface Tool {
   id: number;
-  name: string;
+  name?: string;
   description: string;
   url: string;
-  icon: string;
+  video_url?: string;
+  icon?: string;
   target_role: 'school' | 'salon' | 'specialist';
   is_active: boolean;
   display_order: number;
@@ -35,11 +36,6 @@ const ROLE_LABELS = {
   specialist: 'Специалисты'
 };
 
-const AVAILABLE_ICONS = [
-  'Wrench', 'Bot', 'MessageSquare', 'Zap', 'Calendar', 'Users',
-  'GraduationCap', 'Scissors', 'User', 'Send', 'Phone', 'Mail'
-];
-
 export default function Tools() {
   const [tools, setTools] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
@@ -48,10 +44,9 @@ export default function Tools() {
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({
-    name: '',
     description: '',
     url: '',
-    icon: 'Wrench',
+    video_url: '',
     target_role: 'school' as 'school' | 'salon' | 'specialist',
     is_active: true,
     display_order: 0
@@ -89,10 +84,9 @@ export default function Tools() {
     if (tool) {
       setEditingTool(tool);
       setFormData({
-        name: tool.name,
         description: tool.description,
         url: tool.url,
-        icon: tool.icon,
+        video_url: tool.video_url || '',
         target_role: tool.target_role,
         is_active: tool.is_active,
         display_order: tool.display_order
@@ -100,10 +94,9 @@ export default function Tools() {
     } else {
       setEditingTool(null);
       setFormData({
-        name: '',
         description: '',
         url: '',
-        icon: 'Wrench',
+        video_url: '',
         target_role: 'school',
         is_active: true,
         display_order: 0
@@ -113,7 +106,7 @@ export default function Tools() {
   };
 
   const handleSave = async () => {
-    if (!formData.name || !formData.description || !formData.url) {
+    if (!formData.description || !formData.url) {
       toast({
         title: 'Ошибка',
         description: 'Заполните все обязательные поля',
@@ -231,27 +224,41 @@ export default function Tools() {
                     >
                       <div className="flex items-center gap-4 flex-1">
                         <div className={`p-2 rounded-lg ${tool.is_active ? 'bg-primary/10' : 'bg-muted'}`}>
-                          <Icon name={tool.icon} size={24} className={tool.is_active ? 'text-primary' : 'text-muted-foreground'} />
+                          <Icon name="Link" size={24} className={tool.is_active ? 'text-primary' : 'text-muted-foreground'} />
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <h3 className="font-semibold">{tool.name}</h3>
                             {!tool.is_active && (
                               <span className="text-xs px-2 py-1 bg-muted text-muted-foreground rounded">
                                 Неактивен
                               </span>
                             )}
                           </div>
-                          <p className="text-sm text-muted-foreground">{tool.description}</p>
-                          <a
-                            href={tool.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-xs text-primary hover:underline inline-flex items-center gap-1 mt-1"
-                          >
-                            {tool.url}
-                            <Icon name="ExternalLink" size={12} />
-                          </a>
+                          <p className="text-sm font-medium mb-1">{tool.description}</p>
+                          <div className="space-y-1">
+                            <a
+                              href={tool.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-primary hover:underline inline-flex items-center gap-1"
+                            >
+                              Ссылка на инструмент
+                              <Icon name="ExternalLink" size={12} />
+                            </a>
+                            {tool.video_url && (
+                              <div>
+                                <a
+                                  href={tool.video_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-xs text-muted-foreground hover:underline inline-flex items-center gap-1"
+                                >
+                                  Видеоинструкция
+                                  <Icon name="Video" size={12} />
+                                </a>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
@@ -273,9 +280,12 @@ export default function Tools() {
                     </div>
                   ))
                 ) : (
-                  <p className="text-center text-muted-foreground py-8">
-                    Нет инструментов для этой категории
-                  </p>
+                  <div className="text-center py-8">
+                    <Icon name="Package" size={48} className="mx-auto text-muted-foreground mb-3" />
+                    <p className="text-muted-foreground">
+                      Инструменты для этой категории еще не добавлены
+                    </p>
+                  </div>
                 )}
               </div>
             </CardContent>
@@ -290,40 +300,21 @@ export default function Tools() {
               {editingTool ? 'Редактировать инструмент' : 'Добавить инструмент'}
             </DialogTitle>
             <DialogDescription>
-              Заполните информацию об инструменте для пользователей
+              Укажите ссылку, описание и видео из Кинескопа
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Название *</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Telegram-бот для школ"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="target_role">Для кого *</Label>
-                <Select
-                  value={formData.target_role}
-                  onValueChange={(value) => setFormData({ ...formData, target_role: value as any })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(ROLE_LABELS).map(([value, label]) => (
-                      <SelectItem key={value} value={value}>
-                        {label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="url">Ссылка на инструмент *</Label>
+              <Input
+                id="url"
+                type="url"
+                value={formData.url}
+                onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+                placeholder="https://t.me/your_bot"
+              />
+              <p className="text-xs text-muted-foreground">Ссылка на сторонний сайт или сервис</p>
             </div>
 
             <div className="space-y-2">
@@ -332,65 +323,66 @@ export default function Tools() {
                 id="description"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Автоматизируйте запись на курсы..."
-                rows={3}
+                placeholder="Опишите, для чего нужен этот инструмент и как он поможет пользователям..."
+                rows={4}
+              />
+              <p className="text-xs text-muted-foreground">Расширенное описание для чего нужен инструмент</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="video_url">Ссылка на видео из Кинескопа</Label>
+              <Input
+                id="video_url"
+                type="url"
+                value={formData.video_url}
+                onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
+                placeholder="https://kinescope.io/..."
+              />
+              <p className="text-xs text-muted-foreground">Опционально: видеоинструкция по использованию</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="target_role">Для кого *</Label>
+              <Select
+                value={formData.target_role}
+                onValueChange={(value) => setFormData({ ...formData, target_role: value as any })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(ROLE_LABELS).map(([value, label]) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex items-center justify-between p-4 border rounded-lg">
+              <div className="space-y-0.5">
+                <Label>Активность</Label>
+                <p className="text-sm text-muted-foreground">
+                  Показывать инструмент пользователям
+                </p>
+              </div>
+              <Switch
+                checked={formData.is_active}
+                onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="url">Ссылка *</Label>
+              <Label htmlFor="display_order">Порядок отображения</Label>
               <Input
-                id="url"
-                type="url"
-                value={formData.url}
-                onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-                placeholder="https://t.me/your_bot"
+                id="display_order"
+                type="number"
+                value={formData.display_order}
+                onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })}
+                placeholder="0"
               />
-            </div>
-
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="icon">Иконка</Label>
-                <Select
-                  value={formData.icon}
-                  onValueChange={(value) => setFormData({ ...formData, icon: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {AVAILABLE_ICONS.map((icon) => (
-                      <SelectItem key={icon} value={icon}>
-                        <div className="flex items-center gap-2">
-                          <Icon name={icon} size={16} />
-                          {icon}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="display_order">Порядок</Label>
-                <Input
-                  id="display_order"
-                  type="number"
-                  value={formData.display_order}
-                  onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="is_active">Активен</Label>
-                <div className="flex items-center h-10">
-                  <Switch
-                    id="is_active"
-                    checked={formData.is_active}
-                    onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
-                  />
-                </div>
-              </div>
+              <p className="text-xs text-muted-foreground">Меньшее число = выше в списке</p>
             </div>
           </div>
 

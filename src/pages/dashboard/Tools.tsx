@@ -6,10 +6,11 @@ import Icon from '@/components/ui/icon';
 
 interface Tool {
   id: number;
-  name: string;
+  name?: string;
   description: string;
   url: string;
-  icon: string;
+  video_url?: string;
+  icon?: string;
 }
 
 export default function Tools() {
@@ -78,21 +79,22 @@ export default function Tools() {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2">
         {tools.map((tool) => (
           <Card key={tool.id} className="hover:shadow-lg transition-shadow">
             <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="p-3 rounded-lg bg-primary/10 mb-4">
-                  <Icon name={tool.icon} size={28} className="text-primary" />
+              <div className="flex items-start gap-3 mb-2">
+                <div className="p-3 rounded-lg bg-primary/10 flex-shrink-0">
+                  <Icon name="Link" size={24} className="text-primary" />
+                </div>
+                <div className="flex-1">
+                  <CardDescription className="text-base text-foreground leading-relaxed">
+                    {tool.description}
+                  </CardDescription>
                 </div>
               </div>
-              <CardTitle className="text-xl">{tool.name}</CardTitle>
-              <CardDescription className="line-clamp-3">
-                {tool.description}
-              </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-3">
               <Button 
                 className="w-full" 
                 onClick={() => window.open(tool.url, '_blank')}
@@ -100,6 +102,17 @@ export default function Tools() {
                 <Icon name="ExternalLink" size={18} className="mr-2" />
                 Открыть инструмент
               </Button>
+              
+              {tool.video_url && (
+                <Button 
+                  variant="outline"
+                  className="w-full" 
+                  onClick={() => window.open(tool.video_url, '_blank')}
+                >
+                  <Icon name="Video" size={18} className="mr-2" />
+                  Видеоинструкция
+                </Button>
+              )}
             </CardContent>
           </Card>
         ))}
