@@ -62,6 +62,7 @@ import MasseurOrders from "./pages/MasseurOrders";
 import ClientOrders from "./pages/ClientOrders";
 import KnowledgeBase from "./pages/dashboard/KnowledgeBase";
 import Tools from "./pages/dashboard/Tools";
+import SalonPresentation from "./pages/SalonPresentation";
 
 const queryClient = new QueryClient();
 
@@ -103,6 +104,7 @@ const App = () => (
           <Route path="/schools-info" element={<SchoolsLanding />} />
           <Route path="/masseurs-info" element={<MasseursLanding />} />
           <Route path="/salons-info" element={<SalonsLanding />} />
+          <Route path="/salons-presentation" element={<SalonPresentation />} />
           <Route path="/schools" element={<SchoolCatalog />} />
           <Route path="/school/:slug" element={<SchoolLanding />} />
           <Route path="/salon/cabinet" element={<SalonCabinet />} />
