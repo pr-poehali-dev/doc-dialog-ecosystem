@@ -183,14 +183,14 @@ export default function MasseurDashboard() {
           <h3 className="text-lg md:text-xl font-semibold">Продвижение</h3>
         </div>
         <p className="text-sm md:text-base text-gray-700 mb-3 md:mb-4">Поднимите профиль в ТОП и привлеките больше клиентов</p>
-        <Button 
-          className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold shadow-md hover:shadow-lg transition-all"
-          onClick={() => setPromoteDialogOpen(true)}
-          disabled={!masseurData}
-        >
-          <Icon name="Zap" size={16} className="mr-2" />
-          Продвинуть профиль
-        </Button>
+        <Link to="/dashboard/balance">
+          <Button 
+            className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold shadow-md hover:shadow-lg transition-all"
+          >
+            <Icon name="Zap" size={16} className="mr-2" />
+            Продвинуть профиль
+          </Button>
+        </Link>
       </div>
 
       <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
