@@ -247,6 +247,21 @@ export default function MasseurDashboard() {
         </Link>
       </div>
 
+      <div className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-xl p-4 md:p-6 shadow-sm border-2 border-primary/30 hover:border-primary transition-colors">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Sparkles" className="text-primary" size={20} />
+          </div>
+          <h3 className="text-lg md:text-xl font-semibold">AI Диалоги</h3>
+        </div>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Супервизия и профессиональная поддержка 24/7</p>
+        <Link to="/dashboard/ai-dialogs">
+          <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+            Начать диалог
+          </Button>
+        </Link>
+      </div>
+
       {masseurData && (
         <PromoteMasseurDialog
           open={promoteDialogOpen}
