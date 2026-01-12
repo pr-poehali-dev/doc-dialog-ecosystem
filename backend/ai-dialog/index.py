@@ -42,12 +42,11 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
-    conn = psycopg2.connect(db_url)
+    conn = psycopg2.connect(db_url, options=f'-c search_path={schema}')
     conn.autocommit = True
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     
     try:
-        cursor.execute(f"SET search_path TO {schema}")
         
         user_id = event.get('headers', {}).get('X-User-Id') or event.get('headers', {}).get('x-user-id')
         if not user_id:
