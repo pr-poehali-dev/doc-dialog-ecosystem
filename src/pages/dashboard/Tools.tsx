@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -17,6 +18,7 @@ export default function Tools() {
   const [tools, setTools] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadTools();
@@ -72,11 +74,17 @@ export default function Tools() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold mb-2">Инструменты</h2>
-        <p className="text-muted-foreground">
-          Полезные инструменты для автоматизации вашей работы
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold mb-2">Инструменты</h2>
+          <p className="text-muted-foreground">
+            Полезные инструменты для автоматизации вашей работы
+          </p>
+        </div>
+        <Button variant="outline" onClick={() => navigate('/dashboard')}>
+          <Icon name="ArrowLeft" size={18} className="mr-2" />
+          В кабинет
+        </Button>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
