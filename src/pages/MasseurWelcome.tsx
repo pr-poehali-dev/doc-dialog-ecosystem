@@ -281,7 +281,8 @@ export default function MasseurWelcome() {
                 { icon: 'Eye', quote: 'я лучше понимаю, что происходит с моими клиентами', color: 'from-purple-500/10 to-purple-500/5' },
                 { icon: 'Shield', quote: 'я вижу, где мои границы — и это нормально', color: 'from-green-500/10 to-green-500/5' },
                 { icon: 'Heart', quote: 'мне стало спокойнее работать', color: 'from-pink-500/10 to-pink-500/5' },
-                { icon: 'TrendingUp', quote: 'появилось направление роста', color: 'from-orange-500/10 to-orange-500/5' }
+                { icon: 'TrendingUp', quote: 'появилось направление роста', color: 'from-orange-500/10 to-orange-500/5' },
+                { icon: 'Lightbulb', quote: 'теперь я знаю, куда двигаться дальше', color: 'from-yellow-500/10 to-yellow-500/5' }
               ].map((item, index) => (
                 <div 
                   key={index}
