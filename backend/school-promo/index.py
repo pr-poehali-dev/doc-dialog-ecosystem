@@ -33,24 +33,6 @@ def handler(event: dict, context) -> dict:
         conn = psycopg2.connect(os.environ['DATABASE_URL'])
         cur = conn.cursor()
         
-        # Получить школу по user_id
-        cur.execute(
-            "SELECT id, name FROM t_p46047379_doc_dialog_ecosystem.schools WHERE user_id = %s",
-            (int(user_id),)
-        )
-        school = cur.fetchone()
-        
-        if not school:
-            cur.close()
-            conn.close()
-            return {
-                'statusCode': 404,
-                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Школа не найдена'})
-            }
-        
-        school_id, school_name = school
-        
         if action == 'masseur_promo_offers':
             # Промо-предложения для массажиста
             cur.execute(
@@ -105,6 +87,22 @@ def handler(event: dict, context) -> dict:
             }
         
         elif action == 'my_promo_requests':
+            # Получить школу
+            cur.execute(
+                "SELECT id, name FROM t_p46047379_doc_dialog_ecosystem.schools WHERE user_id = %s",
+                (int(user_id),)
+            )
+            school = cur.fetchone()
+            if not school:
+                cur.close()
+                conn.close()
+                return {
+                    'statusCode': 404,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'Школа не найдена'})
+                }
+            school_id = school[0]
+            
             # История промо-запросов школы
             cur.execute("""
                 SELECT 
@@ -147,6 +145,22 @@ def handler(event: dict, context) -> dict:
             }
         
         elif action == 'send_promo_request' and method == 'POST':
+            # Получить школу
+            cur.execute(
+                "SELECT id, name FROM t_p46047379_doc_dialog_ecosystem.schools WHERE user_id = %s",
+                (int(user_id),)
+            )
+            school = cur.fetchone()
+            if not school:
+                cur.close()
+                conn.close()
+                return {
+                    'statusCode': 404,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'Школа не найдена'})
+                }
+            school_id = school[0]
+            
             # Проверка подписки
             cur.execute("""
                 SELECT sp.promo_requests_allowed
