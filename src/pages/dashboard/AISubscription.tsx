@@ -8,7 +8,9 @@ import { useNavigate } from 'react-router-dom';
 interface SubscriptionData {
   current_tier: string;
   ai_dialogs_limit: number;
-  ai_dialogs_used: number;
+  dialogs_used: number;
+  tools_used: number;
+  total_used: number;
   subscription_expires?: string;
 }
 
@@ -25,12 +27,14 @@ const AISubscription = () => {
       id: 'free',
       name: 'Бесплатный',
       price: 0,
-      dialogs: 3,
+      operations: 5,
       features: [
-        '3 AI-диалога в месяц',
+        '5 AI-операций в месяц',
+        'Диалоги + Инструменты',
         'Все типы супервизии',
-        'История диалогов',
-        'Базовая поддержка'
+        'Медицинский анализ',
+        'Анализ симптомов',
+        'Конструктор программ'
       ],
       color: 'from-gray-500/10 to-gray-500/5',
       icon: 'Sparkles'
@@ -39,13 +43,15 @@ const AISubscription = () => {
       id: 'basic',
       name: 'Базовый',
       price: 299,
-      dialogs: 15,
+      operations: 20,
       features: [
-        '15 AI-диалогов в месяц',
+        '20 AI-операций в месяц',
+        'Диалоги + Инструменты',
         'Все типы супервизии',
-        'История диалогов',
-        'Приоритетная поддержка',
-        'Экспорт диалогов'
+        'Медицинский анализ',
+        'Анализ симптомов',
+        'Конструктор программ',
+        'История всех операций'
       ],
       color: 'from-blue-500/10 to-blue-500/5',
       icon: 'Zap',
@@ -55,14 +61,16 @@ const AISubscription = () => {
       id: 'pro',
       name: 'Профи',
       price: 599,
-      dialogs: 50,
+      operations: 100,
       features: [
-        '50 AI-диалогов в месяц',
+        '100 AI-операций в месяц',
+        'Диалоги + Инструменты',
         'Все типы супервизии',
-        'История диалогов',
-        'Приоритетная поддержка',
-        'Экспорт диалогов',
-        'Расширенная аналитика'
+        'Медицинский анализ',
+        'Анализ симптомов',
+        'Конструктор программ',
+        'История всех операций',
+        'Приоритетная обработка'
       ],
       color: 'from-purple-500/10 to-purple-500/5',
       icon: 'Crown',
@@ -72,15 +80,17 @@ const AISubscription = () => {
       id: 'unlimited',
       name: 'Безлимит',
       price: 999,
-      dialogs: -1,
+      operations: -1,
       features: [
-        'Неограниченные диалоги',
+        'Неограниченные AI-операции',
+        'Диалоги + Инструменты',
         'Все типы супервизии',
-        'История диалогов',
-        'VIP поддержка 24/7',
-        'Экспорт диалогов',
-        'Расширенная аналитика',
-        'Индивидуальная настройка AI'
+        'Медицинский анализ',
+        'Анализ симптомов',
+        'Конструктор программ',
+        'История всех операций',
+        'Максимальный приоритет',
+        'VIP поддержка 24/7'
       ],
       color: 'from-orange-500/10 to-orange-500/5',
       icon: 'Infinity',
@@ -111,8 +121,10 @@ const AISubscription = () => {
       // Временно: показываем free тариф
       setSubscription({
         current_tier: 'free',
-        ai_dialogs_limit: 3,
-        ai_dialogs_used: 0
+        ai_dialogs_limit: 5,
+        dialogs_used: 0,
+        tools_used: 0,
+        total_used: 0
       });
     } catch (error) {
       toast({ title: 'Ошибка', description: 'Не удалось загрузить данные подписки', variant: 'destructive' });
@@ -182,7 +194,7 @@ const AISubscription = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Тарифы и подписка</h1>
           <p className="text-muted-foreground">
-            Выберите подходящий тариф для профессиональной AI-супервизии
+            Единая подписка на все AI-возможности: диалоги, инструменты и анализы
           </p>
         </div>
 
@@ -194,17 +206,20 @@ const AISubscription = () => {
                 Ваш текущий тариф: {currentPlan.name}
               </CardTitle>
               <CardDescription>
-                Использовано диалогов в этом месяце: {subscription.ai_dialogs_used} из {subscription.ai_dialogs_limit === -1 ? '∞' : subscription.ai_dialogs_limit}
+                Использовано AI-операций в этом месяце: {subscription.total_used} из {subscription.ai_dialogs_limit === -1 ? '∞' : subscription.ai_dialogs_limit}
               </CardDescription>
             </CardHeader>
             <CardContent>
+              <div className="mb-3 text-sm text-muted-foreground">
+                Диалоги: {subscription.dialogs_used} • Инструменты: {subscription.tools_used}
+              </div>
               <div className="w-full bg-secondary rounded-full h-3 overflow-hidden">
                 <div 
                   className="bg-primary h-full transition-all rounded-full"
                   style={{ 
                     width: subscription.ai_dialogs_limit === -1 
                       ? '100%' 
-                      : `${Math.min((subscription.ai_dialogs_used / subscription.ai_dialogs_limit) * 100, 100)}%` 
+                      : `${Math.min((subscription.total_used / subscription.ai_dialogs_limit) * 100, 100)}%` 
                   }}
                 />
               </div>
@@ -239,7 +254,7 @@ const AISubscription = () => {
                 <CardContent className="flex-1 flex flex-col">
                   <div className="mb-4 p-3 bg-background/50 rounded-lg">
                     <p className="text-sm text-center font-semibold">
-                      {plan.dialogs === -1 ? 'Неограниченно' : `${plan.dialogs} диалогов`}
+                      {plan.operations === -1 ? 'Неограниченно' : `${plan.operations} операций`}
                     </p>
                   </div>
                   

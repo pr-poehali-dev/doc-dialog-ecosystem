@@ -1,20 +1,40 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import Icon from '@/components/ui/icon';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 const AI_TOOLS_URL = 'https://functions.poehali.dev/7c4b9e29-6778-42e7-9ac9-c30966d1765e';
+
+interface UsageData {
+  limit: number;
+  dialogs_used: number;
+  tools_used: number;
+  total_used: number;
+}
 
 export default function Tools() {
   const [activeToolId, setActiveToolId] = useState<string | null>(null);
   const [inputText, setInputText] = useState('');
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
+  const [usageData, setUsageData] = useState<UsageData | null>(null);
+  const [showLimitModal, setShowLimitModal] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    loadUsageData();
+  }, []);
 
   const tools = [
     {
@@ -124,6 +144,29 @@ export default function Tools() {
     }
   };
 
+  const loadUsageData = async () => {
+    try {
+      const userId = getUserId();
+      if (!userId) return;
+
+      const response = await fetch(`${AI_TOOLS_URL}?action=list_dialogs`, {
+        headers: { 'X-User-Id': userId }
+      });
+
+      if (!response.ok) return;
+      
+      const data = await response.json();
+      setUsageData({
+        limit: data.limit,
+        dialogs_used: data.dialogs_used,
+        tools_used: data.tools_used,
+        total_used: data.total_used
+      });
+    } catch (error) {
+      console.error('Failed to load usage data:', error);
+    }
+  };
+
   const handleAnalyze = async (toolId: string) => {
     if (!inputText.trim()) {
       toast({ title: 'Ошибка', description: 'Введите текст для анализа', variant: 'destructive' });
@@ -163,8 +206,14 @@ export default function Tools() {
         throw new Error(errorData.error || 'Ошибка анализа');
       }
 
+      if (createResponse.status === 403) {
+        setShowLimitModal(true);
+        return;
+      }
+
       const data = await createResponse.json();
       setResponse(data.analysis);
+      loadUsageData();
       
     } catch (error) {
       toast({ 
@@ -273,6 +322,35 @@ export default function Tools() {
         </Button>
       </div>
 
+      {usageData && (
+        <Card className="bg-secondary/30">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm">Использовано AI-операций в этом месяце:</span>
+              <span className="font-semibold">{usageData.total_used} / {usageData.limit}</span>
+            </div>
+            <div className="text-xs text-muted-foreground mb-3">
+              Диалоги: {usageData.dialogs_used} • Инструменты: {usageData.tools_used}
+            </div>
+            <div className="w-full bg-secondary rounded-full h-2 mb-3">
+              <div 
+                className="bg-primary rounded-full h-2 transition-all"
+                style={{ width: `${Math.min((usageData.total_used / usageData.limit) * 100, 100)}%` }}
+              />
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate('/dashboard/ai-subscription')}
+              className="w-full text-sm"
+            >
+              <Icon name="Sparkles" size={14} className="mr-2" />
+              Управление подпиской
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {tools.map((tool) => (
           <Card 
@@ -317,6 +395,30 @@ export default function Tools() {
           <p>• При сомнениях в безопасности техник — откажитесь от работы или направьте к врачу</p>
         </CardContent>
       </Card>
+
+      <Dialog open={showLimitModal} onOpenChange={setShowLimitModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Icon name="AlertCircle" className="text-orange-500" size={24} />
+              Достигнут лимит использования
+            </DialogTitle>
+            <DialogDescription className="text-base pt-4">
+              Вы использовали все доступные AI-операции в этом месяце.
+              Обновите подписку, чтобы продолжить работу с AI-инструментами и диалогами.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-3 mt-4">
+            <Button onClick={() => navigate('/dashboard/ai-subscription')} className="w-full">
+              <Icon name="Sparkles" size={16} className="mr-2" />
+              Выбрать тариф
+            </Button>
+            <Button variant="outline" onClick={() => setShowLimitModal(false)} className="w-full">
+              Закрыть
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

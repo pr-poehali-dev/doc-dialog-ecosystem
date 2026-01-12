@@ -75,13 +75,17 @@ def handler(event: dict, context) -> dict:
                 
                 dialogs = cursor.fetchall()
                 
+                total_used = specialist['ai_dialogs_used'] + specialist.get('ai_tools_used', 0)
+                
                 return {
                     'statusCode': 200,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
                     'body': json.dumps({
                         'dialogs': [dict(d) for d in dialogs],
                         'limit': specialist['ai_dialogs_limit'],
-                        'used': specialist['ai_dialogs_used']
+                        'dialogs_used': specialist['ai_dialogs_used'],
+                        'tools_used': specialist.get('ai_tools_used', 0),
+                        'total_used': total_used
                     }, default=str),
                     'isBase64Encoded': False
                 }
@@ -117,11 +121,19 @@ def handler(event: dict, context) -> dict:
                 title = body.get('title', 'Новый диалог')
                 dialog_type = body.get('type', 'supervision')
                 
-                if specialist['ai_dialogs_used'] >= specialist['ai_dialogs_limit']:
+                total_used = specialist['ai_dialogs_used'] + specialist.get('ai_tools_used', 0)
+                
+                if total_used >= specialist['ai_dialogs_limit']:
                     return {
                         'statusCode': 403,
                         'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                        'body': json.dumps({'error': 'Limit exceeded', 'limit': specialist['ai_dialogs_limit'], 'used': specialist['ai_dialogs_used']}),
+                        'body': json.dumps({
+                            'error': 'Limit exceeded',
+                            'limit': specialist['ai_dialogs_limit'],
+                            'dialogs_used': specialist['ai_dialogs_used'],
+                            'tools_used': specialist.get('ai_tools_used', 0),
+                            'total_used': total_used
+                        }),
                         'isBase64Encoded': False
                     }
                 
@@ -159,12 +171,34 @@ def handler(event: dict, context) -> dict:
                         'isBase64Encoded': False
                     }
                 
+                total_used = specialist['ai_dialogs_used'] + specialist.get('ai_tools_used', 0)
+                
+                if total_used >= specialist['ai_dialogs_limit']:
+                    return {
+                        'statusCode': 403,
+                        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                        'body': json.dumps({
+                            'error': 'Limit exceeded',
+                            'limit': specialist['ai_dialogs_limit'],
+                            'dialogs_used': specialist['ai_dialogs_used'],
+                            'tools_used': specialist.get('ai_tools_used', 0),
+                            'total_used': total_used
+                        }),
+                        'isBase64Encoded': False
+                    }
+                
                 messages = [
                     {'role': 'system', 'content': system_prompt},
                     {'role': 'user', 'content': text}
                 ]
                 
                 analysis = get_ai_response_direct(os.environ.get('OPENAI_API_KEY'), messages)
+                
+                cursor.execute('''
+                    UPDATE specialists
+                    SET ai_tools_used = COALESCE(ai_tools_used, 0) + 1
+                    WHERE id = %s
+                ''', (specialist['id'],))
                 
                 return {
                     'statusCode': 200,
@@ -251,7 +285,7 @@ def handler(event: dict, context) -> dict:
 
 def get_or_create_specialist(cursor, user_id: int) -> dict:
     cursor.execute('''
-        SELECT id, user_id, ai_dialogs_limit, ai_dialogs_used, subscription_tier
+        SELECT id, user_id, ai_dialogs_limit, ai_dialogs_used, ai_tools_used, subscription_tier
         FROM specialists
         WHERE user_id = %s
     ''', (user_id,))
@@ -269,10 +303,10 @@ def get_or_create_specialist(cursor, user_id: int) -> dict:
     masseur_id = masseur['id'] if masseur else None
     
     cursor.execute('''
-        INSERT INTO specialists (user_id, masseur_profile_id, subscription_tier, ai_dialogs_limit, ai_dialogs_used)
-        VALUES (%s, %s, %s, %s, %s)
-        RETURNING id, user_id, ai_dialogs_limit, ai_dialogs_used, subscription_tier
-    ''', (user_id, masseur_id, 'free', 3, 0))
+        INSERT INTO specialists (user_id, masseur_profile_id, subscription_tier, ai_dialogs_limit, ai_dialogs_used, ai_tools_used)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        RETURNING id, user_id, ai_dialogs_limit, ai_dialogs_used, ai_tools_used, subscription_tier
+    ''', (user_id, masseur_id, 'free', 5, 0, 0))
     
     return dict(cursor.fetchone())
 
