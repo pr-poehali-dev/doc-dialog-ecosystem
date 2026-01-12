@@ -219,11 +219,16 @@ export default function MasseurDashboard() {
         </Link>
       </div>
 
-      <PromoteMasseurDialog
-        isOpen={promoteDialogOpen}
-        onClose={() => setPromoteDialogOpen(false)}
-        masseurData={masseurData}
-      />
+      {masseurData && (
+        <PromoteMasseurDialog
+          open={promoteDialogOpen}
+          onOpenChange={setPromoteDialogOpen}
+          masseurId={masseurData.id}
+          masseurName={masseurData.full_name || 'Специалист'}
+          city={masseurData.city || 'Не указан'}
+          onSuccess={() => loadMasseurData()}
+        />
+      )}
     </div>
   );
 }
