@@ -5,6 +5,8 @@ import psycopg2
 def handler(event: dict, context) -> dict:
     '''Получение списка инструментов для пользователя по его роли'''
     
+    print(f"Event: {json.dumps(event, ensure_ascii=False)}")
+    
     method = event.get('httpMethod', 'GET')
     
     if method == 'OPTIONS':
@@ -45,6 +47,7 @@ def handler(event: dict, context) -> dict:
     try:
         # Подключаемся к БД
         dsn = os.environ.get('DATABASE_URL')
+        print(f"Connecting to DB, token present: {bool(token)}")
         conn = psycopg2.connect(dsn)
         cur = conn.cursor()
         
@@ -55,6 +58,7 @@ def handler(event: dict, context) -> dict:
         """, (token,))
         
         user_row = cur.fetchone()
+        print(f"User found: {bool(user_row)}")
         if not user_row:
             return {
                 'statusCode': 401,
@@ -66,6 +70,7 @@ def handler(event: dict, context) -> dict:
             }
         
         user_role = user_row[0]
+        print(f"User role: {user_role}")
         
         # Получаем инструменты для роли пользователя
         cur.execute("""
@@ -85,6 +90,7 @@ def handler(event: dict, context) -> dict:
                 'video_url': row[4]
             })
         
+        print(f"Tools found: {len(tools)}")
         cur.close()
         
         return {
@@ -97,6 +103,9 @@ def handler(event: dict, context) -> dict:
         }
         
     except Exception as e:
+        print(f"Error in tools handler: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return {
             'statusCode': 500,
             'headers': {
