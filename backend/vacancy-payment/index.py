@@ -44,7 +44,8 @@ def handler(event: dict, context) -> dict:
         cur = conn.cursor(cursor_factory=RealDictCursor)
     except Exception as e:
         return response(500, {'error': 'Ошибка подключения к БД', 'details': str(e)})
-        
+    
+    try:
         cur.execute(f"""
             SELECT user_id FROM {schema}.auth_tokens 
             WHERE token = %s AND expires_at > NOW()
@@ -58,27 +59,23 @@ def handler(event: dict, context) -> dict:
         user_id = auth_data['user_id']
         
         if method == 'POST':
-            try:
-                body = json.loads(event.get('body', '{}'))
-                salon_name = body.get('salon_name')
-                vacancy_count = body.get('vacancy_count', 1)
-                
-                if not salon_name:
-                    conn.close()
-                    return response(400, {'error': 'Укажите салон'})
-                
-                cur.execute(f"""
-                    SELECT id FROM {schema}.salons
-                    WHERE user_id = %s AND name = %s
-                """, (user_id, salon_name))
-                
-                salon = cur.fetchone()
-                if not salon:
-                    conn.close()
-                    return response(404, {'error': 'Салон не найден', 'user_id': user_id, 'salon_name': salon_name})
-            except Exception as e:
+            body = json.loads(event.get('body', '{}'))
+            salon_name = body.get('salon_name')
+            vacancy_count = body.get('vacancy_count', 1)
+            
+            if not salon_name:
                 conn.close()
-                return response(500, {'error': 'Ошибка обработки запроса', 'details': str(e)})
+                return response(400, {'error': 'Укажите салон'})
+            
+            cur.execute(f"""
+                SELECT id FROM {schema}.salons
+                WHERE user_id = %s AND name = %s
+            """, (user_id, salon_name))
+            
+            salon = cur.fetchone()
+            if not salon:
+                conn.close()
+                return response(404, {'error': 'Салон не найден', 'user_id': user_id, 'salon_name': salon_name})
             
             salon_id = salon['id']
             
@@ -255,6 +252,10 @@ def handler(event: dict, context) -> dict:
         
         conn.close()
         return response(405, {'error': 'Метод не поддерживается'})
-        
+    
     except Exception as e:
-        return response(500, {'error': str(e)})
+        try:
+            conn.close()
+        except:
+            pass
+        return response(500, {'error': 'Ошибка сервера', 'details': str(e)})
