@@ -35,7 +35,7 @@ export default function VacancyPaymentModal({
         const token = localStorage.getItem('token');
         if (!token) return;
 
-        const res = await fetch('https://functions.poehali.dev/01aa5a2f-6476-4fbc-ba10-6808960c8a21?action=get_profile', {
+        const res = await fetch('https://functions.poehali.dev/7e0aa476-d2dc-4e24-829a-a5dbda9ab76b?action=salon_profile', {
           headers: {
             'X-Authorization': `Bearer ${token}`,
           },
