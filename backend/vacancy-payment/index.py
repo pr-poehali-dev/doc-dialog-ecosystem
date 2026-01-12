@@ -2,6 +2,7 @@ import json
 import os
 import uuid
 import base64
+import jwt
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from urllib.request import Request, urlopen
@@ -46,17 +47,17 @@ def handler(event: dict, context) -> dict:
         return response(500, {'error': 'Ошибка подключения к БД', 'details': str(e)})
     
     try:
-        cur.execute(f"""
-            SELECT user_id FROM {schema}.auth_tokens 
-            WHERE token = %s AND expires_at > NOW()
-        """, (token,))
+        jwt_secret = os.environ.get('JWT_SECRET')
+        if not jwt_secret:
+            conn.close()
+            return response(500, {'error': 'JWT_SECRET не настроен'})
         
-        auth_data = cur.fetchone()
-        if not auth_data:
+        payload = jwt.decode(token, jwt_secret, algorithms=['HS256'])
+        user_id = payload.get('user_id')
+        
+        if not user_id:
             conn.close()
             return response(401, {'error': 'Неверный токен'})
-        
-        user_id = auth_data['user_id']
         
         if method == 'POST':
             body = json.loads(event.get('body', '{}'))
