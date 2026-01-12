@@ -4,7 +4,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 import AIDialogChat from '@/components/ai-dialog/AIDialogChat';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 interface Dialog {
   id: number;
@@ -26,7 +34,9 @@ const AIDialogs = () => {
   const [dialogsData, setDialogsData] = useState<DialogsData>({ dialogs: [], limit: 3, used: 0 });
   const [activeDialog, setActiveDialog] = useState<Dialog | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showLimitModal, setShowLimitModal] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const dialogTypes = [
     { id: 'supervision', label: 'Супервизия', icon: 'Users', color: 'from-blue-500/10 to-blue-500/5' },
@@ -92,6 +102,12 @@ const AIDialogs = () => {
         })
       });
 
+      if (response.status === 403) {
+        const errorData = await response.json();
+        setShowLimitModal(true);
+        return;
+      }
+      
       if (!response.ok) throw new Error('Failed to create dialog');
       
       const data = await response.json();
@@ -137,10 +153,19 @@ const AIDialogs = () => {
             Профессиональная супервизия и поддержка для специалистов
           </p>
           <div className="mt-4 p-4 bg-secondary/50 rounded-lg border">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-2">
               <span className="text-sm">Использовано диалогов в этом месяце:</span>
               <span className="font-semibold">{dialogsData.used} / {dialogsData.limit}</span>
             </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate('/dashboard/ai-subscription')}
+              className="w-full mt-2"
+            >
+              <Icon name="Sparkles" size={16} className="mr-2" />
+              Управление подпиской
+            </Button>
           </div>
         </div>
 
@@ -247,6 +272,30 @@ const AIDialogs = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      <Dialog open={showLimitModal} onOpenChange={setShowLimitModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Icon name="AlertCircle" className="text-orange-500" size={24} />
+              Достигнут лимит диалогов
+            </DialogTitle>
+            <DialogDescription className="text-base pt-4">
+              Вы использовали все доступные диалоги в этом месяце.
+              Обновите подписку, чтобы продолжить общение с AI-супервизором.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-3 mt-4">
+            <Button onClick={() => navigate('/dashboard/ai-subscription')} className="w-full">
+              <Icon name="Sparkles" size={16} className="mr-2" />
+              Выбрать тариф
+            </Button>
+            <Button variant="outline" onClick={() => setShowLimitModal(false)} className="w-full">
+              Закрыть
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

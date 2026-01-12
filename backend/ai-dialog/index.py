@@ -117,6 +117,14 @@ def handler(event: dict, context) -> dict:
                 title = body.get('title', 'Новый диалог')
                 dialog_type = body.get('type', 'supervision')
                 
+                if specialist['ai_dialogs_used'] >= specialist['ai_dialogs_limit']:
+                    return {
+                        'statusCode': 403,
+                        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                        'body': json.dumps({'error': 'Limit exceeded', 'limit': specialist['ai_dialogs_limit'], 'used': specialist['ai_dialogs_used']}),
+                        'isBase64Encoded': False
+                    }
+                
                 cursor.execute('''
                     INSERT INTO ai_dialogs (specialist_id, title, dialog_type)
                     VALUES (%s, %s, %s)
@@ -124,6 +132,12 @@ def handler(event: dict, context) -> dict:
                 ''', (specialist['id'], title, dialog_type))
                 
                 new_dialog = cursor.fetchone()
+                
+                cursor.execute('''
+                    UPDATE specialists
+                    SET ai_dialogs_used = ai_dialogs_used + 1
+                    WHERE id = %s
+                ''', (specialist['id'],))
                 
                 return {
                     'statusCode': 200,
