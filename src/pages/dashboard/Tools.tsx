@@ -27,9 +27,8 @@ export default function Tools() {
       const token = localStorage.getItem('token');
       const response = await fetch('https://functions.poehali.dev/41dbcf47-a8d5-45ff-bb56-f9754581a0d7', {
         headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        credentials: 'include'
+          'X-Authorization': `Bearer ${token}`
+        }
       });
 
       if (!response.ok) throw new Error('Ошибка загрузки инструментов');
