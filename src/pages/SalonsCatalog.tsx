@@ -208,7 +208,7 @@ export default function SalonsCatalog() {
                         {salon.is_verified && (
                           <Badge variant="default" className="bg-green-500">
                             <Icon name="CheckCircle" size={12} className="mr-1" />
-                            Verified
+                            Проверено
                           </Badge>
                         )}
                       </div>
