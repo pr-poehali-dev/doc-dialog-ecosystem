@@ -9,6 +9,13 @@ import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import { getUserId } from '@/utils/auth';
 import { toast } from 'sonner';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface PromoRequest {
   id: number;
@@ -20,21 +27,32 @@ interface PromoRequest {
   sent_count: number;
 }
 
+interface Course {
+  id: number;
+  title: string;
+  entity_type: string;
+  landing_url: string;
+}
+
 export default function SchoolPromoRequests() {
   const navigate = useNavigate();
   const [promoRequests, setPromoRequests] = useState<PromoRequest[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [showForm, setShowForm] = useState(false);
   
   const [formData, setFormData] = useState({
+    course_id: '',
     course_title: '',
+    course_url: '',
     promo_text: '',
     discount_percent: 10
   });
 
   useEffect(() => {
     loadPromoRequests();
+    loadCourses();
   }, []);
 
   const loadPromoRequests = async () => {
@@ -60,11 +78,29 @@ export default function SchoolPromoRequests() {
     }
   };
 
+  const loadCourses = async () => {
+    try {
+      const userId = getUserId();
+      if (!userId) return;
+
+      const response = await fetch('https://functions.poehali.dev/b70e6890-e574-4e96-a68e-c47c7f7fa4ec?action=get_school_courses', {
+        headers: { 'X-User-Id': userId }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setCourses(data.courses || []);
+      }
+    } catch (error) {
+      console.error('Failed to load courses:', error);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.course_title.trim() || !formData.promo_text.trim()) {
-      toast.error('Заполните все поля');
+    if (!formData.course_id || !formData.course_title.trim() || !formData.promo_text.trim()) {
+      toast.error('Выберите курс и заполните все поля');
       return;
     }
 
@@ -90,7 +126,7 @@ export default function SchoolPromoRequests() {
       if (response.ok) {
         const result = await response.json();
         toast.success(`Промо-запрос отправлен ${result.sent_count} массажистам!`);
-        setFormData({ course_title: '', promo_text: '', discount_percent: 10 });
+        setFormData({ course_id: '', course_title: '', course_url: '', promo_text: '', discount_percent: 10 });
         setShowForm(false);
         loadPromoRequests();
       } else {
@@ -179,14 +215,42 @@ export default function SchoolPromoRequests() {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <Label htmlFor="course_title">Название курса</Label>
-                  <Input
-                    id="course_title"
-                    value={formData.course_title}
-                    onChange={(e) => setFormData({ ...formData, course_title: e.target.value })}
-                    placeholder="Например: Базовый курс классического массажа"
-                    required
-                  />
+                  <Label htmlFor="course_id">Выберите курс</Label>
+                  <Select 
+                    value={formData.course_id} 
+                    onValueChange={(value) => {
+                      const course = courses.find(c => c.id.toString() === value);
+                      if (course) {
+                        setFormData({ 
+                          ...formData, 
+                          course_id: value,
+                          course_title: course.title,
+                          course_url: course.landing_url || ''
+                        });
+                      }
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Выберите курс из вашего каталога" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {courses.length === 0 ? (
+                        <SelectItem value="none" disabled>Нет доступных курсов</SelectItem>
+                      ) : (
+                        courses.map((course) => (
+                          <SelectItem key={course.id} value={course.id.toString()}>
+                            {course.title} ({course.entity_type === 'course' ? 'Курс' : course.entity_type === 'mastermind' ? 'Мастермайнд' : 'Оффлайн'})
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                  {formData.course_url && (
+                    <p className="text-sm text-gray-500 mt-1 flex items-center gap-1">
+                      <Icon name="Link" size={14} />
+                      Ссылка на курс: <a href={formData.course_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">{formData.course_url}</a>
+                    </p>
+                  )}
                 </div>
 
                 <div>
