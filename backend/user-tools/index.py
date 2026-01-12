@@ -79,6 +79,8 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
+        print(f"User role: {user['role']}")
+        
         cur.execute("""
             SELECT id, name, description, url, video_url, icon
             FROM t_p46047379_doc_dialog_ecosystem.tools
@@ -87,6 +89,7 @@ def handler(event: dict, context) -> dict:
         """, (user['role'],))
         
         tools = cur.fetchall()
+        print(f"Found {len(tools)} tools for role {user['role']}")
         
         return {
             'statusCode': 200,
