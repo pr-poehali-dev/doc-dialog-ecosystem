@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
+import PromoteMasseurDialog from '@/components/masseur/PromoteMasseurDialog';
 import {
   Dialog,
   DialogContent,
@@ -17,6 +18,7 @@ import {
 } from '@/components/ui/dialog';
 
 const API_URL = 'https://functions.poehali.dev/8c82911e-481f-4a63-92ff-aae203e992cc';
+const MASSEURS_API = 'https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436';
 
 interface Transaction {
   id: number;
@@ -44,10 +46,33 @@ export default function MasseurBalance() {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [promoteDialogOpen, setPromoteDialogOpen] = useState(false);
+  const [masseurData, setMasseurData] = useState<any>(null);
 
   useEffect(() => {
     loadBalance();
+    loadMasseurData();
   }, []);
+
+  const loadMasseurData = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const user = JSON.parse(atob(token.split('.')[1]));
+      const userId = user.user_id;
+
+      const response = await fetch(MASSEURS_API);
+      if (response.ok) {
+        const data = await response.json();
+        const masseurs = data.masseurs || data;
+        const found = masseurs.find((m: any) => m.user_id === userId);
+        setMasseurData(found);
+      }
+    } catch (error) {
+      console.error('Error loading masseur data:', error);
+    }
+  };
 
   const loadBalance = async () => {
     const token = localStorage.getItem('token');
@@ -234,6 +259,30 @@ export default function MasseurBalance() {
             </Card>
           </div>
 
+          <Card className="mb-8 bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <Icon name="TrendingUp" className="text-amber-600" size={24} />
+                  Продвижение профиля
+                </CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-700 mb-4">
+                Поднимите свой профиль в ТОП каталога вашего города и привлекайте больше клиентов
+              </p>
+              <Button
+                className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold shadow-md hover:shadow-lg transition-all"
+                onClick={() => setPromoteDialogOpen(true)}
+                disabled={!masseurData}
+              >
+                <Icon name="Zap" size={18} className="mr-2" />
+                Попасть в топ каталога
+              </Button>
+            </CardContent>
+          </Card>
+
           <Card className="mb-8">
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -372,6 +421,20 @@ export default function MasseurBalance() {
           </Card>
         </div>
       </div>
+
+      {masseurData && (
+        <PromoteMasseurDialog
+          open={promoteDialogOpen}
+          onOpenChange={setPromoteDialogOpen}
+          masseurId={masseurData.id}
+          masseurName={masseurData.full_name || 'Специалист'}
+          city={masseurData.city || 'Не указан'}
+          onSuccess={() => {
+            loadBalance();
+            loadMasseurData();
+          }}
+        />
+      )}
     </div>
   );
 }
