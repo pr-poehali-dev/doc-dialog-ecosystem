@@ -45,7 +45,7 @@ export default function CatalogItemCard({ item }: CatalogItemCardProps) {
   
   const handleClick = () => {
     if (!user || !token) {
-      navigate('/register');
+      navigate('/masseur-welcome');
       return;
     }
     

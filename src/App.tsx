@@ -66,6 +66,7 @@ import KnowledgeBase from "./pages/dashboard/KnowledgeBase";
 import Tools from "./pages/dashboard/Tools";
 import MasseurPromoOffers from "./pages/dashboard/MasseurPromoOffers";
 import SalonPresentation from "./pages/SalonPresentation";
+import MasseurWelcome from "./pages/MasseurWelcome";
 
 const queryClient = new QueryClient();
 
@@ -81,7 +82,9 @@ const App = () => (
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/register/masseur" element={<Register />} />
           <Route path="/register/school" element={<RegisterSchool />} />
+          <Route path="/masseur-welcome" element={<MasseurWelcome />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/masseurs" element={<MasseursDirectory />} />
           <Route path="/masseurs/:id" element={<MasseurProfile />} />
