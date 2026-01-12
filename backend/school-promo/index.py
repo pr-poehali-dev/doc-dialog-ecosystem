@@ -236,7 +236,7 @@ def handler(event: dict, context) -> dict:
                     1,
                     course_title,
                     'course',
-                    'sent',
+                    'pending',
                     discount_percent if discount_percent > 0 else 10,
                     'PROMO' + str(school_id),
                     'https://example.com'
