@@ -224,19 +224,22 @@ def handler(event: dict, context) -> dict:
                 cur.execute("""
                     INSERT INTO t_p46047379_doc_dialog_ecosystem.promo_requests 
                     (masseur_id, masseur_email, masseur_name, school_id, school_email, 
-                     course_id, course_title, entity_type, status, discount_percentage, created_at)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
+                     course_id, course_title, entity_type, status, discount_percentage, 
+                     promo_code, purchase_url, created_at)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
                 """, (
                     masseur_id,
-                    'masseur@example.com',  # Email заглушка
+                    'masseur@example.com',
                     masseur_name or 'Массажист',
                     school_id,
                     school_email,
-                    0,  # Пока нет привязки к курсу
+                    0,
                     course_title,
-                    'course',
+                    'mastermind',
                     'sent',
-                    discount_percent
+                    discount_percent,
+                    '',
+                    ''
                 ))
                 sent_count += 1
             
