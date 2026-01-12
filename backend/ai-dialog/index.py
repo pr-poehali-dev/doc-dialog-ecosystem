@@ -146,6 +146,33 @@ def handler(event: dict, context) -> dict:
                     'isBase64Encoded': False
                 }
             
+            elif action == 'analyze_tool':
+                tool_type = body.get('tool_type')
+                text = body.get('text')
+                system_prompt = body.get('system_prompt')
+                
+                if not tool_type or not text or not system_prompt:
+                    return {
+                        'statusCode': 400,
+                        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                        'body': json.dumps({'error': 'Missing required fields'}),
+                        'isBase64Encoded': False
+                    }
+                
+                messages = [
+                    {'role': 'system', 'content': system_prompt},
+                    {'role': 'user', 'content': text}
+                ]
+                
+                analysis = get_ai_response_direct(os.environ.get('OPENAI_API_KEY'), messages)
+                
+                return {
+                    'statusCode': 200,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'analysis': analysis}),
+                    'isBase64Encoded': False
+                }
+            
             elif action == 'send_message':
                 dialog_id = body.get('dialog_id')
                 user_message = body.get('message')
@@ -293,6 +320,41 @@ def get_ai_response(api_key: str, dialog_type: str, history: list) -> str:
                 'messages': messages,
                 'temperature': 0.7,
                 'max_tokens': 800
+            },
+            proxies=proxies,
+            timeout=25
+        )
+    except Exception as e:
+        return f'Не удалось подключиться к AI-сервису. Ошибка: {str(e)}'
+    
+    if response.status_code != 200:
+        return 'Извините, произошла ошибка при обращении к AI. Попробуйте позже.'
+    
+    result = response.json()
+    return result['choices'][0]['message']['content']
+
+
+def get_ai_response_direct(api_key: str, messages: list) -> str:
+    '''Прямой запрос к OpenAI без истории диалога - для одноразовых анализов'''
+    import requests
+    
+    proxies = {
+        'http': 'http://user:pass@185.200.177.36:3128',
+        'https': 'http://user:pass@185.200.177.36:3128'
+    }
+    
+    try:
+        response = requests.post(
+            'https://api.openai.com/v1/chat/completions',
+            headers={
+                'Authorization': f'Bearer {api_key}',
+                'Content-Type': 'application/json'
+            },
+            json={
+                'model': 'gpt-4o-mini',
+                'messages': messages,
+                'temperature': 0.7,
+                'max_tokens': 1500
             },
             proxies=proxies,
             timeout=25
