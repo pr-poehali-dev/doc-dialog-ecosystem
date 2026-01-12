@@ -357,13 +357,22 @@ def get_ai_response_direct(api_key: str, messages: list) -> str:
                 'max_tokens': 1500
             },
             proxies=proxies,
-            timeout=25
+            timeout=60
         )
+    except requests.exceptions.Timeout:
+        return 'Превышено время ожидания ответа от AI-сервиса. Попробуйте ещё раз или обратитесь в поддержку.'
+    except requests.exceptions.ProxyError:
+        return 'Ошибка подключения через прокси-сервер. Проверьте настройки прокси.'
     except Exception as e:
-        return f'Не удалось подключиться к AI-сервису. Ошибка: {str(e)}'
+        return f'Ошибка подключения к AI-сервису: {str(e)}'
     
     if response.status_code != 200:
-        return 'Извините, произошла ошибка при обращении к AI. Попробуйте позже.'
+        try:
+            error_data = response.json()
+            error_msg = error_data.get('error', {}).get('message', 'Неизвестная ошибка')
+            return f'Ошибка AI-сервиса: {error_msg}'
+        except:
+            return f'Ошибка AI-сервиса (код {response.status_code}). Попробуйте позже.'
     
     result = response.json()
     return result['choices'][0]['message']['content']
