@@ -66,7 +66,7 @@ def handler(event: dict, context) -> dict:
             
             cur.execute(f"""
                 SELECT id FROM {schema}.salons
-                WHERE owner_id = %s AND name = %s
+                WHERE user_id = %s AND name = %s
             """, (user_id, salon_name))
             
             salon = cur.fetchone()
