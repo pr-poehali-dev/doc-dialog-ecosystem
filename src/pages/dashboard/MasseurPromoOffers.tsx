@@ -14,6 +14,7 @@ interface PromoOffer {
   discount_percentage: number;
   created_at: string;
   status: string;
+  purchase_url: string;
 }
 
 export default function MasseurPromoOffers() {
@@ -134,7 +135,10 @@ export default function MasseurPromoOffers() {
                         year: 'numeric'
                       })}
                     </p>
-                    <Button size="sm">
+                    <Button 
+                      size="sm"
+                      onClick={() => window.open(offer.purchase_url, '_blank')}
+                    >
                       <Icon name="ExternalLink" size={14} className="mr-2" />
                       Перейти к курсу
                     </Button>

@@ -59,7 +59,8 @@ def handler(event: dict, context) -> dict:
                     pr.course_title,
                     pr.discount_percentage,
                     pr.created_at,
-                    pr.status
+                    pr.status,
+                    pr.purchase_url
                 FROM t_p46047379_doc_dialog_ecosystem.promo_requests pr
                 JOIN t_p46047379_doc_dialog_ecosystem.schools s ON pr.school_id = s.id
                 WHERE pr.masseur_id = %s
@@ -75,7 +76,8 @@ def handler(event: dict, context) -> dict:
                     'course_title': row[2],
                     'discount_percentage': row[3],
                     'created_at': row[4].isoformat() if row[4] else None,
-                    'status': row[5]
+                    'status': row[5],
+                    'purchase_url': row[6]
                 })
             
             cur.close()
