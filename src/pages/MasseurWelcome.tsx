@@ -13,7 +13,15 @@ export default function MasseurWelcome() {
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-purple-500/5 to-pink-500/5"></div>
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+        <div 
+          className="absolute inset-0 opacity-[0.15]"
+          style={{
+            backgroundImage: `url('https://cdn.poehali.dev/files/17976.jpg')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        ></div>
         
         <div className="container mx-auto px-6 pt-32 pb-24 relative">
           <div className="max-w-4xl mx-auto text-center space-y-8">
