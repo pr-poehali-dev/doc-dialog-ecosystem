@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 const API_URL = 'https://functions.poehali.dev/049813c7-cf1a-4ff1-93bc-af749304eb0d';
 
 export default function Register() {
-  const [role, setRole] = useState<'masseur' | 'school' | 'salon' | 'client'>('client');
+  const [role, setRole] = useState<'masseur' | 'school' | 'salon' | 'client'>('masseur');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -91,35 +91,17 @@ export default function Register() {
 
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <Label className="mb-3 block">Тип аккаунта</Label>
-              <RadioGroup value={role} onValueChange={(value: any) => setRole(value)}>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="client" id="client" />
-                  <Label htmlFor="client" className="cursor-pointer">Клиент</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="masseur" id="masseur" />
-                  <Label htmlFor="masseur" className="cursor-pointer">Массажист</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="school" id="school" />
-                  <Label htmlFor="school" className="cursor-pointer">Школа массажа</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="salon" id="salon" />
-                  <Label htmlFor="salon" className="cursor-pointer">Массажный салон</Label>
-                </div>
-              </RadioGroup>
+            <div className="text-center mb-2">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
+                <span className="text-sm font-semibold text-primary">Регистрация специалиста</span>
+              </div>
             </div>
 
             <div>
-              <Label htmlFor="fullName">
-                {role === 'masseur' || role === 'client' ? 'Полное имя' : 'Название организации'}
-              </Label>
+              <Label htmlFor="fullName">Полное имя</Label>
               <Input
                 id="fullName"
-                placeholder={role === 'masseur' || role === 'client' ? 'Иван Иванов' : 'Название'}
+                placeholder="Иван Иванов"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 required
