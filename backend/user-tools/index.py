@@ -80,7 +80,7 @@ def handler(event: dict, context) -> dict:
             }
         
         cur.execute("""
-            SELECT id, name, description, url, icon
+            SELECT id, name, description, url, video_url, icon
             FROM t_p46047379_doc_dialog_ecosystem.tools
             WHERE target_role = %s AND is_active = true
             ORDER BY display_order, created_at DESC
