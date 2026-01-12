@@ -89,12 +89,16 @@ def handler(event: dict, context) -> dict:
         elif method == 'POST':
             data = json.loads(event.get('body', '{}'))
             
+            # Генерируем name из URL если не указан
+            tool_name = data.get('name', data['url'].split('//')[-1].split('/')[0][:255])
+            
             cur.execute("""
                 INSERT INTO t_p46047379_doc_dialog_ecosystem.tools 
-                (description, url, video_url, target_role, is_active, display_order)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                (name, description, url, video_url, target_role, is_active, display_order)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
                 RETURNING id, name, description, url, video_url, icon, target_role, is_active, display_order, created_at
             """, (
+                tool_name,
                 data['description'],
                 data['url'],
                 data.get('video_url'),
@@ -125,14 +129,18 @@ def handler(event: dict, context) -> dict:
                     'isBase64Encoded': False
                 }
             
+            # Генерируем name из URL если не указан
+            tool_name = data.get('name', data['url'].split('//')[-1].split('/')[0][:255])
+            
             cur.execute("""
                 UPDATE t_p46047379_doc_dialog_ecosystem.tools
-                SET description = %s, url = %s, video_url = %s,
+                SET name = %s, description = %s, url = %s, video_url = %s,
                     target_role = %s, is_active = %s, display_order = %s,
                     updated_at = CURRENT_TIMESTAMP
                 WHERE id = %s
                 RETURNING id, name, description, url, video_url, icon, target_role, is_active, display_order, created_at
             """, (
+                tool_name,
                 data['description'],
                 data['url'],
                 data.get('video_url'),
