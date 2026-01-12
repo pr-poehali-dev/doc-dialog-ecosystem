@@ -25,13 +25,15 @@ interface Dialog {
 interface DialogsData {
   dialogs: Dialog[];
   limit: number;
-  used: number;
+  dialogs_used: number;
+  tools_used: number;
+  total_used: number;
 }
 
 const AI_DIALOG_URL = 'https://functions.poehali.dev/7c4b9e29-6778-42e7-9ac9-c30966d1765e';
 
 const AIDialogs = () => {
-  const [dialogsData, setDialogsData] = useState<DialogsData>({ dialogs: [], limit: 3, used: 0 });
+  const [dialogsData, setDialogsData] = useState<DialogsData>({ dialogs: [], limit: 5, dialogs_used: 0, tools_used: 0, total_used: 0 });
   const [activeDialog, setActiveDialog] = useState<Dialog | null>(null);
   const [loading, setLoading] = useState(true);
   const [showLimitModal, setShowLimitModal] = useState(false);
@@ -154,14 +156,23 @@ const AIDialogs = () => {
           </p>
           <div className="mt-4 p-4 bg-secondary/50 rounded-lg border">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm">Использовано диалогов в этом месяце:</span>
-              <span className="font-semibold">{dialogsData.used} / {dialogsData.limit}</span>
+              <span className="text-sm">Использовано AI-операций в этом месяце:</span>
+              <span className="font-semibold">{dialogsData.total_used} / {dialogsData.limit}</span>
+            </div>
+            <div className="text-xs text-muted-foreground mb-3">
+              Диалоги: {dialogsData.dialogs_used} • Инструменты: {dialogsData.tools_used}
+            </div>
+            <div className="w-full bg-secondary rounded-full h-2 mb-3">
+              <div 
+                className="bg-primary rounded-full h-2 transition-all"
+                style={{ width: `${Math.min((dialogsData.total_used / dialogsData.limit) * 100, 100)}%` }}
+              />
             </div>
             <Button
               variant="outline"
               size="sm"
               onClick={() => navigate('/dashboard/ai-subscription')}
-              className="w-full mt-2"
+              className="w-full"
             >
               <Icon name="Sparkles" size={16} className="mr-2" />
               Управление подпиской
