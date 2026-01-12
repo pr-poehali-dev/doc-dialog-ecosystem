@@ -34,6 +34,7 @@ import SchoolLandingBuilder from "./pages/SchoolLandingBuilder";
 import SchoolAnalytics from "./pages/SchoolAnalytics";
 import SchoolBalance from "./pages/SchoolBalance";
 import SchoolSubscription from "./pages/dashboard/SchoolSubscription";
+import SchoolPromoRequests from "./pages/dashboard/SchoolPromoRequests";
 import SchoolsLanding from "./pages/SchoolsLanding";
 import MasseursLanding from "./pages/MasseursLanding";
 import SalonsLanding from "./pages/SalonsLanding";
@@ -89,6 +90,7 @@ const App = () => (
           <Route path="/school/analytics" element={<SchoolAnalytics />} />
           <Route path="/school/balance" element={<SchoolBalance />} />
           <Route path="/school/subscription" element={<SchoolSubscription />} />
+          <Route path="/school/promo-requests" element={<SchoolPromoRequests />} />
           <Route path="/courses" element={<CoursesCatalog />} />
           <Route path="/course/:id" element={<CoursePage />} />
           <Route path="/mastermind/:id" element={<MastermindPage />} />
