@@ -116,6 +116,7 @@ const App = () => (
           <Route path="/dashboard/badges" element={<TrustBadges />} />
           <Route path="/dashboard/education" element={<ClientEducation />} />
           <Route path="/dashboard/community" element={<Community />} />
+          <Route path="/messages" element={<Messages />} />
           <Route path="/dashboard/messages" element={<Messages />} />
           <Route path="/dashboard/admin-messages" element={<AdminMessages />} />
           <Route path="/dashboard/promo-codes" element={<PromoCodes />} />
