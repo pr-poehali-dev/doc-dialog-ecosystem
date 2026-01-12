@@ -25,7 +25,7 @@ export default function Tools() {
   const loadTools = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('https://functions.poehali.dev/41dbcf47-a8d5-45ff-bb56-f9754581a0d7', {
+      const response = await fetch('https://functions.poehali.dev/27987d69-a3d4-4d00-ba89-d010bc049e1e', {
         headers: {
           'X-Authorization': `Bearer ${token}`
         }
