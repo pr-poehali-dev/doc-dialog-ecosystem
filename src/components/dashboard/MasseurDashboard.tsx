@@ -145,7 +145,7 @@ export default function MasseurDashboard() {
         </div>
         <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Узнайте о коллегах по цеху</p>
         <Link to="/masseurs">
-          <Button className="w-full" variant="outline">Перейти в каталог</Button>
+          <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold shadow-md hover:shadow-lg transition-all">Перейти в каталог</Button>
         </Link>
       </div>
 
@@ -158,7 +158,7 @@ export default function MasseurDashboard() {
         </div>
         <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Найти работу в проверенных салонах</p>
         <Link to="/salons">
-          <Button className="w-full" variant="outline">Смотреть вакансии</Button>
+          <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold shadow-md hover:shadow-lg transition-all">Смотреть вакансии</Button>
         </Link>
       </div>
 
@@ -202,7 +202,7 @@ export default function MasseurDashboard() {
         </div>
         <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Ответы на все вопросы по работе в кабинете</p>
         <Link to="/dashboard/knowledge-base">
-          <Button className="w-full" variant="outline">Открыть базу знаний</Button>
+          <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold shadow-md hover:shadow-lg transition-all">Открыть базу знаний</Button>
         </Link>
       </div>
 
@@ -215,7 +215,7 @@ export default function MasseurDashboard() {
         </div>
         <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Полезные инструменты для автоматизации работы</p>
         <Link to="/dashboard/tools">
-          <Button className="w-full" variant="outline">Открыть инструменты</Button>
+          <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold shadow-md hover:shadow-lg transition-all">Открыть инструменты</Button>
         </Link>
       </div>
 
