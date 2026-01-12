@@ -61,7 +61,7 @@ export default function Tools() {
       const token = localStorage.getItem('token');
       const response = await fetch('https://functions.poehali.dev/f1ae4f5d-1d5b-4adc-a4c9-1b97ab27ee6e', {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'X-Authorization': `Bearer ${token}`
         }
       });
 
@@ -125,7 +125,7 @@ export default function Tools() {
       const response = await fetch('https://functions.poehali.dev/f1ae4f5d-1d5b-4adc-a4c9-1b97ab27ee6e', {
         method,
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'X-Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(body)
@@ -157,7 +157,7 @@ export default function Tools() {
       const response = await fetch(`https://functions.poehali.dev/f1ae4f5d-1d5b-4adc-a4c9-1b97ab27ee6e?id=${id}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'X-Authorization': `Bearer ${token}`
         }
       });
 
