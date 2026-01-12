@@ -1,0 +1,15 @@
+{
+  "tests": [
+    {
+      "name": "Reset monthly counters",
+      "method": "POST",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": "boolean",
+        "reset_count": "number"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
