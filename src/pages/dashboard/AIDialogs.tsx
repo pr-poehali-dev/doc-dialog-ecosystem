@@ -40,9 +40,20 @@ const AIDialogs = () => {
     loadDialogs();
   }, []);
 
+  const getUserId = () => {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.user_id || payload.userId || payload.sub;
+    } catch {
+      return null;
+    }
+  };
+
   const loadDialogs = async () => {
     try {
-      const userId = localStorage.getItem('userId');
+      const userId = getUserId();
       if (!userId) {
         toast({ title: 'Ошибка', description: 'Необходима авторизация', variant: 'destructive' });
         return;
@@ -65,7 +76,7 @@ const AIDialogs = () => {
 
   const createDialog = async (type: string, title: string) => {
     try {
-      const userId = localStorage.getItem('userId');
+      const userId = getUserId();
       if (!userId) return;
 
       const response = await fetch(AI_DIALOG_URL, {

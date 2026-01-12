@@ -32,6 +32,17 @@ const AIDialogChat = ({ dialog }: AIDialogChatProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
+  const getUserId = () => {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.user_id || payload.userId || payload.sub;
+    } catch {
+      return null;
+    }
+  };
+
   useEffect(() => {
     loadMessages();
   }, [dialog.id]);
@@ -46,7 +57,7 @@ const AIDialogChat = ({ dialog }: AIDialogChatProps) => {
 
   const loadMessages = async () => {
     try {
-      const userId = localStorage.getItem('userId');
+      const userId = getUserId();
       if (!userId) return;
 
       const response = await fetch(`${AI_DIALOG_URL}?action=get_messages&dialog_id=${dialog.id}`, {
@@ -79,14 +90,14 @@ const AIDialogChat = ({ dialog }: AIDialogChatProps) => {
     }]);
 
     try {
-      const userId = localStorage.getItem('userId');
+      const userId = getUserId();
       if (!userId) return;
 
       const response = await fetch(AI_DIALOG_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-User-Id': userId
+          'X-User-Id': String(userId)
         },
         body: JSON.stringify({
           action: 'send_message',
