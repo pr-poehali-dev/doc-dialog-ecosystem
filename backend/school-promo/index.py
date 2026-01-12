@@ -225,21 +225,22 @@ def handler(event: dict, context) -> dict:
                     INSERT INTO t_p46047379_doc_dialog_ecosystem.promo_requests 
                     (masseur_id, masseur_email, masseur_name, school_id, school_email, 
                      course_id, course_title, entity_type, status, discount_percentage, 
-                     promo_code, purchase_url, created_at)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
+                     promo_code, purchase_url, promo_text, created_at)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
                 """, (
                     masseur_id,
                     'masseur@example.com',
                     masseur_name or 'Массажист',
                     school_id,
                     school_email,
-                    0,
+                    1,
                     course_title,
-                    'mastermind',
+                    'course',
                     'sent',
-                    discount_percent,
-                    '',
-                    ''
+                    discount_percent if discount_percent > 0 else 10,
+                    'PROMO' + str(school_id),
+                    'https://example.com',
+                    promo_text
                 ))
                 sent_count += 1
             
