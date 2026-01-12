@@ -51,7 +51,60 @@ def handler(event: dict, context) -> dict:
         
         school_id, school_name = school
         
-        if action == 'my_promo_requests':
+        if action == 'masseur_promo_offers':
+            # Промо-предложения для массажиста
+            cur.execute(
+                "SELECT id FROM t_p46047379_doc_dialog_ecosystem.masseur_profiles WHERE user_id = %s",
+                (int(user_id),)
+            )
+            masseur = cur.fetchone()
+            
+            if not masseur:
+                cur.close()
+                conn.close()
+                return {
+                    'statusCode': 404,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'Массажист не найден'})
+                }
+            
+            masseur_id = masseur[0]
+            
+            cur.execute("""
+                SELECT 
+                    pr.id,
+                    s.name as school_name,
+                    pr.course_title,
+                    pr.discount_percentage,
+                    pr.created_at,
+                    pr.status
+                FROM t_p46047379_doc_dialog_ecosystem.promo_requests pr
+                JOIN t_p46047379_doc_dialog_ecosystem.schools s ON pr.school_id = s.id
+                WHERE pr.masseur_id = %s
+                ORDER BY pr.created_at DESC
+                LIMIT 50
+            """, (masseur_id,))
+            
+            offers = []
+            for row in cur.fetchall():
+                offers.append({
+                    'id': row[0],
+                    'school_name': row[1],
+                    'course_title': row[2],
+                    'discount_percentage': row[3],
+                    'created_at': row[4].isoformat() if row[4] else None,
+                    'status': row[5]
+                })
+            
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 200,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'offers': offers})
+            }
+        
+        elif action == 'my_promo_requests':
             # История промо-запросов школы
             cur.execute("""
                 SELECT 

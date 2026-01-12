@@ -16,9 +16,11 @@ export default function MasseurDashboard() {
   const { newOrdersCount } = useNewOrders();
   const [promoteDialogOpen, setPromoteDialogOpen] = useState(false);
   const [masseurData, setMasseurData] = useState<any>(null);
+  const [promoOffersCount, setPromoOffersCount] = useState(0);
 
   useEffect(() => {
     loadMasseurData();
+    loadPromoOffers();
   }, []);
 
   const loadMasseurData = async () => {
@@ -38,6 +40,27 @@ export default function MasseurDashboard() {
       }
     } catch (error) {
       console.error('Error loading masseur data:', error);
+    }
+  };
+
+  const loadPromoOffers = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const user = JSON.parse(atob(token.split('.')[1]));
+      const userId = user.user_id;
+
+      const response = await fetch('https://functions.poehali.dev/37ab5361-b533-43f4-9320-864016746e8c?action=masseur_promo_offers', {
+        headers: { 'X-User-Id': userId }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setPromoOffersCount(data.offers?.length || 0);
+      }
+    } catch (error) {
+      console.error('Error loading promo offers:', error);
     }
   };
   
@@ -177,6 +200,24 @@ export default function MasseurDashboard() {
             <Icon name="Zap" size={16} className="mr-2" />
             Продвинуть профиль
           </Button>
+        </Link>
+      </div>
+
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 relative">
+            <Icon name="Tag" className="text-primary" size={20} />
+            {promoOffersCount > 0 && (
+              <Badge className="absolute -top-1 -right-1 h-5 min-w-5 flex items-center justify-center p-0 px-1.5 text-xs bg-primary border-2 border-white">
+                {promoOffersCount}
+              </Badge>
+            )}
+          </div>
+          <h3 className="text-lg md:text-xl font-semibold">Промо-предложения</h3>
+        </div>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Специальные предложения от школ со скидками</p>
+        <Link to="/dashboard/promo-offers">
+          <Button className="w-full">Смотреть предложения</Button>
         </Link>
       </div>
 

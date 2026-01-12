@@ -64,6 +64,7 @@ import MasseurOrders from "./pages/MasseurOrders";
 import ClientOrders from "./pages/ClientOrders";
 import KnowledgeBase from "./pages/dashboard/KnowledgeBase";
 import Tools from "./pages/dashboard/Tools";
+import MasseurPromoOffers from "./pages/dashboard/MasseurPromoOffers";
 import SalonPresentation from "./pages/SalonPresentation";
 
 const queryClient = new QueryClient();
@@ -135,6 +136,7 @@ const App = () => (
           <Route path="/dashboard/balance" element={<MasseurBalance />} />
           <Route path="/dashboard/knowledge-base" element={<KnowledgeBase />} />
           <Route path="/dashboard/tools" element={<Tools />} />
+          <Route path="/dashboard/promo-offers" element={<MasseurPromoOffers />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="*" element={<NotFound />} />
