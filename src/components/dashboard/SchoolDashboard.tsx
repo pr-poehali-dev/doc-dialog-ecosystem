@@ -200,7 +200,7 @@ export default function SchoolDashboard() {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-2">
-                <Link to="/school/balance" className="flex-1">
+                <Link to="/school/subscription" className="flex-1">
                   <Button variant="outline" className="w-full border-primary text-primary hover:bg-primary hover:text-white">
                     <Icon name="CreditCard" size={16} className="mr-2" />
                     Управление подпиской
