@@ -197,9 +197,8 @@ def handler(event: dict, context) -> dict:
             
             # Получить всех массажистов
             cur.execute("""
-                SELECT mp.id, u.email, mp.full_name
+                SELECT mp.id, mp.email, mp.full_name
                 FROM t_p46047379_doc_dialog_ecosystem.masseur_profiles mp
-                JOIN t_p46047379_doc_dialog_ecosystem.users u ON mp.user_id = u.id
                 WHERE mp.is_active = true
             """)
             
@@ -214,13 +213,8 @@ def handler(event: dict, context) -> dict:
                     'body': json.dumps({'error': 'Нет массажистов для отправки'})
                 }
             
-            # Получить email школы
-            cur.execute(
-                "SELECT u.email FROM t_p46047379_doc_dialog_ecosystem.users u WHERE u.id = %s",
-                (int(user_id),)
-            )
-            school_email_row = cur.fetchone()
-            school_email = school_email_row[0] if school_email_row else 'no-reply@example.com'
+            # Email школы - используем email из школы или дефолтный
+            school_email = 'school@massageplatform.ru'
             
             # Создать промо-запросы для каждого массажиста
             sent_count = 0
