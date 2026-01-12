@@ -187,22 +187,22 @@ export default function Tools() {
     if (!tool) return null;
 
     return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={() => setActiveToolId(null)}>
-            <Icon name="ArrowLeft" size={18} className="mr-2" />
+      <div className="space-y-4 md:space-y-6">
+        <div className="flex flex-col sm:flex-row items-start gap-3 md:gap-4">
+          <Button variant="ghost" onClick={() => setActiveToolId(null)} className="shrink-0 text-sm md:text-base">
+            <Icon name="ArrowLeft" size={16} className="mr-2" />
             Назад
           </Button>
-          <div>
-            <h2 className="text-2xl font-bold">{tool.title}</h2>
-            <p className="text-muted-foreground">{tool.description}</p>
+          <div className="px-2">
+            <h2 className="text-xl md:text-2xl font-bold">{tool.title}</h2>
+            <p className="text-sm md:text-base text-muted-foreground">{tool.description}</p>
           </div>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Icon name={tool.icon as any} size={24} />
+            <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
+              <Icon name={tool.icon as any} size={20} className="md:w-6 md:h-6" />
               Введите данные для анализа
             </CardTitle>
           </CardHeader>
@@ -211,28 +211,28 @@ export default function Tools() {
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               placeholder={tool.placeholder}
-              className="min-h-[200px]"
+              className="min-h-[150px] md:min-h-[200px] text-sm md:text-base"
               disabled={loading}
             />
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <Button 
                 onClick={() => handleAnalyze(activeToolId)} 
                 disabled={loading || !inputText.trim()}
-                className="flex-1"
+                className="flex-1 text-sm md:text-base"
               >
                 {loading ? (
                   <>
-                    <Icon name="Loader2" className="animate-spin mr-2" size={18} />
+                    <Icon name="Loader2" className="animate-spin mr-2" size={16} />
                     Анализирую...
                   </>
                 ) : (
                   <>
-                    <Icon name="Sparkles" size={18} className="mr-2" />
+                    <Icon name="Sparkles" size={16} className="mr-2" />
                     Получить анализ
                   </>
                 )}
               </Button>
-              <Button variant="outline" onClick={handleClear} disabled={loading}>
+              <Button variant="outline" onClick={handleClear} disabled={loading} className="text-sm md:text-base">
                 Очистить
               </Button>
             </div>
@@ -242,14 +242,14 @@ export default function Tools() {
         {response && (
           <Card className="bg-blue-50/50 border-blue-200">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-blue-900">
-                <Icon name="Lightbulb" size={24} />
+              <CardTitle className="flex items-center gap-2 text-blue-900 text-lg md:text-xl">
+                <Icon name="Lightbulb" size={20} className="md:w-6 md:h-6" />
                 Результат анализа
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="prose max-w-none">
-                <div className="whitespace-pre-wrap text-gray-900">{response}</div>
+                <div className="whitespace-pre-wrap text-sm md:text-base text-gray-900">{response}</div>
               </div>
             </CardContent>
           </Card>
@@ -259,21 +259,21 @@ export default function Tools() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold mb-2">AI Инструменты для специалистов</h2>
-          <p className="text-muted-foreground">
+    <div className="space-y-4 md:space-y-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="px-2">
+          <h2 className="text-xl md:text-2xl font-bold mb-1 md:mb-2">AI Инструменты для специалистов</h2>
+          <p className="text-sm md:text-base text-muted-foreground">
             Профессиональные инструменты на базе искусственного интеллекта
           </p>
         </div>
-        <Button variant="outline" onClick={() => navigate('/dashboard')}>
-          <Icon name="ArrowLeft" size={18} className="mr-2" />
+        <Button variant="outline" onClick={() => navigate('/dashboard')} className="shrink-0 text-sm md:text-base">
+          <Icon name="ArrowLeft" size={16} className="mr-2" />
           В кабинет
         </Button>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {tools.map((tool) => (
           <Card 
             key={tool.id}
@@ -286,16 +286,16 @@ export default function Tools() {
               }
             }}
           >
-            <CardHeader>
-              <Icon name={tool.icon as any} size={40} className="text-primary mb-3" />
-              <CardTitle className="text-xl">{tool.title}</CardTitle>
-              <CardDescription className="text-base">
+            <CardHeader className="pb-4">
+              <Icon name={tool.icon as any} size={32} className="text-primary mb-2 md:w-10 md:h-10" />
+              <CardTitle className="text-lg md:text-xl">{tool.title}</CardTitle>
+              <CardDescription className="text-sm md:text-base">
                 {tool.description}
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <Button variant="ghost" className="w-full">
-                <Icon name="ArrowRight" size={18} className="ml-auto" />
+            <CardContent className="pt-0">
+              <Button variant="ghost" className="w-full text-sm md:text-base">
+                <Icon name="ArrowRight" size={16} className="ml-auto" />
                 Открыть инструмент
               </Button>
             </CardContent>
