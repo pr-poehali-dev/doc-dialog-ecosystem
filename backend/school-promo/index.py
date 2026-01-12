@@ -185,10 +185,11 @@ def handler(event: dict, context) -> dict:
             
             body = json.loads(event.get('body', '{}'))
             course_title = body.get('course_title', '').strip()
+            course_url = body.get('course_url', '').strip()
             promo_text = body.get('promo_text', '').strip()
             discount_percent = body.get('discount_percent', 0)
             
-            if not course_title or not promo_text:
+            if not course_title or not promo_text or not course_url:
                 cur.close()
                 conn.close()
                 return {
@@ -241,7 +242,7 @@ def handler(event: dict, context) -> dict:
                     'pending',
                     discount_percent if discount_percent > 0 else 10,
                     'PROMO' + str(school_id),
-                    'https://example.com'
+                    course_url
                 ))
                 sent_count += 1
             
