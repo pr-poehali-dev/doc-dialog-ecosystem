@@ -1,0 +1,16 @@
+{
+  "tests": [
+    {
+      "name": "OPTIONS request for CORS",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200
+    },
+    {
+      "name": "Get promo requests without auth",
+      "method": "GET",
+      "path": "/?action=my_promo_requests",
+      "expectedStatus": 401
+    }
+  ]
+}

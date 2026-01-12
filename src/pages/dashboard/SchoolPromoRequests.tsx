@@ -45,7 +45,7 @@ export default function SchoolPromoRequests() {
         return;
       }
 
-      const response = await fetch('https://functions.poehali.dev/f81f82f7-d9c7-4858-87bc-6701c67f2187?action=my_promo_requests', {
+      const response = await fetch('https://functions.poehali.dev/37ab5361-b533-43f4-9320-864016746e8c?action=my_promo_requests', {
         headers: { 'X-User-Id': userId }
       });
 
@@ -78,7 +78,7 @@ export default function SchoolPromoRequests() {
       const userId = getUserId();
       if (!userId) return;
 
-      const response = await fetch('https://functions.poehali.dev/f81f82f7-d9c7-4858-87bc-6701c67f2187?action=send_promo_request', {
+      const response = await fetch('https://functions.poehali.dev/37ab5361-b533-43f4-9320-864016746e8c?action=send_promo_request', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
