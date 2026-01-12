@@ -89,7 +89,8 @@ export default function MasseurWelcome() {
                 { icon: 'Search', text: 'Тело реагирует, но причина как будто глубже' },
                 { icon: 'HelpCircle', text: 'Ты чувствуешь, что «что-то ещё есть», но этому негде быть' },
                 { icon: 'MessageSquareOff', text: 'Ты устал объяснять, что ты не просто «массажист»' },
-                { icon: 'UserX', text: 'И устал быть с этим один' }
+                { icon: 'UserX', text: 'И устал быть с этим один' },
+                { icon: 'BookX', text: 'Нигде нет ответов на твои профессиональные вопросы' }
               ].map((item, index) => (
                 <div 
                   key={index}
