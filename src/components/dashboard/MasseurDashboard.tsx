@@ -184,8 +184,9 @@ export default function MasseurDashboard() {
         </div>
         <p className="text-sm md:text-base text-gray-700 mb-3 md:mb-4">Поднимите профиль в ТОП и привлеките больше клиентов</p>
         <Button 
-          className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+          className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold shadow-md hover:shadow-lg transition-all"
           onClick={() => setPromoteDialogOpen(true)}
+          disabled={!masseurData}
         >
           <Icon name="Zap" size={16} className="mr-2" />
           Продвинуть профиль
