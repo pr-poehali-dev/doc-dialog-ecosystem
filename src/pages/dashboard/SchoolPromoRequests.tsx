@@ -268,7 +268,11 @@ export default function SchoolPromoRequests() {
                         </CardDescription>
                       </div>
                       <Badge variant={request.status === 'sent' ? 'default' : 'secondary'}>
-                        {request.status === 'sent' ? 'Отправлено' : request.status}
+                        {request.status === 'sent' ? 'Отправлено' : 
+                         request.status === 'pending' ? 'В ожидании' :
+                         request.status === 'approved' ? 'Одобрено' :
+                         request.status === 'rejected' ? 'Отклонено' :
+                         request.status}
                       </Badge>
                     </div>
                   </CardHeader>
