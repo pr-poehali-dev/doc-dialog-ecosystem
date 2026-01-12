@@ -262,26 +262,23 @@ def get_ai_response(api_key: str, dialog_type: str, history: list) -> str:
     messages = [{'role': 'system', 'content': system_prompt}]
     messages.extend([{'role': h['role'], 'content': h['content']} for h in history])
     
-    proxies = {
-        'http': 'http://proxy.poehali.dev:3128',
-        'https': 'http://proxy.poehali.dev:3128'
-    }
-    
-    response = requests.post(
-        'https://api.openai.com/v1/chat/completions',
-        headers={
-            'Authorization': f'Bearer {api_key}',
-            'Content-Type': 'application/json'
-        },
-        json={
-            'model': 'gpt-4o-mini',
-            'messages': messages,
-            'temperature': 0.7,
-            'max_tokens': 800
-        },
-        proxies=proxies,
-        timeout=30
-    )
+    try:
+        response = requests.post(
+            'https://api.openai.com/v1/chat/completions',
+            headers={
+                'Authorization': f'Bearer {api_key}',
+                'Content-Type': 'application/json'
+            },
+            json={
+                'model': 'gpt-4o-mini',
+                'messages': messages,
+                'temperature': 0.7,
+                'max_tokens': 800
+            },
+            timeout=25
+        )
+    except Exception as e:
+        return f'Не удалось подключиться к AI-сервису. Проверьте доступность OpenAI API из вашего региона.'
     
     if response.status_code != 200:
         return 'Извините, произошла ошибка при обращении к AI. Попробуйте позже.'
