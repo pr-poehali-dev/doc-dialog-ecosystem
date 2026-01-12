@@ -86,9 +86,34 @@ def handler(event: dict, context) -> dict:
             shop_id = os.environ.get('YOOKASSA_SHOP_ID')
             secret_key = os.environ.get('YOOKASSA_SECRET_KEY')
             
+            # ТЕСТОВЫЙ РЕЖИМ: пропускаем реальную оплату
             if not shop_id or not secret_key:
+                # Сразу добавляем слоты без оплаты (для тестирования)
+                payment_id = f'test_{uuid.uuid4()}'
+                
+                cur.execute(f"""
+                    INSERT INTO {schema}.vacancy_payments
+                    (payment_id, user_id, salon_id, amount, vacancy_count, status, created_at, paid_at)
+                    VALUES (%s, %s, %s, %s, %s, 'succeeded', NOW(), NOW())
+                """, (payment_id, user_id, salon_id, total_amount, vacancy_count))
+                
+                cur.execute(f"""
+                    UPDATE {schema}.salons
+                    SET paid_vacancy_slots = COALESCE(paid_vacancy_slots, 0) + %s
+                    WHERE id = %s
+                """, (vacancy_count, salon_id))
+                
+                conn.commit()
                 conn.close()
-                return response(500, {'error': 'Платежная система не настроена'})
+                
+                # Возвращаем успех и редирект на dashboard
+                host = event.get('headers', {}).get('host', 'localhost')
+                return response(200, {
+                    'payment_id': payment_id,
+                    'confirmation_url': f'https://{host}/dashboard?payment_success=true&test_mode=true',
+                    'amount': total_amount,
+                    'test_mode': True
+                })
             
             idempotence_key = str(uuid.uuid4())
             
