@@ -473,16 +473,14 @@ export default function SalonsCatalog() {
                   Позвонить
                 </Button>
               )}
-              {selectedSalon?.email && (
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => window.open(`mailto:${selectedSalon.email}`, '_self')}
-                >
-                  <Icon name="Mail" size={16} className="mr-2" />
-                  Написать
-                </Button>
-              )}
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => navigate(`/messages?salon_id=${selectedSalon?.id}`)}
+              >
+                <Icon name="MessageSquare" size={16} className="mr-2" />
+                Написать
+              </Button>
             </div>
           </div>
         </DialogContent>
