@@ -2125,6 +2125,64 @@ def handler(event: dict, context) -> dict:
         conn.close()
         return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'message': 'Course deleted'}), 'isBase64Encoded': False}
     
+    # GET /courses?action=my_school_courses - Get all courses/masterminds/trainings for current school
+    if method == 'GET' and action == 'my_school_courses':
+        user_id = event.get('headers', {}).get('X-User-Id')
+        
+        if not user_id:
+            cur.close()
+            conn.close()
+            return {'statusCode': 401, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'Unauthorized'}), 'isBase64Encoded': False}
+        
+        # Get school_id by user_id
+        cur.execute(f"SELECT id FROM {schema}.schools WHERE user_id = {user_id}")
+        school_data = cur.fetchone()
+        
+        if not school_data:
+            cur.close()
+            conn.close()
+            return {'statusCode': 404, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'error': 'School not found'}), 'isBase64Encoded': False}
+        
+        school_id = school_data[0]
+        
+        # Get all courses
+        cur.execute(f"""
+            SELECT id, title, slug, 'course' as entity_type, external_url as landing_url
+            FROM {schema}.courses
+            WHERE school_id = {school_id} AND status IN ('approved', 'pending')
+        """)
+        courses = cur.fetchall()
+        
+        # Get all masterminds
+        cur.execute(f"""
+            SELECT id, title, slug, 'mastermind' as entity_type, external_url as landing_url
+            FROM {schema}.masterminds
+            WHERE school_id = {school_id} AND status IN ('approved', 'pending')
+        """)
+        masterminds = cur.fetchall()
+        
+        # Get all offline trainings
+        cur.execute(f"""
+            SELECT id, title, slug, 'offline_training' as entity_type, external_url as landing_url
+            FROM {schema}.offline_training
+            WHERE school_id = {school_id} AND status IN ('approved', 'pending')
+        """)
+        trainings = cur.fetchall()
+        
+        all_items = []
+        for item in courses + masterminds + trainings:
+            all_items.append({
+                'id': item[0],
+                'title': item[1],
+                'slug': item[2],
+                'entity_type': item[3],
+                'landing_url': item[4]
+            })
+        
+        cur.close()
+        conn.close()
+        return {'statusCode': 200, 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'courses': all_items}), 'isBase64Encoded': False}
+    
     cur.close()
     conn.close()
     return {

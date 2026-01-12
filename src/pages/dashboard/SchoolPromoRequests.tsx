@@ -83,7 +83,7 @@ export default function SchoolPromoRequests() {
       const userId = getUserId();
       if (!userId) return;
 
-      const response = await fetch('https://functions.poehali.dev/b70e6890-e574-4e96-a68e-c47c7f7fa4ec?action=get_school_courses', {
+      const response = await fetch('https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f?action=my_school_courses', {
         headers: { 'X-User-Id': userId }
       });
 
