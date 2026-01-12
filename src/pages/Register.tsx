@@ -1,191 +1,89 @@
-import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Checkbox } from '@/components/ui/checkbox';
-import { useToast } from '@/hooks/use-toast';
-
-const API_URL = 'https://functions.poehali.dev/049813c7-cf1a-4ff1-93bc-af749304eb0d';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import Icon from '@/components/ui/icon';
 
 export default function Register() {
-  const [role, setRole] = useState<'masseur' | 'school' | 'salon' | 'client'>('masseur');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [city, setCity] = useState('');
-  const [agreed, setAgreed] = useState(false);
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!agreed) {
-      toast({
-        title: 'Требуется согласие',
-        description: 'Пожалуйста, примите условия обработки персональных данных',
-        variant: 'destructive',
-      });
-      return;
+  const accountTypes = [
+    {
+      type: 'masseur',
+      title: 'Специалист',
+      description: 'Массажист, остеопат, телесный терапевт',
+      icon: 'User',
+      color: 'from-blue-500 to-blue-600',
+      path: '/register/masseur'
+    },
+    {
+      type: 'school',
+      title: 'Школа массажа',
+      description: 'Учебное заведение, курсы, обучение',
+      icon: 'GraduationCap',
+      color: 'from-purple-500 to-purple-600',
+      path: '/register/school'
+    },
+    {
+      type: 'salon',
+      title: 'Массажный салон',
+      description: 'Салон, студия массажа',
+      icon: 'Building2',
+      color: 'from-pink-500 to-pink-600',
+      path: '/register/salon'
+    },
+    {
+      type: 'client',
+      title: 'Клиент',
+      description: 'Поиск специалистов и услуг',
+      icon: 'Heart',
+      color: 'from-green-500 to-green-600',
+      path: '/register/client'
     }
-    
-    setLoading(true);
-
-    const profile = role === 'masseur' || role === 'client'
-      ? { full_name: fullName, phone, city }
-      : { name: fullName, phone, city };
-
-    try {
-      const response = await fetch(`${API_URL}?action=register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password, role, profile }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        
-        toast({
-          title: 'Регистрация успешна',
-          description: 'Добро пожаловать в Док диалог!',
-        });
-
-        navigate('/dashboard');
-      } else {
-        toast({
-          title: 'Ошибка регистрации',
-          description: data.error || 'Не удалось создать аккаунт',
-          variant: 'destructive',
-        });
-      }
-    } catch (error) {
-      toast({
-        title: 'Ошибка',
-        description: 'Не удалось подключиться к серверу',
-        variant: 'destructive',
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-blue-50 flex items-center justify-center px-4 py-12">
-      <div className="max-w-md w-full">
-        <div className="text-center mb-8">
+      <div className="max-w-4xl w-full">
+        <div className="text-center mb-12">
           <Link to="/">
             <img src="https://cdn.poehali.dev/files/Group 7 (6).png" alt="Док диалог" className="h-12 mx-auto mb-6" />
           </Link>
-          <h1 className="text-3xl font-bold mb-2">Регистрация</h1>
-          <p className="text-gray-600">Создайте аккаунт в экосистеме Док диалог</p>
+          <h1 className="text-4xl font-bold mb-3">Присоединяйтесь к экосистеме</h1>
+          <p className="text-gray-600 text-lg">Выберите тип аккаунта для регистрации</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="text-center mb-2">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
-                <span className="text-sm font-semibold text-primary">Регистрация специалиста</span>
-              </div>
-            </div>
+        <div className="grid md:grid-cols-2 gap-6">
+          {accountTypes.map((account) => (
+            <Card 
+              key={account.type}
+              className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 hover:border-primary group"
+              onClick={() => navigate(account.path)}
+            >
+              <CardHeader>
+                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${account.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                  <Icon name={account.icon as any} size={32} className="text-white" />
+                </div>
+                <CardTitle className="text-2xl">{account.title}</CardTitle>
+                <CardDescription className="text-base">{account.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button 
+                  className="w-full"
+                  variant="outline"
+                >
+                  <span>Зарегистрироваться</span>
+                  <Icon name="ArrowRight" size={18} className="ml-2" />
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
-            <div>
-              <Label htmlFor="fullName">Полное имя</Label>
-              <Input
-                id="fullName"
-                placeholder="Иван Иванов"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                required
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="your@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="password">Пароль</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="phone">Телефон</Label>
-              <Input
-                id="phone"
-                type="tel"
-                placeholder="+7 900 123-45-67"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="city">Город</Label>
-              <Input
-                id="city"
-                placeholder="Москва"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-              />
-            </div>
-
-            <div className="flex items-start space-x-2">
-              <Checkbox 
-                id="terms" 
-                checked={agreed} 
-                onCheckedChange={(checked) => setAgreed(checked as boolean)}
-              />
-              <label
-                htmlFor="terms"
-                className="text-sm leading-relaxed cursor-pointer"
-              >
-                Согласен с{' '}
-                <Link to="/privacy" className="text-primary hover:underline">
-                  условиями обработки персональных данных
-                </Link>
-                {' '}и{' '}
-                <Link to="/terms" className="text-primary hover:underline">
-                  условиями договора оферты
-                </Link>
-              </label>
-            </div>
-
-            <Button type="submit" className="w-full" disabled={loading || !agreed}>
-              {loading ? 'Регистрация...' : 'Зарегистрироваться'}
-            </Button>
-          </form>
-
-          <div className="mt-6 text-center text-sm">
-            <span className="text-gray-600">Уже есть аккаунт? </span>
-            <Link to="/login" className="text-primary hover:underline font-semibold">
-              Войти
-            </Link>
-          </div>
+        <div className="mt-8 text-center text-sm">
+          <span className="text-gray-600">Уже есть аккаунт? </span>
+          <Link to="/login" className="text-primary hover:underline font-semibold">
+            Войти
+          </Link>
         </div>
       </div>
     </div>

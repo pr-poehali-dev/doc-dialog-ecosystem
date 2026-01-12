@@ -36,7 +36,7 @@ export default function MasseursHero() {
             <Button 
               size="lg" 
               className="text-lg px-10 py-7 shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-r from-primary to-primary/90 w-full sm:w-auto"
-              onClick={() => navigate('/register')}
+              onClick={() => navigate('/register/masseur')}
             >
               Начать развитие бесплатно
               <Icon name="Sparkles" size={22} className="ml-2" />

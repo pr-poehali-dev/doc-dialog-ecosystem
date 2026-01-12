@@ -179,7 +179,7 @@ const SalonPresentation = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button
                 size="lg"
-                onClick={() => navigate('/register')}
+                onClick={() => navigate('/register/salon')}
                 className={`text-lg px-8 py-6 bg-gradient-to-r ${slide.gradient} hover:opacity-90 transition-opacity text-white border-0 shadow-2xl`}
               >
                 <Icon name="Building2" size={24} className="mr-2" />
@@ -223,7 +223,7 @@ const SalonPresentation = () => {
           ) : (
             <Button
               size="lg"
-              onClick={() => navigate('/register')}
+              onClick={() => navigate('/register/salon')}
               className={`bg-gradient-to-r ${slide.gradient} hover:opacity-90 text-white border-0`}
             >
               Начать

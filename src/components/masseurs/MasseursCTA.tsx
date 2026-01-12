@@ -28,7 +28,7 @@ export default function MasseursCTA() {
             <Button 
               size="lg" 
               className="text-base sm:text-lg px-8 sm:px-12 py-6 sm:py-8 shadow-2xl hover:shadow-3xl transition-all duration-300 bg-gradient-to-r from-primary to-primary/90 w-full sm:w-auto"
-              onClick={() => navigate('/register')}
+              onClick={() => navigate('/register/masseur')}
             >
               Начать бесплатно
               <Icon name="ArrowRight" size={20} className="ml-2" />
