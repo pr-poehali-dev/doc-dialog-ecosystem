@@ -262,6 +262,11 @@ def get_ai_response(api_key: str, dialog_type: str, history: list) -> str:
     messages = [{'role': 'system', 'content': system_prompt}]
     messages.extend([{'role': h['role'], 'content': h['content']} for h in history])
     
+    proxies = {
+        'http': 'http://proxy.poehali.dev:3128',
+        'https': 'http://proxy.poehali.dev:3128'
+    }
+    
     response = requests.post(
         'https://api.openai.com/v1/chat/completions',
         headers={
@@ -274,6 +279,7 @@ def get_ai_response(api_key: str, dialog_type: str, history: list) -> str:
             'temperature': 0.7,
             'max_tokens': 800
         },
+        proxies=proxies,
         timeout=30
     )
     
