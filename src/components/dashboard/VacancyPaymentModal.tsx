@@ -135,7 +135,12 @@ export default function VacancyPaymentModal({
         <div className="space-y-4 py-4">
           <div className="space-y-2">
             <Label htmlFor="salon">Салон</Label>
-            <Input id="salon" value={salonName} disabled />
+            <Input 
+              id="salon" 
+              value={salonName} 
+              onChange={(e) => setSalonName(e.target.value)}
+              placeholder="Введите название салона"
+            />
           </div>
 
           <div className="space-y-2">
