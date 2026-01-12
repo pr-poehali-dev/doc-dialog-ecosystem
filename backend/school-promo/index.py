@@ -197,9 +197,9 @@ def handler(event: dict, context) -> dict:
             
             # Получить всех массажистов
             cur.execute("""
-                SELECT mp.id, mp.email, mp.full_name
+                SELECT mp.id, mp.full_name
                 FROM t_p46047379_doc_dialog_ecosystem.masseur_profiles mp
-                WHERE mp.is_active = true
+                WHERE mp.full_name IS NOT NULL
             """)
             
             masseurs = cur.fetchall()
@@ -219,7 +219,7 @@ def handler(event: dict, context) -> dict:
             # Создать промо-запросы для каждого массажиста
             sent_count = 0
             for masseur in masseurs:
-                masseur_id, masseur_email, masseur_name = masseur
+                masseur_id, masseur_name = masseur
                 
                 cur.execute("""
                     INSERT INTO t_p46047379_doc_dialog_ecosystem.promo_requests 
@@ -228,7 +228,7 @@ def handler(event: dict, context) -> dict:
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
                 """, (
                     masseur_id,
-                    masseur_email,
+                    'masseur@example.com',  # Email заглушка
                     masseur_name or 'Массажист',
                     school_id,
                     school_email,
