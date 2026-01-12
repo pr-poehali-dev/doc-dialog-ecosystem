@@ -102,16 +102,18 @@ export default function VacancyPaymentModal({
         window.location.href = data.confirmation_url;
       } else {
         const error = await res.json();
+        console.error('Payment error:', error);
         toast({
-          title: 'Ошибка',
-          description: error.error || 'Не удалось создать платеж',
+          title: 'Ошибка оплаты',
+          description: `${error.error || 'Не удалось создать платеж'}${error.details ? ': ' + error.details : ''}`,
           variant: 'destructive',
         });
       }
     } catch (error) {
+      console.error('Payment exception:', error);
       toast({
         title: 'Ошибка',
-        description: 'Произошла ошибка при создании платежа',
+        description: 'Произошла ошибка при создании платежа: ' + (error instanceof Error ? error.message : String(error)),
         variant: 'destructive',
       });
     } finally {
