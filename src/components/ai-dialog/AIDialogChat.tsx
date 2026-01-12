@@ -166,13 +166,13 @@ const AIDialogChat = ({ dialog }: AIDialogChatProps) => {
               className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                 message.role === 'user'
                   ? 'bg-primary text-primary-foreground ml-auto'
-                  : 'bg-secondary'
+                  : 'bg-blue-50 text-gray-900 border border-blue-100'
               }`}
             >
               <div className="whitespace-pre-wrap break-words">{message.content}</div>
               <div
                 className={`text-xs mt-2 ${
-                  message.role === 'user' ? 'text-primary-foreground/70' : 'text-muted-foreground'
+                  message.role === 'user' ? 'text-primary-foreground/70' : 'text-gray-500'
                 }`}
               >
                 {new Date(message.created_at).toLocaleTimeString('ru-RU', {
