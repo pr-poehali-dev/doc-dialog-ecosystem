@@ -106,13 +106,13 @@ def handler(event: dict, context) -> dict:
                 conn.commit()
                 conn.close()
                 
-                # Возвращаем успех и редирект на dashboard
-                host = event.get('headers', {}).get('host', 'localhost')
+                # Возвращаем успех без редиректа (обработаем во frontend)
                 return response(200, {
                     'payment_id': payment_id,
-                    'confirmation_url': f'https://{host}/dashboard?payment_success=true&test_mode=true',
                     'amount': total_amount,
-                    'test_mode': True
+                    'test_mode': True,
+                    'success': True,
+                    'message': f'Добавлено {vacancy_count} слотов для вакансий'
                 })
             
             idempotence_key = str(uuid.uuid4())

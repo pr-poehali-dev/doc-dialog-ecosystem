@@ -99,7 +99,18 @@ export default function VacancyPaymentModal({
       if (res.ok) {
         const data = await res.json();
         
-        window.location.href = data.confirmation_url;
+        // Если тестовый режим - показываем успех и закрываем модалку
+        if (data.test_mode) {
+          toast({
+            title: 'Успешно!',
+            description: data.message || `Добавлено ${vacancyCount} слотов для вакансий`,
+          });
+          onPaymentSuccess();
+          onClose();
+        } else if (data.confirmation_url) {
+          // Реальная оплата - редирект на ЮКассу
+          window.location.href = data.confirmation_url;
+        }
       } else {
         const error = await res.json();
         console.error('Payment error:', error);
