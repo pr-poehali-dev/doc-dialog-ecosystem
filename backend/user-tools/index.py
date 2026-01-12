@@ -1,8 +1,7 @@
-"""
-API для получения инструментов пользователями
-"""
+"""API для получения инструментов пользователями"""
 import json
 import os
+import jwt
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
@@ -47,7 +46,29 @@ def handler(event: dict, context) -> dict:
     cur = conn.cursor(cursor_factory=RealDictCursor)
     
     try:
-        cur.execute("SELECT role FROM t_p46047379_doc_dialog_ecosystem.users WHERE token = %s", (token,))
+        jwt_secret = os.environ.get('JWT_SECRET')
+        if not jwt_secret:
+            conn.close()
+            return {
+                'statusCode': 500,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'JWT_SECRET не настроен'}),
+                'isBase64Encoded': False
+            }
+        
+        payload = jwt.decode(token, jwt_secret, algorithms=['HS256'])
+        user_id = payload.get('user_id')
+        
+        if not user_id:
+            conn.close()
+            return {
+                'statusCode': 401,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Неверный токен'}),
+                'isBase64Encoded': False
+            }
+        
+        cur.execute("SELECT role FROM t_p46047379_doc_dialog_ecosystem.users WHERE id = %s", (user_id,))
         user = cur.fetchone()
         
         if not user:
