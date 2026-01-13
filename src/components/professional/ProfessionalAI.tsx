@@ -58,7 +58,7 @@ export default function ProfessionalAI() {
             <Button 
               size="lg"
               className="text-lg px-10 py-7 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-2xl hover:shadow-blue-500/50 transition-all"
-              onClick={() => navigate('/register/masseur')}
+              onClick={() => navigate('/dashboard/ai-dialogs')}
             >
               Начать диалог с AI
               <Icon name="MessageSquare" size={22} className="ml-2" />
