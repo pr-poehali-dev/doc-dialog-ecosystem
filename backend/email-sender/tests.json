@@ -1,0 +1,41 @@
+{
+  "tests": [
+    {
+      "name": "Send registration email",
+      "method": "POST",
+      "body": {
+        "to": "test@example.com",
+        "subject": "Подтверждение регистрации",
+        "template": "registration",
+        "data": {
+          "name": "Тестовый Пользователь",
+          "link": "https://doc-dialog.ru/verify?token=abc123"
+        }
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Send password reset email",
+      "method": "POST",
+      "body": {
+        "to": "test@example.com",
+        "subject": "Восстановление пароля",
+        "template": "password-reset",
+        "data": {
+          "name": "Иван Иванов",
+          "code": "123456",
+          "link": "https://doc-dialog.ru/reset-password?token=xyz789"
+        }
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

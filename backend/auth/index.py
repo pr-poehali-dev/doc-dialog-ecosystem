@@ -6,9 +6,7 @@ from datetime import datetime, timedelta
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import secrets
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+from email_utils import send_registration_email, send_password_reset_email
 
 def handler(event: dict, context) -> dict:
     '''API для регистрации и авторизации пользователей (массажисты, школы, салоны)'''
@@ -47,6 +45,10 @@ def handler(event: dict, context) -> dict:
                 return verify_token(token)
             elif action == 'resend-verification':
                 return resend_verification_email(body)
+            elif action == 'request-password-reset':
+                return request_password_reset(body)
+            elif action == 'reset-password':
+                return reset_password(body)
         
         return {
             'statusCode': 405,
@@ -470,6 +472,148 @@ def resend_verification_email(data: dict) -> dict:
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({'message': 'Письмо с подтверждением отправлено'}),
+            'isBase64Encoded': False
+        }
+    
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def request_password_reset(data: dict) -> dict:
+    """Запрос на восстановление пароля"""
+    email = data.get('email')
+    
+    if not email:
+        return {
+            'statusCode': 400,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Email обязателен'}),
+            'isBase64Encoded': False
+        }
+    
+    conn, cursor = get_db_connection()
+    
+    try:
+        cursor.execute("SELECT id, role FROM users WHERE email = %s", (email,))
+        user = cursor.fetchone()
+        
+        if not user:
+            return {
+                'statusCode': 200,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'message': 'Если email существует, письмо будет отправлено'}),
+                'isBase64Encoded': False
+            }
+        
+        user_id = user['id']
+        role = user['role']
+        
+        reset_code = ''.join([str(secrets.randbelow(10)) for _ in range(6)])
+        reset_token = secrets.token_urlsafe(32)
+        expires_at = datetime.now() + timedelta(hours=1)
+        
+        cursor.execute(
+            "DELETE FROM password_reset_tokens WHERE user_id = %s",
+            (user_id,)
+        )
+        
+        cursor.execute(
+            "INSERT INTO password_reset_tokens (user_id, token, code, expires_at) VALUES (%s, %s, %s, %s)",
+            (user_id, reset_token, reset_code, expires_at)
+        )
+        
+        conn.commit()
+        
+        name = email.split('@')[0]
+        if role == 'masseur':
+            cursor.execute("SELECT full_name FROM masseur_profiles WHERE user_id = %s", (user_id,))
+            profile = cursor.fetchone()
+            if profile and profile.get('full_name'):
+                name = profile['full_name']
+        
+        reset_link = f"https://doc-dialog.ru/reset-password?token={reset_token}"
+        
+        send_password_reset_email(email, name, reset_code, reset_link)
+        
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'message': 'Письмо с инструкциями отправлено'}),
+            'isBase64Encoded': False
+        }
+    
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def reset_password(data: dict) -> dict:
+    """Сброс пароля по токену или коду"""
+    token = data.get('token')
+    code = data.get('code')
+    new_password = data.get('password')
+    
+    if not new_password:
+        return {
+            'statusCode': 400,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Новый пароль обязателен'}),
+            'isBase64Encoded': False
+        }
+    
+    if not token and not code:
+        return {
+            'statusCode': 400,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Токен или код обязателен'}),
+            'isBase64Encoded': False
+        }
+    
+    conn, cursor = get_db_connection()
+    
+    try:
+        if token:
+            cursor.execute(
+                "SELECT user_id FROM password_reset_tokens WHERE token = %s AND expires_at > NOW()",
+                (token,)
+            )
+        else:
+            cursor.execute(
+                "SELECT user_id FROM password_reset_tokens WHERE code = %s AND expires_at > NOW()",
+                (code,)
+            )
+        
+        reset_token_data = cursor.fetchone()
+        
+        if not reset_token_data:
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Неверный или истёкший токен/код'}),
+                'isBase64Encoded': False
+            }
+        
+        user_id = reset_token_data['user_id']
+        
+        password_hash = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        
+        cursor.execute(
+            "UPDATE users SET password_hash = %s WHERE id = %s",
+            (password_hash, user_id)
+        )
+        
+        cursor.execute(
+            "DELETE FROM password_reset_tokens WHERE user_id = %s",
+            (user_id,)
+        )
+        
+        conn.commit()
+        
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'message': 'Пароль успешно изменён'}),
             'isBase64Encoded': False
         }
     
