@@ -1,4 +1,5 @@
 {
+  "robokassa-callback": "https://functions.poehali.dev/67053fdf-39ea-4f93-bbed-113372d9b024",
   "email-sender": "https://functions.poehali.dev/21920113-c479-4edd-9a41-cf0b8a08f47c",
   "import-specialists": "https://functions.poehali.dev/9da994a5-6308-436a-955e-2708f96084b4",
   "ai-reset-monthly": "https://functions.poehali.dev/7683a4dd-c60f-484f-b9b9-98adeb50e0c2",

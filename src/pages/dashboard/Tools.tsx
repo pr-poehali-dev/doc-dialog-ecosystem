@@ -8,6 +8,7 @@ import ToolCard from '@/components/tools/ToolCard';
 import ToolDialog from '@/components/tools/ToolDialog';
 import ToolUsageStats from '@/components/tools/ToolUsageStats';
 import ToolLimitModal from '@/components/tools/ToolLimitModal';
+import BuyExtraRequestsDialog from '@/components/tools/BuyExtraRequestsDialog';
 
 const USER_TOOLS_URL = 'https://functions.poehali.dev/41dbcf47-a8d5-45ff-bb56-f9754581a0d7';
 
@@ -16,6 +17,7 @@ interface UsageData {
   dialogs_used: number;
   tools_used: number;
   total_used: number;
+  extra_requests?: number;
 }
 
 interface Tool {
@@ -39,6 +41,7 @@ export default function Tools() {
   const [loading, setLoading] = useState(false);
   const [usageData, setUsageData] = useState<UsageData | null>(null);
   const [showLimitModal, setShowLimitModal] = useState(false);
+  const [showBuyDialog, setShowBuyDialog] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -146,7 +149,8 @@ export default function Tools() {
         limit: data.limit,
         dialogs_used: data.dialogs_used,
         tools_used: data.tools_used,
-        total_used: data.total_used
+        total_used: data.total_used,
+        extra_requests: data.extra_requests || 0
       });
     } catch (error) {
       console.error('Failed to load usage data:', error);
@@ -251,6 +255,47 @@ export default function Tools() {
     navigate('/dashboard/subscriptions');
   };
 
+  const handleBuyExtraRequests = async (count: number) => {
+    try {
+      const userId = getUserId();
+      if (!userId) {
+        toast({ title: 'Ошибка', description: 'Необходима авторизация', variant: 'destructive' });
+        return;
+      }
+
+      const amount = count * 25;
+      
+      const response = await fetch(USER_TOOLS_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-User-Id': userId
+        },
+        body: JSON.stringify({
+          action: 'buy_extra_requests',
+          count: count,
+          amount: amount
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Ошибка создания платежа');
+      }
+
+      if (data.payment_url) {
+        window.location.href = data.payment_url;
+      }
+    } catch (error: any) {
+      toast({
+        title: 'Ошибка',
+        description: error.message || 'Не удалось создать платёж',
+        variant: 'destructive'
+      });
+    }
+  };
+
   const activeTool = tools.find(t => t.id === activeToolId);
 
   return (
@@ -290,6 +335,7 @@ export default function Tools() {
               <ToolUsageStats 
                 usageData={usageData}
                 onUpgradeClick={handleUpgradeClick}
+                onBuyExtraClick={() => setShowBuyDialog(true)}
               />
             </div>
           </div>
@@ -348,6 +394,12 @@ export default function Tools() {
         open={showLimitModal}
         onOpenChange={setShowLimitModal}
         onUpgradeClick={handleUpgradeClick}
+      />
+
+      <BuyExtraRequestsDialog
+        open={showBuyDialog}
+        onOpenChange={setShowBuyDialog}
+        onBuyRequests={handleBuyExtraRequests}
       />
     </div>
   );

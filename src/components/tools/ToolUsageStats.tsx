@@ -7,16 +7,19 @@ interface UsageData {
   dialogs_used: number;
   tools_used: number;
   total_used: number;
+  extra_requests?: number;
 }
 
 interface ToolUsageStatsProps {
   usageData: UsageData | null;
   onUpgradeClick: () => void;
+  onBuyExtraClick: () => void;
 }
 
-export default function ToolUsageStats({ usageData, onUpgradeClick }: ToolUsageStatsProps) {
+export default function ToolUsageStats({ usageData, onUpgradeClick, onBuyExtraClick }: ToolUsageStatsProps) {
   if (!usageData) return null;
 
+  const extraRequests = usageData.extra_requests || 0;
   const percentage = (usageData.total_used / usageData.limit) * 100;
   const remaining = Math.max(0, usageData.limit - usageData.total_used);
 
@@ -52,6 +55,20 @@ export default function ToolUsageStats({ usageData, onUpgradeClick }: ToolUsageS
           </div>
         </div>
 
+        {extraRequests > 0 && (
+          <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Icon name="Plus" size={18} className="text-green-600" />
+                <div className="text-sm">
+                  <p className="font-medium text-green-900">Дополнительные запросы</p>
+                  <p className="text-green-700">Доступно: {extraRequests}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {remaining <= 2 && (
           <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
             <div className="flex items-start gap-2">
@@ -65,16 +82,37 @@ export default function ToolUsageStats({ usageData, onUpgradeClick }: ToolUsageS
                 </p>
               </div>
             </div>
-            <Button 
-              onClick={onUpgradeClick}
-              variant="default" 
-              size="sm" 
-              className="w-full mt-3"
-            >
-              <Icon name="Crown" size={16} className="mr-2" />
-              Перейти на Premium
-            </Button>
+            <div className="grid grid-cols-2 gap-2 mt-3">
+              <Button 
+                onClick={onBuyExtraClick}
+                variant="outline" 
+                size="sm"
+              >
+                <Icon name="Plus" size={16} className="mr-1" />
+                Докупить
+              </Button>
+              <Button 
+                onClick={onUpgradeClick}
+                variant="default" 
+                size="sm"
+              >
+                <Icon name="Crown" size={16} className="mr-1" />
+                Premium
+              </Button>
+            </div>
           </div>
+        )}
+
+        {remaining > 2 && (
+          <Button 
+            onClick={onBuyExtraClick}
+            variant="outline" 
+            size="sm" 
+            className="w-full"
+          >
+            <Icon name="ShoppingCart" size={16} className="mr-2" />
+            Докупить запросы (25₽/шт)
+          </Button>
         )}
 
         <div className="pt-3 border-t text-xs text-muted-foreground">

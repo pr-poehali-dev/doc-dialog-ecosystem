@@ -63,6 +63,9 @@ def handler(event: dict, context) -> dict:
             if action == 'analyze_tool':
                 return analyze_with_tool(user_id, body)
             
+            if action == 'buy_extra_requests':
+                return buy_extra_requests(user_id, body)
+            
             return {
                 'statusCode': 400,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
@@ -92,7 +95,7 @@ def get_usage(user_id: str) -> dict:
     
     try:
         cur.execute(f"""
-            SELECT tools_limit, tools_used 
+            SELECT tools_limit, tools_used, extra_requests 
             FROM {schema}.users 
             WHERE id = %s
         """, (user_id,))
@@ -108,6 +111,7 @@ def get_usage(user_id: str) -> dict:
         
         limit = user.get('tools_limit', 10)
         tools_used = user.get('tools_used', 0)
+        extra_requests = user.get('extra_requests', 0)
         
         return {
             'statusCode': 200,
@@ -116,7 +120,8 @@ def get_usage(user_id: str) -> dict:
                 'limit': limit,
                 'tools_used': tools_used,
                 'dialogs_used': 0,
-                'total_used': tools_used
+                'total_used': tools_used,
+                'extra_requests': extra_requests
             }),
             'isBase64Encoded': False
         }
@@ -254,6 +259,76 @@ def analyze_with_tool(user_id: str, body: dict) -> dict:
             'statusCode': 500,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({'error': f"{type(e).__name__}: {str(e)}"}),
+            'isBase64Encoded': False
+        }
+    finally:
+        cur.close()
+        conn.close()
+
+def buy_extra_requests(user_id: str, body: dict) -> dict:
+    """Создание платежа для покупки дополнительных запросов"""
+    from datetime import datetime
+    conn = get_db()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    schema = os.environ.get('MAIN_DB_SCHEMA', 't_p46047379_doc_dialog_ecosystem')
+    
+    try:
+        count = body.get('count', 5)
+        amount = body.get('amount', count * 25)
+        
+        if count <= 0 or amount <= 0:
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Некорректное количество запросов'}),
+                'isBase64Encoded': False
+            }
+        
+        cur.execute(f"SELECT email FROM {schema}.users WHERE id = %s", (user_id,))
+        user = cur.fetchone()
+        
+        if not user:
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Пользователь не найден'}),
+                'isBase64Encoded': False
+            }
+        
+        robokassa_login = os.environ.get('ROBOKASSA_LOGIN')
+        robokassa_password1 = os.environ.get('ROBOKASSA_PASSWORD1')
+        
+        if not robokassa_login or not robokassa_password1:
+            return {
+                'statusCode': 500,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Платёжная система не настроена'}),
+                'isBase64Encoded': False
+            }
+        
+        import hashlib
+        
+        inv_id = int(datetime.now().timestamp())
+        description = f"Покупка {count} AI-запросов"
+        
+        signature_string = f"{robokassa_login}:{amount}:{inv_id}:{robokassa_password1}:Shp_user_id={user_id}:Shp_count={count}"
+        signature = hashlib.md5(signature_string.encode()).hexdigest()
+        
+        payment_url = f"https://auth.robokassa.ru/Merchant/Index.aspx?MerchantLogin={robokassa_login}&OutSum={amount}&InvId={inv_id}&Description={description}&SignatureValue={signature}&Shp_user_id={user_id}&Shp_count={count}&IsTest=1"
+        
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'payment_url': payment_url, 'inv_id': inv_id}),
+            'isBase64Encoded': False
+        }
+        
+    except Exception as e:
+        print(f"Error in buy_extra_requests: {str(e)}")
+        return {
+            'statusCode': 500,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': str(e)}),
             'isBase64Encoded': False
         }
     finally:
