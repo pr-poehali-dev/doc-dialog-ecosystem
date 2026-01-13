@@ -54,9 +54,7 @@ export default function MasseurProfessionalLanding() {
               Док диалог для специалистов по телу
             </div>
             <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent leading-tight">
-              Настрой диалог с собой.<br />
-              С профессией.<br />
-              С клиентами.
+              Настрой диалог с собой
             </h1>
             <p className="text-lg md:text-xl text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed">
               Док диалог — экосистема для специалистов по телу,
