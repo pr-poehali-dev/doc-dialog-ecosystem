@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface Dialog {
   id: number;
@@ -169,7 +171,24 @@ const AIDialogChat = ({ dialog }: AIDialogChatProps) => {
                   : 'bg-blue-50 text-gray-900 border border-blue-100'
               }`}
             >
-              <div className="whitespace-pre-wrap break-words">{message.content}</div>
+              {message.role === 'user' ? (
+                <div className="whitespace-pre-wrap break-words">{message.content}</div>
+              ) : (
+                <div className="prose prose-sm max-w-none prose-p:my-2 prose-headings:my-2 prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5">
+                  <ReactMarkdown 
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      strong: ({node, ...props}) => <strong className="font-bold" {...props} />,
+                      p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />,
+                      ul: ({node, ...props}) => <ul className="ml-4 mb-2" {...props} />,
+                      ol: ({node, ...props}) => <ol className="ml-4 mb-2" {...props} />,
+                      li: ({node, ...props}) => <li className="mb-1" {...props} />
+                    }}
+                  >
+                    {message.content}
+                  </ReactMarkdown>
+                </div>
+              )}
               <div
                 className={`text-xs mt-2 ${
                   message.role === 'user' ? 'text-primary-foreground/70' : 'text-gray-500'
