@@ -32,6 +32,7 @@ export default function ImportedSpecialists() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSpecialization, setSelectedSpecialization] = useState<string>('all');
+  const [isMovingAll, setIsMovingAll] = useState(false);
 
   useEffect(() => {
     fetchSpecialists();
@@ -153,6 +154,40 @@ export default function ImportedSpecialists() {
     }
   };
 
+  const moveAllToCatalog = async () => {
+    if (!confirm(`Добавить всех ${specialists.length} специалистов в основной каталог? Это действие необратимо.`)) return;
+
+    setIsMovingAll(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('https://functions.poehali.dev/9da994a5-6308-436a-955e-2708f96084b4?action=move-all-to-catalog', {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        toast({
+          title: 'Массовый перенос завершён!',
+          description: data.message || `Добавлено: ${data.moved}, пропущено: ${data.skipped}`
+        });
+        fetchSpecialists();
+      } else {
+        throw new Error('Failed');
+      }
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось выполнить массовый перенос',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsMovingAll(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-blue-50">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -166,10 +201,31 @@ export default function ImportedSpecialists() {
               <p className="text-muted-foreground">Всего: {specialists.length}</p>
             </div>
           </div>
-          <Button onClick={() => navigate('/admin/import-specialists')}>
-            <Icon name="Upload" size={18} className="mr-2" />
-            Импортировать ещё
-          </Button>
+          <div className="flex gap-2">
+            {specialists.length > 0 && (
+              <Button 
+                onClick={moveAllToCatalog}
+                disabled={isMovingAll}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                {isMovingAll ? (
+                  <>
+                    <Icon name="Loader2" size={18} className="mr-2 animate-spin" />
+                    Переносим...
+                  </>
+                ) : (
+                  <>
+                    <Icon name="Users" size={18} className="mr-2" />
+                    Добавить всех в каталог
+                  </>
+                )}
+              </Button>
+            )}
+            <Button onClick={() => navigate('/admin/import-specialists')}>
+              <Icon name="Upload" size={18} className="mr-2" />
+              Импортировать ещё
+            </Button>
+          </div>
         </div>
 
         <Card className="mb-6">

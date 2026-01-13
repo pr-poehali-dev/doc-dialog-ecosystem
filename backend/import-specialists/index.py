@@ -50,6 +50,99 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
     
+    if method == 'PUT' and action == 'move-all-to-catalog':
+        try:
+            dsn = os.environ.get('DATABASE_URL')
+            conn = psycopg2.connect(dsn)
+            cur = conn.cursor(cursor_factory=RealDictCursor)
+            
+            # Получаем всех импортированных специалистов
+            cur.execute("SELECT * FROM imported_specialists ORDER BY id")
+            specialists = cur.fetchall()
+            
+            moved_count = 0
+            skipped_count = 0
+            errors = []
+            
+            for specialist in specialists:
+                try:
+                    # Генерируем email из имени
+                    name_parts = specialist['name'].lower().replace(' ', '_')
+                    email = f"{name_parts}_{specialist['id']}@imported.local"
+                    
+                    # Создаём пользователя
+                    cur.execute("""
+                        INSERT INTO users (email, password_hash, role, created_at)
+                        VALUES (%s, %s, %s, NOW())
+                        RETURNING id
+                    """, (email, 'imported_specialist', 'masseur'))
+                    user_id = cur.fetchone()['id']
+                    
+                    # Парсим опыт работы
+                    experience_years = 5
+                    exp_str = specialist.get('experience', '').strip()
+                    if exp_str:
+                        numbers = re.findall(r'\d+', exp_str)
+                        if numbers:
+                            experience_years = int(numbers[0])
+                    
+                    # Создаём специализации
+                    specializations = [specialist['specialization']] if specialist.get('specialization') else []
+                    
+                    # Создаём профиль массажиста
+                    cur.execute("""
+                        INSERT INTO masseur_profiles 
+                        (user_id, full_name, city, experience_years, specializations, about, 
+                         avatar_url, phone, rating, reviews_count, created_at, address)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), %s)
+                        RETURNING id
+                    """, (
+                        user_id,
+                        specialist['name'],
+                        specialist.get('location', 'Не указан'),
+                        experience_years,
+                        specializations,
+                        specialist.get('description', ''),
+                        specialist.get('photo_url', ''),
+                        specialist.get('phone', ''),
+                        float(specialist.get('rating', 0)) if specialist.get('rating') else 0.0,
+                        int(specialist.get('reviews_count', 0)) if specialist.get('reviews_count') else 0,
+                        specialist.get('location', '')
+                    ))
+                    
+                    # Удаляем из импортированных
+                    cur.execute("DELETE FROM imported_specialists WHERE id = %s", (specialist['id'],))
+                    moved_count += 1
+                    
+                except Exception as e:
+                    skipped_count += 1
+                    errors.append(f"{specialist['name']}: {str(e)}")
+                    continue
+            
+            conn.commit()
+            cur.close()
+            conn.close()
+            
+            return {
+                'statusCode': 200,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({
+                    'success': True,
+                    'moved': moved_count,
+                    'skipped': skipped_count,
+                    'errors': errors[:10],
+                    'message': f'Добавлено в каталог: {moved_count}, пропущено: {skipped_count}'
+                }, ensure_ascii=False),
+                'isBase64Encoded': False
+            }
+        except Exception as e:
+            return {
+                'statusCode': 500,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': f'Ошибка массового переноса: {str(e)}'}),
+                'isBase64Encoded': False
+            }
+    
     if method == 'PUT' and action == 'move-to-catalog':
         try:
             specialist_id = query_params.get('id')
