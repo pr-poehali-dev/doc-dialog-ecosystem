@@ -316,6 +316,15 @@ def handler(event: dict, context) -> dict:
         # Delete client-specific data
         safe_delete(f"DELETE FROM {schema}.client_profiles WHERE user_id = {user_id}")
         
+        # Delete specialists and AI dialogs
+        cur.execute(f"SELECT id FROM {schema}.specialists WHERE user_id = {user_id}")
+        specialist = cur.fetchone()
+        if specialist:
+            specialist_id = specialist[0]
+            safe_delete(f"DELETE FROM {schema}.ai_dialog_messages WHERE dialog_id IN (SELECT id FROM {schema}.ai_dialogs WHERE specialist_id = {specialist_id})")
+            safe_delete(f"DELETE FROM {schema}.ai_dialogs WHERE specialist_id = {specialist_id}")
+            safe_delete(f"DELETE FROM {schema}.specialists WHERE id = {specialist_id}")
+        
         # Delete promo and promotions
         safe_delete(f"DELETE FROM {schema}.promo_requests WHERE user_id = {user_id}")
         safe_delete(f"DELETE FROM {schema}.item_promotions WHERE user_id = {user_id}")
