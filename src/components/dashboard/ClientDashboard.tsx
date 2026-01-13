@@ -18,6 +18,19 @@ export default function ClientDashboard() {
   
   return (
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 shadow-sm border border-primary/20 hover:border-primary/50 transition-colors">
+        <div className="flex items-center gap-4 mb-4">
+          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+            <Icon name="Sparkles" className="text-primary" size={24} />
+          </div>
+          <h3 className="text-xl font-semibold">AI-инструменты</h3>
+        </div>
+        <p className="text-gray-600 mb-4">Расшифровка заключений и анализ болей</p>
+        <Link to="/dashboard/tools">
+          <Button className="w-full">Открыть инструменты</Button>
+        </Link>
+      </div>
+
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
         <div className="flex items-center gap-4 mb-4">
           <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
@@ -120,19 +133,6 @@ export default function ClientDashboard() {
         <p className="text-gray-600 mb-4">Инструкции и ответы на вопросы</p>
         <Link to="/dashboard/knowledge-base">
           <Button className="w-full" variant="outline">Открыть базу знаний</Button>
-        </Link>
-      </div>
-
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 shadow-sm border border-primary/20 hover:border-primary/50 transition-colors">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-            <Icon name="Sparkles" className="text-primary" size={24} />
-          </div>
-          <h3 className="text-xl font-semibold">AI-инструменты</h3>
-        </div>
-        <p className="text-gray-600 mb-4">Расшифровка заключений и анализ болей</p>
-        <Link to="/dashboard/tools">
-          <Button className="w-full">Открыть инструменты</Button>
         </Link>
       </div>
     </div>
