@@ -82,7 +82,7 @@ export default function ProfessionalContent() {
               </div>
               <div className="relative h-[400px] md:h-[500px] rounded-2xl overflow-hidden shadow-2xl">
                 <img 
-                  src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/2becd312-6318-4ef1-a55d-b00e64096dfa.jpg"
+                  src="https://cdn.poehali.dev/files/female-patient-undergoing-therapy-with-physiotherapist.jpg"
                   alt="Professional therapist"
                   className="w-full h-full object-cover"
                 />
