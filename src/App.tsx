@@ -9,6 +9,7 @@ import About from "./pages/About";
 import Pricing from "./pages/Pricing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
 import RegisterMasseur from "./pages/RegisterMasseur";
 import RegisterSchool from "./pages/RegisterSchool";
 import RegisterSalon from "./pages/RegisterSalon";
@@ -92,6 +93,7 @@ const App = () => (
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/register/masseur" element={<RegisterMasseur />} />
           <Route path="/register/school" element={<RegisterSchool />} />
           <Route path="/register/salon" element={<RegisterSalon />} />
