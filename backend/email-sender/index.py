@@ -43,12 +43,22 @@ def handler(event: dict, context) -> dict:
     try:
         smtp_config_str = os.environ.get('SMTP_CONFIG', '{}')
         print(f"[DEBUG] SMTP_CONFIG length: {len(smtp_config_str)}")
+        print(f"[DEBUG] SMTP_CONFIG first 100 chars: {smtp_config_str[:100]}")
+        
+        smtp_config_str = smtp_config_str.strip()
+        if smtp_config_str.startswith('"') and smtp_config_str.endswith('"'):
+            smtp_config_str = smtp_config_str[1:-1]
+            print("[DEBUG] Removed outer quotes from SMTP_CONFIG")
+        
+        smtp_config_str = smtp_config_str.replace('\\"', '"')
+        print(f"[DEBUG] After processing: {smtp_config_str[:100]}")
         
         try:
             smtp_config = json.loads(smtp_config_str)
             print(f"[DEBUG] SMTP host: {smtp_config.get('host')}, port: {smtp_config.get('port')}, user: {smtp_config.get('user', 'not set')[:10]}...")
         except json.JSONDecodeError as e:
             print(f"[ERROR] JSON decode error: {str(e)}")
+            print(f"[ERROR] Full config string: {smtp_config_str}")
             return {
                 'statusCode': 500,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
