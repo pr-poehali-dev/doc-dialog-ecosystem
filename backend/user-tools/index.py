@@ -4,7 +4,7 @@ import os
 import base64
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from openai import OpenAI
+import requests
 
 def get_db():
     dsn = os.environ.get('DATABASE_URL')
@@ -181,7 +181,10 @@ def analyze_with_tool(user_id: str, body: dict) -> dict:
                 'isBase64Encoded': False
             }
         
-        client = OpenAI(api_key=openai_key)
+        proxies = {
+            'http': 'http://user:pass@185.200.177.36:3128',
+            'https': 'http://user:pass@185.200.177.36:3128'
+        }
         
         messages = [{'role': 'system', 'content': system_prompt}]
         
@@ -191,30 +194,42 @@ def analyze_with_tool(user_id: str, body: dict) -> dict:
             else:
                 image_url = f"data:image/jpeg;base64,{image_data}"
             
-            user_message = {
-                'role': 'user',
-                'content': [
-                    {'type': 'image_url', 'image_url': {'url': image_url}}
-                ]
-            }
-            
-            if text:
-                user_message['content'].insert(0, {'type': 'text', 'text': text})
-            else:
-                user_message['content'].insert(0, {'type': 'text', 'text': 'Проанализируй это медицинское заключение'})
-            
-            messages.append(user_message)
+            user_content = [
+                {'type': 'text', 'text': text if text else 'Проанализируй это медицинское заключение'},
+                {'type': 'image_url', 'image_url': {'url': image_url}}
+            ]
+            messages.append({'role': 'user', 'content': user_content})
         else:
             messages.append({'role': 'user', 'content': text})
         
-        response = client.chat.completions.create(
-            model='gpt-4o',
-            messages=messages,
-            temperature=0.7,
-            max_tokens=2000
+        response = requests.post(
+            'https://api.openai.com/v1/chat/completions',
+            headers={
+                'Authorization': f'Bearer {openai_key}',
+                'Content-Type': 'application/json'
+            },
+            json={
+                'model': 'gpt-4o',
+                'messages': messages,
+                'temperature': 0.7,
+                'max_tokens': 2000
+            },
+            proxies=proxies,
+            timeout=30
         )
         
-        ai_response = response.choices[0].message.content
+        if response.status_code != 200:
+            error_text = response.text
+            print(f"OpenAI API error: {response.status_code} - {error_text}")
+            return {
+                'statusCode': 500,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': f'Ошибка AI-сервиса: {error_text}'}),
+                'isBase64Encoded': False
+            }
+        
+        result = response.json()
+        ai_response = result['choices'][0]['message']['content']
         
         cur.execute(f"""
             UPDATE {schema}.users 
