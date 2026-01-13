@@ -11,7 +11,10 @@ def get_db():
     return psycopg2.connect(dsn)
 
 def get_user_id_from_header(event: dict) -> str:
-    user_id = event.get('headers', {}).get('X-User-Id', '')
+    headers = event.get('headers', {})
+    print(f"All headers: {headers}")
+    user_id = headers.get('X-User-Id', '') or headers.get('x-user-id', '')
+    print(f"Extracted user_id: {user_id}")
     return user_id
 
 def handler(event: dict, context) -> dict:
