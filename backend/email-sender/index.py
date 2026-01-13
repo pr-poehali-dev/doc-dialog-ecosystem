@@ -100,14 +100,8 @@ def handler(event: dict, context) -> dict:
         
         msg = MIMEMultipart('alternative')
         
-        from_addr = smtp_config.get('from', smtp_config['user'])
-        if '<' in from_addr and '>' in from_addr:
-            name_part = from_addr.split('<')[0].strip()
-            email_part = from_addr.split('<')[1].split('>')[0].strip()
-            msg['From'] = f"{str(Header(name_part, 'utf-8'))} <{email_part}>"
-        else:
-            msg['From'] = from_addr
-            
+        from_email = smtp_config['user']
+        msg['From'] = from_email
         msg['To'] = to_email
         msg['Subject'] = str(Header(subject, 'utf-8'))
         
