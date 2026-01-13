@@ -91,16 +91,47 @@ export default function ImportSpecialists() {
     if (!file) return;
 
     setIsProcessing(true);
-    
-    // Имитация процесса импорта
-    setTimeout(() => {
-      toast({
-        title: 'Функция в разработке',
-        description: 'Импорт специалистов будет доступен в ближайшее время. Файл успешно обработан и готов к импорту.',
-        variant: 'default'
+    setImportResults(null);
+
+    try {
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data);
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      const jsonData = XLSX.utils.sheet_to_json<SpecialistRow>(worksheet);
+
+      const token = localStorage.getItem('token');
+      const response = await fetch('https://functions.poehali.dev/9da994a5-6308-436a-955e-2708f96084b4', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ specialists: jsonData })
       });
+
+      if (response.ok) {
+        const result = await response.json();
+        setImportResults({
+          success: result.imported || 0,
+          errors: result.errors || []
+        });
+        
+        toast({
+          title: 'Импорт завершен',
+          description: `Успешно добавлено ${result.imported} специалистов. Пропущено: ${result.skipped || 0}`
+        });
+      } else {
+        throw new Error('Failed to import');
+      }
+    } catch (error) {
+      toast({
+        title: 'Ошибка импорта',
+        description: 'Не удалось импортировать данные. Проверьте подключение к интернету.',
+        variant: 'destructive'
+      });
+    } finally {
       setIsProcessing(false);
-    }, 1500);
+    }
   };
 
   const downloadTemplate = () => {
