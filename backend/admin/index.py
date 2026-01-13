@@ -880,49 +880,54 @@ def handler(event: dict, context) -> dict:
         default_password_hash = '$2b$12$LQv3c1yytEUhcfEbXWY5.OdLqJNlQvqoEQj8LUJ9ZW1J8L8sJxwGq'
         
         for data in masseurs_data:
-            # Create user
-            cur.execute(f"""
-                INSERT INTO {schema}.users (email, password_hash, role)
-                VALUES ('{data['email']}', '{default_password_hash}', 'masseur')
-                RETURNING id
-            """)
-            user_id = cur.fetchone()[0]
-            
-            # Prepare arrays
-            langs = ', '.join([f'"{l}"' for l in data['languages']])
-            specs = ', '.join([f'"{s}"' for s in data['specializations']])
-            certs = ', '.join([f'"{c}"' for c in data['certificates']])
-            
-            # Create profile (escape single quotes)
-            cur.execute(f"""
-                INSERT INTO {schema}.masseur_profiles 
-                (user_id, full_name, city, address, experience_years, about, education, 
-                 avatar_url, languages, specializations, certificates, rating, reviews_count)
-                VALUES (
-                    {user_id}, 
-                    '{data['full_name'].replace("'", "''")}', 
-                    '{data['city'].replace("'", "''")}', 
-                    '{data['address'].replace("'", "''")}', 
-                    {data['experience_years']}, 
-                    '{data['about'].replace("'", "''")}', 
-                    '{data['education'].replace("'", "''")}',
-                    '{data['avatar_url']}',
-                    ARRAY[{langs}],
-                    ARRAY[{specs}],
-                    ARRAY[{certs}],
-                    {data['rating']},
-                    {data['reviews_count']}
-                )
-                RETURNING id
-            """)
-            
-            profile_id = cur.fetchone()[0]
-            created_users.append({
-                'user_id': user_id,
-                'profile_id': profile_id,
-                'email': data['email'],
-                'full_name': data['full_name']
-            })
+            try:
+                # Create user
+                cur.execute(f"""
+                    INSERT INTO {schema}.users (email, password_hash, role)
+                    VALUES ('{data['email']}', '{default_password_hash}', 'masseur')
+                    RETURNING id
+                """)
+                user_id = cur.fetchone()[0]
+                
+                # Prepare arrays
+                langs = ', '.join([f'"{l}"' for l in data['languages']])
+                specs = ', '.join([f'"{s}"' for s in data['specializations']])
+                certs = ', '.join([f'"{c}"' for c in data['certificates']])
+                
+                # Create profile (escape single quotes)
+                cur.execute(f"""
+                    INSERT INTO {schema}.masseur_profiles 
+                    (user_id, full_name, city, experience_years, about, education, 
+                     avatar_url, languages, specializations, certificates, rating, reviews_count, address)
+                    VALUES (
+                        {user_id}, 
+                        '{data['full_name'].replace("'", "''")}', 
+                        '{data['city'].replace("'", "''")}', 
+                        {data['experience_years']}, 
+                        '{data['about'].replace("'", "''")}', 
+                        '{data['education'].replace("'", "''")}',
+                        '{data['avatar_url']}',
+                        ARRAY[{langs}],
+                        ARRAY[{specs}],
+                        ARRAY[{certs}],
+                        {data['rating']},
+                        {data['reviews_count']},
+                        '{data['address'].replace("'", "''")}'
+                    )
+                    RETURNING id
+                """)
+                
+                profile_id = cur.fetchone()[0]
+                created_users.append({
+                    'user_id': user_id,
+                    'profile_id': profile_id,
+                    'email': data['email'],
+                    'full_name': data['full_name']
+                })
+            except Exception as e:
+                # Log error but continue with next user
+                print(f"Error creating user {data['email']}: {str(e)}")
+                continue
         
         cur.close()
         conn.close()
