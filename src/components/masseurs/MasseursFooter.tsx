@@ -85,9 +85,10 @@ export default function MasseursFooter() {
         </div>
 
         <div className="border-t border-gray-700 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-gray-400">
-            © 2025 Док диалог. Все права защищены.
-          </p>
+          <div className="text-sm text-gray-400 text-center sm:text-left">
+            <p>© 2025 Док диалог. Все права защищены.</p>
+            <p className="mt-1">ИП Водопьянов С.Г. ИНН 165045847936</p>
+          </div>
           <div className="flex items-center gap-4">
             <a href="https://t.me/+QgiLIa1gFRY4Y2Iy" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition-colors">
               <Icon name="MessageCircle" size={20} />

@@ -18,7 +18,8 @@ export default function SchoolsFooter() {
           </div>
         </div>
         <div className="text-center mt-8 text-sm text-muted-foreground">
-          © 2024 Док диалог. Все права защищены.
+          <p>© 2025 Док диалог. Все права защищены.</p>
+          <p className="mt-1">ИП Водопьянов С.Г. ИНН 165045847936</p>
         </div>
       </div>
     </footer>

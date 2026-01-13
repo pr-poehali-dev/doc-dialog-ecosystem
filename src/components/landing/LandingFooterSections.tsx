@@ -142,7 +142,8 @@ export default function LandingFooterSections({
             <Icon name="Heart" size={16} className="text-red-400" />
             <p className="text-gray-400">Создано на платформе Док диалог</p>
           </div>
-          <p className="text-gray-500 text-sm">© 2024 Все права защищены</p>
+          <p className="text-gray-500 text-sm">© 2025 Все права защищены</p>
+          <p className="text-gray-500 text-sm mt-1">ИП Водопьянов С.Г. ИНН 165045847936</p>
         </div>
       </footer>
 
