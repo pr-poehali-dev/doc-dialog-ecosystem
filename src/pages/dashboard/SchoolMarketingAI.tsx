@@ -164,6 +164,15 @@ export default function SchoolMarketingAI() {
 
   return (
     <div className="space-y-4 md:space-y-6">
+      <Button 
+        variant="ghost" 
+        onClick={() => navigate('/dashboard')}
+        className="gap-2"
+      >
+        <Icon name="ArrowLeft" size={18} />
+        Назад в кабинет
+      </Button>
+
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold">Маркетинговые AI-инструменты</h1>
