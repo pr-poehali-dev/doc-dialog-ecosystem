@@ -66,6 +66,7 @@ export default function MasseurDashboard() {
   
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+      {/* 1. Публичный профиль */}
       <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
         <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
           <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
@@ -79,6 +80,7 @@ export default function MasseurDashboard() {
         </Link>
       </div>
 
+      {/* 2. Личная страница */}
       <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
         <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
           <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
@@ -92,42 +94,37 @@ export default function MasseurDashboard() {
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+      {/* 3. AI Диалоги */}
+      <div className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-xl p-4 md:p-6 shadow-sm border-2 border-primary/30 hover:border-primary transition-colors">
         <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
-          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 relative">
-            <Icon name="Star" className="text-primary" size={20} />
-            {newReviewsCount > 0 && (
-              <Badge className="absolute -top-1 -right-1 h-5 min-w-5 flex items-center justify-center p-0 px-1.5 text-xs bg-primary border-2 border-white">
-                {newReviewsCount}
-              </Badge>
-            )}
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Sparkles" className="text-primary" size={20} />
           </div>
-          <h3 className="text-lg md:text-xl font-semibold">Мои отзывы</h3>
+          <h3 className="text-lg md:text-xl font-semibold">AI Диалоги</h3>
         </div>
-        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Отзывы клиентов о вашей работе</p>
-        <Link to="/dashboard/reviews">
-          <Button className="w-full">Посмотреть отзывы</Button>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Супервизия и профессиональная поддержка 24/7</p>
+        <Link to="/dashboard/ai-dialogs">
+          <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+            Начать диалог
+          </Button>
         </Link>
       </div>
 
+      {/* 4. Инструменты */}
       <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
         <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
-          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 relative">
-            <Icon name="MessageSquare" className="text-primary" size={20} />
-            {unreadCount > 0 && (
-              <Badge className="absolute -top-1 -right-1 h-5 min-w-5 flex items-center justify-center p-0 px-1.5 text-xs bg-primary border-2 border-white">
-                {unreadCount}
-              </Badge>
-            )}
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Wrench" className="text-primary" size={20} />
           </div>
-          <h3 className="text-lg md:text-xl font-semibold">Сообщения</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Инструменты</h3>
         </div>
-        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Чаты с клиентами</p>
-        <Link to="/dashboard/messages">
-          <Button className="w-full">Открыть чаты</Button>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Полезные инструменты для автоматизации работы</p>
+        <Link to="/dashboard/tools">
+          <Button className="w-full">Открыть инструменты</Button>
         </Link>
       </div>
 
+      {/* 5. Заказы услуг */}
       <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
         <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
           <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 relative">
@@ -146,19 +143,26 @@ export default function MasseurDashboard() {
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100">
+      {/* 6. Сообщения */}
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
         <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
-          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-            <Icon name="Search" className="text-primary" size={20} />
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 relative">
+            <Icon name="MessageSquare" className="text-primary" size={20} />
+            {unreadCount > 0 && (
+              <Badge className="absolute -top-1 -right-1 h-5 min-w-5 flex items-center justify-center p-0 px-1.5 text-xs bg-primary border-2 border-white">
+                {unreadCount}
+              </Badge>
+            )}
           </div>
-          <h3 className="text-lg md:text-xl font-semibold">Каталог массажистов</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Сообщения</h3>
         </div>
-        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Узнайте о коллегах по цеху</p>
-        <Link to="/masseurs">
-          <Button className="w-full">Перейти в каталог</Button>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Чаты с клиентами</p>
+        <Link to="/dashboard/messages">
+          <Button className="w-full">Открыть чаты</Button>
         </Link>
       </div>
 
+      {/* 7. Вакансии в салонах */}
       <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100">
         <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
           <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
@@ -172,19 +176,26 @@ export default function MasseurDashboard() {
         </Link>
       </div>
 
+      {/* 8. Мои отзывы */}
       <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
         <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
-          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-            <Icon name="Wallet" className="text-primary" size={20} />
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 relative">
+            <Icon name="Star" className="text-primary" size={20} />
+            {newReviewsCount > 0 && (
+              <Badge className="absolute -top-1 -right-1 h-5 min-w-5 flex items-center justify-center p-0 px-1.5 text-xs bg-primary border-2 border-white">
+                {newReviewsCount}
+              </Badge>
+            )}
           </div>
-          <h3 className="text-lg md:text-xl font-semibold">Баланс</h3>
+          <h3 className="text-lg md:text-xl font-semibold">Мои отзывы</h3>
         </div>
-        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Пополните баланс для продвижения</p>
-        <Link to="/dashboard/balance">
-          <Button className="w-full">Управление балансом</Button>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Отзывы клиентов о вашей работе</p>
+        <Link to="/dashboard/reviews">
+          <Button className="w-full">Посмотреть отзывы</Button>
         </Link>
       </div>
 
+      {/* 9. Продвижение */}
       <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 md:p-6 shadow-sm border-2 border-amber-200 hover:border-amber-300 transition-colors">
         <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
           <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
@@ -203,6 +214,7 @@ export default function MasseurDashboard() {
         </Link>
       </div>
 
+      {/* 10. Промо-предложения */}
       <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
         <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
           <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 relative">
@@ -221,6 +233,21 @@ export default function MasseurDashboard() {
         </Link>
       </div>
 
+      {/* 11. Каталог массажистов */}
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Search" className="text-primary" size={20} />
+          </div>
+          <h3 className="text-lg md:text-xl font-semibold">Каталог массажистов</h3>
+        </div>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Узнайте о коллегах по цеху</p>
+        <Link to="/masseurs">
+          <Button className="w-full">Перейти в каталог</Button>
+        </Link>
+      </div>
+
+      {/* 12. Мои запросы на скидки */}
       <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
         <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
           <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
@@ -234,6 +261,21 @@ export default function MasseurDashboard() {
         </Link>
       </div>
 
+      {/* 13. Баланс */}
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Wallet" className="text-primary" size={20} />
+          </div>
+          <h3 className="text-lg md:text-xl font-semibold">Баланс</h3>
+        </div>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Пополните баланс для продвижения</p>
+        <Link to="/dashboard/balance">
+          <Button className="w-full">Управление балансом</Button>
+        </Link>
+      </div>
+
+      {/* 14. База знаний */}
       <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
         <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
           <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
@@ -244,34 +286,6 @@ export default function MasseurDashboard() {
         <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Ответы на все вопросы по работе в кабинете</p>
         <Link to="/dashboard/knowledge-base">
           <Button className="w-full">Открыть базу знаний</Button>
-        </Link>
-      </div>
-
-      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
-        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
-          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-            <Icon name="Wrench" className="text-primary" size={20} />
-          </div>
-          <h3 className="text-lg md:text-xl font-semibold">Инструменты</h3>
-        </div>
-        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Полезные инструменты для автоматизации работы</p>
-        <Link to="/dashboard/tools">
-          <Button className="w-full">Открыть инструменты</Button>
-        </Link>
-      </div>
-
-      <div className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-xl p-4 md:p-6 shadow-sm border-2 border-primary/30 hover:border-primary transition-colors">
-        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
-          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
-            <Icon name="Sparkles" className="text-primary" size={20} />
-          </div>
-          <h3 className="text-lg md:text-xl font-semibold">AI Диалоги</h3>
-        </div>
-        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Супервизия и профессиональная поддержка 24/7</p>
-        <Link to="/dashboard/ai-dialogs">
-          <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
-            Начать диалог
-          </Button>
         </Link>
       </div>
 
