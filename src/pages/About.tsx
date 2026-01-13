@@ -36,11 +36,11 @@ export default function About() {
   ];
 
   const principles = [
-    { icon: 'Eye', text: 'Прозрачность' },
     { icon: 'Award', text: 'Уважение к профессии' },
-    { icon: 'Coins', text: 'Отсутствие комиссий за услуги' },
+    { icon: 'Eye', text: 'Прозрачность' },
     { icon: 'Users', text: 'Прямое взаимодействие' },
-    { icon: 'TrendingUp', text: 'Осознанное развитие' }
+    { icon: 'TrendingUp', text: 'Осознанное развитие' },
+    { icon: 'Coins', text: 'Отсутствие комиссий за услуги' }
   ];
 
   const dialogTypes = [
