@@ -720,9 +720,12 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
+        import time
+        timestamp = int(time.time())
+        
         masseurs_data = [
             {
-                'email': 'anna.sokolova@test.ru',
+                'email': f'anna.sokolova.{timestamp}@test.ru',
                 'full_name': 'Анна Соколова',
                 'city': 'Москва',
                 'address': 'ул. Арбат, д. 15',
@@ -737,7 +740,7 @@ def handler(event: dict, context) -> dict:
                 'reviews_count': 12
             },
             {
-                'email': 'dmitry.volkov@test.ru',
+                'email': f'dmitry.volkov.{timestamp}@test.ru',
                 'full_name': 'Дмитрий Волков',
                 'city': 'Санкт-Петербург',
                 'address': 'Невский проспект, д. 28',
@@ -752,7 +755,7 @@ def handler(event: dict, context) -> dict:
                 'reviews_count': 25
             },
             {
-                'email': 'ekaterina.ivanova@test.ru',
+                'email': f'ekaterina.ivanova.{timestamp}@test.ru',
                 'full_name': 'Екатерина Иванова',
                 'city': 'Казань',
                 'address': 'ул. Баумана, д. 42',
@@ -767,7 +770,7 @@ def handler(event: dict, context) -> dict:
                 'reviews_count': 18
             },
             {
-                'email': 'alexander.petrov@test.ru',
+                'email': f'alexander.petrov.{timestamp}@test.ru',
                 'full_name': 'Александр Петров',
                 'city': 'Екатеринбург',
                 'address': 'ул. Ленина, д. 50',
@@ -782,7 +785,7 @@ def handler(event: dict, context) -> dict:
                 'reviews_count': 42
             },
             {
-                'email': 'maria.novikova@test.ru',
+                'email': f'maria.novikova.{timestamp}@test.ru',
                 'full_name': 'Мария Новикова',
                 'city': 'Новосибирск',
                 'address': 'пр. Красный, д. 35',
@@ -797,7 +800,7 @@ def handler(event: dict, context) -> dict:
                 'reviews_count': 15
             },
             {
-                'email': 'sergey.kuznetsov@test.ru',
+                'email': f'sergey.kuznetsov.{timestamp}@test.ru',
                 'full_name': 'Сергей Кузнецов',
                 'city': 'Нижний Новгород',
                 'address': 'ул. Большая Покровская, д. 12',
@@ -812,7 +815,7 @@ def handler(event: dict, context) -> dict:
                 'reviews_count': 21
             },
             {
-                'email': 'olga.smirnova@test.ru',
+                'email': f'olga.smirnova.{timestamp}@test.ru',
                 'full_name': 'Ольга Смирнова',
                 'city': 'Краснодар',
                 'address': 'ул. Красная, д. 75',
@@ -827,7 +830,7 @@ def handler(event: dict, context) -> dict:
                 'reviews_count': 14
             },
             {
-                'email': 'igor.morozov@test.ru',
+                'email': f'igor.morozov.{timestamp}@test.ru',
                 'full_name': 'Игорь Морозов',
                 'city': 'Ростов-на-Дону',
                 'address': 'пр. Буденновский, д. 22',
@@ -842,7 +845,7 @@ def handler(event: dict, context) -> dict:
                 'reviews_count': 38
             },
             {
-                'email': 'natalia.belova@test.ru',
+                'email': f'natalia.belova.{timestamp}@test.ru',
                 'full_name': 'Наталья Белова',
                 'city': 'Воронеж',
                 'address': 'ул. Плехановская, д. 33',
@@ -857,7 +860,7 @@ def handler(event: dict, context) -> dict:
                 'reviews_count': 31
             },
             {
-                'email': 'maxim.soloviev@test.ru',
+                'email': f'maxim.soloviev.{timestamp}@test.ru',
                 'full_name': 'Максим Соловьев',
                 'city': 'Самара',
                 'address': 'ул. Ленинградская, д. 60',
