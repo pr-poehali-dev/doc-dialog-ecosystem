@@ -52,7 +52,7 @@ export default function SchoolsToolsAndTrust() {
               </div>
               <div>
                 <img 
-                  src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/55b8bb89-005a-4ddb-8366-010b5c52657d.jpg"
+                  src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/5dafda8d-47c5-488e-b9c2-52e6ebe5ce37.jpg"
                   alt="Инструменты платформы"
                   className="rounded-2xl shadow-2xl w-full h-auto object-cover"
                 />
