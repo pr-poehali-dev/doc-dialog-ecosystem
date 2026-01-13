@@ -708,6 +708,233 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
+    # POST /admin?action=create_test_masseurs - Create 10 test masseurs
+    if method == 'POST' and action == 'create_test_masseurs':
+        if not is_admin:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 403,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Only admin can create test masseurs'}),
+                'isBase64Encoded': False
+            }
+        
+        masseurs_data = [
+            {
+                'email': 'anna.sokolova@test.ru',
+                'full_name': 'Анна Соколова',
+                'city': 'Москва',
+                'address': 'ул. Арбат, д. 15',
+                'experience_years': 5,
+                'about': 'Профессиональный массажист с 5-летним опытом работы. Специализируюсь на расслабляющих и лечебных техниках.',
+                'education': 'Московский медицинский колледж',
+                'avatar_url': 'https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/336eaf83-7bc9-4953-bff4-5371f91b4f32.jpg',
+                'languages': ['Русский', 'Английский'],
+                'specializations': ['Классический массаж', 'Расслабляющий массаж', 'Спортивный массаж', 'Антицеллюлитный массаж'],
+                'certificates': ['Сертификат классического массажа', 'Диплом медицинского колледжа'],
+                'rating': 4.5,
+                'reviews_count': 12
+            },
+            {
+                'email': 'dmitry.volkov@test.ru',
+                'full_name': 'Дмитрий Волков',
+                'city': 'Санкт-Петербург',
+                'address': 'Невский проспект, д. 28',
+                'experience_years': 8,
+                'about': 'Опытный массажист-реабилитолог. Работаю с профессиональными спортсменами.',
+                'education': 'СПбГУ, факультет физической культуры',
+                'avatar_url': 'https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/5c8c1276-c08c-4e5d-ae56-61e97879991c.jpg',
+                'languages': ['Русский'],
+                'specializations': ['Спортивный массаж', 'Реабилитационный массаж', 'Лечебный массаж'],
+                'certificates': ['Сертификат спортивного массажа'],
+                'rating': 4.7,
+                'reviews_count': 25
+            },
+            {
+                'email': 'ekaterina.ivanova@test.ru',
+                'full_name': 'Екатерина Иванова',
+                'city': 'Казань',
+                'address': 'ул. Баумана, д. 42',
+                'experience_years': 3,
+                'about': 'Специализируюсь на восточных техниках массажа.',
+                'education': 'Курсы тайского массажа',
+                'avatar_url': 'https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/6e977ab4-01cc-49e7-beb3-5973619081cb.jpg',
+                'languages': ['Русский', 'Татарский'],
+                'specializations': ['Тайский массаж', 'Балийский массаж', 'Расслабляющий массаж'],
+                'certificates': ['Сертификат тайского массажа'],
+                'rating': 4.6,
+                'reviews_count': 18
+            },
+            {
+                'email': 'alexander.petrov@test.ru',
+                'full_name': 'Александр Петров',
+                'city': 'Екатеринбург',
+                'address': 'ул. Ленина, д. 50',
+                'experience_years': 10,
+                'about': 'Мастер классического и лечебного массажа.',
+                'education': 'Уральский медицинский университет',
+                'avatar_url': 'https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/bbae5df1-832e-4b14-90f3-f0302bb2d335.jpg',
+                'languages': ['Русский', 'Немецкий'],
+                'specializations': ['Классический массаж', 'Лечебный массаж', 'Массаж спины'],
+                'certificates': ['Диплом медицинского университета'],
+                'rating': 4.8,
+                'reviews_count': 42
+            },
+            {
+                'email': 'maria.novikova@test.ru',
+                'full_name': 'Мария Новикова',
+                'city': 'Новосибирск',
+                'address': 'пр. Красный, д. 35',
+                'experience_years': 6,
+                'about': 'Специалист по антицеллюлитному массажу.',
+                'education': 'Новосибирский медицинский колледж',
+                'avatar_url': 'https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/4c7a5026-5353-42cc-9cf0-9603efe2bff2.jpg',
+                'languages': ['Русский'],
+                'specializations': ['Антицеллюлитный массаж', 'Лимфодренажный массаж', 'Вакуумный массаж'],
+                'certificates': ['Сертификат антицеллюлитного массажа'],
+                'rating': 4.5,
+                'reviews_count': 15
+            },
+            {
+                'email': 'sergey.kuznetsov@test.ru',
+                'full_name': 'Сергей Кузнецов',
+                'city': 'Нижний Новгород',
+                'address': 'ул. Большая Покровская, д. 12',
+                'experience_years': 7,
+                'about': 'Практикую точечный массаж.',
+                'education': 'Нижегородская медицинская академия',
+                'avatar_url': 'https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/43e1aa8f-bff5-4b7f-abec-ea08ab13a364.jpg',
+                'languages': ['Русский', 'Английский'],
+                'specializations': ['Точечный массаж', 'Триггерная терапия', 'Массаж шеи'],
+                'certificates': ['Диплом медицинской академии'],
+                'rating': 4.6,
+                'reviews_count': 21
+            },
+            {
+                'email': 'olga.smirnova@test.ru',
+                'full_name': 'Ольга Смирнова',
+                'city': 'Краснодар',
+                'address': 'ул. Красная, д. 75',
+                'experience_years': 4,
+                'about': 'Специализируюсь на массаже для беременных.',
+                'education': 'Курсы перинатального массажа',
+                'avatar_url': 'https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/ebb66f51-1a8c-490d-941a-ce1d83c1e3d2.jpg',
+                'languages': ['Русский'],
+                'specializations': ['Массаж для беременных', 'Постнатальный массаж', 'Расслабляющий массаж'],
+                'certificates': ['Сертификат перинатального массажа'],
+                'rating': 4.7,
+                'reviews_count': 14
+            },
+            {
+                'email': 'igor.morozov@test.ru',
+                'full_name': 'Игорь Морозов',
+                'city': 'Ростов-на-Дону',
+                'address': 'пр. Буденновский, д. 22',
+                'experience_years': 12,
+                'about': 'Мастер восточных практик.',
+                'education': 'Обучение в Таиланде и Индии',
+                'avatar_url': 'https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/1950263b-0c17-4f3a-85b4-becd078d11f8.jpg',
+                'languages': ['Русский', 'Английский', 'Тайский'],
+                'specializations': ['Тайский массаж', 'Йога-массаж', 'Стоун-терапия'],
+                'certificates': ['Сертификат школы Ват По'],
+                'rating': 4.9,
+                'reviews_count': 38
+            },
+            {
+                'email': 'natalia.belova@test.ru',
+                'full_name': 'Наталья Белова',
+                'city': 'Воронеж',
+                'address': 'ул. Плехановская, д. 33',
+                'experience_years': 9,
+                'about': 'Работаю с проблемами опорно-двигательного аппарата.',
+                'education': 'Воронежская медицинская академия',
+                'avatar_url': 'https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/b9072d35-4525-4fbb-9c11-e93af3de36d9.jpg',
+                'languages': ['Русский'],
+                'specializations': ['Лечебный массаж', 'Ортопедический массаж', 'Массаж суставов'],
+                'certificates': ['Диплом медицинской академии'],
+                'rating': 4.8,
+                'reviews_count': 31
+            },
+            {
+                'email': 'maxim.soloviev@test.ru',
+                'full_name': 'Максим Соловьев',
+                'city': 'Самара',
+                'address': 'ул. Ленинградская, д. 60',
+                'experience_years': 5,
+                'about': 'Специалист по спортивному массажу.',
+                'education': 'Самарский институт физкультуры',
+                'avatar_url': 'https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/15292709-e79b-42b4-924a-d27a22bb1510.jpg',
+                'languages': ['Русский', 'Английский'],
+                'specializations': ['Спортивный массаж', 'Восстановительный массаж', 'Кинезиотейпирование'],
+                'certificates': ['Диплом института физкультуры'],
+                'rating': 4.7,
+                'reviews_count': 19
+            }
+        ]
+        
+        created_users = []
+        default_password_hash = '$2b$12$LQv3c1yytEUhcfEbXWY5.OdLqJNlQvqoEQj8LUJ9ZW1J8L8sJxwGq'
+        
+        for data in masseurs_data:
+            # Create user
+            cur.execute(f"""
+                INSERT INTO {schema}.users (email, password_hash, role)
+                VALUES ('{data['email']}', '{default_password_hash}', 'masseur')
+                RETURNING id
+            """)
+            user_id = cur.fetchone()[0]
+            
+            # Prepare arrays
+            langs = ', '.join([f'"{l}"' for l in data['languages']])
+            specs = ', '.join([f'"{s}"' for s in data['specializations']])
+            certs = ', '.join([f'"{c}"' for c in data['certificates']])
+            
+            # Create profile
+            cur.execute(f"""
+                INSERT INTO {schema}.masseur_profiles 
+                (user_id, full_name, city, address, experience_years, about, education, 
+                 avatar_url, languages, specializations, certificates, rating, reviews_count)
+                VALUES (
+                    {user_id}, 
+                    '{data['full_name']}', 
+                    '{data['city']}', 
+                    '{data['address']}', 
+                    {data['experience_years']}, 
+                    '{data['about']}', 
+                    '{data['education']}',
+                    '{data['avatar_url']}',
+                    ARRAY[{langs}],
+                    ARRAY[{specs}],
+                    ARRAY[{certs}],
+                    {data['rating']},
+                    {data['reviews_count']}
+                )
+                RETURNING id
+            """)
+            
+            profile_id = cur.fetchone()[0]
+            created_users.append({
+                'user_id': user_id,
+                'profile_id': profile_id,
+                'email': data['email'],
+                'full_name': data['full_name']
+            })
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({
+                'success': True,
+                'message': f'Создано {len(created_users)} тестовых массажистов',
+                'users': created_users,
+                'default_password': 'Test123456'
+            }),
+            'isBase64Encoded': False
+        }
+    
     cur.close()
     conn.close()
     return {

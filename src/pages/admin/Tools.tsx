@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import Icon from '@/components/ui/icon';
+import CreateTestMasseurs from '@/components/admin/CreateTestMasseurs';
 import {
   Dialog,
   DialogContent,
@@ -206,6 +207,7 @@ export default function Tools() {
       </div>
 
       <div className="space-y-6">
+        <CreateTestMasseurs />
         {Object.entries(ROLE_LABELS).map(([role, label]) => (
           <Card key={role}>
             <CardHeader>
