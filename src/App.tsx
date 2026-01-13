@@ -71,6 +71,7 @@ import MasseurPromoOffers from "./pages/dashboard/MasseurPromoOffers";
 import MasseurDiscountRequests from "./pages/dashboard/MasseurDiscountRequests";
 import SalonPresentation from "./pages/SalonPresentation";
 import MasseurWelcome from "./pages/MasseurWelcome";
+import MasseurProfessionalLanding from "./pages/MasseurProfessionalLanding";
 import AIDialogs from "./pages/dashboard/AIDialogs";
 import AISubscription from "./pages/dashboard/AISubscription";
 
@@ -93,6 +94,7 @@ const App = () => (
           <Route path="/register/salon" element={<RegisterSalon />} />
           <Route path="/register/client" element={<RegisterClient />} />
           <Route path="/masseur-welcome" element={<MasseurWelcome />} />
+          <Route path="/for-specialists" element={<MasseurProfessionalLanding />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/masseurs" element={<MasseursDirectory />} />
           <Route path="/masseurs/:id" element={<MasseurProfile />} />

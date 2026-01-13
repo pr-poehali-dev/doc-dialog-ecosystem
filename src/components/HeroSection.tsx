@@ -46,7 +46,7 @@ const HeroSection = ({ openDialog }: HeroSectionProps) => {
               <Button 
                 size="lg" 
                 className="text-lg px-8 shadow-lg hover:shadow-xl transition-all" 
-                onClick={() => navigate('/masseurs-info')}
+                onClick={() => navigate('/for-specialists')}
               >
                 Я массажист
               </Button>
