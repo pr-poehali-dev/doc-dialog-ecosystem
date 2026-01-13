@@ -251,7 +251,7 @@ export default function SalonCabinet() {
               Личный кабинет салона
             </h1>
           </div>
-          <Button variant="outline" onClick={() => navigate('/')} className="text-white border-white hover:bg-white/20">
+          <Button variant="secondary" onClick={() => navigate('/')}>
             На главную
           </Button>
         </div>
