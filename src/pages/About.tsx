@@ -230,8 +230,8 @@ export default function About() {
               На чём мы стоим
             </h2>
 
-            <div className="grid sm:grid-cols-2 gap-6 mb-12">
-              {principles.map((principle, index) => (
+            <div className="grid sm:grid-cols-2 gap-6 mb-12 max-w-3xl mx-auto">
+              {principles.slice(0, 4).map((principle, index) => (
                 <Card key={index} className="border-2 hover:shadow-lg transition-all bg-gradient-to-br from-white to-blue-50">
                   <CardContent className="p-6 flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shrink-0 shadow-lg">
@@ -241,6 +241,17 @@ export default function About() {
                   </CardContent>
                 </Card>
               ))}
+            </div>
+            
+            <div className="max-w-md mx-auto mb-12">
+              <Card className="border-2 hover:shadow-lg transition-all bg-gradient-to-br from-white to-blue-50">
+                <CardContent className="p-6 flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shrink-0 shadow-lg">
+                    <Icon name={principles[4].icon as any} size={24} className="text-white" />
+                  </div>
+                  <p className="text-lg font-semibold text-gray-900">{principles[4].text}</p>
+                </CardContent>
+              </Card>
             </div>
 
             <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 border-l-4 border-blue-600">
