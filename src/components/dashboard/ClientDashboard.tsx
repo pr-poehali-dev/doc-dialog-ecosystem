@@ -118,7 +118,7 @@ export default function ClientDashboard() {
           <h3 className="text-xl font-semibold">База знаний</h3>
         </div>
         <p className="text-gray-600 mb-4">Инструкции и ответы на вопросы</p>
-        <Link to="/dashboard/knowledge">
+        <Link to="/dashboard/knowledge-base">
           <Button className="w-full" variant="outline">Открыть базу знаний</Button>
         </Link>
       </div>

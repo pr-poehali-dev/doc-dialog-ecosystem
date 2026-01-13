@@ -245,7 +245,7 @@ export default function SalonDashboard() {
           <h3 className="text-lg md:text-xl font-semibold">База знаний</h3>
         </div>
         <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Инструкции и ответы на вопросы</p>
-        <Link to="/dashboard/knowledge">
+        <Link to="/dashboard/knowledge-base">
           <Button className="w-full" variant="outline">Открыть базу знаний</Button>
         </Link>
       </div>
