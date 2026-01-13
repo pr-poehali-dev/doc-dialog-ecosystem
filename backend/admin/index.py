@@ -893,19 +893,19 @@ def handler(event: dict, context) -> dict:
             specs = ', '.join([f'"{s}"' for s in data['specializations']])
             certs = ', '.join([f'"{c}"' for c in data['certificates']])
             
-            # Create profile
+            # Create profile (escape single quotes)
             cur.execute(f"""
                 INSERT INTO {schema}.masseur_profiles 
                 (user_id, full_name, city, address, experience_years, about, education, 
                  avatar_url, languages, specializations, certificates, rating, reviews_count)
                 VALUES (
                     {user_id}, 
-                    '{data['full_name']}', 
-                    '{data['city']}', 
-                    '{data['address']}', 
+                    '{data['full_name'].replace("'", "''")}', 
+                    '{data['city'].replace("'", "''")}', 
+                    '{data['address'].replace("'", "''")}', 
                     {data['experience_years']}, 
-                    '{data['about']}', 
-                    '{data['education']}',
+                    '{data['about'].replace("'", "''")}', 
+                    '{data['education'].replace("'", "''")}',
                     '{data['avatar_url']}',
                     ARRAY[{langs}],
                     ARRAY[{specs}],
