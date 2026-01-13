@@ -95,9 +95,8 @@ export default function ForgotPassword() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email,
           code,
-          new_password: newPassword,
+          password: newPassword,
         }),
       });
 
