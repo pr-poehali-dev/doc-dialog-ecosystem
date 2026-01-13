@@ -44,17 +44,6 @@ export default function AdminTabNavigation({ activeTab, setActiveTab, stats, pen
         <span className="hidden sm:inline">Пользователи</span>
       </Button>
       <Button 
-        variant={activeTab === 'moderation' ? 'default' : 'outline'}
-        onClick={() => setActiveTab('moderation')}
-        className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm"
-      >
-        <Icon name="Shield" size={16} className="sm:mr-2" />
-        <span className="hidden sm:inline">Модерация</span>
-        {stats && stats.pending_moderations > 0 && (
-          <Badge className="ml-1 sm:ml-2" variant="destructive">{stats.pending_moderations}</Badge>
-        )}
-      </Button>
-      <Button 
         variant={activeTab === 'courses' ? 'default' : 'outline'}
         onClick={() => setActiveTab('courses')}
         className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm"
