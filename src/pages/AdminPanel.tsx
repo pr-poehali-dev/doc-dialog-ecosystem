@@ -220,6 +220,40 @@ export default function AdminPanel() {
     }
   };
 
+  const deleteUser = async (userId: number, userEmail: string) => {
+    if (!confirm(`Вы уверены, что хотите удалить пользователя ${userEmail}?\n\nЭто действие необратимо и удалит все связанные данные: профиль, курсы, отзывы и т.д.`)) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('https://functions.poehali.dev/d9ed333b-313d-40b6-8ca2-016db5854f7c?action=delete_user', {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ user_id: userId })
+      });
+      
+      if (response.ok) {
+        toast({
+          title: "Успешно",
+          description: `Пользователь ${userEmail} удалён`
+        });
+        loadUsers();
+      } else {
+        throw new Error('Failed to delete');
+      }
+    } catch (error) {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось удалить пользователя",
+        variant: "destructive"
+      });
+    }
+  };
+
   const moderateItem = async (itemId: number, approve: boolean, comment: string = '') => {
     try {
       const token = localStorage.getItem('token');
@@ -415,7 +449,8 @@ export default function AdminPanel() {
             <AdminUsersTab 
               users={users} 
               loading={loading} 
-              onUpdateUserRole={updateUserRole} 
+              onUpdateUserRole={updateUserRole}
+              onDeleteUser={deleteUser}
             />
           )}
 

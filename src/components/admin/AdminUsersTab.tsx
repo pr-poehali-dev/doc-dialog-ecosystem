@@ -17,9 +17,10 @@ interface AdminUsersTabProps {
   users: User[];
   loading: boolean;
   onUpdateUserRole: (userId: number, isAdmin: boolean, isModerator: boolean) => void;
+  onDeleteUser: (userId: number, userEmail: string) => void;
 }
 
-export default function AdminUsersTab({ users, loading, onUpdateUserRole }: AdminUsersTabProps) {
+export default function AdminUsersTab({ users, loading, onUpdateUserRole, onDeleteUser }: AdminUsersTabProps) {
   const navigate = useNavigate();
 
   const handleLoginAsUser = (user: User) => {
@@ -146,6 +147,14 @@ export default function AdminUsersTab({ users, loading, onUpdateUserRole }: Admi
                   onClick={() => onUpdateUserRole(user.id, user.is_admin, !user.is_moderator)}
                 >
                   {user.is_moderator ? "Убрать модератора" : "Сделать модератором"}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => onDeleteUser(user.id, user.email)}
+                >
+                  <Icon name="Trash2" size={16} className="mr-2" />
+                  Удалить пользователя
                 </Button>
               </div>
             </CardContent>

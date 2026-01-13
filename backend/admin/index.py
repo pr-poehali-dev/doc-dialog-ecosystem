@@ -209,6 +209,65 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
+    # DELETE /admin?action=delete_user - Delete user (admin only)
+    if method == 'DELETE' and action == 'delete_user':
+        if not is_admin:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 403,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Only admin can delete users'}),
+                'isBase64Encoded': False
+            }
+        
+        body = json.loads(event.get('body', '{}'))
+        user_id = body.get('user_id')
+        
+        if not user_id:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'user_id is required'}),
+                'isBase64Encoded': False
+            }
+        
+        # Get user email before deletion
+        cur.execute(f"SELECT email FROM {schema}.users WHERE id = {user_id}")
+        user = cur.fetchone()
+        
+        if not user:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'User not found'}),
+                'isBase64Encoded': False
+            }
+        
+        user_email = user[0]
+        
+        # Delete user (CASCADE will delete related data automatically if foreign keys are set up)
+        cur.execute(f"DELETE FROM {schema}.users WHERE id = {user_id}")
+        
+        result = {
+            'success': True,
+            'deleted_user_id': user_id,
+            'deleted_user_email': user_email
+        }
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps(result),
+            'isBase64Encoded': False
+        }
+    
     # POST /admin?action=moderate - Approve moderation item
     if method == 'POST' and action == 'moderate':
         body = json.loads(event.get('body', '{}'))
