@@ -56,7 +56,6 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
     { label: "Образование", path: "/courses" },
     { label: "Инструменты", path: "/dashboard" },
     { label: "Сообщество", path: "/masseurs" },
-    { label: "Вакансии", path: "/jobs" },
     { label: "О платформе", path: "/about" },
   ];
 
