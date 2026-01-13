@@ -29,12 +29,11 @@ export default function ProfessionalFooter() {
               </Button>
               <Button 
                 size="lg"
-                variant="outline"
-                className="text-lg px-10 py-7 border-2 border-white text-white hover:bg-white/20 hover:text-white"
+                className="text-lg px-10 py-7 border-2 border-white bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 hover:text-white shadow-2xl"
                 onClick={() => navigate('/courses')}
               >
                 Смотреть курсы
-                <Icon name="GraduationCap" size={22} className="ml-2" />
+                <Icon name="GraduationCat" size={22} className="ml-2" />
               </Button>
             </div>
 
