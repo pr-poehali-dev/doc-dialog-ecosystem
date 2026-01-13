@@ -71,7 +71,7 @@ export default function SchoolDashboard() {
           </div>
           <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Статистика продаж и просмотров</p>
           <Link to="/school/analytics">
-            <Button className="w-full" variant="outline">Смотреть отчёты</Button>
+            <Button className="w-full">Смотреть отчёты</Button>
           </Link>
         </div>
 
@@ -84,7 +84,7 @@ export default function SchoolDashboard() {
           </div>
           <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Пополнение и история транзакций</p>
           <Link to="/school/balance">
-            <Button className="w-full" variant="outline">Управление балансом</Button>
+            <Button className="w-full">Управление балансом</Button>
           </Link>
         </div>
 
@@ -97,7 +97,7 @@ export default function SchoolDashboard() {
           </div>
           <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Анализ аудитории и создание востребованных курсов</p>
           <Link to="/school/marketing-ai">
-            <Button className="w-full" variant="outline">Открыть инструменты</Button>
+            <Button className="w-full">Открыть инструменты</Button>
           </Link>
         </div>
 
