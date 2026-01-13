@@ -18,7 +18,7 @@ def handler(event: dict, context) -> dict:
             'statusCode': 200,
             'headers': {
                 'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
                 'Access-Control-Allow-Headers': 'Content-Type, X-Authorization'
             },
             'body': '',
@@ -49,6 +49,10 @@ def handler(event: dict, context) -> dict:
                 return request_password_reset(body)
             elif action == 'reset-password':
                 return reset_password(body)
+        
+        if method == 'DELETE' and action == 'delete-account':
+            token = event.get('headers', {}).get('X-Authorization', '').replace('Bearer ', '')
+            return delete_account(token)
         
         return {
             'statusCode': 405,
@@ -614,6 +618,46 @@ def reset_password(data: dict) -> dict:
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({'message': 'Пароль успешно изменён'}),
+            'isBase64Encoded': False
+        }
+    
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def delete_account(token: str) -> dict:
+    """Удаление аккаунта пользователя"""
+    if not token:
+        return {
+            'statusCode': 401,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Требуется авторизация'}),
+            'isBase64Encoded': False
+        }
+    
+    try:
+        jwt_secret = os.environ['JWT_SECRET']
+        payload = jwt.decode(token, jwt_secret, algorithms=['HS256'])
+        user_id = payload['user_id']
+    except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
+        return {
+            'statusCode': 401,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Неверный или истёкший токен'}),
+            'isBase64Encoded': False
+        }
+    
+    conn, cursor = get_db_connection()
+    
+    try:
+        cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
+        conn.commit()
+        
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'message': 'Аккаунт успешно удалён'}),
             'isBase64Encoded': False
         }
     

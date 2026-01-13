@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,11 +10,24 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 export default function PublicProfile() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
   const [profileData, setProfileData] = useState({
     fullName: '',
@@ -115,6 +129,47 @@ export default function PublicProfile() {
         [format]: description
       }
     });
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('https://functions.poehali.dev/049813c7-cf1a-4ff1-93bc-af749304eb0d?action=delete-account', {
+        method: 'DELETE',
+        headers: {
+          'X-Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('userRole');
+        
+        toast({
+          title: 'Аккаунт удалён',
+          description: 'Ваш аккаунт успешно удалён из системы'
+        });
+        
+        navigate('/');
+      } else {
+        const data = await response.json();
+        toast({
+          title: 'Ошибка',
+          description: data.error || 'Не удалось удалить аккаунт',
+          variant: 'destructive'
+        });
+      }
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось подключиться к серверу',
+        variant: 'destructive'
+      });
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const handleSave = async () => {
@@ -451,6 +506,42 @@ export default function PublicProfile() {
                 {saving ? 'Сохранение...' : 'Сохранить профиль'}
               </Button>
             </div>
+
+            <Card className="border-destructive/50 bg-destructive/5 mt-8">
+              <CardHeader>
+                <CardTitle className="text-destructive flex items-center gap-2">
+                  <Icon name="AlertTriangle" size={20} />
+                  Опасная зона
+                </CardTitle>
+                <CardDescription>
+                  Удаление аккаунта необратимо. Все ваши данные будут потеряны.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" disabled={deleting}>
+                      <Icon name="Trash2" size={18} className="mr-2" />
+                      Удалить аккаунт
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Вы уверены?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Это действие нельзя отменить. Ваш аккаунт и все связанные данные будут безвозвратно удалены.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Отмена</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive hover:bg-destructive/90">
+                        Удалить навсегда
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
