@@ -1,18 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import Icon from '@/components/ui/icon';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import ToolCard from '@/components/tools/ToolCard';
+import ToolDialog from '@/components/tools/ToolDialog';
+import ToolUsageStats from '@/components/tools/ToolUsageStats';
+import ToolLimitModal from '@/components/tools/ToolLimitModal';
 
 const AI_TOOLS_URL = 'https://functions.poehali.dev/7c4b9e29-6778-42e7-9ac9-c30966d1765e';
 
@@ -31,7 +26,6 @@ export default function Tools() {
   const [loading, setLoading] = useState(false);
   const [usageData, setUsageData] = useState<UsageData | null>(null);
   const [showLimitModal, setShowLimitModal] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -236,8 +230,7 @@ export default function Tools() {
         requestBody.image = uploadedImage;
       }
 
-      // Создаём временный диалог для получения ответа
-      const createResponse = await fetch(AI_TOOLS_URL, {
+      const apiResponse = await fetch(AI_TOOLS_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -246,264 +239,159 @@ export default function Tools() {
         body: JSON.stringify(requestBody)
       });
 
-      if (!createResponse.ok) {
-        const errorData = await createResponse.json();
-        throw new Error(errorData.error || 'Ошибка анализа');
-      }
+      const data = await apiResponse.json();
 
-      if (createResponse.status === 403) {
+      if (apiResponse.status === 403 && data.error === 'Limit exceeded') {
         setShowLimitModal(true);
         return;
       }
 
-      const data = await createResponse.json();
+      if (!apiResponse.ok) {
+        throw new Error(data.error || 'Ошибка анализа');
+      }
+
       setResponse(data.analysis);
-      loadUsageData();
+      await loadUsageData();
       
-    } catch (error) {
-      toast({ 
-        title: 'Ошибка', 
-        description: error instanceof Error ? error.message : 'Не удалось получить анализ',
-        variant: 'destructive' 
+      toast({
+        title: 'Анализ завершён',
+        description: 'AI-инструмент обработал ваш запрос'
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Ошибка',
+        description: error.message || 'Не удалось выполнить анализ',
+        variant: 'destructive'
       });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleClear = () => {
+  const handleToolClick = (toolId: string) => {
+    const tool = tools.find(t => t.id === toolId);
+    if (!tool) return;
+
+    if (tool.isLink && tool.linkTo) {
+      navigate(tool.linkTo);
+      return;
+    }
+
+    setActiveToolId(toolId);
     setInputText('');
     setUploadedImage(null);
     setResponse('');
   };
 
-  if (activeToolId && !tools.find(t => t.id === activeToolId)?.isLink) {
-    const tool = tools.find(t => t.id === activeToolId);
-    if (!tool) return null;
+  const handleCloseDialog = () => {
+    setActiveToolId(null);
+    setInputText('');
+    setUploadedImage(null);
+    setResponse('');
+  };
 
-    return (
-      <div className="space-y-4 md:space-y-6">
-        <div className="flex flex-col sm:flex-row items-start gap-3 md:gap-4">
-          <Button variant="ghost" onClick={() => setActiveToolId(null)} className="shrink-0 text-sm md:text-base">
-            <Icon name="ArrowLeft" size={16} className="mr-2" />
-            Назад
-          </Button>
-          <div className="px-2">
-            <h2 className="text-xl md:text-2xl font-bold">{tool.title}</h2>
-            <p className="text-sm md:text-base text-muted-foreground">{tool.description}</p>
-          </div>
-        </div>
+  const handleUpgradeClick = () => {
+    navigate('/dashboard/subscriptions');
+  };
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
-              <Icon name={tool.icon as any} size={20} className="md:w-6 md:h-6" />
-              Введите данные для анализа
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {activeToolId === 'medical-analysis' && (
-              <div className="space-y-4">
-                <div className="flex flex-col gap-2">
-                  <Input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={loading}
-                    className="w-full"
-                  >
-                    <Icon name="Upload" size={16} className="mr-2" />
-                    Загрузить снимок (МРТ, рентген, УЗИ)
-                  </Button>
-                  {uploadedImage && (
-                    <div className="relative border rounded-lg p-2">
-                      <img src={uploadedImage} alt="Загруженный снимок" className="max-h-48 mx-auto rounded" />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setUploadedImage(null)}
-                        className="absolute top-2 right-2"
-                      >
-                        <Icon name="X" size={16} />
-                      </Button>
-                    </div>
-                  )}
-                </div>
-                <div className="text-sm text-muted-foreground text-center">или</div>
-              </div>
-            )}
-            
-            <Textarea
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              placeholder={tool.placeholder}
-              className="min-h-[150px] md:min-h-[200px] text-sm md:text-base"
-              disabled={loading}
-            />
-            <div className="flex flex-col sm:flex-row gap-2">
-              <Button 
-                onClick={() => handleAnalyze(activeToolId)} 
-                disabled={loading || (!inputText.trim() && !uploadedImage)}
-                className="flex-1 text-sm md:text-base"
-              >
-                {loading ? (
-                  <>
-                    <Icon name="Loader2" className="animate-spin mr-2" size={16} />
-                    Анализирую...
-                  </>
-                ) : (
-                  <>
-                    <Icon name="Sparkles" size={16} className="mr-2" />
-                    Получить анализ
-                  </>
-                )}
-              </Button>
-              <Button variant="outline" onClick={handleClear} disabled={loading} className="text-sm md:text-base">
-                Очистить
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {response && (
-          <Card className="bg-blue-50/50 border-blue-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-blue-900 text-lg md:text-xl">
-                <Icon name="Lightbulb" size={20} className="md:w-6 md:h-6" />
-                Результат анализа
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="prose max-w-none">
-                <div className="whitespace-pre-wrap text-sm md:text-base text-gray-900">{response}</div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-    );
-  }
+  const activeTool = tools.find(t => t.id === activeToolId);
 
   return (
-    <div className="space-y-4 md:space-y-6">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="px-2">
-          <h2 className="text-xl md:text-2xl font-bold mb-1 md:mb-2">AI Инструменты для специалистов</h2>
-          <p className="text-sm md:text-base text-muted-foreground">
-            Профессиональные инструменты на базе искусственного интеллекта
-          </p>
-        </div>
-        <Button variant="outline" onClick={() => navigate('/dashboard')} className="shrink-0 text-sm md:text-base">
-          <Icon name="ArrowLeft" size={16} className="mr-2" />
-          В кабинет
-        </Button>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-white to-blue-50">
+      <Navigation />
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center gap-4 mb-6">
+            <Button variant="ghost" onClick={() => navigate(getDashboardRoute())}>
+              <Icon name="ArrowLeft" size={20} />
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold">AI-инструменты</h1>
+              <p className="text-muted-foreground">
+                Профессиональные инструменты для анализа и планирования работы с клиентами
+              </p>
+            </div>
+          </div>
 
-      {usageData && (
-        <Card className="bg-secondary/30">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm">Использовано AI-операций в этом месяце:</span>
-              <span className="font-semibold">{usageData.total_used} / {usageData.limit}</span>
+          <div className="grid lg:grid-cols-3 gap-6 mb-8">
+            <div className="lg:col-span-2 grid md:grid-cols-2 gap-4">
+              {tools.map((tool) => (
+                <ToolCard
+                  key={tool.id}
+                  id={tool.id}
+                  title={tool.title}
+                  description={tool.description}
+                  icon={tool.icon}
+                  color={tool.color}
+                  isLink={tool.isLink}
+                  onClick={handleToolClick}
+                />
+              ))}
             </div>
-            <div className="text-xs text-muted-foreground mb-3">
-              Диалоги: {usageData.dialogs_used} • Инструменты: {usageData.tools_used}
-            </div>
-            <div className="w-full bg-secondary rounded-full h-2 mb-3">
-              <div 
-                className="bg-primary rounded-full h-2 transition-all"
-                style={{ width: `${Math.min((usageData.total_used / usageData.limit) * 100, 100)}%` }}
+
+            <div>
+              <ToolUsageStats 
+                usageData={usageData}
+                onUpgradeClick={handleUpgradeClick}
               />
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate('/dashboard/ai-subscription')}
-              className="w-full text-sm"
-            >
-              <Icon name="Sparkles" size={14} className="mr-2" />
-              Управление подпиской
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+          </div>
 
-      <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        {tools.map((tool) => (
-          <Card 
-            key={tool.id}
-            className={`cursor-pointer hover:shadow-xl transition-all hover:-translate-y-1 bg-gradient-to-br ${tool.color} border-2`}
-            onClick={() => {
-              if (tool.isLink && tool.linkTo) {
-                navigate(tool.linkTo);
-              } else {
-                setActiveToolId(tool.id);
-              }
-            }}
-          >
-            <CardHeader className="pb-4">
-              <Icon name={tool.icon as any} size={32} className="text-primary mb-2 md:w-10 md:h-10" />
-              <CardTitle className="text-lg md:text-xl">{tool.title}</CardTitle>
-              <CardDescription className="text-sm md:text-base">
-                {tool.description}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <Button variant="ghost" className="w-full text-sm md:text-base">
-                <Icon name="ArrowRight" size={16} className="ml-auto" />
-                Открыть инструмент
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 border border-primary/10">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center flex-shrink-0">
+                <Icon name="Lightbulb" size={24} className="text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold mb-2">Как использовать инструменты?</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <Icon name="Check" size={16} className="text-primary mt-0.5 flex-shrink-0" />
+                    <span>Выберите нужный инструмент из списка выше</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Icon name="Check" size={16} className="text-primary mt-0.5 flex-shrink-0" />
+                    <span>Опишите ситуацию или вставьте медицинское заключение</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Icon name="Check" size={16} className="text-primary mt-0.5 flex-shrink-0" />
+                    <span>Получите профессиональные рекомендации от AI</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Icon name="Check" size={16} className="text-primary mt-0.5 flex-shrink-0" />
+                    <span>Используйте полученные знания в работе с клиентами</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <Card className="bg-secondary/30">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Icon name="Info" size={20} />
-            Важная информация
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3 text-sm">
-          <p>• AI-инструменты предоставляют информационную поддержку, но не заменяют медицинскую консультацию</p>
-          <p>• Всегда консультируйте клиентов с серьёзными заболеваниями с врачом</p>
-          <p>• Анализ медицинских заключений помогает понять противопоказания для массажа</p>
-          <p>• При сомнениях в безопасности техник — откажитесь от работы или направьте к врачу</p>
-        </CardContent>
-      </Card>
+      {activeTool && !activeTool.isLink && (
+        <ToolDialog
+          open={activeToolId !== null}
+          onOpenChange={(open) => !open && handleCloseDialog()}
+          toolTitle={activeTool.title}
+          toolDescription={activeTool.description}
+          placeholder={activeTool.placeholder || ''}
+          inputText={inputText}
+          setInputText={setInputText}
+          uploadedImage={uploadedImage}
+          setUploadedImage={setUploadedImage}
+          response={response}
+          loading={loading}
+          onAnalyze={() => handleAnalyze(activeToolId!)}
+          onImageUpload={handleImageUpload}
+          isMedicalTool={activeToolId === 'medical-analysis'}
+        />
+      )}
 
-      <Dialog open={showLimitModal} onOpenChange={setShowLimitModal}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Icon name="AlertCircle" className="text-orange-500" size={24} />
-              Достигнут лимит использования
-            </DialogTitle>
-            <DialogDescription className="text-base pt-4">
-              Вы использовали все доступные AI-операции в этом месяце.
-              Обновите подписку, чтобы продолжить работу с AI-инструментами и диалогами.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex flex-col gap-3 mt-4">
-            <Button onClick={() => navigate('/dashboard/ai-subscription')} className="w-full">
-              <Icon name="Sparkles" size={16} className="mr-2" />
-              Выбрать тариф
-            </Button>
-            <Button variant="outline" onClick={() => setShowLimitModal(false)} className="w-full">
-              Закрыть
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ToolLimitModal
+        open={showLimitModal}
+        onOpenChange={setShowLimitModal}
+        onUpgradeClick={handleUpgradeClick}
+      />
     </div>
   );
 }
