@@ -160,10 +160,11 @@ def handler(event: dict, context) -> dict:
             
             elif action == 'analyze_tool':
                 tool_type = body.get('tool_type')
-                text = body.get('text')
+                text = body.get('text', '')
+                image = body.get('image')
                 system_prompt = body.get('system_prompt')
                 
-                if not tool_type or not text or not system_prompt:
+                if not tool_type or (not text and not image) or not system_prompt:
                     return {
                         'statusCode': 400,
                         'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
@@ -187,12 +188,30 @@ def handler(event: dict, context) -> dict:
                         'isBase64Encoded': False
                     }
                 
-                messages = [
-                    {'role': 'system', 'content': system_prompt},
-                    {'role': 'user', 'content': text}
-                ]
-                
-                analysis = get_ai_response_direct(os.environ.get('OPENAI_API_KEY'), messages)
+                if image:
+                    user_content = [
+                        {
+                            "type": "text",
+                            "text": text if text else "Проанализируй это медицинское изображение (МРТ, рентген или УЗИ) и дай подробное заключение."
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": image
+                            }
+                        }
+                    ]
+                    messages = [
+                        {'role': 'system', 'content': system_prompt},
+                        {'role': 'user', 'content': user_content}
+                    ]
+                    analysis = get_ai_response_with_vision(os.environ.get('OPENAI_API_KEY'), messages)
+                else:
+                    messages = [
+                        {'role': 'system', 'content': system_prompt},
+                        {'role': 'user', 'content': text}
+                    ]
+                    analysis = get_ai_response_direct(os.environ.get('OPENAI_API_KEY'), messages)
                 
                 cursor.execute('''
                     UPDATE specialists
@@ -373,6 +392,41 @@ def get_ai_response(api_key: str, dialog_type: str, history: list) -> str:
     
     if response.status_code != 200:
         return 'Извините, произошла ошибка при обращении к AI. Попробуйте позже.'
+    
+    result = response.json()
+    return result['choices'][0]['message']['content']
+
+
+def get_ai_response_with_vision(api_key: str, messages: list) -> str:
+    '''Запрос к OpenAI Vision API для анализа изображений'''
+    import requests
+    
+    proxies = {
+        'http': 'http://user:pass@185.200.177.36:3128',
+        'https': 'http://user:pass@185.200.177.36:3128'
+    }
+    
+    try:
+        response = requests.post(
+            'https://api.openai.com/v1/chat/completions',
+            headers={
+                'Authorization': f'Bearer {api_key}',
+                'Content-Type': 'application/json'
+            },
+            json={
+                'model': 'gpt-4o',
+                'messages': messages,
+                'temperature': 0.7,
+                'max_tokens': 1500
+            },
+            proxies=proxies,
+            timeout=30
+        )
+    except Exception as e:
+        return f'Не удалось подключиться к AI-сервису. Ошибка: {str(e)}'
+    
+    if response.status_code != 200:
+        return f'Извините, произошла ошибка при обращении к AI. Детали: {response.text}'
     
     result = response.json()
     return result['choices'][0]['message']['content']

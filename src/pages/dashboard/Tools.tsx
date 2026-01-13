@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import Icon from '@/components/ui/icon';
 import {
@@ -25,10 +26,12 @@ interface UsageData {
 export default function Tools() {
   const [activeToolId, setActiveToolId] = useState<string | null>(null);
   const [inputText, setInputText] = useState('');
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
   const [usageData, setUsageData] = useState<UsageData | null>(null);
   const [showLimitModal, setShowLimitModal] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -160,6 +163,26 @@ export default function Tools() {
     }
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: 'Ошибка',
+        description: 'Пожалуйста, загрузите изображение',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setUploadedImage(event.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const loadUsageData = async () => {
     try {
       const userId = getUserId();
@@ -184,8 +207,8 @@ export default function Tools() {
   };
 
   const handleAnalyze = async (toolId: string) => {
-    if (!inputText.trim()) {
-      toast({ title: 'Ошибка', description: 'Введите текст для анализа', variant: 'destructive' });
+    if (!inputText.trim() && !uploadedImage) {
+      toast({ title: 'Ошибка', description: 'Введите текст или загрузите изображение для анализа', variant: 'destructive' });
       return;
     }
 
@@ -202,6 +225,17 @@ export default function Tools() {
       const tool = tools.find(t => t.id === toolId);
       if (!tool || tool.isLink) return;
 
+      const requestBody: any = {
+        action: 'analyze_tool',
+        tool_type: toolId,
+        text: inputText,
+        system_prompt: tool.systemPrompt
+      };
+
+      if (uploadedImage) {
+        requestBody.image = uploadedImage;
+      }
+
       // Создаём временный диалог для получения ответа
       const createResponse = await fetch(AI_TOOLS_URL, {
         method: 'POST',
@@ -209,12 +243,7 @@ export default function Tools() {
           'Content-Type': 'application/json',
           'X-User-Id': userId
         },
-        body: JSON.stringify({
-          action: 'analyze_tool',
-          tool_type: toolId,
-          text: inputText,
-          system_prompt: tool.systemPrompt
-        })
+        body: JSON.stringify(requestBody)
       });
 
       if (!createResponse.ok) {
@@ -244,6 +273,7 @@ export default function Tools() {
 
   const handleClear = () => {
     setInputText('');
+    setUploadedImage(null);
     setResponse('');
   };
 
@@ -272,6 +302,45 @@ export default function Tools() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {activeToolId === 'medical-analysis' && (
+              <div className="space-y-4">
+                <div className="flex flex-col gap-2">
+                  <Input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={loading}
+                    className="w-full"
+                  >
+                    <Icon name="Upload" size={16} className="mr-2" />
+                    Загрузить снимок (МРТ, рентген, УЗИ)
+                  </Button>
+                  {uploadedImage && (
+                    <div className="relative border rounded-lg p-2">
+                      <img src={uploadedImage} alt="Загруженный снимок" className="max-h-48 mx-auto rounded" />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setUploadedImage(null)}
+                        className="absolute top-2 right-2"
+                      >
+                        <Icon name="X" size={16} />
+                      </Button>
+                    </div>
+                  )}
+                </div>
+                <div className="text-sm text-muted-foreground text-center">или</div>
+              </div>
+            )}
+            
             <Textarea
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
@@ -282,7 +351,7 @@ export default function Tools() {
             <div className="flex flex-col sm:flex-row gap-2">
               <Button 
                 onClick={() => handleAnalyze(activeToolId)} 
-                disabled={loading || !inputText.trim()}
+                disabled={loading || (!inputText.trim() && !uploadedImage)}
                 className="flex-1 text-sm md:text-base"
               >
                 {loading ? (
