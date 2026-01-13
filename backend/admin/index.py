@@ -251,56 +251,77 @@ def handler(event: dict, context) -> dict:
         user_email = user[0]
         
         # Delete all related data first (in correct order to avoid foreign key violations)
-        # Note: Order matters! Delete child records before parent records
+        # Using try-except for each table in case it doesn't exist or has no records
+        
+        # Helper function to safely delete
+        def safe_delete(query):
+            try:
+                cur.execute(query)
+            except Exception:
+                pass  # Skip if table doesn't exist or access denied
         
         # Delete AI dialogs and messages
-        cur.execute(f"DELETE FROM {schema}.ai_dialog_messages WHERE dialog_id IN (SELECT id FROM {schema}.ai_dialogs WHERE user_id = {user_id})")
-        cur.execute(f"DELETE FROM {schema}.ai_dialogs WHERE user_id = {user_id}")
+        safe_delete(f"DELETE FROM {schema}.ai_dialog_messages WHERE dialog_id IN (SELECT id FROM {schema}.ai_dialogs WHERE user_id = {user_id})")
+        safe_delete(f"DELETE FROM {schema}.ai_dialogs WHERE user_id = {user_id}")
         
         # Delete balance and transactions
-        cur.execute(f"DELETE FROM {schema}.balance_transactions WHERE user_id = {user_id}")
-        cur.execute(f"DELETE FROM {schema}.coin_transactions WHERE user_id = {user_id}")
+        safe_delete(f"DELETE FROM {schema}.balance_transactions WHERE user_id = {user_id}")
+        safe_delete(f"DELETE FROM {schema}.coin_transactions WHERE user_id = {user_id}")
         
         # Delete appointments and bookings
-        cur.execute(f"DELETE FROM {schema}.appointments WHERE user_id = {user_id} OR masseur_id = {user_id}")
+        safe_delete(f"DELETE FROM {schema}.appointments WHERE user_id = {user_id} OR masseur_id = {user_id}")
         
         # Delete favorites
-        cur.execute(f"DELETE FROM {schema}.favorites WHERE user_id = {user_id}")
+        safe_delete(f"DELETE FROM {schema}.favorites WHERE user_id = {user_id}")
         
         # Delete messages
-        cur.execute(f"DELETE FROM {schema}.messages WHERE sender_id = {user_id} OR recipient_id = {user_id}")
+        safe_delete(f"DELETE FROM {schema}.messages WHERE sender_id = {user_id} OR recipient_id = {user_id}")
         
         # Delete reviews (both written and received)
-        cur.execute(f"DELETE FROM {schema}.reviews WHERE user_id = {user_id} OR masseur_id = {user_id}")
-        cur.execute(f"DELETE FROM {schema}.course_reviews WHERE user_id = {user_id}")
-        cur.execute(f"DELETE FROM {schema}.school_reviews WHERE user_id = {user_id}")
+        safe_delete(f"DELETE FROM {schema}.reviews WHERE user_id = {user_id} OR masseur_id = {user_id}")
+        safe_delete(f"DELETE FROM {schema}.course_reviews WHERE user_id = {user_id}")
+        safe_delete(f"DELETE FROM {schema}.school_reviews WHERE user_id = {user_id}")
         
         # Delete masseur-specific data
-        cur.execute(f"DELETE FROM {schema}.masseur_verifications WHERE masseur_id = {user_id}")
-        cur.execute(f"DELETE FROM {schema}.masseur_profiles WHERE user_id = {user_id}")
+        safe_delete(f"DELETE FROM {schema}.masseur_verifications WHERE masseur_id = {user_id}")
+        safe_delete(f"DELETE FROM {schema}.masseur_profiles WHERE user_id = {user_id}")
         
-        # Delete school-specific data
-        cur.execute(f"DELETE FROM {schema}.school_balance WHERE school_id = (SELECT id FROM {schema}.schools WHERE user_id = {user_id})")
-        cur.execute(f"DELETE FROM {schema}.school_teachers WHERE school_id = (SELECT id FROM {schema}.schools WHERE user_id = {user_id})")
-        cur.execute(f"DELETE FROM {schema}.school_subscriptions WHERE school_id = (SELECT id FROM {schema}.schools WHERE user_id = {user_id})")
-        cur.execute(f"DELETE FROM {schema}.courses WHERE school_id = (SELECT id FROM {schema}.schools WHERE user_id = {user_id})")
-        cur.execute(f"DELETE FROM {schema}.masterminds WHERE school_id = (SELECT id FROM {schema}.schools WHERE user_id = {user_id})")
-        cur.execute(f"DELETE FROM {schema}.offline_training WHERE school_id = (SELECT id FROM {schema}.schools WHERE user_id = {user_id})")
-        cur.execute(f"DELETE FROM {schema}.schools WHERE user_id = {user_id}")
+        # Delete school-specific data (first get school_id)
+        cur.execute(f"SELECT id FROM {schema}.schools WHERE user_id = {user_id}")
+        school = cur.fetchone()
+        if school:
+            school_id = school[0]
+            safe_delete(f"DELETE FROM {schema}.school_balance WHERE school_id = {school_id}")
+            safe_delete(f"DELETE FROM {schema}.school_teachers WHERE school_id = {school_id}")
+            safe_delete(f"DELETE FROM {schema}.school_subscriptions WHERE school_id = {school_id}")
+            safe_delete(f"DELETE FROM {schema}.school_achievements WHERE school_id = {school_id}")
+            safe_delete(f"DELETE FROM {schema}.school_gallery WHERE school_id = {school_id}")
+            safe_delete(f"DELETE FROM {schema}.course_program WHERE course_id IN (SELECT id FROM {schema}.courses WHERE school_id = {school_id})")
+            safe_delete(f"DELETE FROM {schema}.course_target_audience WHERE course_id IN (SELECT id FROM {schema}.courses WHERE school_id = {school_id})")
+            safe_delete(f"DELETE FROM {schema}.course_results WHERE course_id IN (SELECT id FROM {schema}.courses WHERE school_id = {school_id})")
+            safe_delete(f"DELETE FROM {schema}.course_bonuses WHERE course_id IN (SELECT id FROM {schema}.courses WHERE school_id = {school_id})")
+            safe_delete(f"DELETE FROM {schema}.courses WHERE school_id = {school_id}")
+            safe_delete(f"DELETE FROM {schema}.masterminds WHERE school_id = {school_id}")
+            safe_delete(f"DELETE FROM {schema}.offline_training WHERE school_id = {school_id}")
+            safe_delete(f"DELETE FROM {schema}.schools WHERE id = {school_id}")
         
         # Delete salon-specific data
-        cur.execute(f"DELETE FROM {schema}.salon_vacancies WHERE salon_id = (SELECT id FROM {schema}.salons WHERE user_id = {user_id})")
-        cur.execute(f"DELETE FROM {schema}.salons WHERE user_id = {user_id}")
+        cur.execute(f"SELECT id FROM {schema}.salons WHERE user_id = {user_id}")
+        salon = cur.fetchone()
+        if salon:
+            salon_id = salon[0]
+            safe_delete(f"DELETE FROM {schema}.salon_vacancies WHERE salon_id = {salon_id}")
+            safe_delete(f"DELETE FROM {schema}.salons WHERE id = {salon_id}")
         
         # Delete client-specific data
-        cur.execute(f"DELETE FROM {schema}.client_profiles WHERE user_id = {user_id}")
+        safe_delete(f"DELETE FROM {schema}.client_profiles WHERE user_id = {user_id}")
         
         # Delete promo and promotions
-        cur.execute(f"DELETE FROM {schema}.promo_requests WHERE user_id = {user_id}")
-        cur.execute(f"DELETE FROM {schema}.item_promotions WHERE user_id = {user_id}")
+        safe_delete(f"DELETE FROM {schema}.promo_requests WHERE user_id = {user_id}")
+        safe_delete(f"DELETE FROM {schema}.item_promotions WHERE user_id = {user_id}")
         
         # Delete rate limits
-        cur.execute(f"DELETE FROM {schema}.rate_limits WHERE user_id = {user_id}")
+        safe_delete(f"DELETE FROM {schema}.rate_limits WHERE user_id = {user_id}")
         
         # Finally delete the user
         cur.execute(f"DELETE FROM {schema}.users WHERE id = {user_id}")
