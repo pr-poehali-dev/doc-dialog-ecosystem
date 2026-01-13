@@ -110,17 +110,19 @@ export default function MasseurDashboard() {
         </Link>
       </div>
 
-      {/* 4. Инструменты */}
-      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+      {/* 4. ИИ-Инструменты */}
+      <div className="bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-xl p-4 md:p-6 shadow-sm border-2 border-blue-500/30 hover:border-blue-500 transition-colors">
         <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
-          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-            <Icon name="Wrench" className="text-primary" size={20} />
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Bot" className="text-blue-600" size={20} />
           </div>
-          <h3 className="text-lg md:text-xl font-semibold">Инструменты</h3>
+          <h3 className="text-lg md:text-xl font-semibold">ИИ-Инструменты</h3>
         </div>
-        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Полезные инструменты для автоматизации работы</p>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Расшифровка заключений и анализ болей с помощью ИИ</p>
         <Link to="/dashboard/tools">
-          <Button className="w-full">Открыть инструменты</Button>
+          <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+            Открыть инструменты
+          </Button>
         </Link>
       </div>
 

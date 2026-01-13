@@ -1,10 +1,27 @@
 {
   "tests": [
     {
-      "name": "Get tools (unauthorized)",
+      "name": "Get usage without auth",
       "method": "GET",
-      "path": "/",
+      "path": "/?action=usage",
       "expectedStatus": 401,
+      "expectedBody": {
+        "error": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Analyze without auth",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "action": "analyze_tool",
+        "text": "Test text"
+      },
+      "expectedStatus": 401,
+      "expectedBody": {
+        "error": "string"
+      },
       "bodyMatcher": "partial"
     }
   ]

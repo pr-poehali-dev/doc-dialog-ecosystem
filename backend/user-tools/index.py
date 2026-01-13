@@ -1,15 +1,21 @@
-"""API для получения инструментов пользователями"""
+"""API для ИИ-инструментов пользователей: расшифровка заключений и анализ болей"""
 import json
 import os
-import jwt
+import base64
 import psycopg2
 from psycopg2.extras import RealDictCursor
+from openai import OpenAI
 
 def get_db():
     dsn = os.environ.get('DATABASE_URL')
     return psycopg2.connect(dsn)
 
+def get_user_id_from_header(event: dict) -> str:
+    user_id = event.get('headers', {}).get('X-User-Id', '')
+    return user_id
+
 def handler(event: dict, context) -> dict:
+    """API для работы с ИИ-инструментами пользователей"""
     method = event.get('httpMethod', 'GET')
     
     if method == 'OPTIONS':
@@ -17,24 +23,15 @@ def handler(event: dict, context) -> dict:
             'statusCode': 200,
             'headers': {
                 'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Authorization'
+                'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, X-User-Id'
             },
             'body': '',
             'isBase64Encoded': False
         }
     
-    if method != 'GET':
-        return {
-            'statusCode': 405,
-            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'error': 'Метод не поддерживается'}),
-            'isBase64Encoded': False
-        }
-    
-    token = event.get('headers', {}).get('X-Authorization', '').replace('Bearer ', '')
-    
-    if not token:
+    user_id = get_user_id_from_header(event)
+    if not user_id:
         return {
             'statusCode': 401,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
@@ -42,33 +39,103 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
-    conn = get_db()
-    cur = conn.cursor(cursor_factory=RealDictCursor)
+    params = event.get('queryStringParameters') or {}
+    action = params.get('action', 'usage')
     
-    try:
-        jwt_secret = os.environ.get('JWT_SECRET')
-        if not jwt_secret:
-            conn.close()
+    if method == 'GET':
+        if action == 'usage':
+            return get_usage(user_id)
+        return {
+            'statusCode': 400,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Неизвестное действие'}),
+            'isBase64Encoded': False
+        }
+    
+    if method == 'POST':
+        try:
+            body = json.loads(event.get('body', '{}'))
+            action = body.get('action')
+            
+            if action == 'analyze_tool':
+                return analyze_with_tool(user_id, body)
+            
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Неизвестное действие'}),
+                'isBase64Encoded': False
+            }
+        except Exception as e:
             return {
                 'statusCode': 500,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'JWT_SECRET не настроен'}),
+                'body': json.dumps({'error': str(e)}),
                 'isBase64Encoded': False
             }
+    
+    return {
+        'statusCode': 405,
+        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+        'body': json.dumps({'error': 'Метод не поддерживается'}),
+        'isBase64Encoded': False
+    }
+
+def get_usage(user_id: str) -> dict:
+    """Получить статистику использования инструментов"""
+    conn = get_db()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    schema = os.environ.get('MAIN_DB_SCHEMA', 't_p46047379_doc_dialog_ecosystem')
+    
+    try:
+        cur.execute(f"""
+            SELECT tools_limit, tools_used 
+            FROM {schema}.users 
+            WHERE id = %s
+        """, (user_id,))
         
-        payload = jwt.decode(token, jwt_secret, algorithms=['HS256'])
-        user_id = payload.get('user_id')
-        
-        if not user_id:
-            conn.close()
+        user = cur.fetchone()
+        if not user:
             return {
-                'statusCode': 401,
+                'statusCode': 404,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Неверный токен'}),
+                'body': json.dumps({'error': 'Пользователь не найден'}),
                 'isBase64Encoded': False
             }
         
-        cur.execute("SELECT role FROM t_p46047379_doc_dialog_ecosystem.users WHERE id = %s", (user_id,))
+        limit = user.get('tools_limit', 10)
+        tools_used = user.get('tools_used', 0)
+        
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({
+                'limit': limit,
+                'tools_used': tools_used,
+                'dialogs_used': 0,
+                'total_used': tools_used
+            }),
+            'isBase64Encoded': False
+        }
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': str(e)}),
+            'isBase64Encoded': False
+        }
+    finally:
+        cur.close()
+        conn.close()
+
+def analyze_with_tool(user_id: str, body: dict) -> dict:
+    """Анализ с помощью ИИ-инструмента"""
+    conn = get_db()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    schema = os.environ.get('MAIN_DB_SCHEMA', 't_p46047379_doc_dialog_ecosystem')
+    
+    try:
+        cur.execute(f"SELECT tools_limit, tools_used FROM {schema}.users WHERE id = %s", (user_id,))
         user = cur.fetchone()
         
         if not user:
@@ -79,26 +146,89 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
-        print(f"User role: {user['role']}")
+        limit = user.get('tools_limit', 10)
+        tools_used = user.get('tools_used', 0)
         
-        cur.execute("""
-            SELECT id, name, description, url, video_url, icon
-            FROM t_p46047379_doc_dialog_ecosystem.tools
-            WHERE target_role = %s AND is_active = true
-            ORDER BY display_order, created_at DESC
-        """, (user['role'],))
+        if tools_used >= limit:
+            return {
+                'statusCode': 429,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Превышен лимит использования инструментов', 'limit_reached': True}),
+                'isBase64Encoded': False
+            }
         
-        tools = cur.fetchall()
-        print(f"Found {len(tools)} tools for role {user['role']}")
+        text = body.get('text', '')
+        image_data = body.get('image', '')
+        system_prompt = body.get('system_prompt', '')
+        
+        if not text and not image_data:
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Требуется текст или изображение'}),
+                'isBase64Encoded': False
+            }
+        
+        openai_key = os.environ.get('OPENAI_API_KEY')
+        if not openai_key:
+            return {
+                'statusCode': 500,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'OPENAI_API_KEY не настроен'}),
+                'isBase64Encoded': False
+            }
+        
+        client = OpenAI(api_key=openai_key)
+        
+        messages = [{'role': 'system', 'content': system_prompt}]
+        
+        if image_data:
+            if image_data.startswith('data:'):
+                image_url = image_data
+            else:
+                image_url = f"data:image/jpeg;base64,{image_data}"
+            
+            user_message = {
+                'role': 'user',
+                'content': [
+                    {'type': 'image_url', 'image_url': {'url': image_url}}
+                ]
+            }
+            
+            if text:
+                user_message['content'].insert(0, {'type': 'text', 'text': text})
+            else:
+                user_message['content'].insert(0, {'type': 'text', 'text': 'Проанализируй это медицинское заключение'})
+            
+            messages.append(user_message)
+        else:
+            messages.append({'role': 'user', 'content': text})
+        
+        response = client.chat.completions.create(
+            model='gpt-4o',
+            messages=messages,
+            temperature=0.7,
+            max_tokens=2000
+        )
+        
+        ai_response = response.choices[0].message.content
+        
+        cur.execute(f"""
+            UPDATE {schema}.users 
+            SET tools_used = tools_used + 1 
+            WHERE id = %s
+        """, (user_id,))
+        conn.commit()
         
         return {
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps(tools, default=str),
+            'body': json.dumps({'response': ai_response}),
             'isBase64Encoded': False
         }
         
     except Exception as e:
+        conn.rollback()
         return {
             'statusCode': 500,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
