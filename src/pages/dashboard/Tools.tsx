@@ -332,9 +332,9 @@ export default function Tools() {
             Профессиональные инструменты на базе искусственного интеллекта
           </p>
         </div>
-        <Button variant="outline" onClick={() => navigate(-1)} className="shrink-0 text-sm md:text-base">
+        <Button variant="outline" onClick={() => navigate(getDashboardRoute())} className="shrink-0 text-sm md:text-base">
           <Icon name="ArrowLeft" size={16} className="mr-2" />
-          Назад
+          В кабинет
         </Button>
       </div>
 
