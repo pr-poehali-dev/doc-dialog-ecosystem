@@ -90,7 +90,7 @@ export default function About() {
                 Не маркетплейс.<br />
                 Не агрегатор.<br />
                 <span className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  Экосистема роста.
+                  Экосистема роста
                 </span>
               </p>
             </div>
