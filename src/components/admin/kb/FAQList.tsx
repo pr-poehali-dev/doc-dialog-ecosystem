@@ -66,10 +66,10 @@ export default function FAQList({
             </CardDescription>
           </div>
           <div className="flex gap-2">
-            {(selectedType === 'masseur' || selectedType === 'salon') && faqItems.length === 0 && (
+            {(selectedType === 'masseur' || selectedType === 'salon' || selectedType === 'user') && faqItems.length === 0 && (
               <Button onClick={onImportDefault} variant="outline">
                 <Icon name="Download" size={18} className="mr-2" />
-                Импортировать {selectedType === 'masseur' ? '25' : '23'} вопросов
+                Импортировать {selectedType === 'masseur' ? '25' : selectedType === 'salon' ? '23' : '30'} вопросов
               </Button>
             )}
             <Button onClick={onAddNew}>
