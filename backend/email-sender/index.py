@@ -42,10 +42,13 @@ def handler(event: dict, context) -> dict:
     
     try:
         smtp_config_str = os.environ.get('SMTP_CONFIG', '{}')
+        print(f"[DEBUG] SMTP_CONFIG length: {len(smtp_config_str)}")
         
         try:
             smtp_config = json.loads(smtp_config_str)
+            print(f"[DEBUG] SMTP host: {smtp_config.get('host')}, port: {smtp_config.get('port')}, user: {smtp_config.get('user', 'not set')[:10]}...")
         except json.JSONDecodeError as e:
+            print(f"[ERROR] JSON decode error: {str(e)}")
             return {
                 'statusCode': 500,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
@@ -53,6 +56,7 @@ def handler(event: dict, context) -> dict:
             }
         
         if not smtp_config or not smtp_config.get('host'):
+            print("[ERROR] SMTP config is empty or missing host")
             return {
                 'statusCode': 500,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
@@ -90,10 +94,15 @@ def handler(event: dict, context) -> dict:
         html_part = MIMEText(html_body, 'html', 'utf-8')
         msg.attach(html_part)
         
-        with smtplib.SMTP(smtp_config['host'], smtp_config['port']) as server:
+        print(f"[DEBUG] Connecting to SMTP server {smtp_config['host']}:{smtp_config['port']}")
+        with smtplib.SMTP(smtp_config['host'], smtp_config['port'], timeout=10) as server:
+            print("[DEBUG] SMTP connection established, starting TLS")
             server.starttls()
+            print("[DEBUG] TLS started, logging in")
             server.login(smtp_config['user'], smtp_config['password'])
+            print(f"[DEBUG] Logged in, sending email to {to_email}")
             server.send_message(msg)
+            print("[DEBUG] Email sent successfully")
         
         return {
             'statusCode': 200,
@@ -102,10 +111,14 @@ def handler(event: dict, context) -> dict:
         }
         
     except Exception as e:
+        error_msg = f"{type(e).__name__}: {str(e)}"
+        print(f"[ERROR] {error_msg}")
+        import traceback
+        print(f"[TRACEBACK] {traceback.format_exc()}")
         return {
             'statusCode': 500,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'error': str(e)})
+            'body': json.dumps({'error': error_msg})
         }
 
 
