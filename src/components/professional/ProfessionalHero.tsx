@@ -45,7 +45,7 @@ export default function ProfessionalHero() {
               size="lg"
               variant="outline" 
               className="text-lg px-10 py-7 w-full sm:w-auto border-2 bg-white/50 backdrop-blur-sm"
-              onClick={() => navigate('/dashboard/ai-dialogs')}
+              onClick={() => navigate('/register/masseur')}
             >
               Попробовать AI
               <Icon name="Sparkles" size={22} className="ml-2" />
