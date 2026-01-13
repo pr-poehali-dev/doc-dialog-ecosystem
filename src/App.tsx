@@ -78,6 +78,7 @@ import AISubscription from "./pages/dashboard/AISubscription";
 import SchoolMarketingAI from "./pages/dashboard/SchoolMarketingAI";
 import ImportSpecialists from "./pages/admin/ImportSpecialists";
 import ImportSalons from "./pages/admin/ImportSalons";
+import MedicalReportLanding from "./pages/MedicalReportLanding";
 
 const queryClient = new QueryClient();
 
@@ -100,6 +101,7 @@ const App = () => (
           <Route path="/register/client" element={<RegisterClient />} />
           <Route path="/masseur-welcome" element={<MasseurWelcome />} />
           <Route path="/for-specialists" element={<MasseurProfessionalLanding />} />
+          <Route path="/medical-report" element={<MedicalReportLanding />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/masseurs" element={<MasseursDirectory />} />
           <Route path="/masseurs/:id" element={<MasseurProfile />} />
