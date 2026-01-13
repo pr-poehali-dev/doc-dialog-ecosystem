@@ -943,6 +943,46 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
+    # DELETE /admin?action=delete_user - Delete single user (admin only)
+    if method == 'DELETE' and action == 'delete_user':
+        if not is_admin:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 403,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Only admin can delete users'}),
+                'isBase64Encoded': False
+            }
+        
+        body = json.loads(event.get('body', '{}'))
+        user_id = body.get('user_id')
+        
+        if not user_id:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'user_id is required'}),
+                'isBase64Encoded': False
+            }
+        
+        # Delete profile first (foreign key constraint)
+        cur.execute(f"DELETE FROM {schema}.masseur_profiles WHERE user_id = {int(user_id)}")
+        
+        # Delete user
+        cur.execute(f"DELETE FROM {schema}.users WHERE id = {int(user_id)}")
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'success': True}),
+            'isBase64Encoded': False
+        }
+    
     # DELETE /admin?action=delete_users - Delete multiple users (admin only)
     if method == 'DELETE' and action == 'delete_users':
         if not is_admin:
