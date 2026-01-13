@@ -85,24 +85,9 @@ export default function PageBuilder() {
         if (response.ok) {
           const data = await response.json();
           setPageData({ ...defaultPageData, ...data });
-        } else {
-          const savedData = localStorage.getItem('pageBuilderData');
-          if (savedData) {
-            const parsed = JSON.parse(savedData);
-            setPageData({ ...defaultPageData, ...parsed });
-          }
         }
       } catch (e) {
-        console.error('Failed to load saved data', e);
-        const savedData = localStorage.getItem('pageBuilderData');
-        if (savedData) {
-          try {
-            const parsed = JSON.parse(savedData);
-            setPageData({ ...defaultPageData, ...parsed });
-          } catch (err) {
-            console.error('Failed to parse local data', err);
-          }
-        }
+        console.error('Failed to load landing data', e);
       }
     };
     
@@ -224,7 +209,6 @@ export default function PageBuilder() {
       });
       
       if (response.ok) {
-        localStorage.setItem('pageBuilderData', JSON.stringify(pageData));
         setIsPublished(true);
         toast({
           title: "Страница опубликована!",
