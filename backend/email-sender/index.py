@@ -3,6 +3,7 @@ import os
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.header import Header
 
 def handler(event: dict, context) -> dict:
     """
@@ -98,9 +99,17 @@ def handler(event: dict, context) -> dict:
         html_body = generate_email_html(template, template_data, subject)
         
         msg = MIMEMultipart('alternative')
-        msg['From'] = smtp_config['from']
+        
+        from_addr = smtp_config.get('from', smtp_config['user'])
+        if '<' in from_addr and '>' in from_addr:
+            name_part = from_addr.split('<')[0].strip()
+            email_part = from_addr.split('<')[1].split('>')[0].strip()
+            msg['From'] = f"{str(Header(name_part, 'utf-8'))} <{email_part}>"
+        else:
+            msg['From'] = from_addr
+            
         msg['To'] = to_email
-        msg['Subject'] = subject
+        msg['Subject'] = str(Header(subject, 'utf-8'))
         
         html_part = MIMEText(html_body, 'html', 'utf-8')
         msg.attach(html_part)
