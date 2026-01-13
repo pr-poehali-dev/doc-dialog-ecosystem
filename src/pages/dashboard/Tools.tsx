@@ -194,7 +194,7 @@ export default function Tools() {
 
       const data = await apiResponse.json();
 
-      if (apiResponse.status === 403 && data.error === 'Limit exceeded') {
+      if (apiResponse.status === 429 && data.limit_reached) {
         setShowLimitModal(true);
         return;
       }
@@ -203,7 +203,7 @@ export default function Tools() {
         throw new Error(data.error || 'Ошибка анализа');
       }
 
-      setResponse(data.analysis);
+      setResponse(data.response || data.analysis);
       await loadUsageData();
       
       toast({
