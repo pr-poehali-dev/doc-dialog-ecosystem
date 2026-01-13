@@ -229,10 +229,13 @@ def analyze_with_tool(user_id: str, body: dict) -> dict:
         
     except Exception as e:
         conn.rollback()
+        print(f"Error in analyze_with_tool: {type(e).__name__}: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return {
             'statusCode': 500,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'error': str(e)}),
+            'body': json.dumps({'error': f"{type(e).__name__}: {str(e)}"}),
             'isBase64Encoded': False
         }
     finally:
