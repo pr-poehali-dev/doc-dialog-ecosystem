@@ -193,7 +193,20 @@ export default function ImportedSpecialists() {
               <Card key={specialist.id} className="hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                    {specialist.photo_url ? (
+                      <img 
+                        src={specialist.photo_url} 
+                        alt={specialist.name}
+                        className="w-16 h-16 rounded-full object-cover flex-shrink-0 border-2 border-gray-200"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                        }}
+                      />
+                    ) : null}
+                    <div 
+                      className={`w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-xl flex-shrink-0 ${specialist.photo_url ? 'hidden' : ''}`}
+                    >
                       {specialist.name.charAt(0)}
                     </div>
                     
