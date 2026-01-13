@@ -30,7 +30,7 @@ export default function ProfessionalFooter() {
               <Button 
                 size="lg"
                 variant="outline"
-                className="text-lg px-10 py-7 border-2 border-white text-white hover:bg-white/10"
+                className="text-lg px-10 py-7 border-2 border-white text-white hover:bg-white/20 hover:text-white"
                 onClick={() => navigate('/courses')}
               >
                 Смотреть курсы
