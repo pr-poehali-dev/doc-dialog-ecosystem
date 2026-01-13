@@ -150,10 +150,22 @@ const AIDialogs = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">AI Диалоги</h1>
-          <p className="text-muted-foreground">
-            Профессиональная супервизия и поддержка для специалистов
-          </p>
+          <div className="flex items-start justify-between gap-4 mb-4">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">AI Диалоги</h1>
+              <p className="text-muted-foreground">
+                Профессиональная супервизия и поддержка для специалистов
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              onClick={() => navigate('/dashboard')}
+              className="shrink-0"
+            >
+              <Icon name="ArrowLeft" size={16} className="mr-2" />
+              В личный кабинет
+            </Button>
+          </div>
           <div className="mt-4 p-4 bg-secondary/50 rounded-lg border">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm">Использовано AI-операций в этом месяце:</span>
