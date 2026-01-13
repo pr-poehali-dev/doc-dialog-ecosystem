@@ -17,7 +17,7 @@ def handler(event: dict, context) -> dict:
             'statusCode': 200,
             'headers': {
                 'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+                'Access-Control-Allow-Methods': 'GET, POST, DELETE, PUT, OPTIONS',
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization'
             },
             'body': '',
@@ -47,6 +47,107 @@ def handler(event: dict, context) -> dict:
                 'statusCode': 500,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
                 'body': json.dumps({'error': str(e)}),
+                'isBase64Encoded': False
+            }
+    
+    if method == 'PUT' and action == 'move-to-catalog':
+        try:
+            specialist_id = query_params.get('id')
+            if not specialist_id:
+                return {
+                    'statusCode': 400,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'ID не указан'}),
+                    'isBase64Encoded': False
+                }
+            
+            dsn = os.environ.get('DATABASE_URL')
+            conn = psycopg2.connect(dsn)
+            cur = conn.cursor(cursor_factory=RealDictCursor)
+            
+            # Получаем данные импортированного специалиста
+            cur.execute("SELECT * FROM imported_specialists WHERE id = %s", (specialist_id,))
+            specialist = cur.fetchone()
+            
+            if not specialist:
+                cur.close()
+                conn.close()
+                return {
+                    'statusCode': 404,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'Специалист не найден'}),
+                    'isBase64Encoded': False
+                }
+            
+            # Генерируем email из имени
+            name_parts = specialist['name'].lower().replace(' ', '_')
+            email = f"{name_parts}_{specialist['id']}@imported.local"
+            
+            # Создаём пользователя
+            cur.execute("""
+                INSERT INTO users (email, password_hash, role, created_at)
+                VALUES (%s, %s, %s, NOW())
+                RETURNING id
+            """, (email, 'imported_specialist', 'masseur'))
+            user_id = cur.fetchone()['id']
+            
+            # Парсим опыт работы
+            experience_years = 5
+            exp_str = specialist.get('experience', '').strip()
+            if exp_str:
+                numbers = re.findall(r'\d+', exp_str)
+                if numbers:
+                    experience_years = int(numbers[0])
+            
+            # Создаём специализации
+            specializations = [specialist['specialization']] if specialist.get('specialization') else []
+            
+            # Создаём профиль массажиста
+            cur.execute("""
+                INSERT INTO masseur_profiles 
+                (user_id, full_name, city, experience_years, specializations, about, 
+                 avatar_url, phone, rating, reviews_count, created_at, address)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), %s)
+                RETURNING id
+            """, (
+                user_id,
+                specialist['name'],
+                specialist.get('location', 'Не указан'),
+                experience_years,
+                specializations,
+                specialist.get('description', ''),
+                specialist.get('photo_url', ''),
+                specialist.get('phone', ''),
+                float(specialist.get('rating', 0)) if specialist.get('rating') else 0.0,
+                int(specialist.get('reviews_count', 0)) if specialist.get('reviews_count') else 0,
+                specialist.get('location', '')
+            ))
+            
+            masseur_id = cur.fetchone()['id']
+            
+            # Удаляем из импортированных
+            cur.execute("DELETE FROM imported_specialists WHERE id = %s", (specialist_id,))
+            
+            conn.commit()
+            cur.close()
+            conn.close()
+            
+            return {
+                'statusCode': 200,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({
+                    'success': True,
+                    'user_id': user_id,
+                    'masseur_id': masseur_id,
+                    'message': 'Специалист добавлен в каталог'
+                }),
+                'isBase64Encoded': False
+            }
+        except Exception as e:
+            return {
+                'statusCode': 500,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': f'Ошибка переноса: {str(e)}'}),
                 'isBase64Encoded': False
             }
     

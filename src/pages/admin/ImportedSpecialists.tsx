@@ -122,6 +122,37 @@ export default function ImportedSpecialists() {
     }
   };
 
+  const moveToCatalog = async (id: number) => {
+    if (!confirm('Добавить этого специалиста в основной каталог?')) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`https://functions.poehali.dev/9da994a5-6308-436a-955e-2708f96084b4?action=move-to-catalog&id=${id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        toast({
+          title: 'Успешно!',
+          description: data.message || 'Специалист добавлен в каталог'
+        });
+        fetchSpecialists();
+      } else {
+        throw new Error('Failed');
+      }
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось добавить специалиста в каталог',
+        variant: 'destructive'
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-blue-50">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -221,14 +252,25 @@ export default function ImportedSpecialists() {
                             )}
                           </div>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => deleteSpecialist(specialist.id)}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                        >
-                          <Icon name="Trash2" size={16} />
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="default"
+                            size="sm"
+                            onClick={() => moveToCatalog(specialist.id)}
+                            className="bg-green-600 hover:bg-green-700"
+                          >
+                            <Icon name="UserPlus" size={16} className="mr-1" />
+                            В каталог
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => deleteSpecialist(specialist.id)}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Icon name="Trash2" size={16} />
+                          </Button>
+                        </div>
                       </div>
 
                       <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
