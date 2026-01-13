@@ -141,7 +141,7 @@ export default function SalonDashboard() {
           <h3 className="text-lg md:text-xl font-semibold">Профиль салона</h3>
         </div>
         <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Редактировать информацию о салоне</p>
-        <Button className="w-full" onClick={() => setShowForm(true)} variant="outline">
+        <Button className="w-full" onClick={() => setShowForm(true)}>
           <Icon name="Edit" size={16} className="mr-2" />
           Редактировать профиль
         </Button>
@@ -167,7 +167,7 @@ export default function SalonDashboard() {
         </div>
         <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Смотреть салоны в каталоге</p>
         <Link to="/salons">
-          <Button className="w-full" variant="outline">Перейти в каталог</Button>
+          <Button className="w-full">Перейти в каталог</Button>
         </Link>
       </div>
 
@@ -179,7 +179,7 @@ export default function SalonDashboard() {
           <h3 className="text-lg md:text-xl font-semibold">Аналитика</h3>
         </div>
         <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Отчеты и статистика</p>
-        <Button className="w-full" variant="outline">Отчёты</Button>
+        <Button className="w-full">Отчёты</Button>
       </div>
 
       <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
@@ -191,7 +191,7 @@ export default function SalonDashboard() {
         </div>
         <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Полезные инструменты для автоматизации работы</p>
         <Link to="/dashboard/tools">
-          <Button className="w-full" variant="outline">Открыть инструменты</Button>
+          <Button className="w-full">Открыть инструменты</Button>
         </Link>
       </div>
 
