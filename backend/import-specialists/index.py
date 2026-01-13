@@ -115,7 +115,7 @@ def handler(event: dict, context) -> dict:
             }
         
         conn = psycopg2.connect(dsn)
-        cur = conn.cursor(cursor_factory=RealDictCursor)
+        cur = conn.cursor()
         
         imported_count = 0
         skipped_count = 0
@@ -123,94 +123,34 @@ def handler(event: dict, context) -> dict:
         
         for specialist in specialists_data:
             try:
-                external_id = specialist.get('id', '')
-                full_name = specialist.get('name', '').strip()
-                profile_url = specialist.get('url', '')
-                specialization = specialist.get('specialization', '')
-                experience_info = specialist.get('experience', '')
-                address = specialist.get('address', '')
-                phones = specialist.get('phones', '')
+                name = specialist.get('name', '').strip()
+                specialization = specialist.get('specialization', '').strip()
+                experience = specialist.get('experience', '').strip()
+                description = specialist.get('description', '').strip()
                 
-                if not full_name:
+                if not all([name, specialization, experience, description]):
                     skipped_count += 1
-                    errors.append(f"Пропущен специалист ID {external_id}: нет имени")
+                    errors.append(f"Пропущен {name or 'Unknown'}: отсутствуют обязательные поля")
                     continue
                 
-                # Генерируем email из имени или используем временный
-                email_base = re.sub(r'[^a-zA-Z0-9]', '', full_name.lower().replace(' ', '.'))
-                if not email_base:
-                    email_base = f"specialist_{external_id}"
-                email = f"{email_base}@imported.prodoctorov.ru"
-                
-                # Проверяем, существует ли пользователь с таким email
-                cur.execute(
-                    "SELECT id FROM t_p46047379_doc_dialog_ecosystem.users WHERE email = %s",
-                    (email,)
-                )
-                existing_user = cur.fetchone()
-                
-                if existing_user:
-                    skipped_count += 1
-                    errors.append(f"Пропущен {full_name}: пользователь уже существует")
-                    continue
-                
-                # Создаём пользователя
                 cur.execute("""
-                    INSERT INTO t_p46047379_doc_dialog_ecosystem.users 
-                    (email, password_hash, role, created_at)
-                    VALUES (%s, %s, %s, NOW())
-                    RETURNING id
+                    INSERT INTO imported_specialists 
+                    (name, specialization, experience, description, photo_url, location, 
+                     phone, email, price, schedule, rating, reviews_count, created_at)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
                 """, (
-                    email,
-                    'imported_no_password',  # Временный пароль, пользователь сможет восстановить
-                    'masseur'
-                ))
-                user_id = cur.fetchone()['id']
-                
-                # Парсим телефоны
-                phone_list = []
-                if phones:
-                    phone_list = [p.strip() for p in re.split(r'[|,]', phones) if p.strip()]
-                
-                # Парсим специализации
-                specializations = []
-                if specialization:
-                    specializations = [s.strip() for s in specialization.split(',')]
-                
-                # Извлекаем опыт работы из строки (если есть число лет)
-                experience_years = None
-                if experience_info:
-                    match = re.search(r'опыт\s+(\d+)', experience_info, re.IGNORECASE)
-                    if match:
-                        experience_years = int(match.group(1))
-                
-                # Формируем описание
-                about_parts = []
-                if profile_url:
-                    about_parts.append(f"Источник: {profile_url}")
-                if experience_info:
-                    about_parts.append(f"Образование и опыт: {experience_info}")
-                if address:
-                    about_parts.append(f"Адреса приёма: {address}")
-                
-                about = '\n'.join(about_parts) if about_parts else None
-                
-                # Основной телефон (первый из списка)
-                main_phone = phone_list[0] if phone_list else None
-                
-                # Создаём профиль массажиста
-                cur.execute("""
-                    INSERT INTO t_p46047379_doc_dialog_ecosystem.masseur_profiles
-                    (user_id, full_name, phone, specializations, about, experience_years, address, created_at)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, NOW())
-                """, (
-                    user_id,
-                    full_name,
-                    main_phone,
-                    specializations if specializations else None,
-                    about,
-                    experience_years,
-                    address
+                    name,
+                    specialization,
+                    experience,
+                    description,
+                    specialist.get('photo_url', ''),
+                    specialist.get('location', ''),
+                    specialist.get('phone', ''),
+                    specialist.get('email', ''),
+                    specialist.get('price', ''),
+                    specialist.get('schedule', ''),
+                    specialist.get('rating', 0.0),
+                    specialist.get('reviews_count', 0)
                 ))
                 
                 imported_count += 1
@@ -218,7 +158,6 @@ def handler(event: dict, context) -> dict:
             except Exception as e:
                 skipped_count += 1
                 errors.append(f"Ошибка при импорте {specialist.get('name', 'Unknown')}: {str(e)}")
-                conn.rollback()
                 continue
         
         conn.commit()
