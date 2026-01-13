@@ -90,7 +90,7 @@ export default function MasseursFooter() {
             <p className="mt-1">ИП Водопьянов С.Г. ИНН 165045847936</p>
           </div>
           <div className="flex items-center gap-4">
-            <a href="https://t.me/+QgiLIa1gFRY4Y2Iy" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition-colors">
+            <a href="https://t.me/SergeuVodopianov" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition-colors">
               <Icon name="MessageCircle" size={20} />
             </a>
           </div>

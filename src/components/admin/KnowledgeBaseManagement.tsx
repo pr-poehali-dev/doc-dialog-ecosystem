@@ -22,7 +22,7 @@ export default function KnowledgeBaseManagement() {
   const [loading, setLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [editingItem, setEditingItem] = useState<FAQItem | null>(null);
-  const [telegramUrl, setTelegramUrl] = useState('https://t.me/+QgiLIa1gFRY4Y2Iy');
+  const [telegramUrl, setTelegramUrl] = useState('https://t.me/SergeuVodopianov');
   const [searchQuery, setSearchQuery] = useState('');
 
   const [formData, setFormData] = useState({

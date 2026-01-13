@@ -22,7 +22,7 @@ interface Props {
 
 export default function KnowledgeBasePublic({ targetType }: Props) {
   const [faqItems, setFaqItems] = useState<FAQItem[]>([]);
-  const [telegramUrl, setTelegramUrl] = useState('https://t.me/+QgiLIa1gFRY4Y2Iy');
+  const [telegramUrl, setTelegramUrl] = useState('https://t.me/SergeuVodopianov');
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Все');
