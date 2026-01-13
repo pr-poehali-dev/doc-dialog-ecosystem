@@ -69,7 +69,11 @@ const AIDialogChat = ({ dialog }: AIDialogChatProps) => {
       if (!response.ok) throw new Error('Failed to load messages');
       
       const data = await response.json();
-      setMessages(data.messages || []);
+      const cleanMessages = (data.messages || []).map((msg: Message) => ({
+        ...msg,
+        content: (msg.content || '').replace(/\*\*/g, '').trim()
+      }));
+      setMessages(cleanMessages);
     } catch (error) {
       toast({ title: 'Ошибка', description: 'Не удалось загрузить сообщения', variant: 'destructive' });
     } finally {
@@ -112,7 +116,12 @@ const AIDialogChat = ({ dialog }: AIDialogChatProps) => {
       
       const data = await response.json();
       
-      setMessages(prev => [...prev, data.message]);
+      const cleanMessage = {
+        ...data.message,
+        content: (data.message.content || '').replace(/\*\*/g, '').trim()
+      };
+      
+      setMessages(prev => [...prev, cleanMessage]);
     } catch (error) {
       toast({ title: 'Ошибка', description: 'Не удалось отправить сообщение', variant: 'destructive' });
       setMessages(prev => prev.slice(0, -1));
