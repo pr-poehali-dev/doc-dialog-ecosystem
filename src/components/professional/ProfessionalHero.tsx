@@ -11,7 +11,7 @@ export default function ProfessionalHero() {
       <div 
         className="absolute inset-0 opacity-15"
         style={{
-          backgroundImage: `url('https://cdn.poehali.dev/files/2149152685.jpg')`,
+          backgroundImage: `url('https://cdn.poehali.dev/files/mid-shot-woman-talking-man-counselor.jpg')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
