@@ -123,12 +123,16 @@ export default function ToolDialog({
           </Button>
 
           {response && (
-            <div className="mt-6 p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg border border-primary/20">
-              <div className="flex items-center gap-2 mb-3 text-primary font-medium">
-                <Icon name="Sparkles" size={18} />
-                <span>Результат анализа</span>
+            <div className="mt-6 p-6 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 rounded-xl border-2 border-primary/20 shadow-lg">
+              <div className="flex items-center gap-2 mb-4 pb-3 border-b border-primary/20">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+                  <Icon name="Sparkles" size={16} className="text-white" />
+                </div>
+                <span className="text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  Результат анализа
+                </span>
               </div>
-              <div className="prose prose-sm max-w-none whitespace-pre-wrap text-gray-700">
+              <div className="ai-response-content prose prose-sm max-w-none text-gray-800 leading-relaxed">
                 {response}
               </div>
             </div>

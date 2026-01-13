@@ -147,4 +147,34 @@
   .animate-scroll-infinite:hover {
     animation-play-state: paused;
   }
+
+  .ai-response-content h3 {
+    @apply text-lg font-bold text-gray-900 mt-6 mb-3 flex items-center gap-2;
+  }
+
+  .ai-response-content h3::before {
+    content: "✨";
+    font-size: 1.2em;
+  }
+
+  .ai-response-content strong {
+    @apply text-primary font-semibold;
+  }
+
+  .ai-response-content ol,
+  .ai-response-content ul {
+    @apply space-y-2 my-3;
+  }
+
+  .ai-response-content li {
+    @apply pl-2;
+  }
+
+  .ai-response-content p {
+    @apply my-2;
+  }
+
+  .ai-response-content ol li strong {
+    @apply text-blue-700;
+  }
 }
