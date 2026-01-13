@@ -148,33 +148,38 @@
     animation-play-state: paused;
   }
 
+  .ai-response-content {
+    @apply text-base leading-relaxed;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
   .ai-response-content h3 {
-    @apply text-lg font-bold text-gray-900 mt-6 mb-3 flex items-center gap-2;
+    @apply text-base font-bold text-gray-900 mt-5 mb-3 pb-2 border-b border-gray-200;
+    display: block;
   }
 
   .ai-response-content h3::before {
-    content: "✨";
-    font-size: 1.2em;
+    content: "💡 ";
+    margin-right: 0.5rem;
   }
 
   .ai-response-content strong {
-    @apply text-primary font-semibold;
+    @apply font-semibold text-gray-900;
   }
 
   .ai-response-content ol,
   .ai-response-content ul {
-    @apply space-y-2 my-3;
+    @apply my-3 ml-0 pl-0;
   }
 
-  .ai-response-content li {
-    @apply pl-2;
+  .ai-response-content ol li,
+  .ai-response-content ul li {
+    @apply mb-2 pl-0;
+    line-height: 1.6;
   }
 
   .ai-response-content p {
-    @apply my-2;
-  }
-
-  .ai-response-content ol li strong {
-    @apply text-blue-700;
+    @apply my-2 leading-relaxed;
   }
 }
