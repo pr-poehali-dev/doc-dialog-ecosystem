@@ -3,7 +3,9 @@ import { Link } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import SchoolsFooter from "@/components/schools/SchoolsFooter";
 import Icon from "@/components/ui/icon";
+import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const testimonials = [
   {
@@ -75,6 +77,34 @@ const MedicalReportLanding = () => {
   };
 
   const [isPaused, setIsPaused] = useState(false);
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast({
+        title: "Неверный email",
+        description: "Пожалуйста, введите корректный email адрес",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    // Симуляция отправки (здесь можно добавить реальную интеграцию)
+    setTimeout(() => {
+      toast({
+        title: "Спасибо за регистрацию!",
+        description: "Мы отправили вам письмо с инструкциями для начала работы",
+      });
+      setEmail("");
+      setIsSubmitting(false);
+    }, 1000);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -430,25 +460,58 @@ const MedicalReportLanding = () => {
         </div>
       </section>
 
-      {/* Пробный период */}
+      {/* Пробный период с формой */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Попробуйте бесплатно
-            </h2>
-            <p className="text-lg text-muted-foreground mb-8">
-              Мы даём бесплатный пробный период, чтобы вы могли оценить пользу инструмента
-              и понять, насколько он вам подходит.
-            </p>
-            <p className="text-lg font-medium text-muted-foreground mb-8">
-              Без обязательств.
-            </p>
-            <Link to="/dashboard/tools">
-              <Button size="lg" className="text-lg px-8">
-                Начать бесплатный период
-              </Button>
-            </Link>
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-gradient-to-br from-primary/5 to-indigo-50 rounded-2xl p-8 md:p-12 border border-primary/20">
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-primary/20 mb-4">
+                  <Icon name="Gift" size={16} className="text-primary" />
+                  <span className="text-sm font-medium text-primary">Бесплатный пробный период</span>
+                </div>
+                <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                  Попробуйте бесплатно
+                </h2>
+                <p className="text-lg text-muted-foreground mb-2">
+                  Оцените пользу инструмента без обязательств
+                </p>
+              </div>
+
+              <form onSubmit={handleEmailSubmit} className="max-w-md mx-auto">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Input 
+                    type="email"
+                    placeholder="Введите ваш email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="flex-1 h-12 text-base"
+                    disabled={isSubmitting}
+                  />
+                  <Button 
+                    type="submit" 
+                    size="lg" 
+                    className="h-12 px-8 whitespace-nowrap"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Отправка..." : "Получить доступ"}
+                  </Button>
+                </div>
+                <p className="text-sm text-muted-foreground text-center mt-4">
+                  Отправим инструкции на вашу почту в течение минуты
+                </p>
+              </form>
+
+              <div className="mt-8 text-center">
+                <p className="text-sm text-muted-foreground mb-4">Или войдите сразу</p>
+                <Link to="/dashboard/tools">
+                  <Button variant="outline" size="lg" className="text-base">
+                    <Icon name="ArrowRight" size={16} className="mr-2" />
+                    Начать бесплатный период
+                  </Button>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -468,7 +531,7 @@ const MedicalReportLanding = () => {
         </div>
       </section>
 
-      {/* Финальный блок */}
+      {/* Финальный блок с формой */}
       <section className="py-20 bg-gradient-to-br from-primary/5 to-primary/10">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
@@ -478,12 +541,29 @@ const MedicalReportLanding = () => {
             <p className="text-xl text-muted-foreground mb-8">
               Док диалог помогает разобраться, чтобы вы чувствовали уверенность и спокойствие.
             </p>
-            <Link to="/dashboard/tools">
-              <Button size="lg" className="text-lg px-8">
-                Воспользоваться инструментом
-              </Button>
-            </Link>
-            <p className="text-xs text-muted-foreground mt-8 max-w-2xl mx-auto">
+            
+            <div className="bg-white rounded-xl p-6 shadow-lg max-w-md mx-auto mb-6">
+              <form onSubmit={handleEmailSubmit} className="space-y-3">
+                <Input 
+                  type="email"
+                  placeholder="Ваш email для доступа"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="h-12 text-base"
+                  disabled={isSubmitting}
+                />
+                <Button 
+                  type="submit" 
+                  size="lg" 
+                  className="w-full h-12 text-base"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Отправка..." : "Воспользоваться инструментом"}
+                </Button>
+              </form>
+            </div>
+
+            <p className="text-xs text-muted-foreground max-w-2xl mx-auto">
               Инструмент предназначен для информационных целей и не заменяет консультацию врача.
             </p>
           </div>
