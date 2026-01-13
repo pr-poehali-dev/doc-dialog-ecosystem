@@ -32,6 +32,16 @@ export default function Tools() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  const getDashboardRoute = () => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      const user = JSON.parse(userData);
+      if (user.role === 'salon') return '/salon/cabinet';
+      if (user.role === 'school') return '/school/dashboard';
+    }
+    return '/dashboard';
+  };
+
   useEffect(() => {
     loadUsageData();
   }, []);
@@ -322,7 +332,7 @@ export default function Tools() {
             Профессиональные инструменты на базе искусственного интеллекта
           </p>
         </div>
-        <Button variant="outline" onClick={() => navigate('/dashboard')} className="shrink-0 text-sm md:text-base">
+        <Button variant="outline" onClick={() => navigate(getDashboardRoute())} className="shrink-0 text-sm md:text-base">
           <Icon name="ArrowLeft" size={16} className="mr-2" />
           В кабинет
         </Button>
