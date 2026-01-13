@@ -9,9 +9,9 @@ export default function ProfessionalHero() {
     <section className="relative py-20 sm:py-28 lg:py-36 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50"></div>
       <div 
-        className="absolute inset-0 opacity-[0.15]"
+        className="absolute inset-0 opacity-15"
         style={{
-          backgroundImage: `url('https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/a4c1beda-6770-49ab-b96e-e4558c511b33.jpg')`,
+          backgroundImage: `url('https://cdn.poehali.dev/files/2149152685.jpg')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
