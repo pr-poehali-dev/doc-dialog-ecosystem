@@ -113,6 +113,17 @@ const AISubscription = () => {
     }
   };
 
+  const getUserRole = () => {
+    const userStr = localStorage.getItem('user');
+    if (!userStr) return null;
+    try {
+      const user = JSON.parse(userStr);
+      return user.role;
+    } catch {
+      return null;
+    }
+  };
+
   const loadSubscription = async () => {
     try {
       const userId = getUserId();
@@ -178,17 +189,19 @@ const AISubscription = () => {
   }
 
   const currentPlan = plans.find(p => p.id === subscription?.current_tier) || plans[0];
+  const userRole = getUserRole();
+  const isSchool = userRole === 'school';
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-7xl mx-auto">
         <Button
           variant="ghost"
-          onClick={() => navigate('/dashboard/ai-dialogs')}
+          onClick={() => navigate(isSchool ? '/school/marketing-ai' : '/dashboard/ai-dialogs')}
           className="mb-6"
         >
           <Icon name="ArrowLeft" size={20} className="mr-2" />
-          Вернуться к диалогам
+          {isSchool ? 'Вернуться к инструментам' : 'Вернуться к диалогам'}
         </Button>
 
         <div className="mb-8">

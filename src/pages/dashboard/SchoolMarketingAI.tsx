@@ -469,7 +469,7 @@ export default function SchoolMarketingAI() {
           <Button 
             variant="default" 
             className="mt-2"
-            onClick={() => navigate('/school/dashboard')}
+            onClick={() => navigate('/dashboard/ai-subscription')}
           >
             Посмотреть тарифы
           </Button>
