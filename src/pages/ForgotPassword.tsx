@@ -59,6 +59,15 @@ export default function ForgotPassword() {
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!newPassword || newPassword.trim() === '') {
+      toast({
+        title: 'Ошибка',
+        description: 'Введите новый пароль',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
       toast({
         title: 'Ошибка',
