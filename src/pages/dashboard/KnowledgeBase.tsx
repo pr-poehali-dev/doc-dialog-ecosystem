@@ -1,15 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
+import { useToast } from '@/hooks/use-toast';
 
 interface FAQItem {
   id: number;
   question: string;
   answer: string;
   category: string;
+  target_type: string;
+  order_index: number;
 }
 
-const faqData: FAQItem[] = [
+interface SupportSettings {
+  telegram_support_url: string;
+}
+
+const defaultFaqData: FAQItem[] = [
   {
     id: 1,
     category: "Начало работы",
@@ -162,12 +169,75 @@ const faqData: FAQItem[] = [
   }
 ];
 
-const categories = Array.from(new Set(faqData.map(item => item.category)));
-
 export default function KnowledgeBase() {
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [faqData, setFaqData] = useState<FAQItem[]>(defaultFaqData);
+  const [supportUrl, setSupportUrl] = useState('https://t.me/+QgiLIa1gFRY4Y2Iy');
+  const [loading, setLoading] = useState(true);
+  const [userType, setUserType] = useState<'masseur' | 'salon' | 'school' | 'user'>('masseur');
+
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      const user = JSON.parse(userData);
+      let type: 'masseur' | 'salon' | 'school' | 'user' = 'user';
+      
+      if (user.role === 'masseur') type = 'masseur';
+      else if (user.role === 'salon') type = 'salon';
+      else if (user.role === 'school') type = 'school';
+      
+      setUserType(type);
+      loadFAQ(type);
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  const loadFAQ = async (type: string) => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `https://functions.poehali.dev/63fa554e-a9fa-4ee0-8105-240950837372?target_type=${type}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.items && data.items.length > 0) {
+          setFaqData(data.items);
+        }
+      }
+
+      const settingsResponse = await fetch(
+        `https://functions.poehali.dev/63fa554e-a9fa-4ee0-8105-240950837372?action=settings&target_type=${type}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      
+      if (settingsResponse.ok) {
+        const settingsData = await settingsResponse.json();
+        if (settingsData.telegram_support_url) {
+          setSupportUrl(settingsData.telegram_support_url);
+        }
+      }
+    } catch (error) {
+      console.error('Ошибка загрузки базы знаний:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const categories = Array.from(new Set(faqData.map(item => item.category)));
 
   const filteredFAQ = faqData.filter(item => {
     const matchesSearch = item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -176,11 +246,22 @@ export default function KnowledgeBase() {
     return matchesSearch && matchesCategory;
   });
 
+  if (loading) {
+    return (
+      <div className="max-w-5xl mx-auto p-4 md:p-6 lg:p-8 flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <Icon name="Loader2" className="animate-spin mx-auto mb-4 text-primary" size={48} />
+          <p className="text-gray-600">Загрузка базы знаний...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-5xl mx-auto p-4 md:p-6 lg:p-8">
       <div className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold mb-3">База знаний</h1>
-        <p className="text-gray-600 text-lg">Ответы на все вопросы по работе в кабинете специалиста</p>
+        <p className="text-gray-600 text-lg">Ответы на все вопросы по работе в кабинете</p>
       </div>
 
       <div className="mb-6">
@@ -272,10 +353,12 @@ export default function KnowledgeBase() {
           <div>
             <h3 className="text-xl font-semibold mb-2">Не нашли ответ?</h3>
             <p className="text-gray-700 mb-4">Свяжитесь с нашей поддержкой — ответим в течение 1-2 часов</p>
-            <Button>
-              <Icon name="MessageCircle" size={18} className="mr-2" />
-              Написать в поддержку
-            </Button>
+            <a href={supportUrl} target="_blank" rel="noopener noreferrer">
+              <Button>
+                <Icon name="MessageCircle" size={18} className="mr-2" />
+                Написать в поддержку
+              </Button>
+            </a>
           </div>
         </div>
       </div>
