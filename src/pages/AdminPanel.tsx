@@ -439,6 +439,13 @@ export default function AdminPanel() {
               <Icon name="Upload" size={16} className="sm:mr-2" />
               <span className="hidden sm:inline">Импорт специалистов</span>
             </Button>
+            <Button 
+              onClick={() => navigate('/admin/import-salons')}
+              className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm bg-gradient-to-r from-purple-600 to-pink-600"
+            >
+              <Icon name="Building" size={16} className="sm:mr-2" />
+              <span className="hidden sm:inline">Импорт салонов</span>
+            </Button>
           </div>
 
           {/* Dashboard Tab */}
