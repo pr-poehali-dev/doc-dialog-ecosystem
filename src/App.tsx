@@ -74,6 +74,7 @@ import MasseurWelcome from "./pages/MasseurWelcome";
 import MasseurProfessionalLanding from "./pages/MasseurProfessionalLanding";
 import AIDialogs from "./pages/dashboard/AIDialogs";
 import AISubscription from "./pages/dashboard/AISubscription";
+import SchoolMarketingAI from "./pages/dashboard/SchoolMarketingAI";
 
 const queryClient = new QueryClient();
 
@@ -153,6 +154,7 @@ const App = () => (
           <Route path="/dashboard/discount-requests" element={<MasseurDiscountRequests />} />
           <Route path="/dashboard/ai-dialogs" element={<AIDialogs />} />
           <Route path="/dashboard/ai-subscription" element={<AISubscription />} />
+          <Route path="/school/marketing-ai" element={<SchoolMarketingAI />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="*" element={<NotFound />} />
