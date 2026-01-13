@@ -88,16 +88,19 @@ export default function SchoolDashboard() {
           </Link>
         </div>
 
-        <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
-          <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-              <Icon name="Sparkles" className="text-primary" size={20} />
-            </div>
-            <h3 className="text-lg md:text-xl font-semibold">Маркетинг AI</h3>
+        <div className="relative bg-gradient-to-br from-primary/10 via-purple-500/10 to-primary/5 rounded-xl p-4 md:p-6 shadow-lg border-2 border-primary/30 hover:border-primary/50 hover:shadow-xl transition-all">
+          <div className="absolute top-3 right-3 px-2 py-1 bg-primary/20 rounded-full">
+            <span className="text-xs font-semibold text-primary">AI</span>
           </div>
-          <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Анализ аудитории и создание востребованных курсов</p>
+          <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-primary to-purple-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
+              <Icon name="Sparkles" className="text-white" size={20} />
+            </div>
+            <h3 className="text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">Маркетинг AI</h3>
+          </div>
+          <p className="text-sm md:text-base text-gray-700 mb-3 md:mb-4 font-medium">Анализ аудитории и создание востребованных курсов</p>
           <Link to="/school/marketing-ai">
-            <Button className="w-full">Открыть инструменты</Button>
+            <Button className="w-full bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 shadow-md">Открыть инструменты</Button>
           </Link>
         </div>
 
