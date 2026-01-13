@@ -943,6 +943,54 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
+    # DELETE /admin?action=delete_users - Delete multiple users (admin only)
+    if method == 'DELETE' and action == 'delete_users':
+        if not is_admin:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 403,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Only admin can delete users'}),
+                'isBase64Encoded': False
+            }
+        
+        body = json.loads(event.get('body', '{}'))
+        user_ids = body.get('user_ids', [])
+        
+        if not user_ids or not isinstance(user_ids, list):
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'user_ids must be a non-empty array'}),
+                'isBase64Encoded': False
+            }
+        
+        ids_str = ','.join(str(int(uid)) for uid in user_ids)
+        
+        # Delete profiles first (foreign key constraint)
+        cur.execute(f"DELETE FROM {schema}.masseur_profiles WHERE user_id IN ({ids_str})")
+        profiles_deleted = cur.rowcount
+        
+        # Delete users
+        cur.execute(f"DELETE FROM {schema}.users WHERE id IN ({ids_str})")
+        users_deleted = cur.rowcount
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({
+                'success': True,
+                'users_deleted': users_deleted,
+                'profiles_deleted': profiles_deleted
+            }),
+            'isBase64Encoded': False
+        }
+    
     cur.close()
     conn.close()
     return {
