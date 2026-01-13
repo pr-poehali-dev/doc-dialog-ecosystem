@@ -71,7 +71,7 @@ const HeroSection = ({ openDialog }: HeroSectionProps) => {
             <Link to="/medical-report">
               <Button size="lg" variant="secondary" className="text-lg px-8 bg-secondary text-white hover:bg-secondary/90 shadow-md hover:shadow-lg transition-all">
                 <Icon name="FileText" size={20} className="mr-2" />
-                Расшифровать заключение
+                Расшифровать МРТ
               </Button>
             </Link>
           </div>
