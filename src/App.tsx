@@ -77,6 +77,7 @@ import AIDialogs from "./pages/dashboard/AIDialogs";
 import AISubscription from "./pages/dashboard/AISubscription";
 import SchoolMarketingAI from "./pages/dashboard/SchoolMarketingAI";
 import ImportSpecialists from "./pages/admin/ImportSpecialists";
+import ImportedSpecialists from "./pages/admin/ImportedSpecialists";
 import ImportSalons from "./pages/admin/ImportSalons";
 import MedicalReportLanding from "./pages/MedicalReportLanding";
 
@@ -162,6 +163,7 @@ const App = () => (
           <Route path="/dashboard/ai-subscription" element={<AISubscription />} />
           <Route path="/school/marketing-ai" element={<SchoolMarketingAI />} />
           <Route path="/admin/import-specialists" element={<ImportSpecialists />} />
+          <Route path="/admin/imported-specialists" element={<ImportedSpecialists />} />
           <Route path="/admin/import-salons" element={<ImportSalons />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />

@@ -9,18 +9,81 @@ def handler(event: dict, context) -> dict:
     """Backend функция для массового импорта специалистов из Excel таблицы в базу данных"""
     
     method = event.get('httpMethod', 'POST')
+    query_params = event.get('queryStringParameters', {}) or {}
+    action = query_params.get('action', 'import')
     
     if method == 'OPTIONS':
         return {
             'statusCode': 200,
             'headers': {
                 'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'POST, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type, X-User-Id'
+                'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization'
             },
             'body': '',
             'isBase64Encoded': False
         }
+    
+    if method == 'GET' and action == 'list':
+        try:
+            dsn = os.environ.get('DATABASE_URL')
+            conn = psycopg2.connect(dsn)
+            cur = conn.cursor(cursor_factory=RealDictCursor)
+            
+            cur.execute("SELECT * FROM imported_specialists ORDER BY created_at DESC")
+            specialists = cur.fetchall()
+            
+            cur.close()
+            conn.close()
+            
+            return {
+                'statusCode': 200,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'specialists': specialists}, default=str, ensure_ascii=False),
+                'isBase64Encoded': False
+            }
+        except Exception as e:
+            return {
+                'statusCode': 500,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': str(e)}),
+                'isBase64Encoded': False
+            }
+    
+    if method == 'DELETE':
+        try:
+            specialist_id = query_params.get('id')
+            if not specialist_id:
+                return {
+                    'statusCode': 400,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'ID not provided'}),
+                    'isBase64Encoded': False
+                }
+            
+            dsn = os.environ.get('DATABASE_URL')
+            conn = psycopg2.connect(dsn)
+            cur = conn.cursor()
+            
+            cur.execute("DELETE FROM imported_specialists WHERE id = %s", (specialist_id,))
+            conn.commit()
+            
+            cur.close()
+            conn.close()
+            
+            return {
+                'statusCode': 200,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'success': True}),
+                'isBase64Encoded': False
+            }
+        except Exception as e:
+            return {
+                'statusCode': 500,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': str(e)}),
+                'isBase64Encoded': False
+            }
     
     if method != 'POST':
         return {

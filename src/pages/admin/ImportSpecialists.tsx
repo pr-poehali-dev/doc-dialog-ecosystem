@@ -180,14 +180,20 @@ export default function ImportSpecialists() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-blue-50">
       <div className="container mx-auto px-4 py-8 max-w-5xl">
-        <div className="flex items-center gap-4 mb-8">
-          <Button variant="ghost" onClick={() => navigate('/admin')}>
-            <Icon name="ArrowLeft" size={20} />
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold">Импорт специалистов</h1>
-            <p className="text-muted-foreground">Массовая загрузка из Excel-файла</p>
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" onClick={() => navigate('/admin')}>
+              <Icon name="ArrowLeft" size={20} />
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold">Импорт специалистов</h1>
+              <p className="text-muted-foreground">Массовая загрузка из Excel-файла</p>
+            </div>
           </div>
+          <Button variant="outline" onClick={() => navigate('/admin/imported-specialists')}>
+            <Icon name="Users" size={18} className="mr-2" />
+            Просмотр импортированных
+          </Button>
         </div>
 
         <Alert className="mb-6 bg-blue-50 border-blue-200">

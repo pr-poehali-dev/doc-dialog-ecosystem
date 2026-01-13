@@ -24,6 +24,16 @@
         "skipped": "number"
       },
       "bodyMatcher": "partial"
+    },
+    {
+      "name": "Test list specialists",
+      "method": "GET",
+      "path": "/?action=list",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "specialists": "array"
+      },
+      "bodyMatcher": "partial"
     }
   ]
 }
