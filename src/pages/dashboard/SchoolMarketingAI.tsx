@@ -381,8 +381,71 @@ export default function SchoolMarketingAI() {
                   </div>
                   <h3 className="text-lg font-semibold">Результат анализа</h3>
                 </div>
-                <div className="prose prose-sm max-w-none whitespace-pre-wrap text-gray-700">
-                  {response}
+                <div className="space-y-4 text-gray-700">
+                  {response.split('\n').map((line, index) => {
+                    const trimmed = line.trim();
+                    
+                    // Главный заголовок (цифра с точкой в начале)
+                    if (/^\d+\.\s+[А-Яа-яA-Za-z]/.test(trimmed)) {
+                      return (
+                        <h3 key={index} className="text-lg font-bold text-gray-900 mt-6 mb-2">
+                          {trimmed}
+                        </h3>
+                      );
+                    }
+                    
+                    // Подзаголовок (тире в начале с жирным текстом)
+                    if (/^[-—–]\s*\*\*/.test(trimmed)) {
+                      const text = trimmed.replace(/^[-—–]\s*\*\*([^*]+)\*\*:?\s*/, '$1');
+                      return (
+                        <h4 key={index} className="text-base font-semibold text-gray-800 mt-4 mb-1 pl-4">
+                          {text}
+                        </h4>
+                      );
+                    }
+                    
+                    // Списки (тире, звездочка или дефис в начале)
+                    if (/^[-—–*•]\s+/.test(trimmed)) {
+                      const text = trimmed.replace(/^[-—–*•]\s+/, '');
+                      return (
+                        <div key={index} className="flex gap-2 pl-4">
+                          <span className="text-primary mt-1.5">•</span>
+                          <p className="flex-1 leading-relaxed">{text}</p>
+                        </div>
+                      );
+                    }
+                    
+                    // Жирный текст в строке
+                    if (trimmed.includes('**')) {
+                      const parts = trimmed.split(/(\*\*[^*]+\*\*)/g);
+                      return (
+                        <p key={index} className="leading-relaxed">
+                          {parts.map((part, i) => {
+                            if (part.startsWith('**') && part.endsWith('**')) {
+                              return (
+                                <strong key={i} className="font-semibold text-gray-900">
+                                  {part.slice(2, -2)}
+                                </strong>
+                              );
+                            }
+                            return part;
+                          })}
+                        </p>
+                      );
+                    }
+                    
+                    // Пустые строки
+                    if (!trimmed) {
+                      return <div key={index} className="h-2" />;
+                    }
+                    
+                    // Обычный текст
+                    return (
+                      <p key={index} className="leading-relaxed">
+                        {trimmed}
+                      </p>
+                    );
+                  })}
                 </div>
               </div>
             )}
