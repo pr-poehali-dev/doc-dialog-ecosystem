@@ -111,7 +111,7 @@ export default function ToolUsageStats({ usageData, onUpgradeClick, onBuyExtraCl
             className="w-full"
           >
             <Icon name="ShoppingCart" size={16} className="mr-2" />
-            Докупить запросы (25₽/шт)
+            Докупить запросы (12₽/шт)
           </Button>
         )}
 

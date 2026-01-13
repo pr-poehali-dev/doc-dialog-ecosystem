@@ -15,7 +15,7 @@ interface BuyExtraRequestsDialogProps {
   onBuyRequests: (count: number) => void;
 }
 
-const PRICE_PER_REQUEST = 25;
+const PRICE_PER_REQUEST = 12;
 
 export default function BuyExtraRequestsDialog({
   open,
@@ -25,10 +25,10 @@ export default function BuyExtraRequestsDialog({
   const [selectedCount, setSelectedCount] = useState(5);
 
   const packages = [
-    { count: 5, price: 125, popular: false },
-    { count: 10, price: 250, popular: true },
-    { count: 20, price: 500, popular: false },
-    { count: 50, price: 1250, popular: false }
+    { count: 5, price: 60, popular: false },
+    { count: 10, price: 120, popular: true },
+    { count: 20, price: 240, popular: false },
+    { count: 50, price: 600, popular: false }
   ];
 
   return (
@@ -40,7 +40,7 @@ export default function BuyExtraRequestsDialog({
             Докупить AI-запросы
           </DialogTitle>
           <DialogDescription>
-            Выберите количество дополнительных запросов. Один запрос = 25₽
+            Выберите количество дополнительных запросов. Один запрос = 12₽
           </DialogDescription>
         </DialogHeader>
 

@@ -263,7 +263,7 @@ export default function Tools() {
         return;
       }
 
-      const amount = count * 25;
+      const amount = count * 12;
       
       const response = await fetch(USER_TOOLS_URL, {
         method: 'POST',

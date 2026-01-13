@@ -274,7 +274,7 @@ def buy_extra_requests(user_id: str, body: dict) -> dict:
     
     try:
         count = body.get('count', 5)
-        amount = body.get('amount', count * 25)
+        amount = body.get('amount', count * 12)
         
         if count <= 0 or amount <= 0:
             return {
