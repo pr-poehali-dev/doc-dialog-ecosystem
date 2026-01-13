@@ -236,17 +236,6 @@ export default function SalonDashboard() {
         <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Отзывы клиентов о салоне</p>
         <Button className="w-full">Посмотреть отзывы</Button>
       </div>
-
-      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100">
-        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
-          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-            <Icon name="Settings" className="text-primary" size={20} />
-          </div>
-          <h3 className="text-lg md:text-xl font-semibold">Настройки</h3>
-        </div>
-        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Параметры салона</p>
-        <Button className="w-full" variant="outline">Настроить</Button>
-      </div>
     </div>
 
       <Dialog open={showForm} onOpenChange={setShowForm}>
