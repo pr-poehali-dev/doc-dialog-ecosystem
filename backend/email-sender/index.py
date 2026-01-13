@@ -7,6 +7,7 @@ from email.mime.multipart import MIMEMultipart
 def handler(event: dict, context) -> dict:
     """
     Отправка email через SMTP (регистрация, восстановление пароля, уведомления)
+    v1.1
     
     POST body:
     {
