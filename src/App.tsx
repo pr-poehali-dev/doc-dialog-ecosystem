@@ -68,6 +68,7 @@ import ClientOrders from "./pages/ClientOrders";
 import KnowledgeBase from "./pages/dashboard/KnowledgeBase";
 import Tools from "./pages/dashboard/Tools";
 import MasseurPromoOffers from "./pages/dashboard/MasseurPromoOffers";
+import MasseurDiscountRequests from "./pages/dashboard/MasseurDiscountRequests";
 import SalonPresentation from "./pages/SalonPresentation";
 import MasseurWelcome from "./pages/MasseurWelcome";
 import AIDialogs from "./pages/dashboard/AIDialogs";
@@ -147,6 +148,7 @@ const App = () => (
           <Route path="/dashboard/knowledge-base" element={<KnowledgeBase />} />
           <Route path="/dashboard/tools" element={<Tools />} />
           <Route path="/dashboard/promo-offers" element={<MasseurPromoOffers />} />
+          <Route path="/dashboard/discount-requests" element={<MasseurDiscountRequests />} />
           <Route path="/dashboard/ai-dialogs" element={<AIDialogs />} />
           <Route path="/dashboard/ai-subscription" element={<AISubscription />} />
           <Route path="/privacy" element={<Privacy />} />

@@ -224,6 +224,19 @@ export default function MasseurDashboard() {
       <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
         <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
           <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Percent" className="text-primary" size={20} />
+          </div>
+          <h3 className="text-lg md:text-xl font-semibold">Мои запросы на скидки</h3>
+        </div>
+        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Отслеживайте статус запросов на скидки от школ</p>
+        <Link to="/dashboard/discount-requests">
+          <Button className="w-full">Посмотреть запросы</Button>
+        </Link>
+      </div>
+
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
             <Icon name="BookOpen" className="text-primary" size={20} />
           </div>
           <h3 className="text-lg md:text-xl font-semibold">База знаний</h3>
