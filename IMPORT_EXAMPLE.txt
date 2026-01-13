@@ -1,0 +1,16 @@
+ID	Имя	Ссылка	Специализация	Опыт/Инфо	Адреса	Телефоны
+749448	сальков вячеслав сергеевич	https://prodoctorov.ru/moskva/vrachi/salkov-vyacheslav-sergeevich	массажист		Юсуповская больница: Нагорная ул, 17к6	+7 (495) 104-53-76
+687007	Истомина Екатерина Алексеевна	https://prodoctorov.ru/moskva/vrachi/istomina-ekaterina-alekseevna	врач ЛФК, детский массажист	ММК №6, 2018 г., опыт 8 лет	Медиарт на Боровском шоссе 56: Боровское ш, 56	+7 (495) 287-60-00 | +7 (499) 401-77-71
+564683	Байгулова Елена Геннадьевна	https://prodoctorov.ru/moskva/vrachi/baygulova-elena-gennadevna	массажист		ИВЧ: Дениса Давыдова ул, 7	+7 (499) 148-36-11
+622174	Кузьминов Роман Борисович	https://prodoctorov.ru/moskva/vrachi/kuzminov-roman-borisovich	массажист		Поликлиника.ру: Полянка Б. ул, 42с4	+7 (495) 085-15-41
+504527	Никоноров Андрей Николаевич	https://prodoctorov.ru/moskva/vrachi/nikonorov-andrey-nikolaevich-1	остеопат, детский массажист		Медиарт на Боровском шоссе 56: Боровское ш, 56	+7 (495) 287-60-00 | +7 (495) 733-52-28
+350181	Саргсян Шалико Сейранович	https://prodoctorov.ru/moskva/vrachi/sargsyan-shaliko-seyranovich	массажист		Роял Медик: Забелина ул, 3с3	8 (800) 707-22-03
+289739	Прасько Евгений Сергеевич	https://prodoctorov.ru/moskva/vrachi/prasko-evgeniy-sergeevich	мануальный терапевт, массажист, остеопат	СтГМА, 2003 г., опыт 23 года	|	+7 (495) 779-26-99 | +7 (499) 254-91-22
+330123	Тараканов Олег Павлович	https://prodoctorov.ru/moskva/vrachi/tarakanov-oleg-pavlovich	мануальный терапевт, массажист, детский невролог	1-й МОЛМИ, 1983 г., опыт 43 года	|  |  |	+7 (496) 514-59-23 | +7 (496) 514-39-34 | +7 (496) 514-27-12 | +7 (495) 722-64-07 | 8 (800) 500-87-33 | +7 (495) 522-63-87 | +7 (495) 527-74-53 | +7 (495) 706-54-94
+349312	Иркина Лариса Валентиновна	https://prodoctorov.ru/moskva/vrachi/irkina-larisa-valentinovna	врач ЛФК, кинезиолог, массажист	2-й МОЛГМИ им. Н.И. Пирогова, 1989 г., опыт 37 лет	Прима Медика на Калужской: Академика Челомея ул, 10б	+7 (495) 120-01-07
+151576	Астапова Ольга Федоровна	https://prodoctorov.ru/moskva/vrachi/astapova-olga-fedorovna	массажист		Арс Клиник: Менжинского ул, 9	+7 (495) 471-00-13
+749449	Дуган Андрей Владимирович	https://prodoctorov.ru/moskva/vrachi/dugan-andrey-vladimirovich	массажист		Юсуповская больница: Нагорная ул, 17к6	+7 (495) 104-53-76
+330872	Казанцев Эдуард Владимирович	https://prodoctorov.ru/moskva/vrachi/kazantsev-eduard-vladimirovich	массажист, спортивный врач		Клиника КДО: Масловка Нижн. ул, 19	+7 (495) 612-46-66
+173402	Гынга Вячеслав Георгиевич	https://prodoctorov.ru/moskva/vrachi/ginga-vyacheslav-georgievich	массажист		Семейный доктор №9 в Раменках: Мичуринский пр-кт, 34	+7 (495) 780-07-71
+173599	Кучин Дмитрий Сергеевич	https://prodoctorov.ru/moskva/vrachi/kuchin-dmitriy-sergeevich	массажист	ММК №2, 2007 г., опыт 19 лет	|	+7 (495) 780-07-71 | +7 (495) 780-07-71
+151562	Красавин Андрей Александрович	https://prodoctorov.ru/moskva/vrachi/krasavin-andrey-aleksandrovich	массажист		Арс Клиник: Менжинского ул, 9	+7 (495) 471-00-13

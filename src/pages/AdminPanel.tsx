@@ -398,6 +398,13 @@ export default function AdminPanel() {
               <Icon name="Wrench" size={16} className="sm:mr-2" />
               <span className="hidden sm:inline">Инструменты</span>
             </Button>
+            <Button 
+              onClick={() => navigate('/admin/import-specialists')}
+              className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm bg-gradient-to-r from-primary to-purple-600"
+            >
+              <Icon name="Upload" size={16} className="sm:mr-2" />
+              <span className="hidden sm:inline">Импорт специалистов</span>
+            </Button>
           </div>
 
           {/* Dashboard Tab */}
