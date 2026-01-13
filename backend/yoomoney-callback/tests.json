@@ -1,0 +1,17 @@
+{
+  "tests": [
+    {
+      "name": "Missing event type",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "object": {}
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "status": "ignored"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

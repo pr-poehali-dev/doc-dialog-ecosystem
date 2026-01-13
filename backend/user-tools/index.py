@@ -295,10 +295,10 @@ def buy_extra_requests(user_id: str, body: dict) -> dict:
                 'isBase64Encoded': False
             }
         
-        robokassa_login = os.environ.get('ROBOKASSA_LOGIN')
-        robokassa_password1 = os.environ.get('ROBOKASSA_PASSWORD1')
+        yoomoney_shop_id = os.environ.get('YOOMONEY_SHOP_ID')
+        yoomoney_secret_key = os.environ.get('YOOMONEY_SECRET_KEY')
         
-        if not robokassa_login or not robokassa_password1:
+        if not yoomoney_shop_id or not yoomoney_secret_key:
             return {
                 'statusCode': 500,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
@@ -306,20 +306,70 @@ def buy_extra_requests(user_id: str, body: dict) -> dict:
                 'isBase64Encoded': False
             }
         
-        import hashlib
+        import uuid
         
-        inv_id = int(datetime.now().timestamp())
+        payment_id = str(uuid.uuid4())
         description = f"Покупка {count} AI-запросов"
         
-        signature_string = f"{robokassa_login}:{amount}:{inv_id}:{robokassa_password1}:Shp_user_id={user_id}:Shp_count={count}"
-        signature = hashlib.md5(signature_string.encode()).hexdigest()
+        return_url = f"https://{os.environ.get('PROJECT_ID', 'app')}.poehali.dev/dashboard/tools?payment=success"
         
-        payment_url = f"https://auth.robokassa.ru/Merchant/Index.aspx?MerchantLogin={robokassa_login}&OutSum={amount}&InvId={inv_id}&Description={description}&SignatureValue={signature}&Shp_user_id={user_id}&Shp_count={count}&IsTest=1"
+        payment_data = {
+            'amount': {
+                'value': str(amount),
+                'currency': 'RUB'
+            },
+            'confirmation': {
+                'type': 'redirect',
+                'return_url': return_url
+            },
+            'capture': True,
+            'description': description,
+            'metadata': {
+                'user_id': str(user_id),
+                'count': str(count),
+                'type': 'extra_requests'
+            }
+        }
+        
+        import requests
+        import base64
+        
+        auth_string = f"{yoomoney_shop_id}:{yoomoney_secret_key}"
+        auth_header = base64.b64encode(auth_string.encode()).decode()
+        
+        response = requests.post(
+            'https://api.yookassa.ru/v3/payments',
+            json=payment_data,
+            headers={
+                'Authorization': f'Basic {auth_header}',
+                'Content-Type': 'application/json',
+                'Idempotence-Key': payment_id
+            },
+            timeout=10
+        )
+        
+        if response.status_code != 200:
+            print(f"YooMoney API error: {response.text}")
+            return {
+                'statusCode': 500,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Ошибка создания платежа'}),
+                'isBase64Encoded': False
+            }
+        
+        payment_result = response.json()
+        payment_url = payment_result.get('confirmation', {}).get('confirmation_url', '')
+        
+        cur.execute(f"""
+            INSERT INTO {schema}.payment_logs (user_id, payment_id, amount, type, status, metadata)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (user_id, payment_result.get('id'), amount, 'extra_requests', 'pending', json.dumps({'count': count})))
+        conn.commit()
         
         return {
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'payment_url': payment_url, 'inv_id': inv_id}),
+            'body': json.dumps({'payment_url': payment_url, 'payment_id': payment_result.get('id')}),
             'isBase64Encoded': False
         }
         
