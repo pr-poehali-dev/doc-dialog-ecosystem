@@ -44,6 +44,7 @@ interface ChatWindowProps {
   currentUserId: number;
   userRole?: string;
   messagesLimit?: number | null;
+  onBackToList?: () => void;
   onMessageTextChange: (text: string) => void;
   onSendMessage: () => void;
   onBookingResponse: (messageId: number, action: 'accept' | 'decline') => void;
@@ -92,6 +93,7 @@ export default function ChatWindow({
   currentUserId,
   userRole,
   messagesLimit,
+  onBackToList,
   onMessageTextChange,
   onSendMessage,
   onBookingResponse,
@@ -137,6 +139,16 @@ export default function ChatWindow({
         <div className="border-b p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
+              {onBackToList && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onBackToList}
+                  className="lg:hidden -ml-2"
+                >
+                  <Icon name="ArrowLeft" size={20} />
+                </Button>
+              )}
               <Avatar className="w-12 h-12">
                 {selectedChat.avatar ? (
                   <img src={selectedChat.avatar} alt={selectedChat.name} className="w-full h-full object-cover" />

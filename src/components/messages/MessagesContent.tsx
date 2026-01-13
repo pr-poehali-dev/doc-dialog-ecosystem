@@ -11,6 +11,7 @@ interface MessagesContentProps {
   onSendMessage: () => void;
   onBookingResponse: (messageId: number, action: 'accept' | 'decline') => void;
   onDeleteChat: () => void;
+  onBackToList?: () => void;
   sending: boolean;
   userRole: string;
   messagesLimit: number | null;
@@ -25,6 +26,7 @@ export default function MessagesContent({
   onSendMessage,
   onBookingResponse,
   onDeleteChat,
+  onBackToList,
   sending,
   userRole,
   messagesLimit,
@@ -56,6 +58,7 @@ export default function MessagesContent({
         onSendMessage={onSendMessage}
         onBookingResponse={onBookingResponse}
         onDeleteChat={onDeleteChat}
+        onBackToList={onBackToList}
         sending={sending}
         userRole={userRole}
         messagesLimit={messagesLimit}
