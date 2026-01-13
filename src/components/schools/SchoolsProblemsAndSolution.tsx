@@ -42,7 +42,7 @@ export default function SchoolsProblemsAndSolution() {
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-12">
               <div className="order-2 lg:order-1">
                 <img 
-                  src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/e89e4fdc-bd02-4f2a-90d3-7e48bd2f7778.jpg"
+                  src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/7ed1562c-c801-4176-9ecc-e7b12074a8e7.jpg"
                   alt="Целевая аудитория"
                   className="rounded-2xl shadow-2xl w-full h-auto object-cover"
                 />
