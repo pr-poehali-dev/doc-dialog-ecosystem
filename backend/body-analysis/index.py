@@ -223,15 +223,20 @@ def analyze_body_with_openai(image_base64: str, gender: str, age: str, height: s
 
 Проанализируй фото и создай индивидуальную программу трансформации."""
     
+    proxies = {
+        'http': 'http://user:pass@185.200.177.36:3128',
+        'https': 'http://user:pass@185.200.177.36:3128'
+    }
+    
     try:
         response = requests.post(
-            'https://api.vsegpt.ru/v1/chat/completions',
+            'https://api.openai.com/v1/chat/completions',
             headers={
                 'Authorization': f'Bearer {api_key}',
                 'Content-Type': 'application/json'
             },
             json={
-                'model': 'openai/gpt-4o',
+                'model': 'gpt-4o',
                 'messages': [
                     {'role': 'system', 'content': system_prompt},
                     {
@@ -250,6 +255,7 @@ def analyze_body_with_openai(image_base64: str, gender: str, age: str, height: s
                 'max_tokens': 2500,
                 'temperature': 0.7
             },
+            proxies=proxies,
             timeout=60
         )
         
