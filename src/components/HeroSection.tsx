@@ -71,7 +71,7 @@ const HeroSection = ({ openDialog }: HeroSectionProps) => {
             <Link to="/medical-report" className="flex flex-col items-center gap-2">
               <Button size="lg" variant="secondary" className="text-lg px-8 bg-secondary text-white hover:bg-secondary/90 shadow-md hover:shadow-lg transition-all">
                 <Icon name="FileText" size={20} className="mr-2" />
-                Понять медицинское заключение
+                Понять заключение врача
               </Button>
               <p className="text-sm text-muted-foreground text-center max-w-xs">
                 ИИ объяснит МРТ, УЗИ и другие заключения простым языком
