@@ -182,4 +182,8 @@
   .ai-response-content p {
     @apply my-2 leading-relaxed;
   }
+
+  .pb-safe {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
 }

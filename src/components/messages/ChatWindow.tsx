@@ -134,8 +134,8 @@ export default function ChatWindow({
   }
 
   return (
-    <Card className="lg:col-span-2">
-      <CardContent className="p-0">
+    <Card className="lg:col-span-2 flex flex-col h-[calc(100vh-120px)] lg:h-auto">
+      <CardContent className="p-0 flex flex-col h-full">
         <div className="border-b p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -179,7 +179,7 @@ export default function ChatWindow({
           </div>
         </div>
 
-        <ScrollArea className="h-[500px] p-4">
+        <ScrollArea className="flex-1 p-4 min-h-0">
           <div className="space-y-4">
             {messages.length === 0 ? (
               <div className="text-center py-12 text-gray-500">
@@ -199,7 +199,7 @@ export default function ChatWindow({
           </div>
         </ScrollArea>
 
-        <div className="border-t p-4">
+        <div className="border-t p-4 pb-safe">
           {isAdminChat && userRole === 'school' && hasMessageLimit && (
             <div className={`mb-3 p-3 rounded-lg border ${
               isLimitReached 
@@ -250,7 +250,7 @@ export default function ChatWindow({
             </div>
           )}
           
-          <div className="flex gap-2 items-end">
+          <div className="flex gap-2 items-end mb-2">
             <Popover open={showEmojiPicker} onOpenChange={setShowEmojiPicker}>
               <PopoverTrigger asChild>
                 <Button 
