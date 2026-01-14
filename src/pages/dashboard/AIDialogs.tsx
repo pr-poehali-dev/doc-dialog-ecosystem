@@ -174,12 +174,21 @@ const AIDialogs = () => {
             <div className="text-xs text-muted-foreground mb-3">
               Диалоги: {dialogsData.dialogs_used} • Инструменты: {dialogsData.tools_used}
             </div>
-            <div className="w-full bg-secondary rounded-full h-2">
+            <div className="w-full bg-secondary rounded-full h-2 mb-3">
               <div 
                 className="bg-primary rounded-full h-2 transition-all"
                 style={{ width: `${Math.min((dialogsData.total_used / dialogsData.limit) * 100, 100)}%` }}
               />
             </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate('/dashboard/ai-subscription')}
+              className="w-full"
+            >
+              <Icon name="Sparkles" size={16} className="mr-2" />
+              Управление подпиской
+            </Button>
           </div>
         </div>
 
@@ -296,12 +305,16 @@ const AIDialogs = () => {
             </DialogTitle>
             <DialogDescription className="text-base pt-4">
               Вы использовали все доступные AI-операции в этом месяце.
-              Лимиты обновятся 1-го числа следующего месяца.
+              Обновите подписку, чтобы продолжить общение с AI-супервизором.
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-3 mt-4">
+            <Button onClick={() => navigate('/dashboard/ai-subscription')} className="w-full">
+              <Icon name="Sparkles" size={16} className="mr-2" />
+              Выбрать тариф
+            </Button>
             <Button variant="outline" onClick={() => setShowLimitModal(false)} className="w-full">
-              Понятно
+              Закрыть
             </Button>
           </div>
         </DialogContent>
