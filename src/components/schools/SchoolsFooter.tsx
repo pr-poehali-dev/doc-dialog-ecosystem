@@ -85,15 +85,22 @@ export default function SchoolsFooter() {
           </div>
         </div>
 
-        <div className="border-t border-gray-700 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div className="text-sm text-gray-400 text-center sm:text-left">
-            <p>© 2025 Док диалог. Все права защищены.</p>
-            <p className="mt-1">ИП Водопьянов С.Г. ИНН 165045847936</p>
+        <div className="border-t border-gray-700 pt-8">
+          <div className="mb-6 text-center">
+            <p className="text-sm text-gray-400 max-w-4xl mx-auto">
+              Док диалог не оказывает медицинских услуг, не ставит диагнозы и не назначает лечение. Вся информация носит ознакомительный характер.
+            </p>
           </div>
-          <div className="flex items-center gap-4">
-            <a href="https://t.me/SergeuVodopianov" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition-colors">
-              <Icon name="MessageCircle" size={20} />
-            </a>
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="text-sm text-gray-400 text-center sm:text-left">
+              <p>© 2025 Док диалог. Все права защищены.</p>
+              <p className="mt-1">ИП Водопьянов С.Г. ИНН 165045847936</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <a href="https://t.me/SergeuVodopianov" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition-colors">
+                <Icon name="MessageCircle" size={20} />
+              </a>
+            </div>
           </div>
         </div>
       </div>
