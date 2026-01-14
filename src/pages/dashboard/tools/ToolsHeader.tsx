@@ -4,9 +4,10 @@ import Icon from '@/components/ui/icon';
 interface ToolsHeaderProps {
   onBackClick: () => void;
   onHistoryClick: () => void;
+  showHistoryButton?: boolean;
 }
 
-export default function ToolsHeader({ onBackClick, onHistoryClick }: ToolsHeaderProps) {
+export default function ToolsHeader({ onBackClick, onHistoryClick, showHistoryButton = true }: ToolsHeaderProps) {
   return (
     <div className="mb-6">
       <div className="flex items-center justify-between gap-2 mb-4">
@@ -18,15 +19,17 @@ export default function ToolsHeader({ onBackClick, onHistoryClick }: ToolsHeader
             <h1 className="text-2xl md:text-3xl font-bold truncate">AI-инструменты</h1>
           </div>
         </div>
-        <Button
-          variant="outline"
-          onClick={onHistoryClick}
-          className="flex-shrink-0"
-          size="sm"
-        >
-          <Icon name="FileText" size={16} className="sm:mr-2" />
-          <span className="hidden sm:inline">История анамнезов</span>
-        </Button>
+        {showHistoryButton && (
+          <Button
+            variant="outline"
+            onClick={onHistoryClick}
+            className="flex-shrink-0"
+            size="sm"
+          >
+            <Icon name="FileText" size={16} className="sm:mr-2" />
+            <span className="hidden sm:inline">История анамнезов</span>
+          </Button>
+        )}
       </div>
       <p className="text-sm md:text-base text-muted-foreground px-2">
         Профессиональные инструменты для анализа и планирования работы с клиентами

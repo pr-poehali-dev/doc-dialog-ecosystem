@@ -27,6 +27,7 @@ export default function Tools() {
     showAnamnesisTool,
     setShowAnamnesisTool,
     getDashboardRoute,
+    getUserRole,
     handleImageUpload,
     handleAnalyze,
     handleToolClick,
@@ -36,6 +37,16 @@ export default function Tools() {
     handleSaveAnamnesis,
     navigate
   } = useToolsLogic();
+
+  const userRole = getUserRole();
+  const isClient = userRole === 'client';
+  
+  const availableTools = tools.filter(tool => {
+    if (tool.id === 'anamnesis' && isClient) {
+      return false;
+    }
+    return true;
+  });
 
   const activeTool = tools.find(t => t.id === activeToolId);
 
@@ -47,11 +58,12 @@ export default function Tools() {
           <ToolsHeader
             onBackClick={() => navigate(getDashboardRoute())}
             onHistoryClick={() => navigate('/dashboard/anamnesis-history')}
+            showHistoryButton={!isClient}
           />
 
           <div className="grid lg:grid-cols-3 gap-6 mb-8">
             <div className="lg:col-span-2 grid md:grid-cols-2 gap-4">
-              {tools.map((tool) => (
+              {availableTools.map((tool) => (
                 <ToolCard
                   key={tool.id}
                   id={tool.id}

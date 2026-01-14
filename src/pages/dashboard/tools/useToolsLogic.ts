@@ -17,6 +17,15 @@ export function useToolsLogic() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  const getUserRole = () => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      const user = JSON.parse(userData);
+      return user.role;
+    }
+    return null;
+  };
+
   const getDashboardRoute = () => {
     const userData = localStorage.getItem('user');
     if (userData) {
@@ -389,6 +398,7 @@ export function useToolsLogic() {
     showAnamnesisTool,
     setShowAnamnesisTool,
     getDashboardRoute,
+    getUserRole,
     handleImageUpload,
     handleAnalyze,
     handleToolClick,
