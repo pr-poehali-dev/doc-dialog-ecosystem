@@ -9,7 +9,6 @@ import ToolDialog from '@/components/tools/ToolDialog';
 import ToolUsageStats from '@/components/tools/ToolUsageStats';
 import ToolLimitModal from '@/components/tools/ToolLimitModal';
 import BuyExtraRequestsDialog from '@/components/tools/BuyExtraRequestsDialog';
-import BodyAnalysisDialog from '@/components/tools/BodyAnalysisDialog';
 
 const USER_TOOLS_URL = 'https://functions.poehali.dev/41dbcf47-a8d5-45ff-bb56-f9754581a0d7';
 
@@ -43,7 +42,6 @@ export default function Tools() {
   const [usageData, setUsageData] = useState<UsageData | null>(null);
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [showBuyDialog, setShowBuyDialog] = useState(false);
-  const [showBodyAnalysis, setShowBodyAnalysis] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -62,15 +60,6 @@ export default function Tools() {
   }, []);
 
   const tools: Tool[] = [
-    {
-      id: 'body-analysis',
-      title: 'Анализ фигуры',
-      description: 'Загрузите фото и получите программу трансформации: оценка фигуры, план тренировок, питание, коррекция осанки',
-      icon: 'User',
-      color: 'from-purple-500/10 to-purple-500/5',
-      placeholder: 'Загрузите фото в полный рост (желательно в облегающей одежде)',
-      isMedicalTool: false
-    },
     {
       id: 'medical-analysis',
       title: 'Расшифровка заключений',
@@ -249,11 +238,6 @@ export default function Tools() {
       return;
     }
 
-    if (toolId === 'body-analysis') {
-      setShowBodyAnalysis(true);
-      return;
-    }
-
     setActiveToolId(toolId);
     setInputText('');
     setUploadedImage(null);
@@ -410,13 +394,6 @@ export default function Tools() {
         open={showBuyDialog}
         onOpenChange={setShowBuyDialog}
         onBuyRequests={handleBuyExtraRequests}
-      />
-
-      <BodyAnalysisDialog
-        open={showBodyAnalysis}
-        onOpenChange={setShowBodyAnalysis}
-        onLimitReached={() => setShowLimitModal(true)}
-        onUsageUpdate={loadUsageData}
       />
     </div>
   );
