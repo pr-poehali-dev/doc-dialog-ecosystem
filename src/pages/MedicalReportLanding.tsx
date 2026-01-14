@@ -96,7 +96,7 @@ const MedicalReportLanding = () => {
             </div>
 
             <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight text-white px-2">
-              Поймите, что написано в медицинском заключении
+              Понять, что написано в мед заключении
             </h1>
             
             <p className="text-base sm:text-lg md:text-xl text-white/90 mb-4 sm:mb-6 max-w-3xl mx-auto px-4">
