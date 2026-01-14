@@ -153,10 +153,10 @@ export default function ServicesTab({ masseur }: ServicesTabProps) {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Icon name="Briefcase" size={24} />
-          Услуги и специализации
+      <CardHeader className="pb-4">
+        <CardTitle className="flex items-center gap-2 text-base sm:text-lg md:text-xl">
+          <Icon name="Briefcase" size={20} className="flex-shrink-0 sm:w-6 sm:h-6" />
+          <span className="break-words">Услуги и специализации</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -170,15 +170,15 @@ export default function ServicesTab({ masseur }: ServicesTabProps) {
             };
             
             return (
-              <div key={spec} className="p-4 rounded-xl border-2 border-primary/10 bg-gradient-to-br from-white to-primary/5 hover:border-primary/30 transition-all">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Icon name={serviceInfo.icon} size={24} className="text-primary" />
+              <div key={spec} className="p-3 sm:p-4 rounded-xl border-2 border-primary/10 bg-gradient-to-br from-white to-primary/5 hover:border-primary/30 transition-all">
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Icon name={serviceInfo.icon} size={20} className="text-primary sm:w-6 sm:h-6" />
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between gap-3 mb-2">
-                      <h3 className="font-semibold text-lg">{spec}</h3>
-                      <div className="flex gap-2">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-2">
+                      <h3 className="font-semibold text-base sm:text-lg break-words">{spec}</h3>
+                      <div className="flex flex-wrap gap-2">
                         {serviceInfo.duration && (
                           <Badge variant="secondary" className="text-xs whitespace-nowrap">
                             <Icon name="Clock" size={12} className="mr-1" />
