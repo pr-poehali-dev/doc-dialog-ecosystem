@@ -229,6 +229,7 @@ def analyze_body_with_openai(image_base64: str, gender: str, age: str, height: s
     }
     
     try:
+        print(f"Starting OpenAI Vision analysis...")
         response = requests.post(
             'https://api.openai.com/v1/chat/completions',
             headers={
@@ -252,18 +253,30 @@ def analyze_body_with_openai(image_base64: str, gender: str, age: str, height: s
                         ]
                     }
                 ],
-                'max_tokens': 2500,
+                'max_tokens': 2000,
                 'temperature': 0.7
             },
             proxies=proxies,
-            timeout=60
+            timeout=25
         )
         
+        print(f"OpenAI response status: {response.status_code}")
+        
         if response.status_code != 200:
-            return f"Ошибка OpenAI API: {response.status_code} - {response.text}"
+            error_msg = f"Ошибка OpenAI API: {response.status_code} - {response.text}"
+            print(error_msg)
+            return error_msg
         
         result = response.json()
-        return result['choices'][0]['message']['content']
+        analysis = result['choices'][0]['message']['content']
+        print(f"Analysis completed, length: {len(analysis)} chars")
+        return analysis
         
+    except requests.exceptions.Timeout:
+        error_msg = "Превышено время ожидания ответа от AI. Попробуйте загрузить фото меньшего размера."
+        print(error_msg)
+        return error_msg
     except Exception as e:
-        return f"Ошибка при анализе: {str(e)}"
+        error_msg = f"Ошибка при анализе: {str(e)}"
+        print(error_msg)
+        return error_msg
