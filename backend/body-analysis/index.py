@@ -225,13 +225,13 @@ def analyze_body_with_openai(image_base64: str, gender: str, age: str, height: s
     
     try:
         response = requests.post(
-            'https://api.openai.com/v1/chat/completions',
+            'https://api.vsegpt.ru/v1/chat/completions',
             headers={
                 'Authorization': f'Bearer {api_key}',
                 'Content-Type': 'application/json'
             },
             json={
-                'model': 'gpt-4o',
+                'model': 'openai/gpt-4o',
                 'messages': [
                     {'role': 'system', 'content': system_prompt},
                     {
