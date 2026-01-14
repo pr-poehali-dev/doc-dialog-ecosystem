@@ -5,6 +5,7 @@ import MainContent from "@/components/MainContent";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import RegistrationDialog from "@/components/RegistrationDialog";
 import SchoolsFooter from "@/components/schools/SchoolsFooter";
+import FAQ from "@/components/FAQ";
 
 type UserType = 'masseur' | 'school' | 'salon' | null;
 
@@ -58,6 +59,7 @@ const Index = () => {
       <Navigation scrollToSection={scrollToSection} />
       <HeroSection openDialog={openDialog} />
       <MainContent openDialog={openDialog} openTestimonials={() => {}} />
+      <FAQ />
       <SchoolsFooter />
       <RegistrationDialog
         isOpen={isDialogOpen}
