@@ -181,49 +181,6 @@ const FeaturesSection = ({ openDialog }: FeaturesSectionProps) => {
           </div>
         </div>
       </section>
-
-      <footer className="border-t py-12 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8 max-w-6xl mx-auto">
-            <div>
-              <div className="mb-4">
-                <img src="https://cdn.poehali.dev/files/Group 7 (6).png" alt="Док диалог" className="h-8" />
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Профессиональная экосистема для массажистов
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Платформа</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#education" className="hover:text-primary transition-colors">Образование</a></li>
-                <li><a href="#tools" className="hover:text-primary transition-colors">Инструменты</a></li>
-                <li><a href="#community" className="hover:text-primary transition-colors">Сообщество</a></li>
-                <li><a href="#jobs" className="hover:text-primary transition-colors">Вакансии</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Для кого</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-primary transition-colors">Массажисты</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Школы</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Салоны</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Контакты</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-primary transition-colors">Написать нам</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Telegram</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">О платформе</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
-            <p>© 2024 Док диалог. Все права защищены.</p>
-          </div>
-        </div>
-      </footer>
     </>
   );
 };
