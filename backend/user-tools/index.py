@@ -66,6 +66,15 @@ def handler(event: dict, context) -> dict:
             if action == 'buy_extra_requests':
                 return buy_extra_requests(user_id, body)
             
+            if action == 'save_anamnesis':
+                return save_anamnesis(user_id, body)
+            
+            if action == 'get_anamnesis_list':
+                return get_anamnesis_list(user_id)
+            
+            if action == 'get_anamnesis':
+                return get_anamnesis(user_id, body)
+            
             return {
                 'statusCode': 400,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
@@ -375,6 +384,191 @@ def buy_extra_requests(user_id: str, body: dict) -> dict:
         
     except Exception as e:
         print(f"Error in buy_extra_requests: {str(e)}")
+        return {
+            'statusCode': 500,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': str(e)}),
+            'isBase64Encoded': False
+        }
+    finally:
+        cur.close()
+        conn.close()
+
+def save_anamnesis(user_id: str, body: dict) -> dict:
+    """Сохранение анамнеза клиента в БД"""
+    conn = get_db()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    schema = os.environ.get('MAIN_DB_SCHEMA', 't_p46047379_doc_dialog_ecosystem')
+    
+    try:
+        form_data = body.get('formData', {})
+        ai_analysis = body.get('aiAnalysis', '')
+        
+        cur.execute(f"""
+            INSERT INTO {schema}.anamnesis_records (
+                user_id, client_full_name, client_age, client_gender,
+                main_complaint, complaint_duration, pain_location, pain_intensity, pain_character,
+                chronic_diseases, medications, injuries, surgeries,
+                lifestyle, physical_activity, sleep, stress,
+                goals, contraindications, additional_info, ai_analysis
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING id
+        """, (
+            user_id,
+            form_data.get('fullName'),
+            int(form_data.get('age')) if form_data.get('age') else None,
+            form_data.get('gender'),
+            form_data.get('mainComplaint'),
+            form_data.get('complaintDuration'),
+            form_data.get('painLocation'),
+            form_data.get('painIntensity'),
+            form_data.get('painCharacter'),
+            form_data.get('chronicDiseases'),
+            form_data.get('medications'),
+            form_data.get('injuries'),
+            form_data.get('surgeries'),
+            form_data.get('lifestyle'),
+            form_data.get('physicalActivity'),
+            form_data.get('sleep'),
+            form_data.get('stress'),
+            form_data.get('goals'),
+            form_data.get('contraindications'),
+            form_data.get('additionalInfo'),
+            ai_analysis
+        ))
+        
+        result = cur.fetchone()
+        conn.commit()
+        
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'id': result['id'], 'message': 'Анамнез сохранён'}),
+            'isBase64Encoded': False
+        }
+        
+    except Exception as e:
+        conn.rollback()
+        print(f"Error in save_anamnesis: {str(e)}")
+        return {
+            'statusCode': 500,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': str(e)}),
+            'isBase64Encoded': False
+        }
+    finally:
+        cur.close()
+        conn.close()
+
+def get_anamnesis_list(user_id: str) -> dict:
+    """Получить список всех анамнезов пользователя"""
+    conn = get_db()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    schema = os.environ.get('MAIN_DB_SCHEMA', 't_p46047379_doc_dialog_ecosystem')
+    
+    try:
+        cur.execute(f"""
+            SELECT 
+                id, client_full_name, client_age, main_complaint, 
+                created_at, updated_at
+            FROM {schema}.anamnesis_records
+            WHERE user_id = %s
+            ORDER BY created_at DESC
+        """, (user_id,))
+        
+        records = cur.fetchall()
+        
+        records_list = []
+        for record in records:
+            records_list.append({
+                'id': record['id'],
+                'clientFullName': record['client_full_name'],
+                'clientAge': record['client_age'],
+                'mainComplaint': record['main_complaint'],
+                'createdAt': record['created_at'].isoformat() if record['created_at'] else None,
+                'updatedAt': record['updated_at'].isoformat() if record['updated_at'] else None
+            })
+        
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'records': records_list}),
+            'isBase64Encoded': False
+        }
+        
+    except Exception as e:
+        print(f"Error in get_anamnesis_list: {str(e)}")
+        return {
+            'statusCode': 500,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': str(e)}),
+            'isBase64Encoded': False
+        }
+    finally:
+        cur.close()
+        conn.close()
+
+def get_anamnesis(user_id: str, body: dict) -> dict:
+    """Получить полный анамнез по ID"""
+    conn = get_db()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    schema = os.environ.get('MAIN_DB_SCHEMA', 't_p46047379_doc_dialog_ecosystem')
+    
+    try:
+        anamnesis_id = body.get('id')
+        
+        cur.execute(f"""
+            SELECT * FROM {schema}.anamnesis_records
+            WHERE user_id = %s AND id = %s
+        """, (user_id, anamnesis_id))
+        
+        record = cur.fetchone()
+        
+        if not record:
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Анамнез не найден'}),
+                'isBase64Encoded': False
+            }
+        
+        anamnesis_data = {
+            'id': record['id'],
+            'formData': {
+                'fullName': record['client_full_name'],
+                'age': str(record['client_age']) if record['client_age'] else '',
+                'gender': record['client_gender'] or '',
+                'mainComplaint': record['main_complaint'] or '',
+                'complaintDuration': record['complaint_duration'] or '',
+                'painLocation': record['pain_location'] or '',
+                'painIntensity': record['pain_intensity'] or '',
+                'painCharacter': record['pain_character'] or '',
+                'chronicDiseases': record['chronic_diseases'] or '',
+                'medications': record['medications'] or '',
+                'injuries': record['injuries'] or '',
+                'surgeries': record['surgeries'] or '',
+                'lifestyle': record['lifestyle'] or '',
+                'physicalActivity': record['physical_activity'] or '',
+                'sleep': record['sleep'] or '',
+                'stress': record['stress'] or '',
+                'goals': record['goals'] or '',
+                'contraindications': record['contraindications'] or '',
+                'additionalInfo': record['additional_info'] or ''
+            },
+            'aiAnalysis': record['ai_analysis'] or '',
+            'createdAt': record['created_at'].isoformat() if record['created_at'] else None,
+            'updatedAt': record['updated_at'].isoformat() if record['updated_at'] else None
+        }
+        
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps(anamnesis_data),
+            'isBase64Encoded': False
+        }
+        
+    except Exception as e:
+        print(f"Error in get_anamnesis: {str(e)}")
         return {
             'statusCode': 500,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},

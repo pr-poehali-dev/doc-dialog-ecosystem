@@ -411,6 +411,48 @@ export default function Tools() {
     }
   };
 
+  const handleSaveAnamnesis = async (formData: AnamnesisFormData, aiAnalysis: string) => {
+    try {
+      const userId = getUserId();
+      if (!userId) {
+        toast({ title: 'Ошибка', description: 'Необходима авторизация', variant: 'destructive' });
+        return;
+      }
+
+      const response = await fetch(USER_TOOLS_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-User-Id': userId
+        },
+        body: JSON.stringify({
+          action: 'save_anamnesis',
+          formData: formData,
+          aiAnalysis: aiAnalysis
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Ошибка сохранения');
+      }
+
+      toast({
+        title: 'Сохранено',
+        description: `Анамнез клиента ${formData.fullName} сохранён`
+      });
+
+      setShowAnamnesisTool(false);
+    } catch (error: any) {
+      toast({
+        title: 'Ошибка',
+        description: error.message || 'Не удалось сохранить анамнез',
+        variant: 'destructive'
+      });
+    }
+  };
+
   const activeTool = tools.find(t => t.id === activeToolId);
 
   return (
@@ -418,16 +460,25 @@ export default function Tools() {
       <Navigation />
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-4 mb-6">
-            <Button variant="ghost" onClick={() => navigate(getDashboardRoute())}>
-              <Icon name="ArrowLeft" size={20} />
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold">AI-инструменты</h1>
-              <p className="text-muted-foreground">
-                Профессиональные инструменты для анализа и планирования работы с клиентами
-              </p>
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" onClick={() => navigate(getDashboardRoute())}>
+                <Icon name="ArrowLeft" size={20} />
+              </Button>
+              <div>
+                <h1 className="text-3xl font-bold">AI-инструменты</h1>
+                <p className="text-muted-foreground">
+                  Профессиональные инструменты для анализа и планирования работы с клиентами
+                </p>
+              </div>
             </div>
+            <Button
+              variant="outline"
+              onClick={() => navigate('/dashboard/anamnesis-history')}
+            >
+              <Icon name="FileText" size={16} className="mr-2" />
+              История анамнезов
+            </Button>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-6 mb-8">
@@ -519,6 +570,7 @@ export default function Tools() {
         open={showAnamnesisTool}
         onOpenChange={setShowAnamnesisTool}
         onAnalyze={handleAnamnesisAnalyze}
+        onSave={handleSaveAnamnesis}
         loading={loading}
         response={response}
       />

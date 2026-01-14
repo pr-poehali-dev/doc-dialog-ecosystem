@@ -25,6 +25,7 @@ interface AnamnesisToolProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAnalyze: (formData: AnamnesisFormData) => void;
+  onSave: (formData: AnamnesisFormData, aiAnalysis: string) => void;
   loading: boolean;
   response: string;
 }
@@ -55,6 +56,7 @@ export default function AnamnesisTool({
   open,
   onOpenChange,
   onAnalyze,
+  onSave,
   loading,
   response
 }: AnamnesisToolProps) {
@@ -405,9 +407,13 @@ export default function AnamnesisTool({
               </CardContent>
             </Card>
             <div className="flex gap-3">
-              <Button onClick={handleReset} className="flex-1">
+              <Button onClick={() => onSave(formData, response)} className="flex-1">
+                <Icon name="Save" size={16} className="mr-2" />
+                Сохранить анамнез
+              </Button>
+              <Button variant="outline" onClick={handleReset}>
                 <Icon name="Plus" size={16} className="mr-2" />
-                Новый анамнез
+                Новый
               </Button>
               <Button variant="outline" onClick={() => onOpenChange(false)}>
                 Закрыть
