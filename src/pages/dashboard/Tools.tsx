@@ -9,6 +9,7 @@ import ToolDialog from '@/components/tools/ToolDialog';
 import ToolUsageStats from '@/components/tools/ToolUsageStats';
 import ToolLimitModal from '@/components/tools/ToolLimitModal';
 import BuyExtraRequestsDialog from '@/components/tools/BuyExtraRequestsDialog';
+import AnamnesisTool, { AnamnesisFormData } from '@/components/tools/AnamnesisTool';
 
 const USER_TOOLS_URL = 'https://functions.poehali.dev/41dbcf47-a8d5-45ff-bb56-f9754581a0d7';
 
@@ -42,6 +43,7 @@ export default function Tools() {
   const [usageData, setUsageData] = useState<UsageData | null>(null);
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [showBuyDialog, setShowBuyDialog] = useState(false);
+  const [showAnamnesisTool, setShowAnamnesisTool] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -79,6 +81,13 @@ export default function Tools() {
 6. Что делать дальше (рекомендации)
 
 Отвечай структурированно, понятно, без паники. НЕ используй жирный текст (звёздочки **), пиши обычным текстом.`
+    },
+    {
+      id: 'anamnesis',
+      title: 'Сбор анамнеза',
+      description: 'Структурированная форма для сбора анамнеза клиента с AI-анализом',
+      icon: 'ClipboardList',
+      color: 'from-green-500/10 to-green-500/5'
     },
     {
       id: 'pain-analysis',
@@ -238,6 +247,11 @@ export default function Tools() {
       return;
     }
 
+    if (toolId === 'anamnesis') {
+      setShowAnamnesisTool(true);
+      return;
+    }
+
     setActiveToolId(toolId);
     setInputText('');
     setUploadedImage(null);
@@ -289,6 +303,111 @@ export default function Tools() {
         description: error.message || 'Не удалось создать платёж',
         variant: 'destructive'
       });
+    }
+  };
+
+  const handleAnamnesisAnalyze = async (formData: AnamnesisFormData) => {
+    setLoading(true);
+    setResponse('');
+
+    try {
+      const userId = getUserId();
+      if (!userId) {
+        toast({ title: 'Ошибка', description: 'Необходима авторизация', variant: 'destructive' });
+        return;
+      }
+
+      const anamnesisText = `
+АНАМНЕЗ КЛИЕНТА
+
+Общая информация:
+- ФИО: ${formData.fullName}
+- Возраст: ${formData.age} лет
+- Пол: ${formData.gender === 'male' ? 'Мужской' : formData.gender === 'female' ? 'Женский' : 'Не указан'}
+
+Жалобы и симптомы:
+- Основная жалоба: ${formData.mainComplaint}
+- Длительность: ${formData.complaintDuration || 'Не указана'}
+- Локализация: ${formData.painLocation || 'Не указана'}
+- Интенсивность боли: ${formData.painIntensity || 'Не указана'}/10
+- Характер боли: ${formData.painCharacter || 'Не указан'}
+
+Медицинская история:
+- Хронические заболевания: ${formData.chronicDiseases || 'Нет'}
+- Принимаемые препараты: ${formData.medications || 'Нет'}
+- Травмы: ${formData.injuries || 'Нет'}
+- Операции: ${formData.surgeries || 'Нет'}
+
+Образ жизни:
+- Профессия: ${formData.lifestyle || 'Не указана'}
+- Физическая активность: ${formData.physicalActivity || 'Не указана'}
+- Качество сна: ${formData.sleep || 'Не указано'}
+- Уровень стресса: ${formData.stress || 'Не указан'}
+
+Цели и ограничения:
+- Цели клиента: ${formData.goals || 'Не указаны'}
+- Противопоказания: ${formData.contraindications || 'Нет'}
+- Дополнительная информация: ${formData.additionalInfo || 'Нет'}
+      `;
+
+      const systemPrompt = `Ты — опытный специалист по физической терапии и массажу. Твоя задача: проанализировать анамнез клиента и дать профессиональные рекомендации.
+
+Проанализируй анамнез и дай:
+1. Общая оценка состояния клиента
+2. Ключевые факторы риска и противопоказания
+3. Возможные причины жалоб на основе анамнеза
+4. Рекомендуемые виды массажа и мануальных техник
+5. Противопоказанные техники и манипуляции
+6. Рекомендации по работе с клиентом (интенсивность, частота, длительность сеансов)
+7. Дополнительные рекомендации (упражнения, образ жизни, консультации врачей)
+8. Прогноз и ожидаемые результаты
+
+Отвечай структурированно, профессионально, с учётом безопасности клиента. НЕ используй жирный текст (звёздочки **), пиши обычным текстом.`;
+
+      const apiResponse = await fetch(USER_TOOLS_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-User-Id': userId
+        },
+        body: JSON.stringify({
+          action: 'analyze_tool',
+          tool_type: 'anamnesis',
+          text: anamnesisText,
+          system_prompt: systemPrompt
+        })
+      });
+
+      const data = await apiResponse.json();
+
+      if (apiResponse.status === 429 && data.limit_reached) {
+        setShowLimitModal(true);
+        return;
+      }
+
+      if (!apiResponse.ok) {
+        throw new Error(data.error || 'Ошибка анализа');
+      }
+
+      const cleanResponse = (data.response || data.analysis || '')
+        .replace(/\*\*/g, '')
+        .trim();
+      
+      setResponse(cleanResponse);
+      await loadUsageData();
+      
+      toast({
+        title: 'Анализ завершён',
+        description: 'AI проанализировал анамнез клиента'
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Ошибка',
+        description: error.message || 'Не удалось выполнить анализ',
+        variant: 'destructive'
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -394,6 +513,14 @@ export default function Tools() {
         open={showBuyDialog}
         onOpenChange={setShowBuyDialog}
         onBuyRequests={handleBuyExtraRequests}
+      />
+
+      <AnamnesisTool
+        open={showAnamnesisTool}
+        onOpenChange={setShowAnamnesisTool}
+        onAnalyze={handleAnamnesisAnalyze}
+        loading={loading}
+        response={response}
       />
     </div>
   );
