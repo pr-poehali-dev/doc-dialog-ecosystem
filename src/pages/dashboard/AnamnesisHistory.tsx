@@ -236,25 +236,25 @@ export default function AnamnesisHistory() {
       </div>
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto w-[95vw] sm:w-full">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Icon name="FileText" size={24} className="text-primary" />
-              Анамнез клиента
+            <DialogTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Icon name="FileText" size={20} className="text-primary flex-shrink-0" />
+              <span className="truncate">Анамнез клиента</span>
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-sm">
               {selectedAnamnesis && formatDate(selectedAnamnesis.createdAt)}
             </DialogDescription>
           </DialogHeader>
 
           {selectedAnamnesis && (
-            <div className="space-y-6 py-4">
+            <div className="space-y-4 sm:space-y-6 py-4">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Общая информация</CardTitle>
+                  <CardTitle className="text-sm sm:text-base">Общая информация</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2">
-                  <div>
+                <CardContent className="space-y-2 text-sm">
+                  <div className="break-words">
                     <span className="font-semibold">ФИО:</span> {selectedAnamnesis.formData.fullName}
                   </div>
                   <div>
@@ -270,12 +270,12 @@ export default function AnamnesisHistory() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Жалобы и симптомы</CardTitle>
+                  <CardTitle className="text-sm sm:text-base">Жалобы и симптомы</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2">
+                <CardContent className="space-y-2 text-sm">
                   <div>
                     <span className="font-semibold">Основная жалоба:</span>
-                    <p className="mt-1">{selectedAnamnesis.formData.mainComplaint}</p>
+                    <p className="mt-1 break-words">{selectedAnamnesis.formData.mainComplaint}</p>
                   </div>
                   {selectedAnamnesis.formData.complaintDuration && (
                     <div>
@@ -302,31 +302,31 @@ export default function AnamnesisHistory() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Медицинская история</CardTitle>
+                  <CardTitle className="text-sm sm:text-base">Медицинская история</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2">
+                <CardContent className="space-y-2 text-sm">
                   {selectedAnamnesis.formData.chronicDiseases && (
                     <div>
                       <span className="font-semibold">Хронические заболевания:</span>
-                      <p className="mt-1">{selectedAnamnesis.formData.chronicDiseases}</p>
+                      <p className="mt-1 break-words">{selectedAnamnesis.formData.chronicDiseases}</p>
                     </div>
                   )}
                   {selectedAnamnesis.formData.medications && (
                     <div>
                       <span className="font-semibold">Препараты:</span>
-                      <p className="mt-1">{selectedAnamnesis.formData.medications}</p>
+                      <p className="mt-1 break-words">{selectedAnamnesis.formData.medications}</p>
                     </div>
                   )}
                   {selectedAnamnesis.formData.injuries && (
                     <div>
                       <span className="font-semibold">Травмы:</span>
-                      <p className="mt-1">{selectedAnamnesis.formData.injuries}</p>
+                      <p className="mt-1 break-words">{selectedAnamnesis.formData.injuries}</p>
                     </div>
                   )}
                   {selectedAnamnesis.formData.surgeries && (
                     <div>
                       <span className="font-semibold">Операции:</span>
-                      <p className="mt-1">{selectedAnamnesis.formData.surgeries}</p>
+                      <p className="mt-1 break-words">{selectedAnamnesis.formData.surgeries}</p>
                     </div>
                   )}
                 </CardContent>
@@ -334,27 +334,27 @@ export default function AnamnesisHistory() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Образ жизни</CardTitle>
+                  <CardTitle className="text-sm sm:text-base">Образ жизни</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2">
+                <CardContent className="space-y-2 text-sm">
                   {selectedAnamnesis.formData.lifestyle && (
-                    <div>
+                    <div className="break-words">
                       <span className="font-semibold">Профессия:</span> {selectedAnamnesis.formData.lifestyle}
                     </div>
                   )}
                   {selectedAnamnesis.formData.physicalActivity && (
                     <div>
                       <span className="font-semibold">Физическая активность:</span>
-                      <p className="mt-1">{selectedAnamnesis.formData.physicalActivity}</p>
+                      <p className="mt-1 break-words">{selectedAnamnesis.formData.physicalActivity}</p>
                     </div>
                   )}
                   {selectedAnamnesis.formData.sleep && (
-                    <div>
+                    <div className="break-words">
                       <span className="font-semibold">Качество сна:</span> {selectedAnamnesis.formData.sleep}
                     </div>
                   )}
                   {selectedAnamnesis.formData.stress && (
-                    <div>
+                    <div className="break-words">
                       <span className="font-semibold">Уровень стресса:</span> {selectedAnamnesis.formData.stress}
                     </div>
                   )}
@@ -363,25 +363,25 @@ export default function AnamnesisHistory() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Цели и ограничения</CardTitle>
+                  <CardTitle className="text-sm sm:text-base">Цели и ограничения</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2">
+                <CardContent className="space-y-2 text-sm">
                   {selectedAnamnesis.formData.goals && (
                     <div>
                       <span className="font-semibold">Цели:</span>
-                      <p className="mt-1">{selectedAnamnesis.formData.goals}</p>
+                      <p className="mt-1 break-words">{selectedAnamnesis.formData.goals}</p>
                     </div>
                   )}
                   {selectedAnamnesis.formData.contraindications && (
                     <div>
                       <span className="font-semibold">Противопоказания:</span>
-                      <p className="mt-1">{selectedAnamnesis.formData.contraindications}</p>
+                      <p className="mt-1 break-words">{selectedAnamnesis.formData.contraindications}</p>
                     </div>
                   )}
                   {selectedAnamnesis.formData.additionalInfo && (
                     <div>
                       <span className="font-semibold">Дополнительно:</span>
-                      <p className="mt-1">{selectedAnamnesis.formData.additionalInfo}</p>
+                      <p className="mt-1 break-words">{selectedAnamnesis.formData.additionalInfo}</p>
                     </div>
                   )}
                 </CardContent>
@@ -390,13 +390,13 @@ export default function AnamnesisHistory() {
               {selectedAnamnesis.aiAnalysis && (
                 <Card className="border-primary/20">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base">
-                      <Icon name="Brain" className="text-primary" size={20} />
-                      AI-анализ
+                    <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
+                      <Icon name="Brain" className="text-primary flex-shrink-0" size={20} />
+                      <span className="truncate">AI-анализ</span>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="prose prose-sm max-w-none whitespace-pre-wrap">
+                    <div className="prose prose-sm max-w-none whitespace-pre-wrap break-words overflow-wrap-anywhere text-xs sm:text-sm">
                       {selectedAnamnesis.aiAnalysis}
                     </div>
                   </CardContent>
@@ -404,7 +404,7 @@ export default function AnamnesisHistory() {
               )}
 
               <div className="flex gap-3">
-                <Button variant="outline" onClick={() => setShowDetails(false)} className="flex-1">
+                <Button variant="outline" onClick={() => setShowDetails(false)} className="flex-1" size="sm">
                   Закрыть
                 </Button>
               </div>

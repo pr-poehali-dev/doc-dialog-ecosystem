@@ -125,13 +125,13 @@ export default function AnamnesisTool({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto w-[95vw] sm:w-full">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Icon name="ClipboardList" size={24} className="text-primary" />
-            Сбор анамнеза клиента
+          <DialogTitle className="flex items-center gap-2 text-base sm:text-lg">
+            <Icon name="ClipboardList" size={20} className="text-primary flex-shrink-0" />
+            <span className="truncate">Сбор анамнеза клиента</span>
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-sm">
             Заполните форму для получения AI-анализа и рекомендаций по работе с клиентом
           </DialogDescription>
         </DialogHeader>
@@ -396,26 +396,26 @@ export default function AnamnesisTool({
             <Card className="border-primary/20">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <Icon name="Brain" className="text-primary" size={20} />
-                  AI-анализ анамнеза
+                  <Icon name="Brain" className="text-primary flex-shrink-0" size={20} />
+                  <span className="truncate">AI-анализ анамнеза</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="prose prose-sm max-w-none whitespace-pre-wrap">
+                <div className="prose prose-sm max-w-none whitespace-pre-wrap break-words overflow-wrap-anywhere text-sm">
                   {response}
                 </div>
               </CardContent>
             </Card>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Button onClick={() => onSave(formData, response)} className="flex-1">
                 <Icon name="Save" size={16} className="mr-2" />
                 Сохранить анамнез
               </Button>
-              <Button variant="outline" onClick={handleReset}>
+              <Button variant="outline" onClick={handleReset} className="sm:w-auto">
                 <Icon name="Plus" size={16} className="mr-2" />
                 Новый
               </Button>
-              <Button variant="outline" onClick={() => onOpenChange(false)}>
+              <Button variant="outline" onClick={() => onOpenChange(false)} className="sm:w-auto">
                 Закрыть
               </Button>
             </div>
