@@ -252,7 +252,7 @@ export default function Tools() {
   };
 
   const handleUpgradeClick = () => {
-    navigate('/dashboard/subscriptions');
+    navigate('/dashboard/ai-subscription');
   };
 
   const handleBuyExtraRequests = async (count: number) => {
