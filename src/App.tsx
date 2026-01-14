@@ -82,6 +82,7 @@ import ImportedSpecialists from "./pages/admin/ImportedSpecialists";
 import ImportSalons from "./pages/admin/ImportSalons";
 import MedicalReportLanding from "./pages/MedicalReportLanding";
 import VacanciesCatalog from "./pages/VacanciesCatalog";
+import Premium from "./pages/Premium";
 
 const queryClient = new QueryClient();
 
@@ -139,6 +140,7 @@ const App = () => (
           <Route path="/salon/cabinet" element={<SalonCabinet />} />
           <Route path="/salons" element={<SalonsCatalog />} />
           <Route path="/vacancies" element={<VacanciesCatalog />} />
+          <Route path="/premium" element={<Premium />} />
           <Route path="/dashboard/public-profile" element={<PublicProfile />} />
           <Route path="/dashboard/clients" element={<ClientsCRM />} />
           <Route path="/dashboard/page-builder" element={<PageBuilder />} />
