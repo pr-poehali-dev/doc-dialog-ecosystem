@@ -251,10 +251,6 @@ export default function Tools() {
     setResponse('');
   };
 
-  const handleUpgradeClick = () => {
-    navigate('/dashboard/ai-subscription');
-  };
-
   const handleBuyExtraRequests = async (count: number) => {
     try {
       const userId = getUserId();
@@ -334,7 +330,6 @@ export default function Tools() {
             <div>
               <ToolUsageStats 
                 usageData={usageData}
-                onUpgradeClick={handleUpgradeClick}
                 onBuyExtraClick={() => setShowBuyDialog(true)}
               />
             </div>
@@ -393,7 +388,6 @@ export default function Tools() {
       <ToolLimitModal
         open={showLimitModal}
         onOpenChange={setShowLimitModal}
-        onUpgradeClick={handleUpgradeClick}
       />
 
       <BuyExtraRequestsDialog

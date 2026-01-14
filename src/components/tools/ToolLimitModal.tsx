@@ -11,10 +11,9 @@ import {
 interface ToolLimitModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onUpgradeClick: () => void;
 }
 
-export default function ToolLimitModal({ open, onOpenChange, onUpgradeClick }: ToolLimitModalProps) {
+export default function ToolLimitModal({ open, onOpenChange }: ToolLimitModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
@@ -30,38 +29,20 @@ export default function ToolLimitModal({ open, onOpenChange, onUpgradeClick }: T
         
         <div className="space-y-4 mt-4">
           <div className="p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg border border-primary/20">
-            <h4 className="font-semibold mb-3 flex items-center gap-2">
-              <Icon name="Crown" size={18} className="text-primary" />
-              Преимущества Premium
-            </h4>
-            <ul className="space-y-2 text-sm">
-              <li className="flex items-start gap-2">
-                <Icon name="Check" size={16} className="text-green-600 mt-0.5 flex-shrink-0" />
-                <span>Безлимитное использование AI-инструментов</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <Icon name="Check" size={16} className="text-green-600 mt-0.5 flex-shrink-0" />
-                <span>Неограниченные диалоги для супервизии</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <Icon name="Check" size={16} className="text-green-600 mt-0.5 flex-shrink-0" />
-                <span>Приоритетная поддержка</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <Icon name="Check" size={16} className="text-green-600 mt-0.5 flex-shrink-0" />
-                <span>Доступ к новым инструментам в первую очередь</span>
-              </li>
-            </ul>
+            <div className="text-center">
+              <Icon name="Info" size={24} className="text-primary mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">
+                Лимиты обновятся 1-го числа следующего месяца.
+              </p>
+              <p className="text-sm text-muted-foreground mt-2">
+                Вы можете докупить дополнительные запросы по 12₽ за штуку на странице инструментов.
+              </p>
+            </div>
           </div>
 
-          <Button onClick={onUpgradeClick} className="w-full" size="lg">
-            <Icon name="Crown" size={18} className="mr-2" />
-            Перейти на Premium
+          <Button onClick={() => onOpenChange(false)} variant="outline" className="w-full" size="lg">
+            Понятно
           </Button>
-
-          <p className="text-xs text-center text-muted-foreground">
-            Лимиты обновятся 1-го числа следующего месяца
-          </p>
         </div>
       </DialogContent>
     </Dialog>

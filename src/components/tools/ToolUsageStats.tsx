@@ -12,11 +12,10 @@ interface UsageData {
 
 interface ToolUsageStatsProps {
   usageData: UsageData | null;
-  onUpgradeClick: () => void;
   onBuyExtraClick: () => void;
 }
 
-export default function ToolUsageStats({ usageData, onUpgradeClick, onBuyExtraClick }: ToolUsageStatsProps) {
+export default function ToolUsageStats({ usageData, onBuyExtraClick }: ToolUsageStatsProps) {
   if (!usageData) return null;
 
   const extraRequests = usageData.extra_requests || 0;
@@ -77,29 +76,20 @@ export default function ToolUsageStats({ usageData, onUpgradeClick, onBuyExtraCl
                 <p className="font-medium text-orange-900">Осталось использований: {remaining}</p>
                 <p className="text-orange-700 mt-1">
                   {remaining === 0 
-                    ? 'Лимит исчерпан. Перейдите на платный тариф для продолжения использования AI-инструментов.'
-                    : 'Скоро закончатся бесплатные использования. Оформите подписку, чтобы не прерывать работу.'}
+                    ? 'Лимит исчерпан. Вы можете докупить дополнительные запросы.'
+                    : 'Скоро закончатся бесплатные использования. Вы можете докупить дополнительные запросы.'}
                 </p>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-2 mt-3">
-              <Button 
-                onClick={onBuyExtraClick}
-                variant="outline" 
-                size="sm"
-              >
-                <Icon name="Plus" size={16} className="mr-1" />
-                Докупить
-              </Button>
-              <Button 
-                onClick={onUpgradeClick}
-                variant="default" 
-                size="sm"
-              >
-                <Icon name="Crown" size={16} className="mr-1" />
-                Premium
-              </Button>
-            </div>
+            <Button 
+              onClick={onBuyExtraClick}
+              variant="default" 
+              size="sm"
+              className="w-full mt-3"
+            >
+              <Icon name="Plus" size={16} className="mr-2" />
+              Докупить запросы
+            </Button>
           </div>
         )}
 
