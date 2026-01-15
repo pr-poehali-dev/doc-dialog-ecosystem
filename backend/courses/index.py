@@ -1002,6 +1002,35 @@ def handler(event: dict, context) -> dict:
         """)
         
         new_course = cur.fetchone()
+        course_id = new_course[0]
+        
+        # Генерируем автоматические 5-звёздочные отзывы (от 28 до 378)
+        import random
+        review_count = random.randint(28, 378)
+        review_names = [
+            'Анна М.', 'Елена К.', 'Мария П.', 'Ольга С.', 'Татьяна В.',
+            'Светлана Н.', 'Наталья Р.', 'Ирина Л.', 'Екатерина Д.', 'Юлия Т.',
+            'Александр П.', 'Дмитрий К.', 'Сергей В.', 'Андрей М.', 'Максим Л.'
+        ]
+        review_texts = [
+            'Отличный курс! Всё понятно объясняется',
+            'Очень довольна обучением, рекомендую',
+            'Профессиональный подход преподавателя',
+            'Получила массу полезных знаний',
+            'Курс полностью оправдал ожидания',
+            'Качественный материал и практика',
+            'Благодарю за ценные знания!',
+            'Всё на высшем уровне'
+        ]
+        
+        for _ in range(review_count):
+            random_name = random.choice(review_names)
+            random_text = random.choice(review_texts)
+            cur.execute(f"""
+                INSERT INTO {schema}.course_reviews 
+                (entity_type, entity_id, user_name, rating, comment, status, is_auto_generated)
+                VALUES ('course', {course_id}, '{random_name}', 5, '{random_text}', 'approved', true)
+            """)
         
         # Увеличиваем счётчик ТОЛЬКО если отправлено на модерацию (не черновик)
         if not limit_exceeded:
@@ -1202,6 +1231,35 @@ def handler(event: dict, context) -> dict:
         """)
         
         new_mastermind = cur.fetchone()
+        mastermind_id = new_mastermind[0]
+        
+        # Генерируем автоматические 5-звёздочные отзывы (от 28 до 378)
+        import random
+        review_count = random.randint(28, 378)
+        review_names = [
+            'Анна М.', 'Елена К.', 'Мария П.', 'Ольга С.', 'Татьяна В.',
+            'Светлана Н.', 'Наталья Р.', 'Ирина Л.', 'Екатерина Д.', 'Юлия Т.',
+            'Александр П.', 'Дмитрий К.', 'Сергей В.', 'Андрей М.', 'Максим Л.'
+        ]
+        review_texts = [
+            'Отличный мастермайнд! Очень полезно',
+            'Получила огромную пользу от встречи',
+            'Профессиональная организация',
+            'Рекомендую всем коллегам',
+            'Ценный опыт и нетворкинг',
+            'Качественное мероприятие',
+            'Благодарю за возможность участия!',
+            'Всё прошло на высшем уровне'
+        ]
+        
+        for _ in range(review_count):
+            random_name = random.choice(review_names)
+            random_text = random.choice(review_texts)
+            cur.execute(f"""
+                INSERT INTO {schema}.course_reviews 
+                (entity_type, entity_id, user_name, rating, comment, status, is_auto_generated)
+                VALUES ('mastermind', {mastermind_id}, '{random_name}', 5, '{random_text}', 'approved', true)
+            """)
         
         # Увеличиваем счётчик ТОЛЬКО если отправлено на модерацию (не черновик)
         if not limit_exceeded_mm:
@@ -1916,6 +1974,35 @@ def handler(event: dict, context) -> dict:
         """)
         
         new_training = cur.fetchone()
+        training_id = new_training[0]
+        
+        # Генерируем автоматические 5-звёздочные отзывы (от 28 до 378)
+        import random
+        review_count = random.randint(28, 378)
+        review_names = [
+            'Анна М.', 'Елена К.', 'Мария П.', 'Ольга С.', 'Татьяна В.',
+            'Светлана Н.', 'Наталья Р.', 'Ирина Л.', 'Екатерина Д.', 'Юлия Т.',
+            'Александр П.', 'Дмитрий К.', 'Сергей В.', 'Андрей М.', 'Максим Л.'
+        ]
+        review_texts = [
+            'Отличное очное обучение!',
+            'Получила массу практических навыков',
+            'Профессиональный подход тренера',
+            'Рекомендую всем коллегам',
+            'Ценные знания и практика',
+            'Качественное обучение',
+            'Благодарю за отличную организацию!',
+            'Всё прошло на высшем уровне'
+        ]
+        
+        for _ in range(review_count):
+            random_name = random.choice(review_names)
+            random_text = random.choice(review_texts)
+            cur.execute(f"""
+                INSERT INTO {schema}.course_reviews 
+                (entity_type, entity_id, user_name, rating, comment, status, is_auto_generated)
+                VALUES ('offline_training', {training_id}, '{random_name}', 5, '{random_text}', 'approved', true)
+            """)
         
         result = {
             'id': new_training[0], 'title': new_training[1], 'slug': new_training[2],
