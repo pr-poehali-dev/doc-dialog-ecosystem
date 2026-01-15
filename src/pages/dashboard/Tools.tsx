@@ -56,8 +56,6 @@ export default function Tools() {
         <div className="max-w-6xl mx-auto">
           <ToolsHeader
             onBackClick={() => navigate(getDashboardRoute())}
-            onHistoryClick={() => navigate('/dashboard/anamnesis-history')}
-            showHistoryButton={!isClient}
           />
 
           <div className="grid lg:grid-cols-3 gap-6 mb-8">
