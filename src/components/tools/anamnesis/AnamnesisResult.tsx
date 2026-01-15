@@ -55,22 +55,27 @@ ${response}`;
     try {
       const textArea = document.createElement('textarea');
       textArea.value = anamnesisText;
-      textArea.style.position = 'fixed';
-      textArea.style.top = '0';
-      textArea.style.left = '0';
-      textArea.style.width = '2em';
-      textArea.style.height = '2em';
-      textArea.style.padding = '0';
-      textArea.style.border = 'none';
-      textArea.style.outline = 'none';
-      textArea.style.boxShadow = 'none';
-      textArea.style.background = 'transparent';
+      textArea.setAttribute('readonly', '');
+      textArea.style.position = 'absolute';
+      textArea.style.left = '-9999px';
+      textArea.style.fontSize = '12pt';
+      
       document.body.appendChild(textArea);
-      textArea.focus();
+      
+      const selected = document.getSelection()!.rangeCount > 0
+        ? document.getSelection()!.getRangeAt(0)
+        : false;
+      
       textArea.select();
+      textArea.setSelectionRange(0, anamnesisText.length);
       
       const successful = document.execCommand('copy');
       document.body.removeChild(textArea);
+      
+      if (selected) {
+        document.getSelection()!.removeAllRanges();
+        document.getSelection()!.addRange(selected);
+      }
       
       if (successful) {
         toast({
