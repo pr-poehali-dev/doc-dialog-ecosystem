@@ -15,7 +15,7 @@ interface AnamnesisResultProps {
 export default function AnamnesisResult({ formData, response, onReset, onClose }: AnamnesisResultProps) {
   const { toast } = useToast();
 
-  const copyAnamnesisToClipboard = useCallback(() => {
+  const copyAnamnesisToClipboard = useCallback(async () => {
     const anamnesisText = `АНАМНЕЗ КЛИЕНТА
 
 Общая информация:
@@ -53,32 +53,38 @@ AI-АНАЛИЗ:
 
 ${response}`;
     
+    if (navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(anamnesisText);
+        toast({
+          title: 'Скопировано',
+          description: 'Анамнез и анализ скопированы в буфер обмена'
+        });
+        return;
+      } catch (err) {
+        console.error('Modern clipboard failed:', err);
+      }
+    }
+    
     const textArea = document.createElement('textarea');
     textArea.value = anamnesisText;
-    textArea.style.position = 'absolute';
-    textArea.style.left = '-9999px';
+    textArea.style.position = 'fixed';
     textArea.style.top = '0';
-    textArea.setAttribute('readonly', '');
+    textArea.style.left = '0';
+    textArea.style.width = '2em';
+    textArea.style.height = '2em';
+    textArea.style.padding = '0';
+    textArea.style.border = 'none';
+    textArea.style.outline = 'none';
+    textArea.style.boxShadow = 'none';
+    textArea.style.background = 'transparent';
     
     document.body.appendChild(textArea);
-    
-    if (navigator.userAgent.match(/ipad|iphone/i)) {
-      const range = document.createRange();
-      range.selectNodeContents(textArea);
-      const selection = window.getSelection();
-      if (selection) {
-        selection.removeAllRanges();
-        selection.addRange(range);
-      }
-      textArea.setSelectionRange(0, anamnesisText.length);
-    } else {
-      textArea.select();
-    }
+    textArea.focus();
+    textArea.select();
     
     try {
       const successful = document.execCommand('copy');
-      document.body.removeChild(textArea);
-      
       if (successful) {
         toast({
           title: 'Скопировано',
@@ -92,12 +98,13 @@ ${response}`;
         });
       }
     } catch (err) {
-      document.body.removeChild(textArea);
       toast({
         title: 'Ошибка',
         description: 'Не удалось скопировать',
         variant: 'destructive'
       });
+    } finally {
+      document.body.removeChild(textArea);
     }
   }, [formData, response, toast]);
 
