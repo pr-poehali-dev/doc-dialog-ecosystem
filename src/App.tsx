@@ -85,6 +85,7 @@ import MedicalReportLanding from "./pages/MedicalReportLanding";
 import VacanciesCatalog from "./pages/VacanciesCatalog";
 import Premium from "./pages/Premium";
 import AccountSettings from "./pages/dashboard/AccountSettings";
+import VisceraCourse from "./pages/VisceraCourse";
 
 const queryClient = new QueryClient();
 
@@ -143,6 +144,7 @@ const App = () => (
           <Route path="/salons" element={<SalonsCatalog />} />
           <Route path="/vacancies" element={<VacanciesCatalog />} />
           <Route path="/premium" element={<Premium />} />
+          <Route path="/viscera-course" element={<VisceraCourse />} />
           <Route path="/dashboard/public-profile" element={<PublicProfile />} />
           <Route path="/dashboard/clients" element={<ClientsCRM />} />
           <Route path="/dashboard/page-builder" element={<PageBuilder />} />
