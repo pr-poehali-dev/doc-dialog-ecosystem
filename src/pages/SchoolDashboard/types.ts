@@ -70,11 +70,6 @@ export interface CourseFormData {
   external_url: string;
   original_price: string;
   discount_price: string;
-  author_name: string;
-  author_photo: string;
-  course_content: string;
-  cover_url: string;
-  cta_button_url: string;
 }
 
 export interface MastermindFormData {
@@ -89,9 +84,6 @@ export interface MastermindFormData {
   external_url: string;
   original_price: string;
   discount_price: string;
-  author_name: string;
-  author_photo: string;
-  event_content: string;
   category: 'technique' | 'business' | 'soft_skills' | 'health' | 'digital';
 }
 
@@ -118,12 +110,7 @@ export const INITIAL_COURSE_FORM: CourseFormData = {
   image_url: '',
   external_url: '',
   original_price: '',
-  discount_price: '',
-  author_name: '',
-  author_photo: '',
-  course_content: '',
-  cover_url: '',
-  cta_button_url: ''
+  discount_price: ''
 };
 
 export const INITIAL_MASTERMIND_FORM: MastermindFormData = {
@@ -138,9 +125,6 @@ export const INITIAL_MASTERMIND_FORM: MastermindFormData = {
   external_url: '',
   original_price: '',
   discount_price: '',
-  author_name: '',
-  author_photo: '',
-  event_content: '',
   category: 'technique'
 };
 

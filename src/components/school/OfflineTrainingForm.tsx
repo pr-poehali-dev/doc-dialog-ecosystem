@@ -17,9 +17,6 @@ interface OfflineTrainingFormProps {
     external_url: string;
     original_price: string;
     discount_price: string;
-    author_name: string;
-    author_photo: string;
-    event_content: string;
     category: 'technique' | 'business' | 'soft_skills' | 'health' | 'digital';
   };
   setTrainingForm: React.Dispatch<React.SetStateAction<{
@@ -34,9 +31,6 @@ interface OfflineTrainingFormProps {
     external_url: string;
     original_price: string;
     discount_price: string;
-    author_name: string;
-    author_photo: string;
-    event_content: string;
     category: 'technique' | 'business' | 'soft_skills' | 'health' | 'digital';
   }>>;
   onSubmit: () => void;
@@ -104,9 +98,9 @@ export default function OfflineTrainingForm({ trainingForm, setTrainingForm, onS
           <Input value={trainingForm.image_url} onChange={(e) => setTrainingForm({...trainingForm, image_url: e.target.value})} placeholder="https://..." />
         </div>
         <div>
-          <Label>Ссылка для регистрации*</Label>
-          <Input value={trainingForm.external_url} onChange={(e) => setTrainingForm({...trainingForm, external_url: e.target.value})} placeholder="https://... (ссылка на страницу оплаты)" />
-          <p className="text-xs text-muted-foreground mt-1">Укажите прямую ссылку на страницу оплаты</p>
+          <Label>Ссылка на обучение*</Label>
+          <Input value={trainingForm.external_url} onChange={(e) => setTrainingForm({...trainingForm, external_url: e.target.value})} placeholder="https://... (ссылка на ваш сайт/страницу обучения)" />
+          <p className="text-xs text-muted-foreground mt-1">Укажите ссылку на страницу обучения вашей школы. По кнопке &quot;Подробнее&quot; пользователь перейдёт на эту ссылку.</p>
         </div>
         <div className="grid md:grid-cols-2 gap-4">
           <div>
@@ -117,20 +111,6 @@ export default function OfflineTrainingForm({ trainingForm, setTrainingForm, onS
             <Label>Цена со скидкой (красная, ₽)</Label>
             <Input type="number" value={trainingForm.discount_price} onChange={(e) => setTrainingForm({...trainingForm, discount_price: e.target.value})} placeholder="Необязательно" />
           </div>
-        </div>
-        <div className="grid md:grid-cols-2 gap-4">
-          <div>
-            <Label>Имя преподавателя</Label>
-            <Input value={trainingForm.author_name} onChange={(e) => setTrainingForm({...trainingForm, author_name: e.target.value})} placeholder="Иван Иванов" />
-          </div>
-          <div>
-            <Label>Фото преподавателя (URL)</Label>
-            <Input value={trainingForm.author_photo} onChange={(e) => setTrainingForm({...trainingForm, author_photo: e.target.value})} placeholder="https://..." />
-          </div>
-        </div>
-        <div>
-          <Label>Программа обучения</Label>
-          <Textarea value={trainingForm.event_content} onChange={(e) => setTrainingForm({...trainingForm, event_content: e.target.value})} rows={6} placeholder="Подробное описание программы, темы, расписание занятий..." />
         </div>
         <div className="flex gap-2">
           <Button onClick={onSubmit}>{isEditing ? 'Сохранить изменения' : 'Добавить очное обучение'}</Button>

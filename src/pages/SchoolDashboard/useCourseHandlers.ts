@@ -33,10 +33,7 @@ export function useCourseHandlers({
           price: courseForm.price ? parseFloat(courseForm.price) : null,
           duration_hours: courseForm.duration_hours ? parseInt(courseForm.duration_hours) : null,
           original_price: courseForm.original_price ? parseFloat(courseForm.original_price) : null,
-          discount_price: courseForm.discount_price ? parseFloat(courseForm.discount_price) : null,
-          author_name: courseForm.author_name,
-          author_photo: courseForm.author_photo,
-          course_content: courseForm.course_content
+          discount_price: courseForm.discount_price ? parseFloat(courseForm.discount_price) : null
         })
       });
       
@@ -63,12 +60,7 @@ export function useCourseHandlers({
       image_url: course.image_url || '',
       external_url: course.external_url || '',
       original_price: course.original_price?.toString() || '',
-      discount_price: course.discount_price?.toString() || '',
-      author_name: course.author_name || '',
-      author_photo: course.author_photo || '',
-      course_content: course.course_content || '',
-      cover_url: course.cover_url || '',
-      cta_button_url: course.cta_button_url || ''
+      discount_price: course.discount_price?.toString() || ''
     });
     setEditingCourseId(course.id);
     setShowAddForm(true);
@@ -86,10 +78,7 @@ export function useCourseHandlers({
           price: courseForm.price ? parseFloat(courseForm.price) : null,
           duration_hours: courseForm.duration_hours ? parseInt(courseForm.duration_hours) : null,
           original_price: courseForm.original_price ? parseFloat(courseForm.original_price) : null,
-          discount_price: courseForm.discount_price ? parseFloat(courseForm.discount_price) : null,
-          author_name: courseForm.author_name,
-          author_photo: courseForm.author_photo,
-          course_content: courseForm.course_content
+          discount_price: courseForm.discount_price ? parseFloat(courseForm.discount_price) : null
         })
       });
       

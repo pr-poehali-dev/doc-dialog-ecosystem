@@ -33,10 +33,7 @@ export function useMastermindHandlers({
           price: mastermindForm.price ? parseFloat(mastermindForm.price) : null,
           max_participants: mastermindForm.max_participants ? parseInt(mastermindForm.max_participants) : null,
           original_price: mastermindForm.original_price ? parseFloat(mastermindForm.original_price) : null,
-          discount_price: mastermindForm.discount_price ? parseFloat(mastermindForm.discount_price) : null,
-          author_name: mastermindForm.author_name,
-          author_photo: mastermindForm.author_photo,
-          event_content: mastermindForm.event_content
+          discount_price: mastermindForm.discount_price ? parseFloat(mastermindForm.discount_price) : null
         })
       });
       
@@ -64,9 +61,6 @@ export function useMastermindHandlers({
       external_url: mastermind.external_url,
       original_price: mastermind.original_price?.toString() || '',
       discount_price: mastermind.discount_price?.toString() || '',
-      author_name: mastermind.author_name || '',
-      author_photo: mastermind.author_photo || '',
-      event_content: mastermind.event_content || '',
       category: mastermind.category || 'technique'
     });
     setEditingMastermindId(mastermind.id);
@@ -85,10 +79,7 @@ export function useMastermindHandlers({
           price: mastermindForm.price ? parseFloat(mastermindForm.price) : null,
           max_participants: mastermindForm.max_participants ? parseInt(mastermindForm.max_participants) : null,
           original_price: mastermindForm.original_price ? parseFloat(mastermindForm.original_price) : null,
-          discount_price: mastermindForm.discount_price ? parseFloat(mastermindForm.discount_price) : null,
-          author_name: mastermindForm.author_name,
-          author_photo: mastermindForm.author_photo,
-          event_content: mastermindForm.event_content
+          discount_price: mastermindForm.discount_price ? parseFloat(mastermindForm.discount_price) : null
         })
       });
       

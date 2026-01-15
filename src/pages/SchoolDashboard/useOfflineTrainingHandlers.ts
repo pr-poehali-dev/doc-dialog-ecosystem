@@ -23,9 +23,6 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
           external_url: trainingForm.external_url,
           original_price: trainingForm.original_price ? parseFloat(trainingForm.original_price) : null,
           discount_price: trainingForm.discount_price ? parseFloat(trainingForm.discount_price) : null,
-          author_name: trainingForm.author_name,
-          author_photo: trainingForm.author_photo,
-          event_content: trainingForm.event_content,
           category: trainingForm.category || 'technique'
         })
       });
@@ -45,9 +42,6 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
           external_url: '',
           original_price: '',
           discount_price: '',
-          author_name: '',
-          author_photo: '',
-          event_content: '',
           category: 'technique'
         });
         loadData();
@@ -74,9 +68,6 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
       external_url: training.external_url || '',
       original_price: training.original_price?.toString() || '',
       discount_price: training.discount_price?.toString() || '',
-      author_name: training.author_name || '',
-      author_photo: training.author_photo || '',
-      event_content: training.event_content || '',
       category: training.category || 'technique'
     });
     setEditingTrainingId(training.id);
@@ -106,9 +97,6 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
           external_url: trainingForm.external_url,
           original_price: trainingForm.original_price ? parseFloat(trainingForm.original_price) : null,
           discount_price: trainingForm.discount_price ? parseFloat(trainingForm.discount_price) : null,
-          author_name: trainingForm.author_name,
-          author_photo: trainingForm.author_photo,
-          event_content: trainingForm.event_content,
           category: trainingForm.category || 'technique'
         })
       });
@@ -129,9 +117,6 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
           external_url: '',
           original_price: '',
           discount_price: '',
-          author_name: '',
-          author_photo: '',
-          event_content: '',
           category: 'technique'
         });
         loadData();

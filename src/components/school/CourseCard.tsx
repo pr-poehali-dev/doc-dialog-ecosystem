@@ -116,15 +116,15 @@ export default function CourseCard({ course, canPromoteToTop, getStatusBadge, on
               Отправить на модерацию
             </button>
           )}
-          {(course.status === 'approved' || course.status === 'moderation') && course.slug && (
+          {course.external_url && (
             <a
-              href={`/course/landing/${course.slug}?preview=true`}
+              href={course.external_url}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors font-medium"
             >
               <Icon name="ExternalLink" size={16} />
-              {course.status === 'moderation' ? 'Предпросмотр' : 'Открыть лендинг'}
+              Подробнее
             </a>
           )}
           {course.status === 'approved' && (

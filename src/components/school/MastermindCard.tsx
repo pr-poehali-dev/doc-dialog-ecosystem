@@ -131,15 +131,15 @@ export default function MastermindCard({ mastermind: mm, canPromoteToTop, getSta
               Отправить на модерацию
             </button>
           )}
-          {mm.status === 'approved' && mm.slug && (
+          {mm.external_url && (
             <a
-              href={`/mastermind/landing/${mm.slug}`}
+              href={mm.external_url}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors font-medium"
             >
               <Icon name="ExternalLink" size={16} />
-              Открыть лендинг
+              Подробнее
             </a>
           )}
           {mm.status === 'approved' && (
@@ -158,13 +158,13 @@ export default function MastermindCard({ mastermind: mm, canPromoteToTop, getSta
             </button>
           )}
           <div className="flex gap-2">
-            <a
-              href={`/mastermind/landing/builder?id=${mm.id}`}
+            <button
+              onClick={() => onEdit?.(mm)}
               className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
             >
               <Icon name="Pencil" size={16} />
               Редактировать
-            </a>
+            </button>
             <button
               onClick={() => onDelete?.(mm.id)}
               className="flex items-center justify-center gap-2 px-3 py-2 text-sm bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"

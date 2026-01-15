@@ -18,11 +18,6 @@ interface CourseFormProps {
     external_url: string;
     original_price: string;
     discount_price: string;
-    author_name: string;
-    author_photo: string;
-    course_content: string;
-    cover_url: string;
-    cta_button_url: string;
   };
   setCourseForm: React.Dispatch<React.SetStateAction<{
     school_name: string;
@@ -36,11 +31,6 @@ interface CourseFormProps {
     external_url: string;
     original_price: string;
     discount_price: string;
-    author_name: string;
-    author_photo: string;
-    course_content: string;
-    cover_url: string;
-    cta_button_url: string;
   }>>;
   onSubmit: () => void;
   onCancel: () => void;
@@ -132,32 +122,8 @@ export default function CourseForm({ courseForm, setCourseForm, onSubmit, onCanc
         </div>
         <div>
           <Label>Ссылка на курс (внешний сайт)*</Label>
-          <Input value={courseForm.external_url} onChange={(e) => setCourseForm({...courseForm, external_url: e.target.value})} placeholder="https://... (ссылка на страницу оплаты)" />
-          <p className="text-xs text-muted-foreground mt-1">Укажите прямую ссылку на страницу оплаты вашей школы</p>
-        </div>
-        <div className="grid md:grid-cols-2 gap-4">
-          <div>
-            <Label>Имя автора курса</Label>
-            <Input value={courseForm.author_name} onChange={(e) => setCourseForm({...courseForm, author_name: e.target.value})} placeholder="Иван Иванов" />
-          </div>
-          <div>
-            <Label>Фото автора (URL)</Label>
-            <Input value={courseForm.author_photo} onChange={(e) => setCourseForm({...courseForm, author_photo: e.target.value})} placeholder="https://..." />
-          </div>
-        </div>
-        <div>
-          <Label>Содержание курса (программа)</Label>
-          <Textarea value={courseForm.course_content} onChange={(e) => setCourseForm({...courseForm, course_content: e.target.value})} rows={6} placeholder="Подробное описание программы курса, модули, темы..." />
-        </div>
-        <div>
-          <Label>URL обложки для лендинга</Label>
-          <Input value={courseForm.cover_url} onChange={(e) => setCourseForm({...courseForm, cover_url: e.target.value})} placeholder="https://... (большая картинка для героя)" />
-          <p className="text-xs text-muted-foreground mt-1">Эта картинка будет отображаться в hero блоке лендинга курса</p>
-        </div>
-        <div>
-          <Label>Ссылка для кнопки CTA</Label>
-          <Input value={courseForm.cta_button_url} onChange={(e) => setCourseForm({...courseForm, cta_button_url: e.target.value})} placeholder="https://... (ссылка для записи на курс)" />
-          <p className="text-xs text-muted-foreground mt-1">Эта ссылка будет использоваться в кнопке 'Записаться на курс' в лендинге и футере</p>
+          <Input value={courseForm.external_url} onChange={(e) => setCourseForm({...courseForm, external_url: e.target.value})} placeholder="https://... (ссылка на ваш сайт/страницу курса)" />
+          <p className="text-xs text-muted-foreground mt-1">Укажите ссылку на страницу курса вашей школы. По кнопке &quot;Подробнее&quot; пользователь перейдёт на эту ссылку.</p>
         </div>
         <div className="flex gap-2">
           <Button onClick={onSubmit}>{isEditing ? 'Сохранить изменения' : 'Добавить курс'}</Button>
