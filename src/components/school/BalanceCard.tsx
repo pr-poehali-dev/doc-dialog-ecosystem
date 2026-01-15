@@ -131,17 +131,17 @@ export default function BalanceCard() {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <CardTitle className="flex items-center gap-2">
           <Icon name="Wallet" size={24} />
           Баланс школы
         </CardTitle>
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full sm:w-auto">
           <Dialog open={showHistory} onOpenChange={setShowHistory}>
             <DialogTrigger asChild>
-              <Button variant="outline" size="sm" onClick={() => loadTransactions()}>
-                <Icon name="History" size={16} className="mr-2" />
-                История
+              <Button variant="outline" size="sm" onClick={() => loadTransactions()} className="flex-1 sm:flex-none">
+                <Icon name="History" size={16} className="sm:mr-2" />
+                <span className="hidden sm:inline">История</span>
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl">
@@ -183,9 +183,9 @@ export default function BalanceCard() {
 
           <Dialog open={showTopUp} onOpenChange={setShowTopUp}>
             <DialogTrigger asChild>
-              <Button size="sm">
-                <Icon name="Plus" size={16} className="mr-2" />
-                Пополнить
+              <Button size="sm" className="flex-1 sm:flex-none">
+                <Icon name="Plus" size={16} className="sm:mr-2" />
+                <span className="hidden sm:inline">Пополнить</span>
               </Button>
             </DialogTrigger>
             <DialogContent>
@@ -238,10 +238,10 @@ export default function BalanceCard() {
       </CardHeader>
       <CardContent>
         <div className="text-center">
-          <div className="text-4xl font-bold text-primary mb-2">
+          <div className="text-3xl sm:text-4xl font-bold text-primary mb-2">
             {balance.toLocaleString('ru-RU')} ₽
           </div>
-          <p className="text-sm text-gray-500">
+          <p className="text-xs sm:text-sm text-gray-500">
             Используйте баланс для подъёма курсов в топ
           </p>
         </div>
