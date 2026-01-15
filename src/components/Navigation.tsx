@@ -51,6 +51,15 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
     { label: "О платформе", onClick: () => scrollToSection?.('about') },
   ];
 
+  const loggedInMenuItems = [
+    { label: "Главная", path: "/" },
+    { label: "Специалисты", path: "/masseurs" },
+    { label: "Вакансии", path: "/vacancies" },
+    { label: "Курсы", path: "/courses" },
+    { label: "Центры", path: "/salons" },
+    { label: "О платформе", path: "/about" },
+  ];
+
   const otherPagesMenuItems = [
     { label: "Главная", path: "/" },
     { label: "Образование", path: "/courses" },
@@ -83,7 +92,7 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
               </>
             ) : (
               <>
-                {otherPagesMenuItems.map((item, index) => (
+                {(isLoggedIn ? loggedInMenuItems : otherPagesMenuItems).map((item, index) => (
                   <Link
                     key={index}
                     to={item.path}
@@ -121,7 +130,7 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
                       </>
                     ) : (
                       <>
-                        {otherPagesMenuItems.map((item, index) => (
+                        {(isLoggedIn ? loggedInMenuItems : otherPagesMenuItems).map((item, index) => (
                           <Link
                             key={index}
                             to={item.path}
