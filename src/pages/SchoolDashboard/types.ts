@@ -70,6 +70,9 @@ export interface CourseFormData {
   external_url: string;
   original_price: string;
   discount_price: string;
+  has_certificate: boolean;
+  has_employment: boolean;
+  has_practice: boolean;
 }
 
 export interface MastermindFormData {
@@ -110,7 +113,10 @@ export const INITIAL_COURSE_FORM: CourseFormData = {
   image_url: '',
   external_url: '',
   original_price: '',
-  discount_price: ''
+  discount_price: '',
+  has_certificate: false,
+  has_employment: false,
+  has_practice: false
 };
 
 export const INITIAL_MASTERMIND_FORM: MastermindFormData = {

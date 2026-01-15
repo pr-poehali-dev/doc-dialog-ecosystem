@@ -60,7 +60,10 @@ export function useCourseHandlers({
       image_url: course.image_url || '',
       external_url: course.external_url || '',
       original_price: course.original_price?.toString() || '',
-      discount_price: course.discount_price?.toString() || ''
+      discount_price: course.discount_price?.toString() || '',
+      has_certificate: (course as any).has_certificate || false,
+      has_employment: (course as any).has_employment || false,
+      has_practice: (course as any).has_practice || false
     });
     setEditingCourseId(course.id);
     setShowAddForm(true);
