@@ -15,6 +15,15 @@ interface BuyExtraRequestsDialogProps {
   onBuyRequests: (count: number) => void;
 }
 
+interface Package {
+  count: number;
+  price: number;
+  originalPrice: number;
+  discount: number;
+  popular: boolean;
+  badge?: string;
+}
+
 const PRICE_PER_REQUEST = 12;
 
 export default function BuyExtraRequestsDialog({
@@ -22,13 +31,14 @@ export default function BuyExtraRequestsDialog({
   onOpenChange,
   onBuyRequests
 }: BuyExtraRequestsDialogProps) {
-  const [selectedCount, setSelectedCount] = useState(5);
+  const [selectedCount, setSelectedCount] = useState(10);
 
-  const packages = [
-    { count: 5, price: 60, popular: false },
-    { count: 10, price: 120, popular: true },
-    { count: 20, price: 240, popular: false },
-    { count: 50, price: 600, popular: false }
+  const packages: Package[] = [
+    { count: 5, price: 60, originalPrice: 60, discount: 0, popular: false },
+    { count: 10, price: 108, originalPrice: 120, discount: 10, popular: true, badge: 'Выгодно' },
+    { count: 20, price: 192, originalPrice: 240, discount: 20, popular: false, badge: '-20%' },
+    { count: 50, price: 420, originalPrice: 600, discount: 30, popular: false, badge: '-30%' },
+    { count: 100, price: 720, originalPrice: 1200, discount: 40, popular: false, badge: '-40%' }
   ];
 
   return (
@@ -40,30 +50,38 @@ export default function BuyExtraRequestsDialog({
             Докупить AI-запросы
           </DialogTitle>
           <DialogDescription>
-            Выберите количество дополнительных запросов. Один запрос = 12₽
+            Выберите пакет. Чем больше — тем выгоднее! Скидки до 40%
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
           {packages.map((pkg) => (
             <button
               key={pkg.count}
               onClick={() => setSelectedCount(pkg.count)}
               className={`relative p-4 rounded-xl border-2 transition-all hover:shadow-md ${
                 selectedCount === pkg.count
-                  ? 'border-primary bg-blue-50'
+                  ? 'border-primary bg-blue-50 shadow-lg scale-105'
                   : 'border-gray-200 hover:border-primary/50'
               }`}
             >
-              {pkg.popular && (
-                <div className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-primary text-white text-xs rounded-full">
-                  Выгодно
+              {pkg.badge && (
+                <div className={`absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 text-white text-xs rounded-full whitespace-nowrap ${
+                  pkg.popular ? 'bg-primary' : 'bg-green-500'
+                }`}>
+                  {pkg.badge}
                 </div>
               )}
               <div className="text-center">
                 <div className="text-2xl font-bold text-gray-900">{pkg.count}</div>
                 <div className="text-xs text-muted-foreground mb-2">запросов</div>
+                {pkg.discount > 0 && (
+                  <div className="text-xs text-gray-400 line-through mb-1">{pkg.originalPrice}₽</div>
+                )}
                 <div className="text-lg font-semibold text-primary">{pkg.price}₽</div>
+                {pkg.discount > 0 && (
+                  <div className="text-xs text-green-600 font-medium mt-1">Экономия {pkg.originalPrice - pkg.price}₽</div>
+                )}
               </div>
             </button>
           ))}
@@ -75,10 +93,10 @@ export default function BuyExtraRequestsDialog({
             <div className="text-sm space-y-2">
               <p className="font-medium text-gray-900">Что такое дополнительные запросы?</p>
               <ul className="space-y-1 text-muted-foreground">
-                <li>• Работают так же, как обычные запросы</li>
-                <li>• Не сгорают в конце месяца</li>
-                <li>• Используются после основного лимита</li>
-                <li>• Подходят для анализа заключений и диалогов</li>
+                <li>• Никогда не сгорают</li>
+                <li>• Чем больше пакет — тем ниже цена за запрос</li>
+                <li>• Подходят для всех AI-инструментов</li>
+                <li>• Пакет от 10 запросов — скидка 10%</li>
               </ul>
             </div>
           </div>
@@ -88,12 +106,20 @@ export default function BuyExtraRequestsDialog({
           <div>
             <div className="text-sm text-muted-foreground">Итого к оплате:</div>
             <div className="text-2xl font-bold text-gray-900">
-              {selectedCount * PRICE_PER_REQUEST}₽
+              {packages.find(p => p.count === selectedCount)?.price}₽
             </div>
+            {packages.find(p => p.count === selectedCount)?.discount ? (
+              <div className="text-xs text-green-600 font-medium">
+                Вы экономите {packages.find(p => p.count === selectedCount)!.originalPrice - packages.find(p => p.count === selectedCount)!.price}₽
+              </div>
+            ) : null}
           </div>
           <Button
             size="lg"
-            onClick={() => onBuyRequests(selectedCount)}
+            onClick={() => {
+              const pkg = packages.find(p => p.count === selectedCount);
+              if (pkg) onBuyRequests(selectedCount);
+            }}
             className="min-w-[180px]"
           >
             <Icon name="CreditCard" size={18} className="mr-2" />

@@ -102,7 +102,7 @@ export default function ToolUsageStats({ usageData, onBuyExtraClick }: ToolUsage
             className="w-full"
           >
             <Icon name="ShoppingCart" size={16} className="mr-2" />
-            Докупить запросы (12₽/шт)
+            Докупить запросы (скидки до 40%)
           </Button>
         )}
 

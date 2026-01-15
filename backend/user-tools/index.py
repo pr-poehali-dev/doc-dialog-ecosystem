@@ -288,7 +288,22 @@ def buy_extra_requests(user_id: str, body: dict) -> dict:
     
     try:
         count = body.get('count', 5)
-        amount = body.get('amount', count * 12)
+        
+        # Пакеты со скидками
+        price_table = {
+            5: 60,    # без скидки
+            10: 108,  # -10%
+            20: 192,  # -20%
+            50: 420,  # -30%
+            100: 720  # -40%
+        }
+        
+        # Определяем цену
+        if count in price_table:
+            amount = price_table[count]
+        else:
+            # Если количество не в таблице - считаем по базовой цене
+            amount = count * 12
         
         if count <= 0 or amount <= 0:
             return {
