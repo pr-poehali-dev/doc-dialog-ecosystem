@@ -252,6 +252,9 @@ def analyze_with_tool(user_id: str, body: dict) -> dict:
         result = response.json()
         ai_response = result['choices'][0]['message']['content']
         
+        # Удаляем markdown форматирование для чистого отображения
+        clean_response = ai_response.replace('**', '').replace('###', '').replace('##', '')
+        
         cur.execute(f"""
             UPDATE {schema}.users 
             SET tools_used = tools_used + 1 
@@ -262,7 +265,7 @@ def analyze_with_tool(user_id: str, body: dict) -> dict:
         return {
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'response': ai_response}),
+            'body': json.dumps({'response': clean_response}),
             'isBase64Encoded': False
         }
         

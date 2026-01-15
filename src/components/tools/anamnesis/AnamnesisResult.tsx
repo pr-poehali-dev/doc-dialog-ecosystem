@@ -14,7 +14,7 @@ interface AnamnesisResultProps {
 export default function AnamnesisResult({ formData, response, onReset, onClose }: AnamnesisResultProps) {
   const { toast } = useToast();
 
-  const copyAnamnesisToClipboard = () => {
+  const copyAnamnesisToClipboard = async () => {
     const anamnesisText = `АНАМНЕЗ КЛИЕНТА
 
 Общая информация:
@@ -52,18 +52,27 @@ AI-АНАЛИЗ:
 
 ${response}`;
     
-    const textArea = document.createElement('textarea');
-    textArea.value = anamnesisText;
-    textArea.style.top = '0';
-    textArea.style.left = '0';
-    textArea.style.position = 'fixed';
-    textArea.style.opacity = '0';
-    
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    
     try {
+      // Пробуем современный Clipboard API
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(anamnesisText);
+        toast({
+          title: 'Скопировано',
+          description: 'Анамнез и анализ скопированы в буфер обмена'
+        });
+        return;
+      }
+      
+      // Fallback для старых браузеров или небезопасного контекста
+      const textArea = document.createElement('textarea');
+      textArea.value = anamnesisText;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
       const successful = document.execCommand('copy');
       document.body.removeChild(textArea);
       
@@ -73,14 +82,10 @@ ${response}`;
           description: 'Анамнез и анализ скопированы в буфер обмена'
         });
       } else {
-        toast({
-          title: 'Ошибка',
-          description: 'Не удалось скопировать в буфер обмена',
-          variant: 'destructive'
-        });
+        throw new Error('execCommand failed');
       }
     } catch (err) {
-      document.body.removeChild(textArea);
+      console.error('Copy failed:', err);
       toast({
         title: 'Ошибка',
         description: 'Не удалось скопировать в буфер обмена',
