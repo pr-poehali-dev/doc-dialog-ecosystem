@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import { Course, CourseFormData, COURSE_API_URL, INITIAL_COURSE_FORM } from './types';
+import { getUserId } from '@/utils/auth';
 
 interface UseCourseHandlersProps {
   schoolId: number;
@@ -24,9 +25,13 @@ export function useCourseHandlers({
 }: UseCourseHandlersProps) {
   const handleAddCourse = async () => {
     try {
+      const userId = getUserId();
       const response = await fetch(`${COURSE_API_URL}?type=courses`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-User-Id': userId
+        },
         body: JSON.stringify({
           school_id: schoolId,
           title: courseForm.title,
@@ -70,9 +75,13 @@ export function useCourseHandlers({
     if (!editingCourseId) return;
     
     try {
+      const userId = getUserId();
       const response = await fetch(`${COURSE_API_URL}?type=courses&id=${editingCourseId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-User-Id': userId
+        },
         body: JSON.stringify({
           title: courseForm.title,
           course_type: courseForm.course_type,
@@ -101,8 +110,10 @@ export function useCourseHandlers({
     if (!confirm('Вы уверены, что хотите удалить этот курс?')) return;
     
     try {
+      const userId = getUserId();
       const response = await fetch(`${COURSE_API_URL}?type=courses&id=${courseId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: { 'X-User-Id': userId }
       });
       
       if (response.ok) {
@@ -116,8 +127,10 @@ export function useCourseHandlers({
 
   const handleSubmitDraftCourse = async (courseId: number) => {
     try {
+      const userId = getUserId();
       const response = await fetch(`${COURSE_API_URL}?type=courses&id=${courseId}&action=submit_draft`, {
-        method: 'POST'
+        method: 'POST',
+        headers: { 'X-User-Id': userId }
       });
       
       const data = await response.json();

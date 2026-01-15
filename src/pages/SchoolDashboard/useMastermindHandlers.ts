@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import { Mastermind, MastermindFormData, COURSE_API_URL, INITIAL_MASTERMIND_FORM } from './types';
+import { getUserId } from '@/utils/auth';
 
 interface UseMastermindHandlersProps {
   schoolId: number;
@@ -24,9 +25,13 @@ export function useMastermindHandlers({
 }: UseMastermindHandlersProps) {
   const handleAddMastermind = async () => {
     try {
+      const userId = getUserId();
       const response = await fetch(`${COURSE_API_URL}?type=masterminds`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-User-Id': userId
+        },
         body: JSON.stringify({
           school_id: schoolId,
           title: mastermindForm.title,
@@ -70,9 +75,13 @@ export function useMastermindHandlers({
     if (!editingMastermindId) return;
     
     try {
+      const userId = getUserId();
       const response = await fetch(`${COURSE_API_URL}?type=masterminds&id=${editingMastermindId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-User-Id': userId
+        },
         body: JSON.stringify({
           title: mastermindForm.title,
           course_type: mastermindForm.course_type,
@@ -101,8 +110,10 @@ export function useMastermindHandlers({
     if (!confirm('Вы уверены, что хотите удалить этот мастермайнд?')) return;
     
     try {
+      const userId = getUserId();
       const response = await fetch(`${COURSE_API_URL}?type=masterminds&id=${mastermindId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: { 'X-User-Id': userId }
       });
       
       if (response.ok) {
@@ -116,8 +127,10 @@ export function useMastermindHandlers({
 
   const handleSubmitDraftMastermind = async (mastermindId: number) => {
     try {
+      const userId = getUserId();
       const response = await fetch(`${COURSE_API_URL}?type=masterminds&id=${mastermindId}&action=submit_draft`, {
-        method: 'POST'
+        method: 'POST',
+        headers: { 'X-User-Id': userId }
       });
       
       const data = await response.json();

@@ -1,16 +1,17 @@
 import { INITIAL_OFFLINE_TRAINING_FORM } from './types';
+import { getUserId } from '@/utils/auth';
 
 export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTrainingForm, editingTrainingId, setEditingTrainingId, setShowAddForm, loadData, toast }: any) {
   const TRAINING_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f';
 
   const handleAddTraining = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const userId = getUserId();
       const response = await fetch(`${TRAINING_API_URL}?type=offline_trainings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'X-User-Id': userId
         },
         body: JSON.stringify({
           school_id: schoolId,
@@ -59,12 +60,12 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
     if (!editingTrainingId) return;
     
     try {
-      const token = localStorage.getItem('token');
+      const userId = getUserId();
       const response = await fetch(`${TRAINING_API_URL}?type=offline_trainings&id=${editingTrainingId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'X-User-Id': userId
         },
         body: JSON.stringify({
           title: trainingForm.title,
@@ -98,8 +99,10 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
     if (!confirm('Вы уверены, что хотите удалить это обучение?')) return;
     
     try {
+      const userId = getUserId();
       const response = await fetch(`${TRAINING_API_URL}?type=offline_trainings&id=${trainingId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: { 'X-User-Id': userId }
       });
       
       if (response.ok) {
@@ -117,8 +120,10 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
 
   const handleSubmitDraftTraining = async (trainingId: number) => {
     try {
+      const userId = getUserId();
       const response = await fetch(`${TRAINING_API_URL}?type=offline_trainings&id=${trainingId}&action=submit_draft`, {
-        method: 'POST'
+        method: 'POST',
+        headers: { 'X-User-Id': userId }
       });
       
       const data = await response.json();
