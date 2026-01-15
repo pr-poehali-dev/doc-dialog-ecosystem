@@ -70,7 +70,7 @@ def handler(event: dict, context) -> dict:
                     experience_years, specializations, about,
                     avatar_url, education, languages, 
                     certificates, portfolio_images, rating, reviews_count,
-                    verification_badges, is_premium
+                    verification_badges, is_premium, is_visible
                 FROM {schema}.masseur_profiles
                 WHERE user_id = {user_id}
             """)
