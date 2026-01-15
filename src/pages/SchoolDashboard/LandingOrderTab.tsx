@@ -58,7 +58,7 @@ export default function LandingOrderTab() {
       const API_URL = 'https://functions.poehali.dev/3c603f9a-2c2c-49e8-a7c7-c4fa98866f4c';
       
       const emailData = {
-        to: 'info@massagists.ru',
+        to: 'a.docdialog@mail.ru',
         subject: `Заказ лендинга: ${form.courseName}`,
         html: `
           <h2>Новый заказ продающего лендинга</h2>
