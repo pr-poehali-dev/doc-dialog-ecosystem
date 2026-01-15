@@ -48,14 +48,37 @@ export default function ToolDialog({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const copyDialogToClipboard = () => {
+  const copyDialogToClipboard = async () => {
     const dialogText = `Запрос:\n${inputText}\n\nОтвет:\n${response}`;
-    navigator.clipboard.writeText(dialogText).then(() => {
+    
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(dialogText);
+        toast({
+          title: 'Скопировано',
+          description: 'Диалог скопирован в буфер обмена'
+        });
+      } else {
+        const textArea = document.createElement('textarea');
+        textArea.value = dialogText;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        toast({
+          title: 'Скопировано',
+          description: 'Диалог скопирован в буфер обмена'
+        });
+      }
+    } catch (error) {
       toast({
-        title: 'Скопировано',
-        description: 'Диалог скопирован в буфер обмена'
+        title: 'Ошибка',
+        description: 'Не удалось скопировать в буфер обмена',
+        variant: 'destructive'
       });
-    });
+    }
   };
 
   return (
