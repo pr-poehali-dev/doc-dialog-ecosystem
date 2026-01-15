@@ -765,37 +765,38 @@ def handler(event: dict, context) -> dict:
     if method == 'POST' and entity_type == 'courses' and action != 'submit_draft':
         body = json.loads(event.get('body', '{}'))
         
-        # Проверяем авторизацию
+        # Проверяем авторизацию через X-User-Id
         headers = event.get('headers', {})
-        token = headers.get('X-Authorization', headers.get('Authorization', '')).replace('Bearer ', '')
+        user_id = headers.get('X-User-Id') or headers.get('x-user-id')
         
-        if not token:
+        if not user_id:
             cur.close()
             conn.close()
             return {
                 'statusCode': 401,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Требуется авторизация'}),
+                'body': json.dumps({'error': 'Требуется авторизация: Missing X-User-Id'}),
                 'isBase64Encoded': False
             }
         
-        try:
-            decoded = jwt.decode(token, options={"verify_signature": False})
-            user_id = decoded.get('user_id')
-        except jwt.InvalidTokenError:
+        # Получаем school_id пользователя
+        cur.execute(f"SELECT id FROM {schema}.schools WHERE user_id = {user_id} LIMIT 1")
+        school_row = cur.fetchone()
+        
+        if not school_row:
             cur.close()
             conn.close()
             return {
                 'statusCode': 401,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Неверный токен'}),
+                'body': json.dumps({'error': 'У пользователя нет школы'}),
                 'isBase64Encoded': False
             }
         
         # Определяем формат данных: простая форма или лендинг
         is_simple_form = body.get('school_name') is not None
         
-        school_id = body.get('school_id', 1)
+        school_id = school_row[0] if not body.get('school_id') else body.get('school_id')
         title = body.get('title')
         description = body.get('description', '')
         
@@ -1039,34 +1040,35 @@ def handler(event: dict, context) -> dict:
     if method == 'POST' and entity_type == 'masterminds':
         body = json.loads(event.get('body', '{}'))
         
-        # Проверяем авторизацию
+        # Проверяем авторизацию через X-User-Id
         headers = event.get('headers', {})
-        token = headers.get('X-Authorization', headers.get('Authorization', '')).replace('Bearer ', '')
+        user_id = headers.get('X-User-Id') or headers.get('x-user-id')
         
-        if not token:
+        if not user_id:
             cur.close()
             conn.close()
             return {
                 'statusCode': 401,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Требуется авторизация'}),
+                'body': json.dumps({'error': 'Требуется авторизация: Missing X-User-Id'}),
                 'isBase64Encoded': False
             }
         
-        try:
-            decoded = jwt.decode(token, options={"verify_signature": False})
-            user_id_mastermind = decoded.get('user_id')
-        except jwt.InvalidTokenError:
+        # Получаем school_id пользователя
+        cur.execute(f"SELECT id FROM {schema}.schools WHERE user_id = {user_id} LIMIT 1")
+        school_row = cur.fetchone()
+        
+        if not school_row:
             cur.close()
             conn.close()
             return {
                 'statusCode': 401,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Неверный токен'}),
+                'body': json.dumps({'error': 'У пользователя нет школы'}),
                 'isBase64Encoded': False
             }
         
-        school_id = body.get('school_id')
+        school_id = school_row[0] if not body.get('school_id') else body.get('school_id')
         title = body.get('title')
         description = body.get('description', '')
         event_date = body.get('event_date')
@@ -1765,7 +1767,35 @@ def handler(event: dict, context) -> dict:
         body = json.loads(event.get('body', '{}'))
         print(f"[OFFLINE_TRAINING POST] body keys: {list(body.keys())}")
         
-        school_id = body.get('school_id')
+        # Проверяем авторизацию через X-User-Id
+        headers = event.get('headers', {})
+        user_id = headers.get('X-User-Id') or headers.get('x-user-id')
+        
+        if not user_id:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 401,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Требуется авторизация: Missing X-User-Id'}),
+                'isBase64Encoded': False
+            }
+        
+        # Получаем school_id пользователя
+        cur.execute(f"SELECT id FROM {schema}.schools WHERE user_id = {user_id} LIMIT 1")
+        school_row = cur.fetchone()
+        
+        if not school_row:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 401,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'У пользователя нет школы'}),
+                'isBase64Encoded': False
+            }
+        
+        school_id = school_row[0] if not body.get('school_id') else body.get('school_id')
         title = body.get('title')
         description = body.get('description', '')
         event_date = body.get('event_date')
