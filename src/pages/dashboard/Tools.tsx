@@ -52,13 +52,13 @@ export default function Tools() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-blue-50">
       <Navigation />
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-6">
         <div className="max-w-6xl mx-auto">
           <ToolsHeader
             onBackClick={() => navigate(getDashboardRoute())}
           />
 
-          <div className="grid lg:grid-cols-3 gap-6 mb-8">
+          <div className="grid lg:grid-cols-3 gap-6 mb-6">
             <div className="lg:col-span-2 grid md:grid-cols-2 gap-4">
               {availableTools.map((tool) => (
                 <ToolCard
@@ -74,39 +74,39 @@ export default function Tools() {
               ))}
             </div>
 
-            <div>
+            <div className="lg:row-span-2">
               <ToolUsageStats 
                 usageData={usageData}
                 onBuyExtraClick={() => setShowBuyDialog(true)}
               />
             </div>
-          </div>
 
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 sm:p-6 border border-primary/10">
-            <div className="flex items-start gap-3 sm:gap-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-sm flex items-center justify-center flex-shrink-0">
-                <Icon name="Lightbulb" size={20} className="text-primary sm:w-6 sm:h-6" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <h3 className="font-semibold mb-2 text-sm sm:text-base">Как использовать инструменты?</h3>
-                <ul className="space-y-2 text-xs sm:text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <Icon name="Check" size={14} className="text-primary mt-0.5 flex-shrink-0 sm:w-4 sm:h-4" />
-                    <span className="break-words">Выберите нужный инструмент из списка выше</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Icon name="Check" size={14} className="text-primary mt-0.5 flex-shrink-0 sm:w-4 sm:h-4" />
-                    <span className="break-words">Опишите ситуацию или вставьте медицинское заключение</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Icon name="Check" size={14} className="text-primary mt-0.5 flex-shrink-0 sm:w-4 sm:h-4" />
-                    <span className="break-words">Получите профессиональные рекомендации от AI</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Icon name="Check" size={14} className="text-primary mt-0.5 flex-shrink-0 sm:w-4 sm:h-4" />
-                    <span className="break-words">Используйте полученные знания в работе с клиентами</span>
-                  </li>
-                </ul>
+            <div className="lg:col-span-2 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 sm:p-6 border border-primary/10">
+              <div className="flex items-start gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-sm flex items-center justify-center flex-shrink-0">
+                  <Icon name="Lightbulb" size={20} className="text-primary sm:w-6 sm:h-6" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-semibold mb-2 text-sm sm:text-base">Как использовать инструменты?</h3>
+                  <ul className="space-y-2 text-xs sm:text-sm text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <Icon name="Check" size={14} className="text-primary mt-0.5 flex-shrink-0 sm:w-4 sm:h-4" />
+                      <span className="break-words">Выберите нужный инструмент из списка выше</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Icon name="Check" size={14} className="text-primary mt-0.5 flex-shrink-0 sm:w-4 sm:h-4" />
+                      <span className="break-words">Опишите ситуацию или вставьте медицинское заключение</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Icon name="Check" size={14} className="text-primary mt-0.5 flex-shrink-0 sm:w-4 sm:h-4" />
+                      <span className="break-words">Получите профессиональные рекомендации от AI</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Icon name="Check" size={14} className="text-primary mt-0.5 flex-shrink-0 sm:w-4 sm:h-4" />
+                      <span className="break-words">Используйте полученные знания в работе с клиентами</span>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
