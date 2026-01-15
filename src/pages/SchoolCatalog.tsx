@@ -5,6 +5,7 @@ import Icon from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { isAdmin } from '@/utils/auth';
+import SchoolsFooter from '@/components/schools/SchoolsFooter';
 
 const SCHOOLS_API_URL = 'https://functions.poehali.dev/6ac6b552-624e-4960-a4f1-94f540394c86';
 
@@ -263,6 +264,7 @@ export default function SchoolCatalog() {
           </div>
         </div>
       </div>
+      <SchoolsFooter />
     </div>
   );
 }

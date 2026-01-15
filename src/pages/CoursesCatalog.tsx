@@ -3,6 +3,7 @@ import { Navigation } from '@/components/Navigation';
 import Icon from '@/components/ui/icon';
 import CatalogFilters from './CoursesCatalog/CatalogFilters';
 import CatalogItemCard from './CoursesCatalog/CatalogItemCard';
+import SchoolsFooter from '@/components/schools/SchoolsFooter';
 import { 
   CatalogItem, 
   Course, 
@@ -254,6 +255,7 @@ export default function CoursesCatalog() {
           </>
         )}
       </div>
+      <SchoolsFooter />
     </div>
   );
 }

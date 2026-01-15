@@ -8,6 +8,7 @@ import MasseurDashboard from '@/components/dashboard/MasseurDashboard';
 import SchoolDashboard from '@/components/dashboard/SchoolDashboard';
 import SalonDashboard from '@/components/dashboard/SalonDashboard';
 import AdminDashboard from '@/components/dashboard/AdminDashboard';
+import SchoolsFooter from '@/components/schools/SchoolsFooter';
 
 interface User {
   id: number;
@@ -94,6 +95,7 @@ export default function Dashboard() {
           {isAdminOrModerator && <AdminDashboard />}
         </div>
       </div>
+      <SchoolsFooter />
     </div>
   );
 }

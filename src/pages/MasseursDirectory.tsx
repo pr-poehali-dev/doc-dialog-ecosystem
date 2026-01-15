@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Icon from "@/components/ui/icon";
 import { Link } from "react-router-dom";
+import SchoolsFooter from '@/components/schools/SchoolsFooter';
 
 interface Masseur {
   id: number;
@@ -371,6 +372,7 @@ const MasseursDirectory = () => {
           </div>
         )}
       </div>
+      <SchoolsFooter />
     </div>
   );
 };
