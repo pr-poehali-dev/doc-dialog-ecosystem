@@ -1,19 +1,15 @@
 import ItemsList from '@/components/school/ItemsList';
-import LandingsTab from './LandingsTab';
-import KnowledgeBasePublic from '@/components/school/KnowledgeBasePublic';
 import PromoRequestsTab from '@/components/school/PromoRequestsTab';
 import SubscriptionTab from './SubscriptionTab';
-import { Course, Mastermind, SpecialistRequest } from './types';
+import { Course, Mastermind } from './types';
 import Icon from '@/components/ui/icon';
 
 interface DashboardContentProps {
-  activeTab: 'courses' | 'masterminds' | 'offline-training' | 'specialists' | 'landings' | 'knowledge' | 'promo-requests' | 'subscription';
+  activeTab: 'courses' | 'masterminds' | 'offline-training' | 'promo-requests' | 'subscription';
   showAddForm: boolean;
   courses: Course[];
   masterminds: Mastermind[];
   offlineTrainings: any[];
-  specialists: SpecialistRequest[];
-  landings: any[];
   canPromoteToTop: boolean;
   onEditCourse: (id: number) => void;
   onPromoteCourse: (id: number, title: string, category: string) => void;
@@ -24,12 +20,9 @@ interface DashboardContentProps {
   onDeleteMastermind: (id: number) => void;
   onEditTraining: (id: number) => void;
   onDeleteTraining: (id: number) => void;
-  onEditSpecialist: (id: number) => void;
-  onDeleteSpecialist: (id: number) => void;
   onSubmitDraftCourse: (id: number) => void;
   onSubmitDraftMastermind: (id: number) => void;
   onSubmitDraftTraining: (id: number) => void;
-  onReloadLandings: () => void;
   setPendingPromoRequestsCount: (count: number) => void;
 }
 
@@ -83,8 +76,6 @@ export default function DashboardContent({
   courses,
   masterminds,
   offlineTrainings,
-  specialists,
-  landings,
   canPromoteToTop,
   onEditCourse,
   onPromoteCourse,
@@ -95,22 +86,18 @@ export default function DashboardContent({
   onDeleteMastermind,
   onEditTraining,
   onDeleteTraining,
-  onEditSpecialist,
-  onDeleteSpecialist,
   onSubmitDraftCourse,
   onSubmitDraftMastermind,
   onSubmitDraftTraining,
-  onReloadLandings,
   setPendingPromoRequestsCount
 }: DashboardContentProps) {
-  if (!showAddForm && activeTab !== 'landings' && activeTab !== 'knowledge' && activeTab !== 'promo-requests' && activeTab !== 'subscription') {
+  if (!showAddForm && activeTab !== 'promo-requests' && activeTab !== 'subscription') {
     return (
       <ItemsList
         activeTab={activeTab}
         courses={courses}
         masterminds={masterminds}
         offlineTrainings={offlineTrainings}
-        specialists={specialists}
         canPromoteToTop={canPromoteToTop}
         getStatusBadge={getStatusBadge}
         onEditCourse={onEditCourse}
@@ -122,21 +109,11 @@ export default function DashboardContent({
         onDeleteMastermind={onDeleteMastermind}
         onEditTraining={onEditTraining}
         onDeleteTraining={onDeleteTraining}
-        onEditSpecialist={onEditSpecialist}
-        onDeleteSpecialist={onDeleteSpecialist}
         onSubmitDraftCourse={onSubmitDraftCourse}
         onSubmitDraftMastermind={onSubmitDraftMastermind}
         onSubmitDraftTraining={onSubmitDraftTraining}
       />
     );
-  }
-
-  if (activeTab === 'landings') {
-    return <LandingsTab landings={landings} onReload={onReloadLandings} />;
-  }
-
-  if (activeTab === 'knowledge') {
-    return <KnowledgeBasePublic targetType="school" />;
   }
 
   if (activeTab === 'promo-requests') {

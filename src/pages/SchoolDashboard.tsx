@@ -180,8 +180,6 @@ export default function SchoolDashboard() {
           courses={courses}
           masterminds={masterminds}
           offlineTrainings={offlineTrainings}
-          specialists={specialists}
-          landings={landings}
           canPromoteToTop={canPromoteToTop}
           onEditCourse={handleEditCourse}
           onPromoteCourse={(id, title, category) => {
@@ -202,12 +200,9 @@ export default function SchoolDashboard() {
           onDeleteMastermind={handleDeleteMastermind}
           onEditTraining={handleEditTraining}
           onDeleteTraining={handleDeleteTraining}
-          onEditSpecialist={handleEditSpecialist}
-          onDeleteSpecialist={handleDeleteSpecialist}
           onSubmitDraftCourse={handleSubmitDraftCourse}
           onSubmitDraftMastermind={handleSubmitDraftMastermind}
           onSubmitDraftTraining={handleSubmitDraftTraining}
-          onReloadLandings={loadData}
           setPendingPromoRequestsCount={setPendingPromoRequestsCount}
         />
       </div>

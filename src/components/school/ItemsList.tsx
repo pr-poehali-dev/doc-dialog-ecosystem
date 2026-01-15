@@ -64,11 +64,10 @@ interface SpecialistRequest {
 }
 
 interface ItemsListProps {
-  activeTab: 'courses' | 'masterminds' | 'offline-training' | 'specialists';
+  activeTab: 'courses' | 'masterminds' | 'offline-training';
   courses: Course[];
   masterminds: Mastermind[];
   offlineTrainings?: any[];
-  specialists: SpecialistRequest[];
   canPromoteToTop: boolean;
   getStatusBadge: (status: string) => JSX.Element;
   onEditCourse?: (course: Course) => void;
@@ -80,14 +79,12 @@ interface ItemsListProps {
   onDeleteMastermind?: (mastermindId: number) => void;
   onEditTraining?: (training: any) => void;
   onDeleteTraining?: (trainingId: number) => void;
-  onEditSpecialist?: (specialist: SpecialistRequest) => void;
-  onDeleteSpecialist?: (specialistId: number) => void;
   onSubmitDraftCourse?: (courseId: number) => void;
   onSubmitDraftMastermind?: (mastermindId: number) => void;
   onSubmitDraftTraining?: (trainingId: number) => void;
 }
 
-export default function ItemsList({ activeTab, courses, masterminds, offlineTrainings = [], specialists, canPromoteToTop, getStatusBadge, onEditCourse, onDeleteCourse, onPromoteCourse, onPromoteMastermind, onPromoteTraining, onEditMastermind, onDeleteMastermind, onEditTraining, onDeleteTraining, onEditSpecialist, onDeleteSpecialist, onSubmitDraftCourse, onSubmitDraftMastermind, onSubmitDraftTraining }: ItemsListProps) {
+export default function ItemsList({ activeTab, courses, masterminds, offlineTrainings = [], canPromoteToTop, getStatusBadge, onEditCourse, onDeleteCourse, onPromoteCourse, onPromoteMastermind, onPromoteTraining, onEditMastermind, onDeleteMastermind, onEditTraining, onDeleteTraining, onSubmitDraftCourse, onSubmitDraftMastermind, onSubmitDraftTraining }: ItemsListProps) {
   return (
     <>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -129,14 +126,6 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
             onSubmitDraft={onSubmitDraftTraining}
           />
         ))}
-
-        {activeTab === 'specialists' && specialists.map((spec) => (
-          <SpecialistCard
-            key={spec.id}
-            specialist={spec}
-            getStatusBadge={getStatusBadge}
-            onEdit={onEditSpecialist}
-            onDelete={onDeleteSpecialist}
           />
         ))}
       </div>
@@ -152,13 +141,6 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
         <div className="text-center py-12 text-muted-foreground">
           <Icon name="Users" size={48} className="mx-auto mb-4 opacity-50" />
           <p>Пока нет мастермайндов. Добавьте первое мероприятие!</p>
-        </div>
-      )}
-
-      {activeTab === 'specialists' && specialists.length === 0 && (
-        <div className="text-center py-12 text-muted-foreground">
-          <Icon name="Search" size={48} className="mx-auto mb-4 opacity-50" />
-          <p>Пока нет запросов. Создайте первое объявление!</p>
         </div>
       )}
     </>

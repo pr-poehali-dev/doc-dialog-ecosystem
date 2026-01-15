@@ -1,6 +1,6 @@
 import Icon from '@/components/ui/icon';
 
-type TabType = 'courses' | 'masterminds' | 'offline-training' | 'specialists' | 'landings' | 'knowledge' | 'promo-requests' | 'subscription';
+type TabType = 'courses' | 'masterminds' | 'offline-training' | 'promo-requests' | 'subscription';
 
 interface DashboardTabsProps {
   activeTab: TabType;
@@ -11,13 +11,6 @@ interface DashboardTabsProps {
 export default function DashboardTabs({ activeTab, onTabChange, pendingPromoRequestsCount = 0 }: DashboardTabsProps) {
   return (
     <div className="flex gap-2 mb-6 border-b overflow-x-auto">
-      <button
-        onClick={() => onTabChange('landings')}
-        className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${activeTab === 'landings' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
-      >
-        <Icon name="Layout" size={18} className="inline mr-2" />
-        Лендинг школы
-      </button>
       <button
         onClick={() => onTabChange('offline-training')}
         className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${activeTab === 'offline-training' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
@@ -38,13 +31,6 @@ export default function DashboardTabs({ activeTab, onTabChange, pendingPromoRequ
       >
         <Icon name="Users" size={18} className="inline mr-2" />
         Мастермайнды
-      </button>
-      <button
-        onClick={() => onTabChange('knowledge')}
-        className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${activeTab === 'knowledge' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
-      >
-        <Icon name="HelpCircle" size={18} className="inline mr-2" />
-        База знаний
       </button>
       <button
         onClick={() => onTabChange('promo-requests')}
