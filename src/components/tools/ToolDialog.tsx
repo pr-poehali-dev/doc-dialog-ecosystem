@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useCallback } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -48,11 +48,13 @@ export default function ToolDialog({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const copyDialogToClipboard = async () => {
+  const copyDialogToClipboard = useCallback(async () => {
     const dialogText = `Запрос:\n${inputText}\n\nОтвет:\n${response}`;
+    console.log('Копирую текст:', { inputText: inputText.substring(0, 50), response: response.substring(0, 50), fullLength: dialogText.length });
     
     try {
       await navigator.clipboard.writeText(dialogText);
+      console.log('Clipboard API успешно');
       toast({
         title: 'Скопировано',
         description: 'Диалог скопирован в буфер обмена'
@@ -74,6 +76,7 @@ export default function ToolDialog({
       try {
         const successful = document.execCommand('copy');
         document.body.removeChild(textArea);
+        console.log('execCommand result:', successful);
         
         if (successful) {
           toast({
@@ -85,6 +88,7 @@ export default function ToolDialog({
         }
       } catch (fallbackErr) {
         document.body.removeChild(textArea);
+        console.error('execCommand failed:', fallbackErr);
         toast({
           title: 'Ошибка',
           description: 'Не удалось скопировать. Попробуйте выделить текст вручную',
@@ -92,7 +96,7 @@ export default function ToolDialog({
         });
       }
     }
-  };
+  }, [inputText, response, toast]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

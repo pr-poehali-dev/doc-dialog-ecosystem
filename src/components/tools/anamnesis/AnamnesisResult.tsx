@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
@@ -14,7 +15,7 @@ interface AnamnesisResultProps {
 export default function AnamnesisResult({ formData, response, onReset, onClose }: AnamnesisResultProps) {
   const { toast } = useToast();
 
-  const copyAnamnesisToClipboard = async () => {
+  const copyAnamnesisToClipboard = useCallback(async () => {
     const anamnesisText = `АНАМНЕЗ КЛИЕНТА
 
 Общая информация:
@@ -52,8 +53,11 @@ AI-АНАЛИЗ:
 
 ${response}`;
     
+    console.log('Копирую анамнез:', { fullName: formData.fullName, response: response.substring(0, 50), fullLength: anamnesisText.length });
+    
     try {
       await navigator.clipboard.writeText(anamnesisText);
+      console.log('Clipboard API успешно (анамнез)');
       toast({
         title: 'Скопировано',
         description: 'Анамнез и анализ скопированы в буфер обмена'
@@ -75,6 +79,7 @@ ${response}`;
       try {
         const successful = document.execCommand('copy');
         document.body.removeChild(textArea);
+        console.log('execCommand result (анамнез):', successful);
         
         if (successful) {
           toast({
@@ -86,6 +91,7 @@ ${response}`;
         }
       } catch (fallbackErr) {
         document.body.removeChild(textArea);
+        console.error('execCommand failed (анамнез):', fallbackErr);
         toast({
           title: 'Ошибка',
           description: 'Не удалось скопировать. Попробуйте выделить текст вручную',
@@ -93,7 +99,7 @@ ${response}`;
         });
       }
     }
-  };
+  }, [formData, response, toast]);
 
   return (
     <div className="space-y-4 py-4">
