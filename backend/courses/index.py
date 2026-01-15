@@ -1112,7 +1112,7 @@ def handler(event: dict, context) -> dict:
             }
         
         # Проверяем лимиты тарифа для определения статуса
-        cur.execute(f"SELECT id FROM {schema}.schools WHERE user_id = {user_id_mastermind}")
+        cur.execute(f"SELECT id FROM {schema}.schools WHERE user_id = {user_id}")
         school_check = cur.fetchone()
         
         # По умолчанию статус - на модерации
