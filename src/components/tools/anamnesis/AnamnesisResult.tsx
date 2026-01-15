@@ -14,7 +14,7 @@ interface AnamnesisResultProps {
 export default function AnamnesisResult({ formData, response, onReset, onClose }: AnamnesisResultProps) {
   const { toast } = useToast();
 
-  const copyAnamnesisToClipboard = async () => {
+  const copyAnamnesisToClipboard = () => {
     const anamnesisText = `АНАМНЕЗ КЛИЕНТА
 
 Общая информация:
@@ -53,25 +53,32 @@ AI-АНАЛИЗ:
 ${response}`;
     
     try {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        await navigator.clipboard.writeText(anamnesisText);
+      const textArea = document.createElement('textarea');
+      textArea.value = anamnesisText;
+      textArea.style.position = 'fixed';
+      textArea.style.top = '0';
+      textArea.style.left = '0';
+      textArea.style.width = '2em';
+      textArea.style.height = '2em';
+      textArea.style.padding = '0';
+      textArea.style.border = 'none';
+      textArea.style.outline = 'none';
+      textArea.style.boxShadow = 'none';
+      textArea.style.background = 'transparent';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      
+      if (successful) {
         toast({
           title: 'Скопировано',
           description: 'Анамнез и анализ скопированы в буфер обмена'
         });
       } else {
-        const textArea = document.createElement('textarea');
-        textArea.value = anamnesisText;
-        textArea.style.position = 'fixed';
-        textArea.style.left = '-999999px';
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        toast({
-          title: 'Скопировано',
-          description: 'Анамнез и анализ скопированы в буфер обмена'
-        });
+        throw new Error('Copy command failed');
       }
     } catch (error) {
       toast({

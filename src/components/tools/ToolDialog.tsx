@@ -48,29 +48,36 @@ export default function ToolDialog({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const copyDialogToClipboard = async () => {
+  const copyDialogToClipboard = () => {
     const dialogText = `Запрос:\n${inputText}\n\nОтвет:\n${response}`;
     
     try {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        await navigator.clipboard.writeText(dialogText);
+      const textArea = document.createElement('textarea');
+      textArea.value = dialogText;
+      textArea.style.position = 'fixed';
+      textArea.style.top = '0';
+      textArea.style.left = '0';
+      textArea.style.width = '2em';
+      textArea.style.height = '2em';
+      textArea.style.padding = '0';
+      textArea.style.border = 'none';
+      textArea.style.outline = 'none';
+      textArea.style.boxShadow = 'none';
+      textArea.style.background = 'transparent';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      
+      if (successful) {
         toast({
           title: 'Скопировано',
           description: 'Диалог скопирован в буфер обмена'
         });
       } else {
-        const textArea = document.createElement('textarea');
-        textArea.value = dialogText;
-        textArea.style.position = 'fixed';
-        textArea.style.left = '-999999px';
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        toast({
-          title: 'Скопировано',
-          description: 'Диалог скопирован в буфер обмена'
-        });
+        throw new Error('Copy command failed');
       }
     } catch (error) {
       toast({
