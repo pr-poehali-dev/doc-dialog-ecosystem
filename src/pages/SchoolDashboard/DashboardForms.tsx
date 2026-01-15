@@ -59,11 +59,18 @@ export default function DashboardForms({
   return (
     <>
       <div className="mb-6">
-        <Button onClick={() => setShowAddForm(!showAddForm)}>
+        <Button onClick={() => setShowAddForm(!showAddForm)} className="w-full sm:w-auto">
           <Icon name="Plus" size={18} className="mr-2" />
-          {activeTab === 'courses' && 'Добавить курс'}
-          {activeTab === 'masterminds' && 'Добавить мастермайнд'}
-          {activeTab === 'offline-training' && 'Добавить очное обучение'}
+          <span className="hidden sm:inline">
+            {activeTab === 'courses' && 'Добавить курс'}
+            {activeTab === 'masterminds' && 'Добавить мастермайнд'}
+            {activeTab === 'offline-training' && 'Добавить очное обучение'}
+          </span>
+          <span className="inline sm:hidden">
+            {activeTab === 'courses' && 'Курс'}
+            {activeTab === 'masterminds' && 'Мастермайнд'}
+            {activeTab === 'offline-training' && 'Обучение'}
+          </span>
         </Button>
       </div>
 

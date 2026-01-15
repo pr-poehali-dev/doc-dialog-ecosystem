@@ -117,7 +117,7 @@ export default function SchoolDashboard() {
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/5">
       <Navigation />
       
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-6 sm:py-12">
         <DashboardHeader />
 
         <DashboardTabs 

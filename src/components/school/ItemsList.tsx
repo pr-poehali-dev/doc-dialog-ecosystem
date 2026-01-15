@@ -86,7 +86,7 @@ interface ItemsListProps {
 export default function ItemsList({ activeTab, courses, masterminds, offlineTrainings = [], canPromoteToTop, getStatusBadge, onEditCourse, onDeleteCourse, onPromoteCourse, onPromoteMastermind, onPromoteTraining, onEditMastermind, onDeleteMastermind, onEditTraining, onDeleteTraining, onSubmitDraftCourse, onSubmitDraftMastermind, onSubmitDraftTraining }: ItemsListProps) {
   return (
     <>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {activeTab === 'courses' && courses.map((course) => (
           <CourseCard
             key={course.id}
@@ -128,16 +128,16 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
       </div>
 
       {activeTab === 'courses' && courses.length === 0 && (
-        <div className="text-center py-12 text-muted-foreground">
-          <Icon name="BookOpen" size={48} className="mx-auto mb-4 opacity-50" />
-          <p>Пока нет курсов. Добавьте первый курс!</p>
+        <div className="text-center py-8 sm:py-12 text-muted-foreground px-4">
+          <Icon name="BookOpen" size={40} className="sm:size-12 mx-auto mb-4 opacity-50" />
+          <p className="text-sm sm:text-base">Пока нет курсов. Добавьте первый курс!</p>
         </div>
       )}
 
       {activeTab === 'masterminds' && masterminds.length === 0 && (
-        <div className="text-center py-12 text-muted-foreground">
-          <Icon name="Users" size={48} className="mx-auto mb-4 opacity-50" />
-          <p>Пока нет мастермайндов. Добавьте первое мероприятие!</p>
+        <div className="text-center py-8 sm:py-12 text-muted-foreground px-4">
+          <Icon name="Users" size={40} className="sm:size-12 mx-auto mb-4 opacity-50" />
+          <p className="text-sm sm:text-base">Пока нет мастермайндов. Добавьте первое мероприятие!</p>
         </div>
       )}
     </>
