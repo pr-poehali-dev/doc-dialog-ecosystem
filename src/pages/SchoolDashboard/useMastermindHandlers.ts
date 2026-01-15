@@ -34,6 +34,8 @@ export function useMastermindHandlers({
         },
         body: JSON.stringify({
           school_id: schoolId,
+          school_name: '',
+          event_date: new Date().toISOString().split('T')[0],
           title: mastermindForm.title,
           course_type: mastermindForm.course_type,
           category: mastermindForm.category,
@@ -83,6 +85,8 @@ export function useMastermindHandlers({
           'X-User-Id': userId
         },
         body: JSON.stringify({
+          school_name: '',
+          event_date: new Date().toISOString().split('T')[0],
           title: mastermindForm.title,
           course_type: mastermindForm.course_type,
           category: mastermindForm.category,

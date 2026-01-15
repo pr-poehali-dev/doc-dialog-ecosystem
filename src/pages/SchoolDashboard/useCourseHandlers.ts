@@ -34,6 +34,7 @@ export function useCourseHandlers({
         },
         body: JSON.stringify({
           school_id: schoolId,
+          school_name: '',
           title: courseForm.title,
           course_type: courseForm.course_type,
           category: courseForm.category,
@@ -86,6 +87,7 @@ export function useCourseHandlers({
           'X-User-Id': userId
         },
         body: JSON.stringify({
+          school_name: '',
           title: courseForm.title,
           course_type: courseForm.course_type,
           category: courseForm.category,

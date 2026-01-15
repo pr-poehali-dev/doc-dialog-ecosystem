@@ -15,6 +15,8 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
         },
         body: JSON.stringify({
           school_id: schoolId,
+          school_name: '',
+          event_date: new Date().toISOString().split('T')[0],
           title: trainingForm.title,
           course_type: trainingForm.course_type,
           category: trainingForm.category,
@@ -68,6 +70,8 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
           'X-User-Id': userId
         },
         body: JSON.stringify({
+          school_name: '',
+          event_date: new Date().toISOString().split('T')[0],
           title: trainingForm.title,
           course_type: trainingForm.course_type,
           category: trainingForm.category,
