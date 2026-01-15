@@ -122,6 +122,14 @@ def handler(event: dict, context) -> dict:
             'body': json.dumps({'success': True, 'message': 'Пароль успешно изменён'}),
             'isBase64Encoded': False
         }
+    
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': f'Ошибка сервера: {str(e)}'}),
+            'isBase64Encoded': False
+        }
         
     finally:
         cur.close()
