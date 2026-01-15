@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
@@ -14,9 +14,9 @@ interface AnamnesisResultProps {
 
 export default function AnamnesisResult({ formData, response, onReset, onClose }: AnamnesisResultProps) {
   const { toast } = useToast();
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
-  const copyAnamnesisToClipboard = useCallback(() => {
-    const anamnesisText = `АНАМНЕЗ КЛИЕНТА
+  const anamnesisText = `АНАМНЕЗ КЛИЕНТА
 
 Общая информация:
 - ФИО: ${formData.fullName}
@@ -52,48 +52,17 @@ export default function AnamnesisResult({ formData, response, onReset, onClose }
 AI-АНАЛИЗ:
 
 ${response}`;
-    
-    const textArea = document.createElement('textarea');
-    textArea.value = anamnesisText;
-    textArea.style.position = 'fixed';
-    textArea.style.top = '0';
-    textArea.style.left = '0';
-    textArea.style.width = '2em';
-    textArea.style.height = '2em';
-    textArea.style.padding = '0';
-    textArea.style.border = 'none';
-    textArea.style.outline = 'none';
-    textArea.style.boxShadow = 'none';
-    textArea.style.background = 'transparent';
-    
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    
-    try {
-      const successful = document.execCommand('copy');
-      if (successful) {
-        toast({
-          title: 'Скопировано',
-          description: 'Анамнез и анализ скопированы в буфер обмена'
-        });
-      } else {
-        toast({
-          title: 'Ошибка',
-          description: 'Не удалось скопировать',
-          variant: 'destructive'
-        });
-      }
-    } catch (err) {
+
+  const copyAnamnesisToClipboard = useCallback(() => {
+    if (textAreaRef.current) {
+      textAreaRef.current.select();
+      document.execCommand('copy');
       toast({
-        title: 'Ошибка',
-        description: 'Не удалось скопировать',
-        variant: 'destructive'
+        title: 'Скопировано',
+        description: 'Анамнез скопирован в буфер обмена'
       });
-    } finally {
-      document.body.removeChild(textArea);
     }
-  }, [formData, response, toast]);
+  }, [toast]);
 
   return (
     <div className="space-y-4 py-4">
@@ -101,7 +70,7 @@ ${response}`;
         <div className="flex items-start gap-2 text-sm text-blue-800">
           <Icon name="Info" size={16} className="flex-shrink-0 mt-0.5" />
           <p>
-            Сервис не хранит данные запросов и диалогов. Вы можете скопировать их и сохранить в любое удобное место.
+            Сервис не хранит данные запросов и диалогов. Выделите текст ниже и нажмите Ctrl+C (или Cmd+C на Mac) для копирования.
           </p>
         </div>
       </div>
@@ -111,7 +80,7 @@ ${response}`;
           <CardTitle className="flex items-center justify-between text-base">
             <div className="flex items-center gap-2">
               <Icon name="Brain" className="text-primary flex-shrink-0" size={20} />
-              <span className="truncate">AI-анализ анамнеза</span>
+              <span className="truncate">Результат</span>
             </div>
             <Button
               variant="outline"
@@ -119,14 +88,17 @@ ${response}`;
               onClick={copyAnamnesisToClipboard}
             >
               <Icon name="Copy" size={16} className="mr-2" />
-              Копировать диалог
+              Выделить весь текст
             </Button>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="prose prose-sm max-w-none whitespace-pre-wrap break-words overflow-wrap-anywhere text-sm">
-            {response}
-          </div>
+          <textarea
+            ref={textAreaRef}
+            value={anamnesisText}
+            readOnly
+            className="w-full h-96 p-4 border rounded-lg font-mono text-sm resize-y focus:outline-none focus:ring-2 focus:ring-primary"
+          />
         </CardContent>
       </Card>
       

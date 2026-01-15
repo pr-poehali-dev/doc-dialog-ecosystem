@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useMemo } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -46,52 +46,21 @@ export default function ToolDialog({
   isMedicalTool
 }: ToolDialogProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const copyTextAreaRef = useRef<HTMLTextAreaElement>(null);
   const { toast } = useToast();
 
+  const dialogText = useMemo(() => `Запрос:\n${inputText}\n\nОтвет:\n${response}`, [inputText, response]);
+
   const copyDialogToClipboard = useCallback(() => {
-    const dialogText = `Запрос:\n${inputText}\n\nОтвет:\n${response}`;
-    
-    const textArea = document.createElement('textarea');
-    textArea.value = dialogText;
-    textArea.style.position = 'fixed';
-    textArea.style.top = '0';
-    textArea.style.left = '0';
-    textArea.style.width = '2em';
-    textArea.style.height = '2em';
-    textArea.style.padding = '0';
-    textArea.style.border = 'none';
-    textArea.style.outline = 'none';
-    textArea.style.boxShadow = 'none';
-    textArea.style.background = 'transparent';
-    
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    
-    try {
-      const successful = document.execCommand('copy');
-      if (successful) {
-        toast({
-          title: 'Скопировано',
-          description: 'Диалог скопирован в буфер обмена'
-        });
-      } else {
-        toast({
-          title: 'Ошибка',
-          description: 'Не удалось скопировать',
-          variant: 'destructive'
-        });
-      }
-    } catch (err) {
+    if (copyTextAreaRef.current) {
+      copyTextAreaRef.current.select();
+      document.execCommand('copy');
       toast({
-        title: 'Ошибка',
-        description: 'Не удалось скопировать',
-        variant: 'destructive'
+        title: 'Скопировано',
+        description: 'Диалог скопирован в буфер обмена'
       });
-    } finally {
-      document.body.removeChild(textArea);
     }
-  }, [inputText, response, toast]);
+  }, [toast]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -175,7 +144,7 @@ export default function ToolDialog({
                 <div className="flex items-start gap-2 text-sm text-blue-800">
                   <Icon name="Info" size={16} className="flex-shrink-0 mt-0.5" />
                   <p>
-                    Сервис не хранит данные запросов и диалогов. Вы можете скопировать их и сохранить в любое удобное место.
+                    Выделите текст ниже и нажмите Ctrl+C (или Cmd+C на Mac) для копирования.
                   </p>
                 </div>
               </div>
@@ -187,7 +156,7 @@ export default function ToolDialog({
                       <Icon name="FileText" size={18} className="text-blue-600" />
                     </div>
                     <span className="text-lg font-semibold text-gray-900">
-                      Результат анализа
+                      Результат
                     </span>
                   </div>
                   <Button
@@ -196,12 +165,15 @@ export default function ToolDialog({
                     onClick={copyDialogToClipboard}
                   >
                     <Icon name="Copy" size={16} className="mr-2" />
-                    Копировать диалог
+                    Выделить весь текст
                   </Button>
                 </div>
-                <div className="ai-response-content text-gray-700">
-                  {response}
-                </div>
+                <textarea
+                  ref={copyTextAreaRef}
+                  value={dialogText}
+                  readOnly
+                  className="w-full h-96 p-4 border rounded-lg font-mono text-sm resize-y focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
               </div>
             </div>
           )}
