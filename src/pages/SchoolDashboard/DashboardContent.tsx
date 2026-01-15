@@ -1,11 +1,12 @@
 import ItemsList from '@/components/school/ItemsList';
 import PromoRequestsTab from '@/components/school/PromoRequestsTab';
 import SubscriptionTab from './SubscriptionTab';
+import LandingOrderTab from './LandingOrderTab';
 import { Course, Mastermind } from './types';
 import Icon from '@/components/ui/icon';
 
 interface DashboardContentProps {
-  activeTab: 'courses' | 'masterminds' | 'offline-training' | 'promo-requests' | 'subscription';
+  activeTab: 'courses' | 'masterminds' | 'offline-training' | 'promo-requests' | 'subscription' | 'landing-order';
   showAddForm: boolean;
   courses: Course[];
   masterminds: Mastermind[];
@@ -91,7 +92,7 @@ export default function DashboardContent({
   onSubmitDraftTraining,
   setPendingPromoRequestsCount
 }: DashboardContentProps) {
-  if (!showAddForm && activeTab !== 'promo-requests' && activeTab !== 'subscription') {
+  if (!showAddForm && activeTab !== 'promo-requests' && activeTab !== 'subscription' && activeTab !== 'landing-order') {
     return (
       <ItemsList
         activeTab={activeTab}
@@ -122,6 +123,10 @@ export default function DashboardContent({
 
   if (activeTab === 'subscription') {
     return <SubscriptionTab />;
+  }
+
+  if (activeTab === 'landing-order') {
+    return <LandingOrderTab />;
   }
 
   return null;

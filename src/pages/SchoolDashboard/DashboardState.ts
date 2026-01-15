@@ -7,7 +7,7 @@ export function useDashboardState(toast: any) {
   const navigate = useNavigate();
   const location = useLocation();
   
-  const [activeTab, setActiveTab] = useState<'courses' | 'masterminds' | 'offline-training' | 'promo-requests' | 'subscription'>('courses');
+  const [activeTab, setActiveTab] = useState<'courses' | 'masterminds' | 'offline-training' | 'promo-requests' | 'subscription' | 'landing-order'>('courses');
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingCourseId, setEditingCourseId] = useState<number | null>(null);
   const [editingMastermindId, setEditingMastermindId] = useState<number | null>(null);
@@ -177,7 +177,7 @@ export function useDashboardState(toast: any) {
     // Обработка URL параметра для переключения вкладки
     const params = new URLSearchParams(location.search);
     const tabParam = params.get('tab');
-    if (tabParam && ['courses', 'masterminds', 'offline-training', 'promo-requests', 'subscription'].includes(tabParam)) {
+    if (tabParam && ['courses', 'masterminds', 'offline-training', 'promo-requests', 'subscription', 'landing-order'].includes(tabParam)) {
       setActiveTab(tabParam as typeof activeTab);
     }
     

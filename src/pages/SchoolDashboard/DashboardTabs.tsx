@@ -1,6 +1,6 @@
 import Icon from '@/components/ui/icon';
 
-type TabType = 'courses' | 'masterminds' | 'offline-training' | 'promo-requests' | 'subscription';
+type TabType = 'courses' | 'masterminds' | 'offline-training' | 'promo-requests' | 'subscription' | 'landing-order';
 
 interface DashboardTabsProps {
   activeTab: TabType;
@@ -43,6 +43,13 @@ export default function DashboardTabs({ activeTab, onTabChange, pendingPromoRequ
             {pendingPromoRequestsCount}
           </span>
         )}
+      </button>
+      <button
+        onClick={() => onTabChange('landing-order')}
+        className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${activeTab === 'landing-order' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+      >
+        <Icon name="Sparkles" size={18} className="inline mr-2" />
+        Заказать лендинг
       </button>
       <button
         onClick={() => onTabChange('subscription')}
