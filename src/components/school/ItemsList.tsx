@@ -2,7 +2,6 @@ import Icon from '@/components/ui/icon';
 import CourseCard from './CourseCard';
 import MastermindCard from './MastermindCard';
 import OfflineTrainingCard from './OfflineTrainingCard';
-import SpecialistCard from './SpecialistCard';
 
 interface Course {
   id: number;
@@ -124,8 +123,6 @@ export default function ItemsList({ activeTab, courses, masterminds, offlineTrai
             onDelete={onDeleteTraining}
             onPromote={onPromoteTraining}
             onSubmitDraft={onSubmitDraftTraining}
-          />
-        ))}
           />
         ))}
       </div>
