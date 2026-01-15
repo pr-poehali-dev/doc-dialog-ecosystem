@@ -19,8 +19,9 @@ export default function ToolUsageStats({ usageData, onBuyExtraClick }: ToolUsage
   if (!usageData) return null;
 
   const extraRequests = usageData.extra_requests || 0;
-  const percentage = (usageData.total_used / usageData.limit) * 100;
-  const remaining = Math.max(0, usageData.limit - usageData.total_used);
+  const totalAvailable = usageData.limit + extraRequests;
+  const percentage = (usageData.total_used / totalAvailable) * 100;
+  const remaining = Math.max(0, totalAvailable - usageData.total_used);
 
   return (
     <Card className="border-primary/20 bg-gradient-to-br from-blue-50 to-indigo-50">
@@ -33,8 +34,8 @@ export default function ToolUsageStats({ usageData, onBuyExtraClick }: ToolUsage
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Общий лимит</span>
-            <span className="font-medium">{usageData.total_used} из {usageData.limit}</span>
+            <span className="text-muted-foreground">Использовано</span>
+            <span className="font-medium">{usageData.total_used} из {totalAvailable}</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
             <div 
@@ -108,7 +109,7 @@ export default function ToolUsageStats({ usageData, onBuyExtraClick }: ToolUsage
         <div className="pt-3 border-t text-xs text-muted-foreground">
           <p className="flex items-center gap-2">
             <Icon name="Info" size={14} />
-            Лимиты обновляются 1-го числа каждого месяца
+            {usageData.limit} бесплатных запросов. Далее только пополнение.
           </p>
         </div>
       </CardContent>

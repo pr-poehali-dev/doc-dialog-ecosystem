@@ -23,19 +23,19 @@ export default function ToolLimitModal({ open, onOpenChange }: ToolLimitModalPro
           </div>
           <DialogTitle className="text-center">Лимит исчерпан</DialogTitle>
           <DialogDescription className="text-center">
-            Вы исчерпали лимит бесплатных использований AI-инструментов в этом месяце.
+            Вы использовали все бесплатные запросы к AI-инструментам.
           </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-4 mt-4">
           <div className="p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg border border-primary/20">
             <div className="text-center">
-              <Icon name="Info" size={24} className="text-primary mx-auto mb-2" />
-              <p className="text-sm text-muted-foreground">
-                Лимиты обновятся 1-го числа следующего месяца.
+              <Icon name="ShoppingCart" size={24} className="text-primary mx-auto mb-2" />
+              <p className="text-sm font-medium mb-2">
+                Чтобы продолжить использование:
               </p>
-              <p className="text-sm text-muted-foreground mt-2">
-                Вы можете докупить дополнительные запросы по 12₽ за штуку на странице инструментов.
+              <p className="text-sm text-muted-foreground">
+                Докупите дополнительные запросы по <span className="font-semibold">12₽ за штуку</span> на странице инструментов.
               </p>
             </div>
           </div>

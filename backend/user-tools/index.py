@@ -118,7 +118,7 @@ def get_usage(user_id: str) -> dict:
                 'isBase64Encoded': False
             }
         
-        limit = user.get('tools_limit', 10)
+        limit = user.get('tools_limit', 5)
         tools_used = user.get('tools_used', 0)
         extra_requests = user.get('extra_requests', 0)
         
@@ -163,16 +163,21 @@ def analyze_with_tool(user_id: str, body: dict) -> dict:
                 'isBase64Encoded': False
             }
         
-        limit = user.get('tools_limit', 10)
+        limit = user.get('tools_limit', 5)
         tools_used = user.get('tools_used', 0)
+        extra_requests = user.get('extra_requests', 0)
         
-        if tools_used >= limit:
+        # Проверка лимита: базовый лимит + купленные запросы
+        total_available = limit + extra_requests
+        
+        if tools_used >= total_available:
             return {
                 'statusCode': 429,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
                 'body': json.dumps({'error': 'Превышен лимит использования инструментов', 'limit_reached': True}),
                 'isBase64Encoded': False
             }
+
         
         text = body.get('text', '')
         image_data = body.get('image', '')
