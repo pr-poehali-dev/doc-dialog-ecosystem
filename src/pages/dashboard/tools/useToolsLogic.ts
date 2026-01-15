@@ -202,7 +202,7 @@ export function useToolsLogic() {
         return;
       }
 
-      const amount = count * 12;
+      setLoading(true);
       
       const response = await fetch(USER_TOOLS_URL, {
         method: 'POST',
@@ -212,8 +212,7 @@ export function useToolsLogic() {
         },
         body: JSON.stringify({
           action: 'buy_extra_requests',
-          count: count,
-          amount: amount
+          count: count
         })
       });
 
@@ -225,6 +224,8 @@ export function useToolsLogic() {
 
       if (data.payment_url) {
         window.location.href = data.payment_url;
+      } else {
+        throw new Error('Не получена ссылка для оплаты');
       }
     } catch (error: any) {
       toast({
@@ -232,6 +233,8 @@ export function useToolsLogic() {
         description: error.message || 'Не удалось создать платёж',
         variant: 'destructive'
       });
+    } finally {
+      setLoading(false);
     }
   };
 
