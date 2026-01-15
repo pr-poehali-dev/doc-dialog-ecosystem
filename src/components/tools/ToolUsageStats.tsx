@@ -109,7 +109,7 @@ export default function ToolUsageStats({ usageData, onBuyExtraClick }: ToolUsage
         <div className="pt-3 border-t text-xs text-muted-foreground">
           <p className="flex items-center gap-2">
             <Icon name="Info" size={14} />
-            {usageData.limit} бесплатных запросов. Далее только пополнение.
+            10 бесплатных запросов для ознакомления. Далее только пополнение.
           </p>
         </div>
       </CardContent>

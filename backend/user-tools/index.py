@@ -118,7 +118,7 @@ def get_usage(user_id: str) -> dict:
                 'isBase64Encoded': False
             }
         
-        limit = user.get('tools_limit', 5)
+        limit = user.get('tools_limit', 10)
         tools_used = user.get('tools_used', 0)
         extra_requests = user.get('extra_requests', 0)
         first_purchase_bonus_used = user.get('first_purchase_bonus_used', False)
@@ -165,7 +165,7 @@ def analyze_with_tool(user_id: str, body: dict) -> dict:
                 'isBase64Encoded': False
             }
         
-        limit = user.get('tools_limit', 5)
+        limit = user.get('tools_limit', 10)
         tools_used = user.get('tools_used', 0)
         extra_requests = user.get('extra_requests', 0)
         
