@@ -32,7 +32,7 @@ def handler(event: dict, context) -> dict:
     cur = conn.cursor()
     
     try:
-        # Получить всех массажистов с их бейджами и premium статусом (исключаем тестовых)
+        # Получить всех массажистов с их бейджами и premium статусом (исключаем тестовых и скрытых)
         cur.execute("""
             SELECT 
                 mp.id,
@@ -54,6 +54,7 @@ def handler(event: dict, context) -> dict:
                 mp.created_at
             FROM t_p46047379_doc_dialog_ecosystem.masseur_profiles mp
             WHERE mp.user_id NOT IN (1, 2)
+                AND COALESCE(mp.is_visible, true) = true
             ORDER BY 
                 CASE WHEN mp.promoted_until > NOW() THEN 0 ELSE 1 END,
                 mp.is_premium DESC NULLS LAST,

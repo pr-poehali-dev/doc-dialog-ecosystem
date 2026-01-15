@@ -16,6 +16,7 @@ export default function PublicProfile() {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const [profileData, setProfileData] = useState({
     fullName: '',
     city: '',
@@ -61,6 +62,7 @@ export default function PublicProfile() {
           photo: data.avatar_url || '',
           serviceDescriptions: {},
         });
+        setIsVisible(data.is_visible !== false);
       }
     } catch (error) {
       console.error('Ошибка загрузки профиля:', error);
@@ -225,6 +227,36 @@ export default function PublicProfile() {
     });
   };
 
+  const toggleVisibility = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('https://functions.poehali.dev/bf27da5d-a5ee-4dc7-b5bb-fcc474598d37', {
+        method: 'PUT',
+        headers: {
+          'X-Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ is_visible: !isVisible })
+      });
+      
+      if (response.ok) {
+        setIsVisible(!isVisible);
+        toast({
+          title: isVisible ? 'Карточка скрыта' : 'Карточка опубликована',
+          description: isVisible 
+            ? 'Ваш профиль больше не отображается в каталоге'
+            : 'Ваш профиль теперь виден в каталоге специалистов'
+        });
+      }
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось изменить видимость профиля',
+        variant: 'destructive'
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-blue-50">
       <Navigation />
@@ -262,6 +294,8 @@ export default function PublicProfile() {
 
             <ProfileVerificationCard
               deleting={deleting}
+              isVisible={isVisible}
+              toggleVisibility={toggleVisibility}
               handleDeleteAccount={handleDeleteAccount}
             />
 

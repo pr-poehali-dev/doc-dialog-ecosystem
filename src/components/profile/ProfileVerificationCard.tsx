@@ -15,13 +15,44 @@ import {
 
 interface ProfileVerificationCardProps {
   deleting: boolean;
+  isVisible: boolean;
+  toggleVisibility: () => void;
   handleDeleteAccount: () => void;
 }
 
-export default function ProfileVerificationCard({ deleting, handleDeleteAccount }: ProfileVerificationCardProps) {
+export default function ProfileVerificationCard({ deleting, isVisible, toggleVisibility, handleDeleteAccount }: ProfileVerificationCardProps) {
   return (
     <>
-      <Card className="border-primary/20 bg-gradient-to-br from-blue-50 to-indigo-50">
+      <Card className="border-orange-200 bg-gradient-to-br from-orange-50 to-yellow-50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Icon name={isVisible ? "Eye" : "EyeOff"} size={20} />
+            Видимость в каталоге
+          </CardTitle>
+          <CardDescription>
+            {isVisible 
+              ? "Ваша карточка отображается в каталоге специалистов" 
+              : "Ваша карточка скрыта из каталога специалистов"}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground mb-4">
+            {isVisible 
+              ? "Временно не принимаете клиентов? Скройте карточку из каталога" 
+              : "Готовы принимать клиентов? Опубликуйте карточку в каталоге"}
+          </p>
+          <Button 
+            onClick={toggleVisibility}
+            variant={isVisible ? "outline" : "default"}
+            className="w-full"
+          >
+            <Icon name={isVisible ? "EyeOff" : "Eye"} size={18} className="mr-2" />
+            {isVisible ? "Скрыть из каталога" : "Показать в каталоге"}
+          </Button>
+        </CardContent>
+      </Card>
+
+      <Card className="border-primary/20 bg-gradient-to-br from-blue-50 to-indigo-50 mt-6">
         <CardHeader>
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center flex-shrink-0">

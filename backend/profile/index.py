@@ -95,6 +95,24 @@ def handler(event: dict, context) -> dict:
         elif method == 'PUT':
             body = json.loads(event.get('body', '{}'))
             
+            # If only is_visible is provided, update only that field
+            if 'is_visible' in body and len(body) == 1:
+                is_visible = body.get('is_visible')
+                cur.execute(f"""
+                    UPDATE {schema}.masseur_profiles
+                    SET is_visible = {is_visible}
+                    WHERE user_id = {user_id}
+                """)
+                conn.commit()
+                cur.close()
+                conn.close()
+                return {
+                    'statusCode': 200,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'success': True, 'is_visible': is_visible}),
+                    'isBase64Encoded': False
+                }
+            
             full_name = body.get('full_name', '')
             phone = body.get('phone', '')
             telegram = body.get('telegram', '')
