@@ -1,23 +1,23 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getUserId } from '@/utils/auth';
-import { Course, Mastermind, SpecialistRequest, COURSE_API_URL } from './types';
+import { Course, Mastermind, COURSE_API_URL } from './types';
 
 export function useDashboardState(toast: any) {
   const navigate = useNavigate();
   const location = useLocation();
   
-  const [activeTab, setActiveTab] = useState<'courses' | 'masterminds' | 'offline-training' | 'specialists' | 'landings' | 'knowledge' | 'promo-requests' | 'subscription'>('courses');
+  const [activeTab, setActiveTab] = useState<'courses' | 'masterminds' | 'offline-training' | 'promo-requests' | 'subscription'>('courses');
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingCourseId, setEditingCourseId] = useState<number | null>(null);
   const [editingMastermindId, setEditingMastermindId] = useState<number | null>(null);
   const [editingTrainingId, setEditingTrainingId] = useState<number | null>(null);
-  const [editingSpecialistId, setEditingSpecialistId] = useState<number | null>(null);
+
   
   const [courses, setCourses] = useState<Course[]>([]);
   const [masterminds, setMasterminds] = useState<Mastermind[]>([]);
   const [offlineTrainings, setOfflineTrainings] = useState<any[]>([]);
-  const [specialists, setSpecialists] = useState<SpecialistRequest[]>([]);
+
   const [landings, setLandings] = useState<any[]>([]);
   const [schoolId, setSchoolId] = useState<number | null>(null);
   
@@ -148,10 +148,6 @@ export function useDashboardState(toast: any) {
         } else {
           setOfflineTrainings([]);
         }
-      } else if (activeTab === 'specialists') {
-        const response = await fetch(`${COURSE_API_URL}?action=specialists&school_id=${schoolId}&status=all`);
-        const data = await response.json();
-        setSpecialists(data);
       } else if (activeTab === 'landings') {
         const userId = getUserId();
         const response = await fetch(`https://functions.poehali.dev/6ac6b552-624e-4960-a4f1-94f540394c86?action=my_schools`, {
@@ -181,7 +177,7 @@ export function useDashboardState(toast: any) {
     // Обработка URL параметра для переключения вкладки
     const params = new URLSearchParams(location.search);
     const tabParam = params.get('tab');
-    if (tabParam && ['courses', 'masterminds', 'offline-training', 'specialists', 'landings', 'knowledge', 'promo-requests', 'subscription'].includes(tabParam)) {
+    if (tabParam && ['courses', 'masterminds', 'offline-training', 'promo-requests', 'subscription'].includes(tabParam)) {
       setActiveTab(tabParam as typeof activeTab);
     }
     
@@ -214,15 +210,14 @@ export function useDashboardState(toast: any) {
     setEditingMastermindId,
     editingTrainingId,
     setEditingTrainingId,
-    editingSpecialistId,
-    setEditingSpecialistId,
+
     courses,
     setCourses,
     masterminds,
     setMasterminds,
     offlineTrainings,
     setOfflineTrainings,
-    specialists,
+
     setSpecialists,
     landings,
     setLandings,

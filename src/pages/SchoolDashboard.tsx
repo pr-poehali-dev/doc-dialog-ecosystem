@@ -9,12 +9,12 @@ import DashboardPromoteDialogs from './SchoolDashboard/DashboardPromoteDialogs';
 import {
   INITIAL_COURSE_FORM,
   INITIAL_MASTERMIND_FORM,
-  INITIAL_SPECIALIST_FORM
+  INITIAL_OFFLINE_TRAINING_FORM
 } from './SchoolDashboard/types';
 import { useCourseHandlers } from './SchoolDashboard/useCourseHandlers';
 import { useMastermindHandlers } from './SchoolDashboard/useMastermindHandlers';
 import { useOfflineTrainingHandlers } from './SchoolDashboard/useOfflineTrainingHandlers';
-import { useSpecialistHandlers } from './SchoolDashboard/useSpecialistHandlers';
+
 import { useDashboardState } from './SchoolDashboard/DashboardState';
 
 export default function SchoolDashboard() {
@@ -30,12 +30,9 @@ export default function SchoolDashboard() {
     setEditingMastermindId,
     editingTrainingId,
     setEditingTrainingId,
-    editingSpecialistId,
-    setEditingSpecialistId,
     courses,
     masterminds,
     offlineTrainings,
-    specialists,
     landings,
     schoolId,
     promoteCourseId,
@@ -61,8 +58,7 @@ export default function SchoolDashboard() {
 
   const [courseForm, setCourseForm] = useState(INITIAL_COURSE_FORM);
   const [mastermindForm, setMastermindForm] = useState(INITIAL_MASTERMIND_FORM);
-  const [trainingForm, setTrainingForm] = useState(INITIAL_MASTERMIND_FORM);
-  const [specialistForm, setSpecialistForm] = useState(INITIAL_SPECIALIST_FORM);
+  const [trainingForm, setTrainingForm] = useState(INITIAL_OFFLINE_TRAINING_FORM);
 
   const {
     handleAddCourse,
@@ -115,21 +111,7 @@ export default function SchoolDashboard() {
     toast
   });
 
-  const {
-    handleAddSpecialist,
-    handleEditSpecialist,
-    handleUpdateSpecialist,
-    handleDeleteSpecialist
-  } = useSpecialistHandlers({
-    schoolId,
-    specialistForm,
-    setSpecialistForm,
-    editingSpecialistId,
-    setEditingSpecialistId,
-    setShowAddForm,
-    loadData,
-    toast
-  });
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/5">
@@ -154,24 +136,21 @@ export default function SchoolDashboard() {
           setEditingMastermindId={setEditingMastermindId}
           editingTrainingId={editingTrainingId}
           setEditingTrainingId={setEditingTrainingId}
-          editingSpecialistId={editingSpecialistId}
-          setEditingSpecialistId={setEditingSpecialistId}
+
           courseForm={courseForm}
           setCourseForm={setCourseForm}
           mastermindForm={mastermindForm}
           setMastermindForm={setMastermindForm}
           trainingForm={trainingForm}
           setTrainingForm={setTrainingForm}
-          specialistForm={specialistForm}
-          setSpecialistForm={setSpecialistForm}
+
           handleAddCourse={handleAddCourse}
           handleUpdateCourse={handleUpdateCourse}
           handleAddMastermind={handleAddMastermind}
           handleUpdateMastermind={handleUpdateMastermind}
           handleAddTraining={handleAddTraining}
           handleUpdateTraining={handleUpdateTraining}
-          handleAddSpecialist={handleAddSpecialist}
-          handleUpdateSpecialist={handleUpdateSpecialist}
+
         />
 
         <DashboardContent
