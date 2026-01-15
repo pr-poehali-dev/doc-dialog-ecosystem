@@ -1,3 +1,5 @@
+import { INITIAL_OFFLINE_TRAINING_FORM } from './types';
+
 export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTrainingForm, editingTrainingId, setEditingTrainingId, setShowAddForm, loadData, toast }: any) {
   const TRAINING_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f';
 
@@ -12,38 +14,21 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
         },
         body: JSON.stringify({
           school_id: schoolId,
-          school_name: trainingForm.school_name,
           title: trainingForm.title,
+          course_type: trainingForm.course_type,
+          category: trainingForm.category,
           description: trainingForm.description,
-          event_date: trainingForm.event_date,
-          location: trainingForm.location,
-          max_participants: trainingForm.max_participants ? parseInt(trainingForm.max_participants) : null,
-          price: trainingForm.price ? parseFloat(trainingForm.price) : null,
+          has_certificate: trainingForm.has_certificate,
+          duration_hours: trainingForm.duration_hours ? parseInt(trainingForm.duration_hours) : null,
           image_url: trainingForm.image_url,
-          external_url: trainingForm.external_url,
-          original_price: trainingForm.original_price ? parseFloat(trainingForm.original_price) : null,
-          discount_price: trainingForm.discount_price ? parseFloat(trainingForm.discount_price) : null,
-          category: trainingForm.category || 'technique'
+          external_url: trainingForm.external_url
         })
       });
       
       if (response.ok) {
         toast({ title: 'Успех', description: 'Очное обучение добавлено и отправлено на модерацию' });
         setShowAddForm(false);
-        setTrainingForm({
-          school_name: '',
-          title: '',
-          description: '',
-          event_date: '',
-          location: '',
-          max_participants: '',
-          price: '',
-          image_url: '',
-          external_url: '',
-          original_price: '',
-          discount_price: '',
-          category: 'technique'
-        });
+        setTrainingForm(INITIAL_OFFLINE_TRAINING_FORM);
         loadData();
       } else {
         const errorData = await response.json();
@@ -57,18 +42,14 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
 
   const handleEditTraining = (training: any) => {
     setTrainingForm({
-      school_name: training.school_name,
       title: training.title,
+      course_type: training.course_type || 'offline',
+      category: training.category || 'technique',
       description: training.description || '',
-      event_date: training.event_date?.slice(0, 16) || '',
-      location: training.location || '',
-      max_participants: training.max_participants?.toString() || '',
-      price: training.price?.toString() || '',
+      has_certificate: (training as any).has_certificate || false,
+      duration_hours: training.duration_hours?.toString() || '',
       image_url: training.image_url || '',
-      external_url: training.external_url || '',
-      original_price: training.original_price?.toString() || '',
-      discount_price: training.discount_price?.toString() || '',
-      category: training.category || 'technique'
+      external_url: training.external_url || ''
     });
     setEditingTrainingId(training.id);
     setShowAddForm(true);
@@ -86,18 +67,14 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          school_name: trainingForm.school_name,
           title: trainingForm.title,
+          course_type: trainingForm.course_type,
+          category: trainingForm.category,
           description: trainingForm.description,
-          event_date: trainingForm.event_date,
-          location: trainingForm.location,
-          max_participants: trainingForm.max_participants ? parseInt(trainingForm.max_participants) : null,
-          price: trainingForm.price ? parseFloat(trainingForm.price) : null,
+          has_certificate: trainingForm.has_certificate,
+          duration_hours: trainingForm.duration_hours ? parseInt(trainingForm.duration_hours) : null,
           image_url: trainingForm.image_url,
-          external_url: trainingForm.external_url,
-          original_price: trainingForm.original_price ? parseFloat(trainingForm.original_price) : null,
-          discount_price: trainingForm.discount_price ? parseFloat(trainingForm.discount_price) : null,
-          category: trainingForm.category || 'technique'
+          external_url: trainingForm.external_url
         })
       });
       
@@ -105,20 +82,7 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
         toast({ title: 'Успех', description: 'Обучение обновлено' });
         setShowAddForm(false);
         setEditingTrainingId(null);
-        setTrainingForm({
-          school_name: '',
-          title: '',
-          description: '',
-          event_date: '',
-          location: '',
-          max_participants: '',
-          price: '',
-          image_url: '',
-          external_url: '',
-          original_price: '',
-          discount_price: '',
-          category: 'technique'
-        });
+        setTrainingForm(INITIAL_OFFLINE_TRAINING_FORM);
         loadData();
       } else {
         const errorData = await response.json();

@@ -29,11 +29,14 @@ export function useMastermindHandlers({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           school_id: schoolId,
-          ...mastermindForm,
-          price: mastermindForm.price ? parseFloat(mastermindForm.price) : null,
-          max_participants: mastermindForm.max_participants ? parseInt(mastermindForm.max_participants) : null,
-          original_price: mastermindForm.original_price ? parseFloat(mastermindForm.original_price) : null,
-          discount_price: mastermindForm.discount_price ? parseFloat(mastermindForm.discount_price) : null
+          title: mastermindForm.title,
+          course_type: mastermindForm.course_type,
+          category: mastermindForm.category,
+          description: mastermindForm.description,
+          has_certificate: mastermindForm.has_certificate,
+          duration_hours: mastermindForm.duration_hours ? parseInt(mastermindForm.duration_hours) : null,
+          image_url: mastermindForm.image_url,
+          external_url: mastermindForm.external_url
         })
       });
       
@@ -50,18 +53,14 @@ export function useMastermindHandlers({
 
   const handleEditMastermind = (mastermind: any) => {
     setMastermindForm({
-      school_name: mastermind.school_name || '',
       title: mastermind.title,
+      course_type: mastermind.course_type || 'online',
+      category: mastermind.category || 'technique',
       description: mastermind.description,
-      event_date: mastermind.event_date?.slice(0, 16) || '',
-      location: mastermind.location || '',
-      max_participants: mastermind.max_participants?.toString() || '',
-      price: mastermind.price?.toString() || '',
+      has_certificate: (mastermind as any).has_certificate || false,
+      duration_hours: mastermind.duration_hours?.toString() || '',
       image_url: mastermind.image_url || '',
-      external_url: mastermind.external_url,
-      original_price: mastermind.original_price?.toString() || '',
-      discount_price: mastermind.discount_price?.toString() || '',
-      category: mastermind.category || 'technique'
+      external_url: mastermind.external_url || ''
     });
     setEditingMastermindId(mastermind.id);
     setShowAddForm(true);
@@ -75,11 +74,14 @@ export function useMastermindHandlers({
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...mastermindForm,
-          price: mastermindForm.price ? parseFloat(mastermindForm.price) : null,
-          max_participants: mastermindForm.max_participants ? parseInt(mastermindForm.max_participants) : null,
-          original_price: mastermindForm.original_price ? parseFloat(mastermindForm.original_price) : null,
-          discount_price: mastermindForm.discount_price ? parseFloat(mastermindForm.discount_price) : null
+          title: mastermindForm.title,
+          course_type: mastermindForm.course_type,
+          category: mastermindForm.category,
+          description: mastermindForm.description,
+          has_certificate: mastermindForm.has_certificate,
+          duration_hours: mastermindForm.duration_hours ? parseInt(mastermindForm.duration_hours) : null,
+          image_url: mastermindForm.image_url,
+          external_url: mastermindForm.external_url
         })
       });
       

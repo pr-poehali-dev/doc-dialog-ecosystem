@@ -59,87 +59,69 @@ export interface SpecialistRequest {
 }
 
 export interface CourseFormData {
-  school_name: string;
   title: string;
-  description: string;
-  category: string;
   course_type: string;
-  price: string;
+  category: string;
+  description: string;
+  has_certificate: boolean;
   duration_hours: string;
   image_url: string;
   external_url: string;
-  original_price: string;
-  discount_price: string;
-  has_certificate: boolean;
-  has_employment: boolean;
-  has_practice: boolean;
 }
 
 export interface MastermindFormData {
-  school_name: string;
   title: string;
+  course_type: string;
+  category: 'technique' | 'business' | 'soft_skills' | 'health' | 'digital';
   description: string;
-  event_date: string;
-  location: string;
-  max_participants: string;
-  price: string;
+  has_certificate: boolean;
+  duration_hours: string;
   image_url: string;
   external_url: string;
-  original_price: string;
-  discount_price: string;
-  category: 'technique' | 'business' | 'soft_skills' | 'health' | 'digital';
 }
 
-export interface SpecialistFormData {
+export interface OfflineTrainingFormData {
   title: string;
+  course_type: string;
+  category: 'technique' | 'business' | 'soft_skills' | 'health' | 'digital';
   description: string;
-  specialty: string;
-  budget_from: string;
-  budget_to: string;
-  location: string;
-  deadline_date: string;
+  has_certificate: boolean;
+  duration_hours: string;
+  image_url: string;
+  external_url: string;
 }
 
 export const COURSE_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f';
 
 export const INITIAL_COURSE_FORM: CourseFormData = {
-  school_name: '',
   title: '',
-  description: '',
-  category: 'Классический массаж',
   course_type: 'online',
-  price: '',
+  category: 'Классический массаж',
+  description: '',
+  has_certificate: false,
   duration_hours: '',
   image_url: '',
-  external_url: '',
-  original_price: '',
-  discount_price: '',
-  has_certificate: false,
-  has_employment: false,
-  has_practice: false
+  external_url: ''
 };
 
 export const INITIAL_MASTERMIND_FORM: MastermindFormData = {
-  school_name: '',
   title: '',
+  course_type: 'online',
+  category: 'technique',
   description: '',
-  event_date: '',
-  location: '',
-  max_participants: '',
-  price: '',
+  has_certificate: false,
+  duration_hours: '',
   image_url: '',
-  external_url: '',
-  original_price: '',
-  discount_price: '',
-  category: 'technique'
+  external_url: ''
 };
 
-export const INITIAL_SPECIALIST_FORM: SpecialistFormData = {
+export const INITIAL_OFFLINE_TRAINING_FORM: OfflineTrainingFormData = {
   title: '',
+  course_type: 'offline',
+  category: 'technique',
   description: '',
-  specialty: 'Видеооператор',
-  budget_from: '',
-  budget_to: '',
-  location: '',
-  deadline_date: ''
+  has_certificate: false,
+  duration_hours: '',
+  image_url: '',
+  external_url: ''
 };
