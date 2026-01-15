@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
 import CourseForm from '@/components/school/CourseForm';
@@ -7,7 +6,7 @@ import OfflineTrainingForm from '@/components/school/OfflineTrainingForm';
 import { INITIAL_COURSE_FORM, INITIAL_MASTERMIND_FORM, INITIAL_OFFLINE_TRAINING_FORM } from './types';
 
 interface DashboardFormsProps {
-  activeTab: 'courses' | 'masterminds' | 'offline-training' | 'landings' | 'knowledge' | 'promo-requests' | 'subscription';
+  activeTab: 'courses' | 'masterminds' | 'offline-training' | 'promo-requests' | 'subscription';
   showAddForm: boolean;
   setShowAddForm: (show: boolean) => void;
   editingCourseId: number | null;
@@ -53,26 +52,14 @@ export default function DashboardForms({
   handleAddTraining,
   handleUpdateTraining
 }: DashboardFormsProps) {
-  const navigate = useNavigate();
-
-  if (activeTab === 'landings' || activeTab === 'knowledge' || activeTab === 'promo-requests' || activeTab === 'subscription') {
+  if (activeTab === 'promo-requests' || activeTab === 'subscription') {
     return null;
   }
 
   return (
     <>
       <div className="mb-6">
-        <Button onClick={() => {
-          if (activeTab === 'courses') {
-            navigate('/course/landing/builder');
-          } else if (activeTab === 'masterminds') {
-            navigate('/mastermind/landing/builder');
-          } else if (activeTab === 'offline-training') {
-            navigate('/offline-training/landing/builder');
-          } else {
-            setShowAddForm(!showAddForm);
-          }
-        }}>
+        <Button onClick={() => setShowAddForm(!showAddForm)}>
           <Icon name="Plus" size={18} className="mr-2" />
           {activeTab === 'courses' && 'Добавить курс'}
           {activeTab === 'masterminds' && 'Добавить мастермайнд'}
