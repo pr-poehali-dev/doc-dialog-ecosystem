@@ -44,25 +44,9 @@ export default function CatalogItemCard({ item }: CatalogItemCardProps) {
   const isMasseur = user?.role === 'masseur';
   
   const handleClick = () => {
-    if (!user || !token) {
-      navigate('/masseur-welcome');
-      return;
-    }
-    
-    if (item.itemType === 'mastermind') {
-      if ('slug' in item && item.slug) {
-        window.location.href = `/mastermind/landing/${item.slug}`;
-      } else {
-        window.location.href = `/mastermind/${item.id}`;
-      }
-    } else if (item.itemType === 'offline_training') {
-      if ('slug' in item && item.slug) {
-        window.location.href = `/offline-training/${item.slug}`;
-      }
-    } else if ('slug' in item && item.slug) {
-      window.location.href = `/course/landing/${item.slug}`;
-    } else {
-      window.location.href = `/course/${item.id}`;
+    // Открываем external_url напрямую
+    if (item.external_url) {
+      window.open(item.external_url, '_blank');
     }
   };
 

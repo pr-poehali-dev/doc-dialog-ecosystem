@@ -41,6 +41,7 @@ export function useCourseHandlers({
           description: courseForm.description,
           has_certificate: courseForm.has_certificate,
           duration_hours: courseForm.duration_hours ? parseInt(courseForm.duration_hours) : null,
+          price: courseForm.price ? parseFloat(courseForm.price) : null,
           image_url: courseForm.image_url,
           external_url: courseForm.external_url
         })
@@ -69,7 +70,8 @@ export function useCourseHandlers({
       has_certificate: (course as any).has_certificate || false,
       duration_hours: course.duration_hours?.toString() || '',
       image_url: course.image_url || '',
-      external_url: course.external_url || ''
+      external_url: course.external_url || '',
+      price: course.price?.toString() || ''
     });
     setEditingCourseId(course.id);
     setShowAddForm(true);
@@ -94,6 +96,7 @@ export function useCourseHandlers({
           description: courseForm.description,
           has_certificate: courseForm.has_certificate,
           duration_hours: courseForm.duration_hours ? parseInt(courseForm.duration_hours) : null,
+          price: courseForm.price ? parseFloat(courseForm.price) : null,
           image_url: courseForm.image_url,
           external_url: courseForm.external_url
         })

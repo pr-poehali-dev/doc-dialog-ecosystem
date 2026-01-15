@@ -15,6 +15,7 @@ interface CourseFormProps {
     duration_hours: string;
     image_url: string;
     external_url: string;
+    price: string;
   };
   setCourseForm: React.Dispatch<React.SetStateAction<{
     title: string;
@@ -25,6 +26,7 @@ interface CourseFormProps {
     duration_hours: string;
     image_url: string;
     external_url: string;
+    price: string;
   }>>;
   onSubmit: () => void;
   onCancel: () => void;
@@ -72,9 +74,15 @@ export default function CourseForm({ courseForm, setCourseForm, onSubmit, onCanc
           <input type="checkbox" checked={courseForm.has_certificate} onChange={(e) => setCourseForm({...courseForm, has_certificate: e.target.checked})} className="w-4 h-4" id="cert" />
           <Label htmlFor="cert" className="cursor-pointer">Выдаётся сертификат</Label>
         </div>
-        <div>
-          <Label>Длительность (часов)*</Label>
-          <Input type="number" value={courseForm.duration_hours} onChange={(e) => setCourseForm({...courseForm, duration_hours: e.target.value})} placeholder="40" />
+        <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <Label>Длительность (часов)*</Label>
+            <Input type="number" value={courseForm.duration_hours} onChange={(e) => setCourseForm({...courseForm, duration_hours: e.target.value})} placeholder="40" />
+          </div>
+          <div>
+            <Label>Стоимость (руб.)</Label>
+            <Input type="number" value={courseForm.price} onChange={(e) => setCourseForm({...courseForm, price: e.target.value})} placeholder="25000" />
+          </div>
         </div>
         <div>
           <Label>Картинка (URL)*</Label>
