@@ -52,30 +52,20 @@ AI-АНАЛИЗ:
 
 ${response}`;
     
+    const textArea = document.createElement('textarea');
+    textArea.value = anamnesisText;
+    textArea.style.top = '0';
+    textArea.style.left = '0';
+    textArea.style.position = 'fixed';
+    textArea.style.opacity = '0';
+    
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
     try {
-      const textArea = document.createElement('textarea');
-      textArea.value = anamnesisText;
-      textArea.setAttribute('readonly', '');
-      textArea.style.position = 'absolute';
-      textArea.style.left = '-9999px';
-      textArea.style.fontSize = '12pt';
-      
-      document.body.appendChild(textArea);
-      
-      const selected = document.getSelection()!.rangeCount > 0
-        ? document.getSelection()!.getRangeAt(0)
-        : false;
-      
-      textArea.select();
-      textArea.setSelectionRange(0, anamnesisText.length);
-      
       const successful = document.execCommand('copy');
       document.body.removeChild(textArea);
-      
-      if (selected) {
-        document.getSelection()!.removeAllRanges();
-        document.getSelection()!.addRange(selected);
-      }
       
       if (successful) {
         toast({
@@ -83,9 +73,14 @@ ${response}`;
           description: 'Анамнез и анализ скопированы в буфер обмена'
         });
       } else {
-        throw new Error('Copy command failed');
+        toast({
+          title: 'Ошибка',
+          description: 'Не удалось скопировать в буфер обмена',
+          variant: 'destructive'
+        });
       }
-    } catch (error) {
+    } catch (err) {
+      document.body.removeChild(textArea);
       toast({
         title: 'Ошибка',
         description: 'Не удалось скопировать в буфер обмена',
