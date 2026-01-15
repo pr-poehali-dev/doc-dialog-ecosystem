@@ -4,11 +4,10 @@ import Icon from '@/components/ui/icon';
 import CourseForm from '@/components/school/CourseForm';
 import MastermindForm from '@/components/school/MastermindForm';
 import OfflineTrainingForm from '@/components/school/OfflineTrainingForm';
-import SpecialistForm from '@/components/school/SpecialistForm';
-import { INITIAL_COURSE_FORM, INITIAL_MASTERMIND_FORM, INITIAL_SPECIALIST_FORM } from './types';
+import { INITIAL_COURSE_FORM, INITIAL_MASTERMIND_FORM, INITIAL_OFFLINE_TRAINING_FORM } from './types';
 
 interface DashboardFormsProps {
-  activeTab: 'courses' | 'masterminds' | 'offline-training' | 'specialists' | 'landings' | 'knowledge' | 'promo-requests' | 'subscription';
+  activeTab: 'courses' | 'masterminds' | 'offline-training' | 'landings' | 'knowledge' | 'promo-requests' | 'subscription';
   showAddForm: boolean;
   setShowAddForm: (show: boolean) => void;
   editingCourseId: number | null;
@@ -17,24 +16,18 @@ interface DashboardFormsProps {
   setEditingMastermindId: (id: number | null) => void;
   editingTrainingId: number | null;
   setEditingTrainingId: (id: number | null) => void;
-  editingSpecialistId: number | null;
-  setEditingSpecialistId: (id: number | null) => void;
   courseForm: any;
   setCourseForm: (form: any) => void;
   mastermindForm: any;
   setMastermindForm: (form: any) => void;
   trainingForm: any;
   setTrainingForm: (form: any) => void;
-  specialistForm: any;
-  setSpecialistForm: (form: any) => void;
   handleAddCourse: () => void;
   handleUpdateCourse: () => void;
   handleAddMastermind: () => void;
   handleUpdateMastermind: () => void;
   handleAddTraining: () => void;
   handleUpdateTraining: () => void;
-  handleAddSpecialist: () => void;
-  handleUpdateSpecialist: () => void;
 }
 
 export default function DashboardForms({
@@ -47,24 +40,18 @@ export default function DashboardForms({
   setEditingMastermindId,
   editingTrainingId,
   setEditingTrainingId,
-  editingSpecialistId,
-  setEditingSpecialistId,
   courseForm,
   setCourseForm,
   mastermindForm,
   setMastermindForm,
   trainingForm,
   setTrainingForm,
-  specialistForm,
-  setSpecialistForm,
   handleAddCourse,
   handleUpdateCourse,
   handleAddMastermind,
   handleUpdateMastermind,
   handleAddTraining,
-  handleUpdateTraining,
-  handleAddSpecialist,
-  handleUpdateSpecialist
+  handleUpdateTraining
 }: DashboardFormsProps) {
   const navigate = useNavigate();
 
@@ -90,7 +77,6 @@ export default function DashboardForms({
           {activeTab === 'courses' && 'Добавить курс'}
           {activeTab === 'masterminds' && 'Добавить мастермайнд'}
           {activeTab === 'offline-training' && 'Добавить очное обучение'}
-          {activeTab === 'specialists' && 'Найти специалиста'}
         </Button>
       </div>
 
@@ -130,23 +116,9 @@ export default function DashboardForms({
           onCancel={() => {
             setShowAddForm(false);
             setEditingTrainingId(null);
-            setTrainingForm(INITIAL_MASTERMIND_FORM);
+            setTrainingForm(INITIAL_OFFLINE_TRAINING_FORM);
           }}
           isEditing={!!editingTrainingId}
-        />
-      )}
-
-      {showAddForm && activeTab === 'specialists' && (
-        <SpecialistForm
-          specialistForm={specialistForm}
-          setSpecialistForm={setSpecialistForm}
-          onSubmit={editingSpecialistId ? handleUpdateSpecialist : handleAddSpecialist}
-          onCancel={() => {
-            setShowAddForm(false);
-            setEditingSpecialistId(null);
-            setSpecialistForm(INITIAL_SPECIALIST_FORM);
-          }}
-          isEditing={!!editingSpecialistId}
         />
       )}
     </>
