@@ -3,6 +3,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
+import { useToast } from '@/hooks/use-toast';
 import {
   Dialog,
   DialogContent,
@@ -45,6 +46,17 @@ export default function ToolDialog({
   isMedicalTool
 }: ToolDialogProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  const copyDialogToClipboard = () => {
+    const dialogText = `Запрос:\n${inputText}\n\nОтвет:\n${response}`;
+    navigator.clipboard.writeText(dialogText).then(() => {
+      toast({
+        title: 'Скопировано',
+        description: 'Диалог скопирован в буфер обмена'
+      });
+    });
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -123,17 +135,38 @@ export default function ToolDialog({
           </Button>
 
           {response && (
-            <div className="mt-6 p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
-              <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-200">
-                <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                  <Icon name="FileText" size={18} className="text-blue-600" />
+            <div className="mt-6 space-y-3">
+              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="flex items-start gap-2 text-sm text-blue-800">
+                  <Icon name="Info" size={16} className="flex-shrink-0 mt-0.5" />
+                  <p>
+                    Сервис не хранит данные запросов и диалогов. Вы можете скопировать их и сохранить в любое удобное место.
+                  </p>
                 </div>
-                <span className="text-lg font-semibold text-gray-900">
-                  Результат анализа
-                </span>
               </div>
-              <div className="ai-response-content text-gray-700">
-                {response}
+              
+              <div className="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+                <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                      <Icon name="FileText" size={18} className="text-blue-600" />
+                    </div>
+                    <span className="text-lg font-semibold text-gray-900">
+                      Результат анализа
+                    </span>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={copyDialogToClipboard}
+                  >
+                    <Icon name="Copy" size={16} className="mr-2" />
+                    Копировать диалог
+                  </Button>
+                </div>
+                <div className="ai-response-content text-gray-700">
+                  {response}
+                </div>
               </div>
             </div>
           )}

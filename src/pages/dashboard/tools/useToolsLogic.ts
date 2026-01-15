@@ -337,48 +337,6 @@ export function useToolsLogic() {
     }
   };
 
-  const handleSaveAnamnesis = async (formData: AnamnesisFormData, aiAnalysis: string) => {
-    try {
-      const userId = getUserId();
-      if (!userId) {
-        toast({ title: 'Ошибка', description: 'Необходима авторизация', variant: 'destructive' });
-        return;
-      }
-
-      const response = await fetch(USER_TOOLS_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-User-Id': userId
-        },
-        body: JSON.stringify({
-          action: 'save_anamnesis',
-          formData: formData,
-          aiAnalysis: aiAnalysis
-        })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Ошибка сохранения');
-      }
-
-      toast({
-        title: 'Сохранено',
-        description: `Анамнез клиента ${formData.fullName} сохранён`
-      });
-
-      setShowAnamnesisTool(false);
-    } catch (error: any) {
-      toast({
-        title: 'Ошибка',
-        description: error.message || 'Не удалось сохранить анамнез',
-        variant: 'destructive'
-      });
-    }
-  };
-
   return {
     activeToolId,
     inputText,
@@ -402,7 +360,6 @@ export function useToolsLogic() {
     handleCloseDialog,
     handleBuyExtraRequests,
     handleAnamnesisAnalyze,
-    handleSaveAnamnesis,
     navigate
   };
 }

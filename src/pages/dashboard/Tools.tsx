@@ -34,7 +34,6 @@ export default function Tools() {
     handleCloseDialog,
     handleBuyExtraRequests,
     handleAnamnesisAnalyze,
-    handleSaveAnamnesis,
     navigate
   } = useToolsLogic();
 
@@ -151,7 +150,6 @@ export default function Tools() {
         open={showAnamnesisTool}
         onOpenChange={setShowAnamnesisTool}
         onAnalyze={handleAnamnesisAnalyze}
-        onSave={handleSaveAnamnesis}
         loading={loading}
         response={response}
       />

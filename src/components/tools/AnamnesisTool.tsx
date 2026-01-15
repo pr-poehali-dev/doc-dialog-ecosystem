@@ -25,7 +25,6 @@ interface AnamnesisToolProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAnalyze: (formData: AnamnesisFormData) => void;
-  onSave: (formData: AnamnesisFormData, aiAnalysis: string) => void;
   loading: boolean;
   response: string;
 }
@@ -56,7 +55,6 @@ export default function AnamnesisTool({
   open,
   onOpenChange,
   onAnalyze,
-  onSave,
   loading,
   response
 }: AnamnesisToolProps) {
@@ -120,6 +118,54 @@ export default function AnamnesisTool({
       goals: '',
       contraindications: '',
       additionalInfo: ''
+    });
+  };
+
+  const copyAnamnesisToClipboard = () => {
+    const anamnesisText = `
+АНАМНЕЗ КЛИЕНТА
+
+Общая информация:
+- ФИО: ${formData.fullName}
+- Возраст: ${formData.age} лет
+- Пол: ${formData.gender === 'male' ? 'Мужской' : formData.gender === 'female' ? 'Женский' : 'Не указан'}
+
+Жалобы и симптомы:
+- Основная жалоба: ${formData.mainComplaint}
+- Длительность: ${formData.complaintDuration || 'Не указана'}
+- Локализация: ${formData.painLocation || 'Не указана'}
+- Интенсивность боли: ${formData.painIntensity || 'Не указана'}/10
+- Характер боли: ${formData.painCharacter || 'Не указан'}
+
+Медицинская история:
+- Хронические заболевания: ${formData.chronicDiseases || 'Нет'}
+- Принимаемые препараты: ${formData.medications || 'Нет'}
+- Травмы: ${formData.injuries || 'Нет'}
+- Операции: ${formData.surgeries || 'Нет'}
+
+Образ жизни:
+- Профессия: ${formData.lifestyle || 'Не указана'}
+- Физическая активность: ${formData.physicalActivity || 'Не указана'}
+- Качество сна: ${formData.sleep || 'Не указано'}
+- Уровень стресса: ${formData.stress || 'Не указан'}
+
+Цели и ограничения:
+- Цели клиента: ${formData.goals || 'Не указаны'}
+- Противопоказания: ${formData.contraindications || 'Нет'}
+- Дополнительная информация: ${formData.additionalInfo || 'Нет'}
+
+---
+
+AI-АНАЛИЗ:
+
+${response}
+    `;
+    
+    navigator.clipboard.writeText(anamnesisText).then(() => {
+      toast({
+        title: 'Скопировано',
+        description: 'Анамнез и анализ скопированы в буфер обмена'
+      });
     });
   };
 
@@ -393,11 +439,30 @@ export default function AnamnesisTool({
           </div>
         ) : (
           <div className="space-y-4 py-4">
+            <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="flex items-start gap-2 text-sm text-blue-800">
+                <Icon name="Info" size={16} className="flex-shrink-0 mt-0.5" />
+                <p>
+                  Сервис не хранит данные запросов и диалогов. Вы можете скопировать их и сохранить в любое удобное место.
+                </p>
+              </div>
+            </div>
+
             <Card className="border-primary/20">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Icon name="Brain" className="text-primary flex-shrink-0" size={20} />
-                  <span className="truncate">AI-анализ анамнеза</span>
+                <CardTitle className="flex items-center justify-between text-base">
+                  <div className="flex items-center gap-2">
+                    <Icon name="Brain" className="text-primary flex-shrink-0" size={20} />
+                    <span className="truncate">AI-анализ анамнеза</span>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={copyAnamnesisToClipboard}
+                  >
+                    <Icon name="Copy" size={16} className="mr-2" />
+                    Копировать диалог
+                  </Button>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -406,14 +471,10 @@ export default function AnamnesisTool({
                 </div>
               </CardContent>
             </Card>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Button onClick={() => onSave(formData, response)} className="flex-1">
-                <Icon name="Save" size={16} className="mr-2" />
-                Сохранить анамнез
-              </Button>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button variant="outline" onClick={handleReset} className="sm:w-auto">
                 <Icon name="Plus" size={16} className="mr-2" />
-                Новый
+                Новый анамнез
               </Button>
               <Button variant="outline" onClick={() => onOpenChange(false)} className="sm:w-auto">
                 Закрыть
