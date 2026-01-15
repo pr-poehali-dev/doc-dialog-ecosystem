@@ -1,7 +1,9 @@
+import { useRef, useCallback, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import Icon from '@/components/ui/icon';
+import { useToast } from '@/hooks/use-toast';
 
 interface MarketingToolViewProps {
   tool: {
@@ -31,6 +33,42 @@ export default function MarketingToolView({
   onClear,
   onBack
 }: MarketingToolViewProps) {
+  const copyTextAreaRef = useRef<HTMLTextAreaElement>(null);
+  const { toast } = useToast();
+
+  const resultText = useMemo(() => `Запрос:\n${inputText}\n\nРезультат:\n${response}`, [inputText, response]);
+
+  const selectAllText = useCallback(() => {
+    if (copyTextAreaRef.current) {
+      copyTextAreaRef.current.select();
+    }
+  }, []);
+
+  const copyToClipboard = useCallback(() => {
+    if (copyTextAreaRef.current) {
+      const textarea = copyTextAreaRef.current;
+      const selectedText = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
+      const textToCopy = selectedText || textarea.value;
+      
+      const tempArea = document.createElement('textarea');
+      tempArea.value = textToCopy;
+      tempArea.style.position = 'fixed';
+      tempArea.style.opacity = '0';
+      document.body.appendChild(tempArea);
+      tempArea.select();
+      
+      const success = document.execCommand('copy');
+      document.body.removeChild(tempArea);
+      
+      if (success) {
+        toast({
+          title: 'Скопировано',
+          description: selectedText ? 'Выделенный текст скопирован' : 'Весь текст скопирован'
+        });
+      }
+    }
+  }, [toast]);
+
   const formatResponse = (text: string) => {
     return text.split('\n').map((line, index) => {
       const trimmed = line.trim();
@@ -157,17 +195,51 @@ export default function MarketingToolView({
           </div>
 
           {response && (
-            <div className="mt-6 p-4 md:p-6 bg-white rounded-lg border shadow-sm">
-              <div className="flex items-start gap-3 mb-4">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <Icon name="Sparkles" size={20} className="text-primary" />
+            <>
+              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="flex items-start gap-2 text-sm text-blue-800">
+                  <Icon name="Info" size={16} className="flex-shrink-0 mt-0.5" />
+                  <p>
+                    Сервис не хранит данные запросов и диалогов. Нажмите кнопку "Выделить всё" и скопируйте через Ctrl+C (или Cmd+C на Mac).
+                  </p>
                 </div>
-                <h3 className="text-lg font-semibold">Результат анализа</h3>
               </div>
-              <div className="space-y-4 text-gray-700">
-                {formatResponse(response)}
+
+              <div className="mt-6 p-4 md:p-6 bg-white rounded-lg border shadow-sm">
+                <div className="flex items-start justify-between gap-3 mb-4 pb-3 border-b">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 bg-primary/10 rounded-lg">
+                      <Icon name="Sparkles" size={20} className="text-primary" />
+                    </div>
+                    <h3 className="text-lg font-semibold">Результат</h3>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={selectAllText}
+                    >
+                      <Icon name="MousePointerClick" size={16} className="mr-2" />
+                      Выделить всё
+                    </Button>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={copyToClipboard}
+                    >
+                      <Icon name="Copy" size={16} className="mr-2" />
+                      Копировать
+                    </Button>
+                  </div>
+                </div>
+                <textarea
+                  ref={copyTextAreaRef}
+                  value={resultText}
+                  readOnly
+                  className="w-full h-96 p-4 border rounded-lg font-mono text-sm resize-y focus:outline-none focus:ring-2 focus:ring-primary"
+                />
               </div>
-            </div>
+            </>
           )}
         </CardContent>
       </Card>
