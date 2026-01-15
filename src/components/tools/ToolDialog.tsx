@@ -48,53 +48,54 @@ export default function ToolDialog({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const copyDialogToClipboard = useCallback(async () => {
+  const copyDialogToClipboard = useCallback(() => {
     const dialogText = `Запрос:\n${inputText}\n\nОтвет:\n${response}`;
-    console.log('Копирую текст:', { inputText: inputText.substring(0, 50), response: response.substring(0, 50), fullLength: dialogText.length });
+    
+    const textArea = document.createElement('textarea');
+    textArea.value = dialogText;
+    textArea.style.position = 'absolute';
+    textArea.style.left = '-9999px';
+    textArea.style.top = '0';
+    textArea.setAttribute('readonly', '');
+    
+    document.body.appendChild(textArea);
+    
+    if (navigator.userAgent.match(/ipad|iphone/i)) {
+      const range = document.createRange();
+      range.selectNodeContents(textArea);
+      const selection = window.getSelection();
+      if (selection) {
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+      textArea.setSelectionRange(0, dialogText.length);
+    } else {
+      textArea.select();
+    }
     
     try {
-      await navigator.clipboard.writeText(dialogText);
-      console.log('Clipboard API успешно');
-      toast({
-        title: 'Скопировано',
-        description: 'Диалог скопирован в буфер обмена'
-      });
-    } catch (err) {
-      console.error('Clipboard API failed:', err);
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
       
-      const textArea = document.createElement('textarea');
-      textArea.value = dialogText;
-      textArea.style.position = 'fixed';
-      textArea.style.opacity = '0';
-      textArea.style.top = '0';
-      textArea.style.left = '0';
-      
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      
-      try {
-        const successful = document.execCommand('copy');
-        document.body.removeChild(textArea);
-        console.log('execCommand result:', successful);
-        
-        if (successful) {
-          toast({
-            title: 'Скопировано',
-            description: 'Диалог скопирован в буфер обмена'
-          });
-        } else {
-          throw new Error('execCommand failed');
-        }
-      } catch (fallbackErr) {
-        document.body.removeChild(textArea);
-        console.error('execCommand failed:', fallbackErr);
+      if (successful) {
+        toast({
+          title: 'Скопировано',
+          description: 'Диалог скопирован в буфер обмена'
+        });
+      } else {
         toast({
           title: 'Ошибка',
-          description: 'Не удалось скопировать. Попробуйте выделить текст вручную',
+          description: 'Не удалось скопировать',
           variant: 'destructive'
         });
       }
+    } catch (err) {
+      document.body.removeChild(textArea);
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось скопировать',
+        variant: 'destructive'
+      });
     }
   }, [inputText, response, toast]);
 

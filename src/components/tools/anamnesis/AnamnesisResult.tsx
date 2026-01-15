@@ -15,7 +15,7 @@ interface AnamnesisResultProps {
 export default function AnamnesisResult({ formData, response, onReset, onClose }: AnamnesisResultProps) {
   const { toast } = useToast();
 
-  const copyAnamnesisToClipboard = useCallback(async () => {
+  const copyAnamnesisToClipboard = useCallback(() => {
     const anamnesisText = `АНАМНЕЗ КЛИЕНТА
 
 Общая информация:
@@ -53,51 +53,51 @@ AI-АНАЛИЗ:
 
 ${response}`;
     
-    console.log('Копирую анамнез:', { fullName: formData.fullName, response: response.substring(0, 50), fullLength: anamnesisText.length });
+    const textArea = document.createElement('textarea');
+    textArea.value = anamnesisText;
+    textArea.style.position = 'absolute';
+    textArea.style.left = '-9999px';
+    textArea.style.top = '0';
+    textArea.setAttribute('readonly', '');
+    
+    document.body.appendChild(textArea);
+    
+    if (navigator.userAgent.match(/ipad|iphone/i)) {
+      const range = document.createRange();
+      range.selectNodeContents(textArea);
+      const selection = window.getSelection();
+      if (selection) {
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+      textArea.setSelectionRange(0, anamnesisText.length);
+    } else {
+      textArea.select();
+    }
     
     try {
-      await navigator.clipboard.writeText(anamnesisText);
-      console.log('Clipboard API успешно (анамнез)');
-      toast({
-        title: 'Скопировано',
-        description: 'Анамнез и анализ скопированы в буфер обмена'
-      });
-    } catch (err) {
-      console.error('Clipboard API failed:', err);
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
       
-      const textArea = document.createElement('textarea');
-      textArea.value = anamnesisText;
-      textArea.style.position = 'fixed';
-      textArea.style.opacity = '0';
-      textArea.style.top = '0';
-      textArea.style.left = '0';
-      
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      
-      try {
-        const successful = document.execCommand('copy');
-        document.body.removeChild(textArea);
-        console.log('execCommand result (анамнез):', successful);
-        
-        if (successful) {
-          toast({
-            title: 'Скопировано',
-            description: 'Анамнез и анализ скопированы в буфер обмена'
-          });
-        } else {
-          throw new Error('execCommand failed');
-        }
-      } catch (fallbackErr) {
-        document.body.removeChild(textArea);
-        console.error('execCommand failed (анамнез):', fallbackErr);
+      if (successful) {
+        toast({
+          title: 'Скопировано',
+          description: 'Анамнез и анализ скопированы в буфер обмена'
+        });
+      } else {
         toast({
           title: 'Ошибка',
-          description: 'Не удалось скопировать. Попробуйте выделить текст вручную',
+          description: 'Не удалось скопировать',
           variant: 'destructive'
         });
       }
+    } catch (err) {
+      document.body.removeChild(textArea);
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось скопировать',
+        variant: 'destructive'
+      });
     }
   }, [formData, response, toast]);
 
