@@ -347,6 +347,23 @@ def handler(event: dict, context) -> dict:
         # Delete vacancy payments
         safe_delete(f"DELETE FROM {schema}.vacancy_payments WHERE user_id = {user_id}")
         
+        # Update foreign keys that reference this user (set to NULL or remove references)
+        # Update courses approved_by
+        cur.execute(f"UPDATE {schema}.courses SET approved_by = NULL WHERE approved_by = {user_id}")
+        
+        # Update masterminds approved_by and school_id
+        cur.execute(f"UPDATE {schema}.masterminds SET approved_by = NULL WHERE approved_by = {user_id}")
+        safe_delete(f"DELETE FROM {schema}.masterminds WHERE school_id = {user_id}")
+        
+        # Update masseur_verifications verified_by
+        cur.execute(f"UPDATE {schema}.masseur_verifications SET verified_by = NULL WHERE verified_by = {user_id}")
+        
+        # Update moderation_logs moderator_id
+        cur.execute(f"UPDATE {schema}.moderation_logs SET moderator_id = NULL WHERE moderator_id = {user_id}")
+        
+        # Delete specialist_requests
+        safe_delete(f"DELETE FROM {schema}.specialist_requests WHERE school_id = {user_id}")
+        
         # Finally delete the user
         cur.execute(f"DELETE FROM {schema}.users WHERE id = {user_id}")
         
