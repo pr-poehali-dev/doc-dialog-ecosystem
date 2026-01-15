@@ -131,7 +131,7 @@ export default function VisceraCourse() {
       <SchoolsHeader />
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary/5 via-purple-500/5 to-primary/10 pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden">
+      <section className="relative bg-gradient-to-br from-primary/[0.03] via-purple-500/[0.03] to-primary/[0.06] pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="max-w-4xl mx-auto text-center">
@@ -229,6 +229,35 @@ export default function VisceraCourse() {
         </div>
       </section>
 
+      {/* Images Showcase */}
+      <section className="py-16 md:py-24 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <div className="rounded-2xl overflow-hidden shadow-lg">
+              <img 
+                src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/78f8621d-0ff5-486d-b0e7-679188b17ba2.jpg" 
+                alt="Висцеральная терапия" 
+                className="w-full h-64 object-cover"
+              />
+            </div>
+            <div className="rounded-2xl overflow-hidden shadow-lg">
+              <img 
+                src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/ad4157c1-c115-499f-b544-ab00513370f1.jpg" 
+                alt="Обучение висцеральной терапии" 
+                className="w-full h-64 object-cover"
+              />
+            </div>
+            <div className="rounded-2xl overflow-hidden shadow-lg">
+              <img 
+                src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/46e0c9cb-0a4b-4469-810d-1c2d917db915.jpg" 
+                alt="Практика висцеральной терапии" 
+                className="w-full h-64 object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Target Audience */}
       <section className="py-16 md:py-24 bg-gradient-to-br from-gray-50 to-primary/5">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -317,6 +346,148 @@ export default function VisceraCourse() {
                   </div>
                 </Card>
               ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-16 md:py-24 bg-gradient-to-br from-gray-50 to-primary/5">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">Отзывы выпускников</h2>
+          <p className="text-center text-gray-600 mb-12">Более 500 специалистов прошли курс</p>
+
+          <div className="overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide cursor-grab active:cursor-grabbing">
+            <div className="flex gap-6 min-w-max">
+              <div className="flex-shrink-0 w-80 bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-1 mb-3">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Icon key={i} name="Star" size={16} className="text-amber-400 fill-amber-400" />
+                  ))}
+                </div>
+                <p className="text-gray-700 mb-4 leading-relaxed">"Курс полностью изменил моё понимание работы с клиентами. Теперь я не просто массажист, а специалист, который понимает глубинные процессы в теле."</p>
+                <div>
+                  <p className="font-semibold text-gray-900">Елена Петрова</p>
+                  <p className="text-sm text-gray-600">Массажист, 8 лет опыта</p>
+                </div>
+              </div>
+
+              <div className="flex-shrink-0 w-80 bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-1 mb-3">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Icon key={i} name="Star" size={16} className="text-amber-400 fill-amber-400" />
+                  ))}
+                </div>
+                <p className="text-gray-700 mb-4 leading-relaxed">"Очень системный подход. Анатомия, физиология, практика — всё связано логично. После курса уверенно работаю с органами, клиенты в восторге."</p>
+                <div>
+                  <p className="font-semibold text-gray-900">Дмитрий Волков</p>
+                  <p className="text-sm text-gray-600">Телесный терапевт</p>
+                </div>
+              </div>
+
+              <div className="flex-shrink-0 w-80 bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-1 mb-3">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Icon key={i} name="Star" size={16} className="text-amber-400 fill-amber-400" />
+                  ))}
+                </div>
+                <p className="text-gray-700 mb-4 leading-relaxed">"Боялась работать с животом, не понимала что трогать. Курс дал чёткие алгоритмы и уверенность. Теперь висцералка — моя специализация!"</p>
+                <div>
+                  <p className="font-semibold text-gray-900">Анна Смирнова</p>
+                  <p className="text-sm text-gray-600">Массажист, 5 лет опыта</p>
+                </div>
+              </div>
+
+              <div className="flex-shrink-0 w-80 bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-1 mb-3">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Icon key={i} name="Star" size={16} className="text-amber-400 fill-amber-400" />
+                  ))}
+                </div>
+                <p className="text-gray-700 mb-4 leading-relaxed">"Преподаватели объясняют сложные вещи простым языком. Практика на реальных клиентах под супервизией — бесценный опыт."</p>
+                <div>
+                  <p className="font-semibold text-gray-900">Сергей Иванов</p>
+                  <p className="text-sm text-gray-600">Остеопат</p>
+                </div>
+              </div>
+
+              <div className="flex-shrink-0 w-80 bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-1 mb-3">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Icon key={i} name="Star" size={16} className="text-amber-400 fill-amber-400" />
+                  ))}
+                </div>
+                <p className="text-gray-700 mb-4 leading-relaxed">"Курс стоит каждого вложенного рубля. Мои доходы выросли в 2 раза благодаря новой специализации. Клиенты приходят именно на висцералку."</p>
+                <div>
+                  <p className="font-semibold text-gray-900">Ольга Новикова</p>
+                  <p className="text-sm text-gray-600">Массажист</p>
+                </div>
+              </div>
+
+              <div className="flex-shrink-0 w-80 bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-1 mb-3">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Icon key={i} name="Star" size={16} className="text-amber-400 fill-amber-400" />
+                  ))}
+                </div>
+                <p className="text-gray-700 mb-4 leading-relaxed">"Работаю с хроническими болями в пояснице через органы — эффект поразительный. Спасибо за знания!"</p>
+                <div>
+                  <p className="font-semibold text-gray-900">Максим Лебедев</p>
+                  <p className="text-sm text-gray-600">Мануальный терапевт</p>
+                </div>
+              </div>
+
+              <div className="flex-shrink-0 w-80 bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-1 mb-3">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Icon key={i} name="Star" size={16} className="text-amber-400 fill-amber-400" />
+                  ))}
+                </div>
+                <p className="text-gray-700 mb-4 leading-relaxed">"До курса делала классический массаж. Теперь работаю комплексно — тело, фасции, органы. Результаты у клиентов намного лучше."</p>
+                <div>
+                  <p className="font-semibold text-gray-900">Татьяна Кузнецова</p>
+                  <p className="text-sm text-gray-600">Массажист, 10 лет опыта</p>
+                </div>
+              </div>
+
+              <div className="flex-shrink-0 w-80 bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-1 mb-3">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Icon key={i} name="Star" size={16} className="text-amber-400 fill-amber-400" />
+                  ))}
+                </div>
+                <p className="text-gray-700 mb-4 leading-relaxed">"Курс структурирован идеально. От анатомии до клинического мышления. Каждый модуль — новый уровень понимания."</p>
+                <div>
+                  <p className="font-semibold text-gray-900">Игорь Соколов</p>
+                  <p className="text-sm text-gray-600">Телесный специалист</p>
+                </div>
+              </div>
+
+              <div className="flex-shrink-0 w-80 bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-1 mb-3">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Icon key={i} name="Star" size={16} className="text-amber-400 fill-amber-400" />
+                  ))}
+                </div>
+                <p className="text-gray-700 mb-4 leading-relaxed">"Рекомендую всем массажистам, кто хочет расти профессионально. Висцеральная терапия — это следующий уровень!"</p>
+                <div>
+                  <p className="font-semibold text-gray-900">Мария Попова</p>
+                  <p className="text-sm text-gray-600">Массажист</p>
+                </div>
+              </div>
+
+              <div className="flex-shrink-0 w-80 bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-1 mb-3">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Icon key={i} name="Star" size={16} className="text-amber-400 fill-amber-400" />
+                  ))}
+                </div>
+                <p className="text-gray-700 mb-4 leading-relaxed">"Боялась навредить клиенту при работе с органами. После курса понимаю все процессы и работаю безопасно и эффективно."</p>
+                <div>
+                  <p className="font-semibold text-gray-900">Виктория Морозова</p>
+                  <p className="text-sm text-gray-600">Массажист, 6 лет опыта</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
