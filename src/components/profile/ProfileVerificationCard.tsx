@@ -31,23 +31,23 @@ export default function ProfileVerificationCard({ deleting, isVisible, toggleVis
           </CardTitle>
           <CardDescription>
             {isVisible 
-              ? "Ваша карточка скрыта из каталога специалистов" 
-              : "Ваша карточка отображается в каталоге специалистов"}
+              ? "Ваша карточка отображается в каталоге специалистов" 
+              : "Ваша карточка скрыта из каталога специалистов"}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground mb-4">
             {isVisible 
-              ? "Готовы принимать клиентов? Опубликуйте карточку в каталоге" 
-              : "Временно не принимаете клиентов? Скройте карточку из каталога"}
+              ? "Временно не принимаете клиентов? Скройте карточку из каталога" 
+              : "Готовы принимать клиентов? Опубликуйте карточку в каталоге"}
           </p>
           <Button 
             onClick={toggleVisibility}
-            variant={isVisible ? "default" : "outline"}
+            variant={isVisible ? "outline" : "default"}
             className="w-full"
           >
-            <Icon name={isVisible ? "Eye" : "EyeOff"} size={18} className="mr-2" />
-            {isVisible ? "Показать в каталоге" : "Скрыть из каталога"}
+            <Icon name={isVisible ? "EyeOff" : "Eye"} size={18} className="mr-2" />
+            {isVisible ? "Скрыть из каталога" : "Показать в каталоге"}
           </Button>
         </CardContent>
       </Card>
