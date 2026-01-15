@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import Icon from '@/components/ui/icon';
 import { Link } from 'react-router-dom';
+import { Navigation } from '@/components/Navigation';
+import MasseursFooter from '@/components/masseurs/MasseursFooter';
 
 interface Vacancy {
   id: number;
@@ -53,22 +55,7 @@ export default function VacanciesCatalog() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2">
-              <Icon name="Briefcase" size={28} className="text-primary" />
-              <span className="text-xl font-bold">Вакансии для массажистов</span>
-            </Link>
-            <Link to="/">
-              <Button variant="outline">
-                <Icon name="Home" size={18} className="mr-2" />
-                На главную
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <Navigation />
 
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
@@ -232,12 +219,7 @@ export default function VacanciesCatalog() {
           </div>
         </div>
       </main>
-
-      <footer className="border-t mt-16 py-8 bg-background/80">
-        <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>© 2024 Платформа для массажистов. Все права защищены.</p>
-        </div>
-      </footer>
+      <MasseursFooter />
     </div>
   );
 }
