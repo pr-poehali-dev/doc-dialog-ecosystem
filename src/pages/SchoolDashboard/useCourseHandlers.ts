@@ -50,6 +50,9 @@ export function useCourseHandlers({
         setShowAddForm(false);
         setCourseForm(INITIAL_COURSE_FORM);
         loadData();
+      } else {
+        const errorData = await response.json();
+        toast({ title: 'Ошибка', description: errorData.error || 'Не удалось добавить курс', variant: 'destructive' });
       }
     } catch (error) {
       toast({ title: 'Ошибка', description: 'Не удалось добавить курс', variant: 'destructive' });
