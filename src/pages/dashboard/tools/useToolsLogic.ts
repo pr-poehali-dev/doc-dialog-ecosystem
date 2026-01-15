@@ -27,12 +27,6 @@ export function useToolsLogic() {
   };
 
   const getDashboardRoute = () => {
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      const user = JSON.parse(userData);
-      if (user.role === 'salon') return '/salon/cabinet';
-      if (user.role === 'school') return '/school/dashboard';
-    }
     return '/dashboard';
   };
 
