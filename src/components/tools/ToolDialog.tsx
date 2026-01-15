@@ -48,30 +48,31 @@ export default function ToolDialog({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const copyDialogToClipboard = async () => {
+  const copyDialogToClipboard = () => {
     const dialogText = `Запрос:\n${inputText}\n\nОтвет:\n${response}`;
     
-    try {
-      // Пробуем современный Clipboard API
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(dialogText);
-        toast({
-          title: 'Скопировано',
-          description: 'Диалог скопирован в буфер обмена'
-        });
-        return;
-      }
-      
-      // Fallback для старых браузеров или небезопасного контекста
-      const textArea = document.createElement('textarea');
-      textArea.value = dialogText;
-      textArea.style.position = 'fixed';
-      textArea.style.left = '-999999px';
-      textArea.style.top = '-999999px';
-      document.body.appendChild(textArea);
-      textArea.focus();
+    const textArea = document.createElement('textarea');
+    textArea.value = dialogText;
+    textArea.style.position = 'absolute';
+    textArea.style.left = '-9999px';
+    textArea.style.top = '0';
+    textArea.setAttribute('readonly', '');
+    
+    document.body.appendChild(textArea);
+    
+    // Для iOS
+    if (navigator.userAgent.match(/ipad|iphone/i)) {
+      const range = document.createRange();
+      range.selectNodeContents(textArea);
+      const selection = window.getSelection();
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+      textArea.setSelectionRange(0, 999999);
+    } else {
       textArea.select();
-      
+    }
+    
+    try {
       const successful = document.execCommand('copy');
       document.body.removeChild(textArea);
       
@@ -81,13 +82,17 @@ export default function ToolDialog({
           description: 'Диалог скопирован в буфер обмена'
         });
       } else {
-        throw new Error('execCommand failed');
+        toast({
+          title: 'Ошибка',
+          description: 'Не удалось скопировать. Попробуйте выделить текст вручную',
+          variant: 'destructive'
+        });
       }
     } catch (err) {
-      console.error('Copy failed:', err);
+      document.body.removeChild(textArea);
       toast({
         title: 'Ошибка',
-        description: 'Не удалось скопировать в буфер обмена',
+        description: 'Не удалось скопировать. Попробуйте выделить текст вручную',
         variant: 'destructive'
       });
     }

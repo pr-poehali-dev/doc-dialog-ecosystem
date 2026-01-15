@@ -14,7 +14,7 @@ interface AnamnesisResultProps {
 export default function AnamnesisResult({ formData, response, onReset, onClose }: AnamnesisResultProps) {
   const { toast } = useToast();
 
-  const copyAnamnesisToClipboard = async () => {
+  const copyAnamnesisToClipboard = () => {
     const anamnesisText = `АНАМНЕЗ КЛИЕНТА
 
 Общая информация:
@@ -52,27 +52,28 @@ AI-АНАЛИЗ:
 
 ${response}`;
     
-    try {
-      // Пробуем современный Clipboard API
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(anamnesisText);
-        toast({
-          title: 'Скопировано',
-          description: 'Анамнез и анализ скопированы в буфер обмена'
-        });
-        return;
-      }
-      
-      // Fallback для старых браузеров или небезопасного контекста
-      const textArea = document.createElement('textarea');
-      textArea.value = anamnesisText;
-      textArea.style.position = 'fixed';
-      textArea.style.left = '-999999px';
-      textArea.style.top = '-999999px';
-      document.body.appendChild(textArea);
-      textArea.focus();
+    const textArea = document.createElement('textarea');
+    textArea.value = anamnesisText;
+    textArea.style.position = 'absolute';
+    textArea.style.left = '-9999px';
+    textArea.style.top = '0';
+    textArea.setAttribute('readonly', '');
+    
+    document.body.appendChild(textArea);
+    
+    // Для iOS
+    if (navigator.userAgent.match(/ipad|iphone/i)) {
+      const range = document.createRange();
+      range.selectNodeContents(textArea);
+      const selection = window.getSelection();
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+      textArea.setSelectionRange(0, 999999);
+    } else {
       textArea.select();
-      
+    }
+    
+    try {
       const successful = document.execCommand('copy');
       document.body.removeChild(textArea);
       
@@ -82,13 +83,17 @@ ${response}`;
           description: 'Анамнез и анализ скопированы в буфер обмена'
         });
       } else {
-        throw new Error('execCommand failed');
+        toast({
+          title: 'Ошибка',
+          description: 'Не удалось скопировать. Попробуйте выделить текст вручную',
+          variant: 'destructive'
+        });
       }
     } catch (err) {
-      console.error('Copy failed:', err);
+      document.body.removeChild(textArea);
       toast({
         title: 'Ошибка',
-        description: 'Не удалось скопировать в буфер обмена',
+        description: 'Не удалось скопировать. Попробуйте выделить текст вручную',
         variant: 'destructive'
       });
     }
