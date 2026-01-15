@@ -104,7 +104,7 @@ def get_usage(user_id: str) -> dict:
     
     try:
         cur.execute(f"""
-            SELECT tools_limit, tools_used, extra_requests 
+            SELECT tools_limit, tools_used, extra_requests, first_purchase_bonus_used 
             FROM {schema}.users 
             WHERE id = %s
         """, (user_id,))
@@ -121,6 +121,7 @@ def get_usage(user_id: str) -> dict:
         limit = user.get('tools_limit', 5)
         tools_used = user.get('tools_used', 0)
         extra_requests = user.get('extra_requests', 0)
+        first_purchase_bonus_used = user.get('first_purchase_bonus_used', False)
         
         return {
             'statusCode': 200,
@@ -130,7 +131,8 @@ def get_usage(user_id: str) -> dict:
                 'tools_used': tools_used,
                 'dialogs_used': 0,
                 'total_used': tools_used,
-                'extra_requests': extra_requests
+                'extra_requests': extra_requests,
+                'first_purchase_bonus_available': not first_purchase_bonus_used
             }),
             'isBase64Encoded': False
         }
@@ -313,8 +315,10 @@ def buy_extra_requests(user_id: str, body: dict) -> dict:
                 'isBase64Encoded': False
             }
         
-        cur.execute(f"SELECT email FROM {schema}.users WHERE id = %s", (user_id,))
+        cur.execute(f"SELECT email, first_purchase_bonus_used FROM {schema}.users WHERE id = %s", (user_id,))
         user = cur.fetchone()
+        
+        first_purchase_bonus_used = user.get('first_purchase_bonus_used', False)
         
         if not user:
             return {
@@ -338,7 +342,14 @@ def buy_extra_requests(user_id: str, body: dict) -> dict:
         import uuid
         
         payment_id = str(uuid.uuid4())
-        description = f"Покупка {count} AI-запросов"
+        
+        # Проверяем бонус первой покупки
+        actual_count = count
+        if not first_purchase_bonus_used:
+            actual_count = count * 2  # Удваиваем количество
+            description = f"Покупка {count} AI-запросов (x2 БОНУС = {actual_count} запросов)"
+        else:
+            description = f"Покупка {count} AI-запросов"
         
         return_url = f"https://{os.environ.get('PROJECT_ID', 'app')}.poehali.dev/dashboard/tools?payment=success"
         
@@ -355,7 +366,9 @@ def buy_extra_requests(user_id: str, body: dict) -> dict:
             'description': description,
             'metadata': {
                 'user_id': str(user_id),
-                'count': str(count),
+                'count': str(actual_count),  # Сохраняем фактическое количество с бонусом
+                'original_count': str(count),  # Оригинальное количество
+                'first_purchase_bonus': str(not first_purchase_bonus_used),
                 'type': 'extra_requests'
             }
         }

@@ -13,6 +13,7 @@ interface BuyExtraRequestsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onBuyRequests: (count: number) => void;
+  firstPurchaseBonusAvailable?: boolean;
 }
 
 interface Package {
@@ -29,7 +30,8 @@ const PRICE_PER_REQUEST = 12;
 export default function BuyExtraRequestsDialog({
   open,
   onOpenChange,
-  onBuyRequests
+  onBuyRequests,
+  firstPurchaseBonusAvailable = false
 }: BuyExtraRequestsDialogProps) {
   const [selectedCount, setSelectedCount] = useState(10);
 
@@ -54,6 +56,24 @@ export default function BuyExtraRequestsDialog({
           </DialogDescription>
         </DialogHeader>
 
+        {firstPurchaseBonusAvailable && (
+          <div className="bg-gradient-to-r from-orange-50 via-red-50 to-pink-50 border-2 border-orange-300 rounded-xl p-4 shadow-lg animate-pulse-slow">
+            <div className="flex items-start gap-3">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center flex-shrink-0 shadow-md">
+                <Icon name="Gift" size={24} className="text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-lg text-gray-900 mb-1">
+                  🎉 ПЕРВАЯ ПОКУПКА x2 БОНУС!
+                </h3>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                  Это ваша первая покупка! Получите <span className="font-bold text-orange-600">УДВОЕННОЕ количество</span> запросов по обычной цене. Купите 10 — получите 20! Купите 50 — получите 100!
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
           {packages.map((pkg) => (
             <button
@@ -75,6 +95,9 @@ export default function BuyExtraRequestsDialog({
               <div className="text-center">
                 <div className="text-2xl font-bold text-gray-900">{pkg.count}</div>
                 <div className="text-xs text-muted-foreground mb-2">запросов</div>
+                {firstPurchaseBonusAvailable && (
+                  <div className="text-sm font-bold text-orange-600 mb-1">→ Получите {pkg.count * 2}!</div>
+                )}
                 {pkg.discount > 0 && (
                   <div className="text-xs text-gray-400 line-through mb-1">{pkg.originalPrice}₽</div>
                 )}
@@ -108,7 +131,12 @@ export default function BuyExtraRequestsDialog({
             <div className="text-2xl font-bold text-gray-900">
               {packages.find(p => p.count === selectedCount)?.price}₽
             </div>
-            {packages.find(p => p.count === selectedCount)?.discount ? (
+            {firstPurchaseBonusAvailable && (
+              <div className="text-sm font-bold text-orange-600">
+                🎁 Вы получите {selectedCount * 2} запросов!
+              </div>
+            )}
+            {packages.find(p => p.count === selectedCount)?.discount && !firstPurchaseBonusAvailable ? (
               <div className="text-xs text-green-600 font-medium">
                 Вы экономите {packages.find(p => p.count === selectedCount)!.originalPrice - packages.find(p => p.count === selectedCount)!.price}₽
               </div>

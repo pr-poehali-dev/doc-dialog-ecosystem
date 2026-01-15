@@ -6,6 +6,7 @@ export interface UsageData {
   tools_used: number;
   total_used: number;
   extra_requests?: number;
+  first_purchase_bonus_available?: boolean;
 }
 
 export interface Tool {

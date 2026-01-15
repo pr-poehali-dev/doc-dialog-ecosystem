@@ -73,6 +73,7 @@ def handler(event: dict, context) -> dict:
     user_id = metadata.get('user_id')
     count = metadata.get('count')
     payment_type = metadata.get('type')
+    first_purchase_bonus = metadata.get('first_purchase_bonus', 'false') == 'true'
     
     if not user_id or not count or payment_type != 'extra_requests':
         return {
@@ -101,11 +102,20 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
-        cur.execute(f"""
-            UPDATE {schema}.users 
-            SET extra_requests = extra_requests + %s
-            WHERE id = %s
-        """, (int(count), int(user_id)))
+        # Обновляем запросы и отмечаем использование бонуса первой покупки
+        if first_purchase_bonus:
+            cur.execute(f"""
+                UPDATE {schema}.users 
+                SET extra_requests = extra_requests + %s,
+                    first_purchase_bonus_used = true
+                WHERE id = %s
+            """, (int(count), int(user_id)))
+        else:
+            cur.execute(f"""
+                UPDATE {schema}.users 
+                SET extra_requests = extra_requests + %s
+                WHERE id = %s
+            """, (int(count), int(user_id)))
         
         cur.execute(f"""
             UPDATE {schema}.payment_logs

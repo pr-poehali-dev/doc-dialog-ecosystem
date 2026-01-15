@@ -144,6 +144,7 @@ export default function Tools() {
         open={showBuyDialog}
         onOpenChange={setShowBuyDialog}
         onBuyRequests={handleBuyExtraRequests}
+        firstPurchaseBonusAvailable={usageData?.first_purchase_bonus_available}
       />
 
       <AnamnesisTool
