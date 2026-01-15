@@ -399,7 +399,7 @@ export default function LandingOrderTab() {
             ) : (
               <>
                 <Icon name="Send" size={20} className="mr-2" />
-                Отправить заявку на создание лендинга
+                Отправить заказ
               </>
             )}
           </Button>
