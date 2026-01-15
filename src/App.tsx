@@ -84,6 +84,7 @@ import ImportSalons from "./pages/admin/ImportSalons";
 import MedicalReportLanding from "./pages/MedicalReportLanding";
 import VacanciesCatalog from "./pages/VacanciesCatalog";
 import Premium from "./pages/Premium";
+import AccountSettings from "./pages/dashboard/AccountSettings";
 
 const queryClient = new QueryClient();
 
@@ -169,6 +170,7 @@ const App = () => (
           <Route path="/dashboard/discount-requests" element={<MasseurDiscountRequests />} />
           <Route path="/dashboard/ai-dialogs" element={<AIDialogs />} />
           <Route path="/dashboard/ai-subscription" element={<AISubscription />} />
+          <Route path="/dashboard/account-settings" element={<AccountSettings />} />
           <Route path="/school/marketing-ai" element={<SchoolMarketingAI />} />
           <Route path="/admin/import-specialists" element={<ImportSpecialists />} />
           <Route path="/admin/imported-specialists" element={<ImportedSpecialists />} />

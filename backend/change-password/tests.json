@@ -1,0 +1,37 @@
+{
+  "tests": [
+    {
+      "name": "OPTIONS for CORS",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200
+    },
+    {
+      "name": "Change password - unauthorized",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "old_password": "oldpass123",
+        "new_password": "newpass123"
+      },
+      "expectedStatus": 401,
+      "expectedBody": {
+        "error": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Change password - missing fields",
+      "method": "POST",
+      "path": "/",
+      "headers": {
+        "X-Authorization": "Bearer invalid_token"
+      },
+      "body": {
+        "old_password": ""
+      },
+      "expectedStatus": 403,
+      "bodyMatcher": "partial"
+    }
+  ]
+}
