@@ -15,7 +15,7 @@ interface AnamnesisResultProps {
 export default function AnamnesisResult({ formData, response, onReset, onClose }: AnamnesisResultProps) {
   const { toast } = useToast();
 
-  const copyAnamnesisToClipboard = useCallback(async () => {
+  const copyAnamnesisToClipboard = useCallback(() => {
     const anamnesisText = `АНАМНЕЗ КЛИЕНТА
 
 Общая информация:
@@ -52,19 +52,6 @@ export default function AnamnesisResult({ formData, response, onReset, onClose }
 AI-АНАЛИЗ:
 
 ${response}`;
-    
-    if (navigator.clipboard && window.isSecureContext) {
-      try {
-        await navigator.clipboard.writeText(anamnesisText);
-        toast({
-          title: 'Скопировано',
-          description: 'Анамнез и анализ скопированы в буфер обмена'
-        });
-        return;
-      } catch (err) {
-        console.error('Modern clipboard failed:', err);
-      }
-    }
     
     const textArea = document.createElement('textarea');
     textArea.value = anamnesisText;

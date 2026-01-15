@@ -48,21 +48,8 @@ export default function ToolDialog({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const copyDialogToClipboard = useCallback(async () => {
+  const copyDialogToClipboard = useCallback(() => {
     const dialogText = `Запрос:\n${inputText}\n\nОтвет:\n${response}`;
-    
-    if (navigator.clipboard && window.isSecureContext) {
-      try {
-        await navigator.clipboard.writeText(dialogText);
-        toast({
-          title: 'Скопировано',
-          description: 'Диалог скопирован в буфер обмена'
-        });
-        return;
-      } catch (err) {
-        console.error('Modern clipboard failed:', err);
-      }
-    }
     
     const textArea = document.createElement('textarea');
     textArea.value = dialogText;
