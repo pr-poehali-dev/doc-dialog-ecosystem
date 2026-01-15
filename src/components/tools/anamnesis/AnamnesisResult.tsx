@@ -53,14 +53,34 @@ AI-АНАЛИЗ:
 
 ${response}`;
 
-  const copyAnamnesisToClipboard = useCallback(() => {
+  const selectAllText = useCallback(() => {
     if (textAreaRef.current) {
       textAreaRef.current.select();
-      document.execCommand('copy');
-      toast({
-        title: 'Скопировано',
-        description: 'Анамнез скопирован в буфер обмена'
-      });
+    }
+  }, []);
+
+  const copyToClipboard = useCallback(() => {
+    if (textAreaRef.current) {
+      const textarea = textAreaRef.current;
+      const selectedText = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
+      const textToCopy = selectedText || textarea.value;
+      
+      const tempArea = document.createElement('textarea');
+      tempArea.value = textToCopy;
+      tempArea.style.position = 'fixed';
+      tempArea.style.opacity = '0';
+      document.body.appendChild(tempArea);
+      tempArea.select();
+      
+      const success = document.execCommand('copy');
+      document.body.removeChild(tempArea);
+      
+      if (success) {
+        toast({
+          title: 'Скопировано',
+          description: selectedText ? 'Выделенный текст скопирован' : 'Весь анамнез скопирован'
+        });
+      }
     }
   }, [toast]);
 
@@ -82,14 +102,24 @@ ${response}`;
               <Icon name="Brain" className="text-primary flex-shrink-0" size={20} />
               <span className="truncate">Результат</span>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={copyAnamnesisToClipboard}
-            >
-              <Icon name="Copy" size={16} className="mr-2" />
-              Выделить весь текст
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={selectAllText}
+              >
+                <Icon name="MousePointerClick" size={16} className="mr-2" />
+                Выделить всё
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={copyToClipboard}
+              >
+                <Icon name="Copy" size={16} className="mr-2" />
+                Копировать
+              </Button>
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>

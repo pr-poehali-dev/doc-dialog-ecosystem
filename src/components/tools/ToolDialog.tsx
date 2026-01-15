@@ -51,14 +51,34 @@ export default function ToolDialog({
 
   const dialogText = useMemo(() => `Запрос:\n${inputText}\n\nОтвет:\n${response}`, [inputText, response]);
 
-  const copyDialogToClipboard = useCallback(() => {
+  const selectAllText = useCallback(() => {
     if (copyTextAreaRef.current) {
       copyTextAreaRef.current.select();
-      document.execCommand('copy');
-      toast({
-        title: 'Скопировано',
-        description: 'Диалог скопирован в буфер обмена'
-      });
+    }
+  }, []);
+
+  const copyToClipboard = useCallback(() => {
+    if (copyTextAreaRef.current) {
+      const textarea = copyTextAreaRef.current;
+      const selectedText = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
+      const textToCopy = selectedText || textarea.value;
+      
+      const tempArea = document.createElement('textarea');
+      tempArea.value = textToCopy;
+      tempArea.style.position = 'fixed';
+      tempArea.style.opacity = '0';
+      document.body.appendChild(tempArea);
+      tempArea.select();
+      
+      const success = document.execCommand('copy');
+      document.body.removeChild(tempArea);
+      
+      if (success) {
+        toast({
+          title: 'Скопировано',
+          description: selectedText ? 'Выделенный текст скопирован' : 'Весь текст скопирован'
+        });
+      }
     }
   }, [toast]);
 
@@ -159,14 +179,24 @@ export default function ToolDialog({
                       Результат
                     </span>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={copyDialogToClipboard}
-                  >
-                    <Icon name="Copy" size={16} className="mr-2" />
-                    Выделить весь текст
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={selectAllText}
+                    >
+                      <Icon name="MousePointerClick" size={16} className="mr-2" />
+                      Выделить всё
+                    </Button>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={copyToClipboard}
+                    >
+                      <Icon name="Copy" size={16} className="mr-2" />
+                      Копировать
+                    </Button>
+                  </div>
                 </div>
                 <textarea
                   ref={copyTextAreaRef}
