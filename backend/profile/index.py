@@ -98,11 +98,20 @@ def handler(event: dict, context) -> dict:
             # If only is_visible is provided, update only that field
             if 'is_visible' in body and len(body) == 1:
                 is_visible = body.get('is_visible')
-                cur.execute(f"""
-                    UPDATE {schema}.masseur_profiles
-                    SET is_visible = {is_visible}
-                    WHERE user_id = {user_id}
-                """)
+                # When publishing (is_visible = true), set published_at if not set
+                if is_visible:
+                    cur.execute(f"""
+                        UPDATE {schema}.masseur_profiles
+                        SET is_visible = {is_visible},
+                            published_at = COALESCE(published_at, NOW())
+                        WHERE user_id = {user_id}
+                    """)
+                else:
+                    cur.execute(f"""
+                        UPDATE {schema}.masseur_profiles
+                        SET is_visible = {is_visible}
+                        WHERE user_id = {user_id}
+                    """)
                 conn.commit()
                 cur.close()
                 conn.close()

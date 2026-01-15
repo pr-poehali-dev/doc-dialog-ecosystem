@@ -53,13 +53,15 @@ def handler(event: dict, context) -> dict:
                 mp.promoted_until,
                 mp.created_at
             FROM t_p46047379_doc_dialog_ecosystem.masseur_profiles mp
+            INNER JOIN t_p46047379_doc_dialog_ecosystem.users u ON mp.user_id = u.id
             WHERE mp.user_id NOT IN (1, 2)
                 AND COALESCE(mp.is_visible, true) = true
             ORDER BY 
                 CASE WHEN mp.promoted_until > NOW() THEN 0 ELSE 1 END,
                 mp.is_premium DESC NULLS LAST,
-                mp.rating DESC NULLS LAST,
-                mp.created_at DESC
+                CASE WHEN u.email LIKE '%@imported.local' THEN 1 ELSE 0 END,
+                COALESCE(mp.published_at, mp.created_at) DESC NULLS LAST,
+                mp.rating DESC NULLS LAST
         """)
         
         rows = cur.fetchall()
