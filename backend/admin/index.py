@@ -332,6 +332,21 @@ def handler(event: dict, context) -> dict:
         # Delete rate limits
         safe_delete(f"DELETE FROM {schema}.rate_limits WHERE user_id = {user_id}")
         
+        # Delete moderation logs
+        safe_delete(f"DELETE FROM {schema}.moderation_logs WHERE user_id = {user_id}")
+        
+        # Delete content warnings
+        safe_delete(f"DELETE FROM {schema}.content_warnings WHERE user_id = {user_id}")
+        
+        # Delete password reset tokens
+        safe_delete(f"DELETE FROM {schema}.password_reset_tokens WHERE user_id = {user_id}")
+        
+        # Delete payment logs
+        safe_delete(f"DELETE FROM {schema}.payment_logs WHERE user_id = {user_id}")
+        
+        # Delete vacancy payments
+        safe_delete(f"DELETE FROM {schema}.vacancy_payments WHERE user_id = {user_id}")
+        
         # Finally delete the user
         cur.execute(f"DELETE FROM {schema}.users WHERE id = {user_id}")
         
