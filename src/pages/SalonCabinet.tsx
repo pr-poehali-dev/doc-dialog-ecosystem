@@ -299,8 +299,8 @@ export default function SalonCabinet() {
 
         <Tabs defaultValue="profile" className="space-y-6">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="profile">Профиль</TabsTrigger>
-            <TabsTrigger value="requests">
+            <TabsTrigger value="profile" className="cursor-pointer">Профиль</TabsTrigger>
+            <TabsTrigger value="requests" className="cursor-pointer">
               Заявки {requests.length > 0 && `(${requests.length})`}
             </TabsTrigger>
           </TabsList>
