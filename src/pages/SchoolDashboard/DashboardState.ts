@@ -218,7 +218,6 @@ export function useDashboardState(toast: any) {
     offlineTrainings,
     setOfflineTrainings,
 
-    setSpecialists,
     landings,
     setLandings,
     schoolId,
