@@ -123,29 +123,29 @@ export default function LandingOrderTab() {
 
   return (
     <div className="space-y-6">
-      <Card className="p-6 bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
-        <div className="flex items-start gap-4">
+      <Card className="p-4 sm:p-6 bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
+        <div className="flex flex-col sm:flex-row items-start gap-4">
           <div className="p-3 bg-primary/10 rounded-lg">
-            <Icon name="Sparkles" size={28} className="text-primary" />
+            <Icon name="Sparkles" size={24} className="sm:size-7 text-primary" />
           </div>
           <div className="flex-1">
-            <h3 className="text-xl font-bold mb-2">Закажите продающий лендинг</h3>
-            <p className="text-muted-foreground mb-4">
+            <h3 className="text-lg sm:text-xl font-bold mb-2">Закажите продающий лендинг</h3>
+            <p className="text-sm sm:text-base text-muted-foreground mb-4">
               Современный лендинг для вашего курса повысит конверсию в продажи. 
               Профессиональный дизайн, УТП, призывы к действию.
             </p>
-            <div className="flex items-center gap-6 text-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 text-xs sm:text-sm">
               <div className="flex items-center gap-2">
-                <Icon name="CheckCircle2" size={18} className="text-green-500" />
+                <Icon name="CheckCircle2" size={16} className="sm:size-[18px] text-green-500 flex-shrink-0" />
                 <span>Создание за 2-3 дня</span>
               </div>
               <div className="flex items-center gap-2">
-                <Icon name="CheckCircle2" size={18} className="text-green-500" />
+                <Icon name="CheckCircle2" size={16} className="sm:size-[18px] text-green-500 flex-shrink-0" />
                 <span>Хостинг на год включён</span>
               </div>
               <div className="flex items-center gap-2">
-                <Icon name="CheckCircle2" size={18} className="text-green-500" />
-                <span>Всего 2990 ₽</span>
+                <Icon name="CheckCircle2" size={16} className="sm:size-[18px] text-green-500 flex-shrink-0" />
+                <span className="font-semibold">Всего 2990 ₽</span>
               </div>
             </div>
           </div>
