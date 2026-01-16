@@ -8,6 +8,7 @@ import MastermindBenefits from "@/components/mastermind/MastermindBenefits";
 import MastermindProgram from "@/components/mastermind/MastermindProgram";
 import MastermindTariffs from "@/components/mastermind/MastermindTariffs";
 import MastermindIncludes from "@/components/mastermind/MastermindIncludes";
+import MastermindReviews from "@/components/mastermind/MastermindReviews";
 import MastermindCTA from "@/components/mastermind/MastermindCTA";
 
 const MastermindMoscow = () => {
@@ -21,6 +22,7 @@ const MastermindMoscow = () => {
       <MastermindBenefits />
       <MastermindProgram />
       <MastermindTariffs />
+      <MastermindReviews />
       <MastermindIncludes />
       <MastermindCTA />
       <SchoolsFooter />

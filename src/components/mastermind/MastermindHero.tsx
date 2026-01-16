@@ -24,7 +24,7 @@ const MastermindHero = () => {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button size="lg" className="text-lg px-8 py-6 bg-white text-primary hover:bg-gray-100" asChild>
-              <a href="https://t.me/docdialogs_bot" target="_blank" rel="noopener noreferrer">
+              <a href="https://school.brossok.ru/buy/53" target="_blank" rel="noopener noreferrer">
                 <Icon name="Calendar" size={20} className="mr-2" />
                 Забронировать место
               </a>
