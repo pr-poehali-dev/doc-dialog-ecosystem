@@ -5,6 +5,11 @@ const MastermindHero = () => {
   return (
     <section className="relative pt-32 pb-20 px-4 overflow-hidden">
       <div className="absolute inset-0">
+        <img 
+          src="https://cdn.poehali.dev/files/massage-with-four-hands-concept-healthcare-female-beauty-two-masseuses-make-double-massage-girl-woman-spa-salon (4).jpg" 
+          alt="Практика массажа" 
+          className="w-full h-full object-cover"
+        />
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/95 via-teal-600/90 to-cyan-700/95"></div>
       </div>
       
