@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
@@ -11,6 +12,23 @@ const results = [
 ];
 
 export default function VisceraCourseResults() {
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://school.brossok.ru/load/forms/form8.js';
+    script.async = true;
+    
+    const formWrapper = document.getElementById('formwrapper8');
+    if (formWrapper) {
+      formWrapper.appendChild(script);
+    }
+    
+    return () => {
+      if (formWrapper && script.parentNode) {
+        formWrapper.removeChild(script);
+      }
+    };
+  }, []);
+
   return (
     <>
       {/* Results */}
@@ -33,6 +51,16 @@ export default function VisceraCourseResults() {
                 ))}
               </div>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Registration Form */}
+      <section className="py-16 md:py-24 bg-gradient-to-br from-slate-50 to-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-8">Записаться на курс</h2>
+            <div id="formwrapper8" style={{ width: '100%' }}></div>
           </div>
         </div>
       </section>
