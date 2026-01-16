@@ -19,7 +19,7 @@ const ArsenalCourseHero = () => {
             Онлайн-курс
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight text-white">
             Арсенал массажиста
           </h1>
           
