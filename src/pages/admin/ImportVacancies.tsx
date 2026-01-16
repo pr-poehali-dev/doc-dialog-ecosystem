@@ -28,6 +28,7 @@ export default function ImportVacancies() {
   const [jsonData, setJsonData] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ImportResult | null>(null);
+  const [csvParsing, setCsvParsing] = useState(false);
 
   const handleImport = async () => {
     if (!jsonData.trim()) {
@@ -77,6 +78,95 @@ export default function ImportVacancies() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const parseCSVLine = (line: string): string[] => {
+    const result: string[] = [];
+    let current = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      const nextChar = line[i + 1];
+
+      if (char === '"' && inQuotes && nextChar === '"') {
+        current += '"';
+        i++;
+      } else if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === '\t' && !inQuotes) {
+        result.push(current);
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    result.push(current);
+    return result;
+  };
+
+  const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setCsvParsing(true);
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const text = event.target?.result as string;
+        const lines = text.split('\n').filter(line => line.trim());
+        
+        if (lines.length < 2) {
+          throw new Error('CSV файл пустой или содержит только заголовки');
+        }
+
+        const headers = parseCSVLine(lines[0]);
+        const vacancies = [];
+
+        for (let i = 1; i < lines.length; i++) {
+          const values = parseCSVLine(lines[i]);
+          const vacancy: any = {};
+
+          headers.forEach((header, index) => {
+            const value = values[index]?.trim() || '';
+            
+            if (header === 'compensationFrom' || header === 'compensationTo') {
+              vacancy[header] = value ? parseInt(value) : null;
+            } else if (header === 'gross' || header === 'online' || header === 'companyApproved' || 
+                       header === 'itAccreditation' || header === 'withoutResume' || 
+                       header === 'employer-it-accreditation') {
+              vacancy[header] = value.toLowerCase() === 'true' || value === '1';
+            } else if (header === 'employer-hh-rating') {
+              vacancy[header] = value ? parseFloat(value) : null;
+            } else {
+              vacancy[header] = value;
+            }
+          });
+
+          if (vacancy['Название'] && vacancy['companyName']) {
+            vacancies.push(vacancy);
+          }
+        }
+
+        const jsonOutput = JSON.stringify({ vacancies }, null, 2);
+        setJsonData(jsonOutput);
+
+        toast({
+          title: 'CSV обработан',
+          description: `Распознано ${vacancies.length} вакансий`,
+        });
+      } catch (error: any) {
+        toast({
+          title: 'Ошибка парсинга CSV',
+          description: error.message,
+          variant: 'destructive',
+        });
+      } finally {
+        setCsvParsing(false);
+      }
+    };
+    reader.readAsText(file, 'UTF-8');
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -151,17 +241,39 @@ export default function ImportVacancies() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="file-upload">Загрузить из файла</Label>
-                <Input
-                  id="file-upload"
-                  type="file"
-                  accept=".json"
-                  onChange={handleFileUpload}
-                />
-                <p className="text-sm text-muted-foreground">
-                  Поддерживаются JSON файлы с массивом вакансий
-                </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="csv-upload" className="flex items-center gap-2">
+                    <Icon name="FileSpreadsheet" size={18} className="text-emerald-600" />
+                    Загрузить CSV с HH.ru
+                  </Label>
+                  <Input
+                    id="csv-upload"
+                    type="file"
+                    accept=".csv,.tsv,.txt"
+                    onChange={handleCSVUpload}
+                    disabled={csvParsing}
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    {csvParsing ? 'Обрабатываю CSV...' : 'Автоматический парсинг CSV/TSV файлов'}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="file-upload" className="flex items-center gap-2">
+                    <Icon name="FileJson" size={18} className="text-blue-600" />
+                    Загрузить JSON
+                  </Label>
+                  <Input
+                    id="file-upload"
+                    type="file"
+                    accept=".json"
+                    onChange={handleFileUpload}
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    JSON файлы с готовыми данными
+                  </p>
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -252,32 +364,62 @@ export default function ImportVacancies() {
                 </Card>
               )}
 
-              <Card className="bg-blue-50 border-blue-200">
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Icon name="Info" size={20} className="text-blue-600" />
-                    Формат данных
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2 text-sm">
-                    <p className="font-semibold">Обязательные поля:</p>
-                    <ul className="list-disc list-inside space-y-1 ml-4">
-                      <li><code className="bg-white px-2 py-0.5 rounded">Название</code> — название вакансии</li>
-                      <li><code className="bg-white px-2 py-0.5 rounded">companyName</code> — название компании</li>
-                    </ul>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Card className="bg-blue-50 border-blue-200">
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Icon name="Info" size={20} className="text-blue-600" />
+                      Формат данных
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2 text-sm">
+                      <p className="font-semibold">Обязательные поля:</p>
+                      <ul className="list-disc list-inside space-y-1 ml-4">
+                        <li><code className="bg-white px-2 py-0.5 rounded">Название</code> — название вакансии</li>
+                        <li><code className="bg-white px-2 py-0.5 rounded">companyName</code> — название компании</li>
+                      </ul>
 
-                    <p className="font-semibold mt-4">Опциональные поля:</p>
-                    <ul className="list-disc list-inside space-y-1 ml-4 text-xs">
-                      <li>compensationFrom, compensationTo, gross, city, online</li>
-                      <li>vacancyLink, companyLink, companyLogo</li>
-                      <li>companyApproved, itAccreditation, withoutResume</li>
-                      <li>Станция метро0-3, workExperience, График работы</li>
-                      <li>compensationFrequency, employer-hh-rating, hrbrand</li>
-                    </ul>
-                  </div>
-                </CardContent>
-              </Card>
+                      <p className="font-semibold mt-4">Опциональные поля:</p>
+                      <ul className="list-disc list-inside space-y-1 ml-4 text-xs">
+                        <li>compensationFrom, compensationTo, gross, city, online</li>
+                        <li>vacancyLink, companyLink, companyLogo</li>
+                        <li>companyApproved, itAccreditation, withoutResume</li>
+                        <li>Станция метро0-3, workExperience, График работы</li>
+                        <li>compensationFrequency, employer-hh-rating, hrbrand</li>
+                      </ul>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-emerald-50 border-emerald-200">
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Icon name="FileSpreadsheet" size={20} className="text-emerald-600" />
+                      Импорт CSV с HH.ru
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3 text-sm">
+                      <p className="font-semibold">Как экспортировать с HH.ru:</p>
+                      <ol className="list-decimal list-inside space-y-1 ml-2">
+                        <li>Откройте поиск вакансий на hh.ru</li>
+                        <li>Настройте нужные фильтры</li>
+                        <li>Используйте расширение для экспорта в CSV/Excel</li>
+                        <li>Загрузите файл в эту форму</li>
+                      </ol>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Поддерживаются файлы с разделителями: табуляция, запятая, точка с запятой
+                      </p>
+                      <p className="text-xs font-semibold text-emerald-700 mt-2">
+                        ✓ Автоматическое определение формата<br/>
+                        ✓ Обработка кавычек и спецсимволов<br/>
+                        ✓ Преобразование типов данных
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </CardContent>
           </Card>
         </div>
