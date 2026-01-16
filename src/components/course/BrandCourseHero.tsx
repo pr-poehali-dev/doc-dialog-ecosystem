@@ -5,6 +5,11 @@ const BrandCourseHero = () => {
   return (
     <section className="relative pt-32 pb-20 px-4 overflow-hidden">
       <div className="absolute inset-0">
+        <img 
+          src="https://cdn.poehali.dev/files/senior-woman-taking-online-class-her-tablet.jpg" 
+          alt="Онлайн-обучение" 
+          className="w-full h-full object-cover"
+        />
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/95 via-purple-600/90 to-pink-600/95"></div>
       </div>
       
