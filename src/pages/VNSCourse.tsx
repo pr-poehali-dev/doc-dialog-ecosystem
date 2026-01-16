@@ -7,6 +7,7 @@ import VNSSkills from "@/components/vns/VNSSkills";
 import VNSResults from "@/components/vns/VNSResults";
 import VNSProgram from "@/components/vns/VNSProgram";
 import VNSAdvantages from "@/components/vns/VNSAdvantages";
+import VNSReviews from "@/components/vns/VNSReviews";
 import VNSCTA from "@/components/vns/VNSCTA";
 
 const VNSCourse = () => {
@@ -20,6 +21,7 @@ const VNSCourse = () => {
       <VNSResults />
       <VNSProgram />
       <VNSAdvantages />
+      <VNSReviews />
       <VNSCTA />
       <SchoolsFooter />
     </div>
