@@ -21,12 +21,28 @@ export default function VisceraCourseAbout() {
   return (
     <>
       {/* About Section */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative py-16 md:py-24 overflow-hidden bg-gradient-to-br from-slate-50 via-slate-100/30 to-slate-50">
+        {/* Background image with overlay */}
+        <div 
+          className="absolute inset-0 opacity-[0.12]"
+          style={{
+            backgroundImage: `url('https://cdn.poehali.dev/files/hands-massaging-female-abdomen-therapist-applying-pressure-belly (1).jpg')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        ></div>
+        
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">О курсе</h2>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-primary/10 mb-8 mx-auto w-fit">
+              <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium text-muted-foreground">Системный подход</span>
+            </div>
             
-            <Card className="p-8 md:p-12 bg-gradient-to-br from-white to-primary/5 border-2 border-primary/10">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-slate-900 via-primary to-slate-900 bg-clip-text text-transparent">О курсе</h2>
+            
+            <Card className="p-8 md:p-12 bg-white/90 backdrop-blur-md border-2 border-primary/10 shadow-xl">
               <p className="text-lg text-gray-700 mb-6 leading-relaxed">
                 «Висцералка: с нуля» — это базовый, системный и практический курс по мануальной терапии внутренних органов.
               </p>
