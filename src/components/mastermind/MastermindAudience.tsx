@@ -6,7 +6,8 @@ const MastermindAudience = () => {
     { icon: "Heart", text: "телесные терапевты" },
     { icon: "Activity", text: "остеопаты" },
     { icon: "Users", text: "мануальные терапевты" },
-    { icon: "Zap", text: "специалисты по восстановлению" }
+    { icon: "Zap", text: "специалисты по восстановлению" },
+    { icon: "Sparkles", text: "косметологи и эстетисты" }
   ];
 
   return (
