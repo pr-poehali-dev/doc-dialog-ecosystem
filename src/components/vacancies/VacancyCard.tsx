@@ -67,7 +67,7 @@ const VacancyCard = ({ vacancy }: VacancyCardProps) => {
     }
   };
 
-  const isSalonVacancy = vacancy.source === 'salon';
+
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all p-6">
@@ -91,12 +91,6 @@ const VacancyCard = ({ vacancy }: VacancyCardProps) => {
             <h3 className="text-xl font-bold text-gray-900 hover:text-blue-600 cursor-pointer flex-1">
               {vacancy.title}
             </h3>
-            {isSalonVacancy && (
-              <Badge variant="secondary" className="text-xs bg-emerald-100 text-emerald-700 ml-2">
-                <Icon name="Building" size={12} className="mr-1" />
-                Салон
-              </Badge>
-            )}
           </div>
           
           <div 
@@ -194,41 +188,20 @@ const VacancyCard = ({ vacancy }: VacancyCardProps) => {
           )}
 
           <div className="flex items-center gap-3 pt-3">
-            {isSalonVacancy ? (
-              <>
-                <Button size="lg" style={{ backgroundColor: '#0da2e7' }} className="hover:opacity-90">
-                  <Icon name="Send" size={18} className="mr-2" />
-                  Откликнуться
-                </Button>
-                {vacancy.contacts && (
-                  <Button 
-                    variant="outline" 
-                    size="lg"
-                    onClick={() => window.open(`tel:${vacancy.contacts}`, '_self')}
-                  >
-                    <Icon name="Phone" size={18} className="mr-2" />
-                    Позвонить
-                  </Button>
-                )}
-              </>
-            ) : (
-              <>
-                <Button onClick={handleApply} size="lg" style={{ backgroundColor: '#0da2e7' }} className="hover:opacity-90">
-                  <Icon name="Send" size={18} className="mr-2" />
-                  Откликнуться
-                </Button>
-                
-                {vacancy.vacancyLink && (
-                  <Button 
-                    variant="outline" 
-                    size="lg"
-                    onClick={() => window.open(vacancy.vacancyLink, '_blank')}
-                  >
-                    <Icon name="ExternalLink" size={18} className="mr-2" />
-                    Подробнее
-                  </Button>
-                )}
-              </>
+            <Button onClick={handleApply} size="lg" style={{ backgroundColor: '#0da2e7' }} className="hover:opacity-90">
+              <Icon name="Send" size={18} className="mr-2" />
+              Откликнуться
+            </Button>
+            
+            {vacancy.vacancyLink && (
+              <Button 
+                variant="outline" 
+                size="lg"
+                onClick={() => window.open(vacancy.vacancyLink, '_blank')}
+              >
+                <Icon name="ExternalLink" size={18} className="mr-2" />
+                Подробнее
+              </Button>
             )}
           </div>
         </div>

@@ -128,7 +128,7 @@ def handler(event: dict, context: Any) -> dict:
     query_salon = """
         SELECT 
             sv.id, sv.specializations, sv.schedule, sv.salary_from, sv.salary_to,
-            sv.salary_currency, sv.requirements, sv.created_at, sv.salon_id
+            sv.salary_currency, sv.requirements, sv.created_at, sv.salon_id, sv.vacancy_link
         FROM salon_vacancies sv
         WHERE sv.is_active = true
         ORDER BY sv.created_at DESC
@@ -176,7 +176,7 @@ def handler(event: dict, context: Any) -> dict:
             'companyName': salon_info.get('name', 'Массажный салон'),
             'city': salon_info.get('city'),
             'online': False,
-            'vacancyLink': None,
+            'vacancyLink': row[9],
             'companyLink': None,
             'companyApproved': False,
             'itAccreditation': False,
@@ -207,8 +207,13 @@ def handler(event: dict, context: Any) -> dict:
 
         all_vacancies.append(vacancy)
 
-    # Сортируем все вакансии по дате создания
-    all_vacancies.sort(key=lambda x: x['createdAt'] or '', reverse=True)
+    # Сортируем: сначала салонные вакансии, потом импортированные (внутри по дате)
+    def sort_key(v):
+        is_salon = 0 if v['source'] == 'salon' else 1
+        date = v['createdAt'] or ''
+        return (is_salon, date)
+    
+    all_vacancies.sort(key=sort_key, reverse=True)
 
     # Применяем пагинацию
     total = len(all_vacancies)
