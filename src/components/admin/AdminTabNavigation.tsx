@@ -152,6 +152,13 @@ export default function AdminTabNavigation({ activeTab, setActiveTab, stats, pen
         <Icon name="Building" size={16} className="sm:mr-2" />
         <span className="hidden sm:inline">Импорт салонов</span>
       </Button>
+      <Button 
+        onClick={() => navigate('/admin/import-vacancies')}
+        className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm bg-gradient-to-r from-emerald-600 to-teal-600"
+      >
+        <Icon name="Briefcase" size={16} className="sm:mr-2" />
+        <span className="hidden sm:inline">Импорт вакансий</span>
+      </Button>
     </div>
   );
 }

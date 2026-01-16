@@ -81,6 +81,7 @@ import SchoolMarketingAI from "./pages/dashboard/SchoolMarketingAI";
 import ImportSpecialists from "./pages/admin/ImportSpecialists";
 import ImportedSpecialists from "./pages/admin/ImportedSpecialists";
 import ImportSalons from "./pages/admin/ImportSalons";
+import ImportVacancies from "./pages/admin/ImportVacancies";
 import MedicalReportLanding from "./pages/MedicalReportLanding";
 import VacanciesCatalog from "./pages/VacanciesCatalog";
 import VacanciesImport from "./pages/VacanciesImport";
@@ -193,6 +194,7 @@ const App = () => (
           <Route path="/admin/import-specialists" element={<ImportSpecialists />} />
           <Route path="/admin/imported-specialists" element={<ImportedSpecialists />} />
           <Route path="/admin/import-salons" element={<ImportSalons />} />
+          <Route path="/admin/import-vacancies" element={<ImportVacancies />} />
           <Route path="/vns-course" element={<VNSCourse />} />
           <Route path="/pregnancy-fitness" element={<PregnancyFitness />} />
           <Route path="/privacy" element={<Privacy />} />
