@@ -117,7 +117,7 @@ const VacancyCard = ({ vacancy }: VacancyCardProps) => {
             )}
           </div>
 
-          <div className="text-2xl font-bold text-emerald-600 mb-3">
+          <div className="text-2xl font-bold mb-3" style={{ color: '#0da2e7' }}>
             {formatSalary()}
           </div>
 
