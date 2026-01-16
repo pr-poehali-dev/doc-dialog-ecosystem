@@ -89,10 +89,10 @@ export default function VisceraCourseResults() {
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="text-lg px-8 py-6 border-2 border-white text-white hover:bg-white hover:text-primary transition-colors"
+                className="text-lg px-8 py-6 border-2 border-white bg-transparent text-white hover:bg-white hover:text-primary transition-colors"
                 asChild
               >
-                <a href="https://t.me/docdialog_bot" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center">
+                <a href="https://t.me/docdialog_bot" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center text-white hover:text-primary">
                   <Icon name="MessageCircle" size={20} className="mr-2" />
                   <span>Задать вопрос</span>
                 </a>
