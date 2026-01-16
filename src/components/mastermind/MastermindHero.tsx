@@ -10,7 +10,7 @@ const MastermindHero = () => {
           alt="Практика массажа" 
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/95 via-teal-600/90 to-cyan-700/95"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/75 via-teal-600/70 to-cyan-700/75"></div>
       </div>
       
       <div className="container mx-auto max-w-5xl relative z-10">
