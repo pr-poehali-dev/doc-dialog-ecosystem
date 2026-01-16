@@ -4,7 +4,14 @@ import Icon from "@/components/ui/icon";
 const BasicsMassageHero = () => {
   return (
     <section className="relative pt-32 pb-20 px-4 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-600/95 via-indigo-600/90 to-purple-700/95"></div>
+      <div className="absolute inset-0">
+        <img 
+          src="https://cdn.poehali.dev/files/young-woman-having-face-massage-relaxing-spa-salon.jpg" 
+          alt="Массаж лица" 
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/70 via-indigo-600/70 to-purple-700/70"></div>
+      </div>
       
       <div className="container mx-auto max-w-5xl relative z-10">
         <div className="text-center">
