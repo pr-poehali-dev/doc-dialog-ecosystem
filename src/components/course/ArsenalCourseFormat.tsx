@@ -26,6 +26,11 @@ const ArsenalCourseFormat = () => {
       icon: "RotateCcw",
       title: "Возможность возвращаться к материалу",
       description: "Неограниченный доступ к курсу"
+    },
+    {
+      icon: "HeadphonesIcon",
+      title: "Поддержка и сопровождение",
+      description: "Ответы на вопросы от экспертов"
     }
   ];
 
