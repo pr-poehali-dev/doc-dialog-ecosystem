@@ -15,7 +15,8 @@ const targetAudience = [
   { icon: "Users", text: "Специалисты по телесной терапии" },
   { icon: "Activity", text: "Остеопатические и мануальные практики" },
   { icon: "TrendingUp", text: "Те, кто хочет работать глубже, но без риска" },
-  { icon: "Heart", text: "Специалисты, работающие с животом, осанкой, ВНС" }
+  { icon: "Heart", text: "Специалисты, работающие с животом, осанкой, ВНС" },
+  { icon: "Target", text: "Новички без опыта работы с внутренними органами" }
 ];
 
 export default function VisceraCourseAbout() {
