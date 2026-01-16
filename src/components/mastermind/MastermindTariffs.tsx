@@ -12,13 +12,14 @@ const MastermindTariffs = () => {
         "мощная групповая динамика"
       ],
       location: "м. Баррикадная, Волков переулок, 4",
-      date: "11.01.2026",
+      date: "01.03.2026",
       time: "10:00–18:00",
       price: "15 600 ₽",
       spots: "3 места",
       prepayment: "5 000 ₽",
       gradient: "from-emerald-500 to-teal-600",
-      note: "не возвращается, но переносится на следующий мастермайнд"
+      note: "не возвращается, но переносится на следующий мастермайнд",
+      url: "https://school.brossok.ru/buy/53"
     },
     {
       name: "ИНТЕНСИВ В МАЛОЙ ГРУППЕ",
@@ -114,7 +115,7 @@ const MastermindTariffs = () => {
                     className="w-full text-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700" 
                     asChild
                   >
-                    <a href="https://t.me/docdialogs_bot" target="_blank" rel="noopener noreferrer">
+                    <a href={tariff.url || "https://t.me/docdialogs_bot"} target="_blank" rel="noopener noreferrer">
                       <Icon name="Calendar" size={20} className="mr-2" />
                       Забронировать место
                     </a>
