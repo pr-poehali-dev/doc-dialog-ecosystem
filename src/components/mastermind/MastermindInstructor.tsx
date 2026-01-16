@@ -26,8 +26,13 @@ const MastermindInstructor = () => {
         <div className="bg-white p-8 md:p-12 rounded-2xl shadow-xl border-2 border-emerald-100">
           <div className="flex flex-col md:flex-row gap-8">
             <div className="md:w-1/3">
-              <div className="bg-gradient-to-br from-emerald-100 to-teal-100 rounded-2xl p-8 aspect-square flex items-center justify-center">
-                <Icon name="User" size={120} className="text-emerald-600" />
+              <div className="rounded-2xl overflow-hidden shadow-lg">
+                <img 
+                  src="https://cdn.poehali.dev/files/ИнфоХит.jpg" 
+                  alt="Водопьянов Сергей Геннадьевич" 
+                  className="w-full h-full object-cover object-top"
+                  style={{ maxHeight: '400px' }}
+                />
               </div>
             </div>
             
