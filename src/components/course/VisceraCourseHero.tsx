@@ -34,9 +34,11 @@ export default function VisceraCourseHero() {
               <Icon name="Play" size={20} className="mr-2" />
               Записаться на курс
             </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-2">
-              <Icon name="Info" size={20} className="mr-2" />
-              Узнать подробнее
+            <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-2" asChild>
+              <a href="https://t.me/docdialogs_bot" target="_blank" rel="noopener noreferrer">
+                <Icon name="Info" size={20} className="mr-2" />
+                Узнать подробнее
+              </a>
             </Button>
           </div>
 
