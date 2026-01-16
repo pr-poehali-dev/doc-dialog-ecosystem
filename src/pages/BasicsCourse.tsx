@@ -8,6 +8,7 @@ import BasicsMassageResults from "@/components/course/BasicsMassageResults";
 import BasicsMassageProgram from "@/components/course/BasicsMassageProgram";
 import BasicsMassageFormat from "@/components/course/BasicsMassageFormat";
 import BasicsMassageAdvantages from "@/components/course/BasicsMassageAdvantages";
+import BasicsMassageReviews from "@/components/course/BasicsMassageReviews";
 import BasicsMassageCTA from "@/components/course/BasicsMassageCTA";
 
 const BasicsCourse = () => {
@@ -22,6 +23,7 @@ const BasicsCourse = () => {
       <BasicsMassageProgram />
       <BasicsMassageFormat />
       <BasicsMassageAdvantages />
+      <BasicsMassageReviews />
       <BasicsMassageCTA />
       <SchoolsFooter />
     </div>
