@@ -1,0 +1,10 @@
+{
+  "tests": [
+    {
+      "name": "Get vacancies list",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200
+    }
+  ]
+}

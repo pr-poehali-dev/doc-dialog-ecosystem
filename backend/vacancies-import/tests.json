@@ -1,0 +1,55 @@
+{
+  "tests": [
+    {
+      "name": "Import single vacancy",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "vacancies": [
+          {
+            "Название": "Frontend Developer",
+            "compensationFrom": 150000,
+            "compensationTo": 250000,
+            "gross": false,
+            "companyName": "Tech Corp",
+            "city": "Москва",
+            "online": true,
+            "vacancyLink": "https://hh.ru/vacancy/12345",
+            "companyLink": "https://hh.ru/employer/6789",
+            "companyApproved": true,
+            "itAccreditation": true,
+            "withoutResume": false,
+            "companyLogo": "https://example.com/logo.png",
+            "Станция метро0": "Маяковская",
+            "Станция метро1": "Тверская",
+            "workExperience": "От 1 до 3 лет",
+            "График работы": "Полный день",
+            "compensationFrequency": "monthly",
+            "employer-hh-rating": 4.5,
+            "employer-it-accreditation": true,
+            "hrbrand": "Tech Corp HR"
+          }
+        ]
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true,
+        "total_processed": 1
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Empty vacancies array returns error",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "vacancies": []
+      },
+      "expectedStatus": 400,
+      "expectedBody": {
+        "error": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

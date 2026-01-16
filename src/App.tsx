@@ -83,6 +83,7 @@ import ImportedSpecialists from "./pages/admin/ImportedSpecialists";
 import ImportSalons from "./pages/admin/ImportSalons";
 import MedicalReportLanding from "./pages/MedicalReportLanding";
 import VacanciesCatalog from "./pages/VacanciesCatalog";
+import VacanciesImport from "./pages/VacanciesImport";
 import Premium from "./pages/Premium";
 import AccountSettings from "./pages/dashboard/AccountSettings";
 import VisceraCourse from "./pages/VisceraCourse";
@@ -151,6 +152,7 @@ const App = () => (
           <Route path="/salon/cabinet" element={<SalonCabinet />} />
           <Route path="/salons" element={<SalonsCatalog />} />
           <Route path="/vacancies" element={<VacanciesCatalog />} />
+          <Route path="/vacancies-import" element={<VacanciesImport />} />
           <Route path="/premium" element={<Premium />} />
           <Route path="/viscera-course" element={<VisceraCourse />} />
           <Route path="/arsenal-course" element={<ArsenalCourse />} />
