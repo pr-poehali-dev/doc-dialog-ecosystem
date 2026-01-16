@@ -102,6 +102,35 @@ const MastermindReviews = () => {
           </p>
         </div>
 
+        <div className="mb-16">
+          <h3 className="text-2xl font-bold text-center mb-8 text-gray-800">
+            Фото с прошлых встреч
+          </h3>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+              <img 
+                src="https://cdn.poehali.dev/files/Group 30.jpg" 
+                alt="Разбор анатомии на мастермайнде" 
+                className="w-full h-[300px] object-cover"
+              />
+            </div>
+            <div className="rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+              <img 
+                src="https://cdn.poehali.dev/files/Group 45.jpg" 
+                alt="Лекция на мастермайнде" 
+                className="w-full h-[300px] object-cover"
+              />
+            </div>
+            <div className="rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+              <img 
+                src="https://cdn.poehali.dev/files/Group 31 (5).png" 
+                alt="Практическое занятие на мастермайнде" 
+                className="w-full h-[300px] object-cover"
+              />
+            </div>
+          </div>
+        </div>
+
         <div className="relative">
           <button
             onClick={() => scroll('left')}
