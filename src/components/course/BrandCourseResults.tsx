@@ -19,9 +19,9 @@ const BrandCourseResults = () => {
             className="text-lg px-8 py-6 bg-white text-primary hover:bg-gray-100 hover:scale-105 transition-transform" 
             asChild
           >
-            <a href="https://school.brossok.ru/buy/51" target="_blank" rel="noopener noreferrer">
+            <a href="https://school.brossok.ru/training/view/-laquo-massaghist-2-0-sozdanie-i-prodvighenie-lichnogo-brenda-raquo-" target="_blank" rel="noopener noreferrer">
               <Icon name="Rocket" size={20} className="mr-2" />
-              Записаться на курс
+              Начать обучение бесплатно
             </a>
           </Button>
           <Button 

@@ -24,9 +24,9 @@ const BrandCourseHero = () => {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button size="lg" className="text-lg px-8 py-6 bg-white text-primary hover:bg-gray-100" asChild>
-              <a href="https://school.brossok.ru/buy/51" target="_blank" rel="noopener noreferrer">
+              <a href="https://school.brossok.ru/training/view/-laquo-massaghist-2-0-sozdanie-i-prodvighenie-lichnogo-brenda-raquo-" target="_blank" rel="noopener noreferrer">
                 <Icon name="Rocket" size={20} className="mr-2" />
-                Записаться на курс
+                Начать обучение бесплатно
               </a>
             </Button>
             <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-2 border-white bg-transparent text-white hover:bg-white hover:text-primary" asChild>
