@@ -218,7 +218,7 @@ const TestimonialsSection = () => {
   const duplicatedTestimonials = [...testimonials, ...testimonials];
 
   return (
-    <section className="py-20 bg-gradient-to-b from-muted/30 to-background overflow-hidden">
+    <section className="py-12 md:py-20 bg-gradient-to-b from-muted/30 to-background overflow-hidden">
       <div className="container mx-auto px-4 mb-12">
         <div className="text-center max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">

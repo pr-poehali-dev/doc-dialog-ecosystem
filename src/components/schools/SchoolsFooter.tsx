@@ -5,7 +5,7 @@ export default function SchoolsFooter() {
   const navigate = useNavigate();
 
   return (
-    <footer className="bg-gradient-to-br from-gray-900 to-gray-800 text-white py-12 sm:py-16">
+    <footer className="bg-gradient-to-br from-gray-900 to-gray-800 text-white py-8 sm:py-12 md:py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8 mb-10">
           <div className="sm:col-span-2 md:col-span-1">

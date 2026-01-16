@@ -3,9 +3,9 @@ import Icon from "@/components/ui/icon";
 
 const EcosystemSection = () => {
   return (
-    <section className="py-20 bg-muted/30">
+    <section className="py-12 md:py-20 bg-muted/30">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 md:mb-16">
           Что входит в экосистему Док диалог
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">

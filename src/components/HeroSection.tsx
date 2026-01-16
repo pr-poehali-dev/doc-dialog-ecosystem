@@ -12,7 +12,7 @@ const HeroSection = ({ openDialog }: HeroSectionProps) => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative py-20 md:py-32 animate-fade-in overflow-hidden bg-gradient-to-br from-slate-50 via-slate-100/30 to-slate-50">
+    <section className="relative py-12 md:py-32 animate-fade-in overflow-hidden bg-gradient-to-br from-slate-50 via-slate-100/30 to-slate-50">
       {/* Network pattern background */}
       <div 
         className="absolute inset-0 opacity-[0.15]"
@@ -31,11 +31,11 @@ const HeroSection = ({ openDialog }: HeroSectionProps) => {
             <span className="text-sm font-medium text-muted-foreground">Профессиональная экосистема</span>
           </div>
 
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight bg-gradient-to-r from-slate-900 via-primary to-slate-900 bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-6xl font-bold mb-4 md:mb-6 leading-tight bg-gradient-to-r from-slate-900 via-primary to-slate-900 bg-clip-text text-transparent">
             Для массажистов, школ массажа и салонов
           </h1>
           
-          <p className="text-xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-muted-foreground mb-8 md:mb-12 max-w-3xl mx-auto leading-relaxed">
             Обучение, инструменты, практика и карьерный рост — 
             <br className="hidden md:block" />
             в одном пространстве для массажистов
@@ -79,7 +79,7 @@ const HeroSection = ({ openDialog }: HeroSectionProps) => {
             </Link>
           </div>
 
-          <div className="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto">
+          <div className="mt-10 md:mt-16 grid grid-cols-3 gap-4 md:gap-8 max-w-2xl mx-auto">
             <div className="text-center">
               <div className="text-3xl font-bold text-primary mb-2">1000+</div>
               <div className="text-sm text-muted-foreground">Массажистов</div>

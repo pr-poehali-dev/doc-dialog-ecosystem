@@ -82,9 +82,9 @@ export default function FAQ() {
   }, []);
 
   return (
-    <section className="py-16 px-4 bg-secondary/30">
+    <section className="py-10 md:py-16 px-4 bg-secondary/30">
       <div className="container mx-auto max-w-4xl">
-        <h2 className="text-3xl font-bold text-center mb-12">
+        <h2 className="text-3xl font-bold text-center mb-8 md:mb-12">
           Часто задаваемые вопросы
         </h2>
         

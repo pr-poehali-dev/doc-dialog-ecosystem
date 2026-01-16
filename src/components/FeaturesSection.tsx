@@ -14,7 +14,7 @@ const FeaturesSection = ({ openDialog }: FeaturesSectionProps) => {
     <>
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto space-y-24">
+          <div className="max-w-6xl mx-auto space-y-12 md:space-y-24">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold mb-6">
@@ -129,9 +129,9 @@ const FeaturesSection = ({ openDialog }: FeaturesSectionProps) => {
         </div>
       </section>
 
-      <section className="py-20 bg-muted/30">
+      <section className="py-12 md:py-20 bg-muted/30">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 md:mb-16">
             Почему Док диалог
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -158,7 +158,7 @@ const FeaturesSection = ({ openDialog }: FeaturesSectionProps) => {
 
       <TestimonialsSection />
 
-      <section className="py-20">
+      <section className="py-12 md:py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
