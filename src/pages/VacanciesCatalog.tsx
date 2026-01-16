@@ -1,56 +1,83 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import Icon from '@/components/ui/icon';
-import { Link } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import MasseursFooter from '@/components/masseurs/MasseursFooter';
+import VacancyCard from '@/components/vacancies/VacancyCard';
+
+const VACANCIES_API_URL = 'https://functions.poehali.dev/9ec6649e-d672-475b-a0cf-04f3634699ed';
 
 interface Vacancy {
-  id: number;
-  salonName: string;
-  position: string;
-  salary: string;
-  schedule: string;
-  district: string;
-  requirements: string[];
-  description: string;
-  contacts: string;
+  id: string;
+  source: 'hh' | 'salon';
+  title: string;
+  compensationFrom?: number;
+  compensationTo?: number;
+  gross?: boolean;
+  companyName: string;
+  city?: string;
+  online?: boolean;
+  vacancyLink?: string;
+  companyLink?: string;
+  companyApproved?: boolean;
+  itAccreditation?: boolean;
+  withoutResume?: boolean;
+  companyLogo?: string;
+  metroStations?: string[];
+  workExperience?: string;
+  workSchedule?: string;
+  compensationFrequency?: string;
+  employerHhRating?: number;
+  employerItAccreditation?: boolean;
+  hrbrand?: string;
+  createdAt?: string;
+  requirements?: string[];
+  description?: string;
+  district?: string;
+  contacts?: string;
 }
 
-const mockVacancies: Vacancy[] = [
-  {
-    id: 1,
-    salonName: "Массажный салон «Гармония»",
-    position: "Массажист",
-    salary: "от 80 000 ₽",
-    schedule: "Полный день",
-    district: "Центральный",
-    requirements: ["Опыт от 1 года", "Сертификат массажиста", "Знание различных техник"],
-    description: "Ищем профессионального массажиста в команду. Дружный коллектив, современное оборудование, стабильный поток клиентов.",
-    contacts: "+7 (900) 123-45-67"
-  }
-];
-
 export default function VacanciesCatalog() {
-  const [vacancies] = useState<Vacancy[]>(mockVacancies);
+  const [vacancies, setVacancies] = useState<Vacancy[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [total, setTotal] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
-  const [districtFilter, setDistrictFilter] = useState('all');
+  const [cityFilter, setCityFilter] = useState('all');
   const [scheduleFilter, setScheduleFilter] = useState('all');
 
-  const filteredVacancies = vacancies.filter(vacancy => {
-    const matchesSearch = vacancy.salonName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         vacancy.position.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesDistrict = districtFilter === 'all' || vacancy.district === districtFilter;
-    const matchesSchedule = scheduleFilter === 'all' || vacancy.schedule === scheduleFilter;
+  const fetchVacancies = async () => {
+    setLoading(true);
     
-    return matchesSearch && matchesDistrict && matchesSchedule;
+    const params = new URLSearchParams();
+    if (searchQuery) params.append('search', searchQuery);
+    if (cityFilter && cityFilter !== 'all') params.append('city', cityFilter);
+    params.append('limit', '100');
+
+    const url = `${VACANCIES_API_URL}?${params.toString()}`;
+    
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      setVacancies(data.vacancies || []);
+      setTotal(data.total || 0);
+    } catch (error) {
+      console.error('Ошибка загрузки вакансий:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchVacancies();
+  }, [searchQuery, cityFilter]);
+
+  const filteredVacancies = vacancies.filter(vacancy => {
+    if (scheduleFilter === 'all') return true;
+    return vacancy.workSchedule === scheduleFilter;
   });
 
   return (
@@ -69,23 +96,29 @@ export default function VacanciesCatalog() {
           <Card className="mb-8">
             <CardContent className="pt-6">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="md:col-span-2">
+                <div className="md:col-span-2 relative">
+                  <Icon 
+                    name="Search" 
+                    size={20} 
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" 
+                  />
                   <Input
-                    placeholder="Поиск по названию салона или должности..."
+                    placeholder="Поиск по названию или компании..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full"
+                    className="w-full pl-10"
                   />
                 </div>
-                <Select value={districtFilter} onValueChange={setDistrictFilter}>
+                <Select value={cityFilter} onValueChange={setCityFilter}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Район" />
+                    <SelectValue placeholder="Город" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Все районы</SelectItem>
-                    <SelectItem value="Центральный">Центральный</SelectItem>
-                    <SelectItem value="Северный">Северный</SelectItem>
-                    <SelectItem value="Южный">Южный</SelectItem>
+                    <SelectItem value="all">Все города</SelectItem>
+                    <SelectItem value="Москва">Москва</SelectItem>
+                    <SelectItem value="Санкт-Петербург">Санкт-Петербург</SelectItem>
+                    <SelectItem value="Новосибирск">Новосибирск</SelectItem>
+                    <SelectItem value="Екатеринбург">Екатеринбург</SelectItem>
                   </SelectContent>
                 </Select>
                 <Select value={scheduleFilter} onValueChange={setScheduleFilter}>
@@ -100,125 +133,69 @@ export default function VacanciesCatalog() {
                   </SelectContent>
                 </Select>
               </div>
+              {(searchQuery || cityFilter !== 'all' || scheduleFilter !== 'all') && (
+                <div className="mt-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setSearchQuery('');
+                      setCityFilter('all');
+                      setScheduleFilter('all');
+                    }}
+                  >
+                    <Icon name="X" size={16} className="mr-1" />
+                    Сбросить фильтры
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
 
           <div className="mb-6 flex items-center justify-between">
             <p className="text-muted-foreground">
-              Найдено вакансий: <span className="font-semibold text-foreground">{filteredVacancies.length}</span>
+              Найдено вакансий: <span className="font-semibold text-foreground">{filteredVacancies.length}</span> из {total}
             </p>
           </div>
 
-          <div className="grid gap-6">
-            {filteredVacancies.map((vacancy) => (
-              <Card key={vacancy.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="text-2xl mb-2">{vacancy.position}</CardTitle>
-                      <p className="text-lg text-muted-foreground mb-3">{vacancy.salonName}</p>
-                      <div className="flex flex-wrap gap-2">
-                        <Badge variant="secondary" className="text-sm">
-                          <Icon name="MapPin" size={14} className="mr-1" />
-                          {vacancy.district}
-                        </Badge>
-                        <Badge variant="secondary" className="text-sm">
-                          <Icon name="Clock" size={14} className="mr-1" />
-                          {vacancy.schedule}
-                        </Badge>
-                        <Badge variant="default" className="text-sm bg-green-600">
-                          <Icon name="Wallet" size={14} className="mr-1" />
-                          {vacancy.salary}
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-semibold mb-2 flex items-center gap-2">
-                        <Icon name="FileText" size={18} />
-                        Описание
-                      </h4>
-                      <p className="text-muted-foreground">{vacancy.description}</p>
-                    </div>
-                    
-                    <div>
-                      <h4 className="font-semibold mb-2 flex items-center gap-2">
-                        <Icon name="CheckCircle" size={18} />
-                        Требования
-                      </h4>
-                      <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                        {vacancy.requirements.map((req, idx) => (
-                          <li key={idx}>{req}</li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div className="flex gap-3 pt-4">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button className="flex-1">
-                            <Icon name="Send" size={18} className="mr-2" />
-                            Откликнуться
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-md">
-                          <DialogHeader>
-                            <DialogTitle>Отклик на вакансию</DialogTitle>
-                            <DialogDescription>
-                              {vacancy.salonName} — {vacancy.position}
-                            </DialogDescription>
-                          </DialogHeader>
-                          <div className="space-y-4 py-4">
-                            <div>
-                              <Label htmlFor="name">Ваше имя</Label>
-                              <Input id="name" placeholder="Иван Иванов" />
-                            </div>
-                            <div>
-                              <Label htmlFor="phone">Телефон</Label>
-                              <Input id="phone" placeholder="+7 (900) 000-00-00" />
-                            </div>
-                            <div>
-                              <Label htmlFor="message">Сопроводительное письмо</Label>
-                              <Textarea 
-                                id="message" 
-                                placeholder="Расскажите о себе и своём опыте..."
-                                rows={4}
-                              />
-                            </div>
-                            <Button className="w-full">
-                              Отправить отклик
-                            </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                      
-                      <Button variant="outline" className="flex-1">
-                        <Icon name="Phone" size={18} className="mr-2" />
-                        {vacancy.contacts}
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-
-            {filteredVacancies.length === 0 && (
-              <Card>
-                <CardContent className="py-12 text-center">
-                  <Icon name="Search" size={48} className="mx-auto mb-4 text-muted-foreground" />
-                  <h3 className="text-xl font-semibold mb-2">Вакансии не найдены</h3>
-                  <p className="text-muted-foreground">
-                    Попробуйте изменить параметры поиска
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="text-center">
+                <div className="w-16 h-16 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-gray-600">Загрузка вакансий...</p>
+              </div>
+            </div>
+          ) : filteredVacancies.length === 0 ? (
+            <div className="text-center py-20">
+              <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon name="Briefcase" size={48} className="text-gray-400" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                Вакансии не найдены
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Попробуйте изменить параметры поиска
+              </p>
+              <Button
+                onClick={() => {
+                  setSearchQuery('');
+                  setCityFilter('all');
+                  setScheduleFilter('all');
+                }}
+              >
+                Сбросить фильтры
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {filteredVacancies.map((vacancy) => (
+                <VacancyCard key={vacancy.id} vacancy={vacancy} />
+              ))}
+            </div>
+          )}
         </div>
       </main>
+
       <MasseursFooter />
     </div>
   );

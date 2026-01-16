@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge";
 
 interface VacancyCardProps {
   vacancy: {
-    id: number;
+    id: string | number;
+    source?: 'hh' | 'salon';
     title: string;
     compensationFrom?: number;
     compensationTo?: number;
@@ -26,6 +27,10 @@ interface VacancyCardProps {
     employerItAccreditation?: boolean;
     hrbrand?: string;
     createdAt?: string;
+    requirements?: string[];
+    description?: string;
+    district?: string;
+    contacts?: string;
   };
 }
 
@@ -62,6 +67,8 @@ const VacancyCard = ({ vacancy }: VacancyCardProps) => {
     }
   };
 
+  const isSalonVacancy = vacancy.source === 'salon';
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all p-6">
       <div className="flex items-start gap-4 mb-4">
@@ -80,9 +87,17 @@ const VacancyCard = ({ vacancy }: VacancyCardProps) => {
         )}
 
         <div className="flex-1 min-w-0">
-          <h3 className="text-xl font-bold text-gray-900 mb-1 hover:text-blue-600 cursor-pointer">
-            {vacancy.title}
-          </h3>
+          <div className="flex items-start justify-between mb-1">
+            <h3 className="text-xl font-bold text-gray-900 hover:text-blue-600 cursor-pointer flex-1">
+              {vacancy.title}
+            </h3>
+            {isSalonVacancy && (
+              <Badge variant="secondary" className="text-xs bg-emerald-100 text-emerald-700 ml-2">
+                <Icon name="Building" size={12} className="mr-1" />
+                Салон
+              </Badge>
+            )}
+          </div>
           
           <div 
             onClick={handleCompanyClick}
@@ -158,21 +173,62 @@ const VacancyCard = ({ vacancy }: VacancyCardProps) => {
             </div>
           )}
 
+          {vacancy.description && (
+            <div className="mb-3 text-gray-600 text-sm">
+              {vacancy.description}
+            </div>
+          )}
+
+          {vacancy.requirements && vacancy.requirements.length > 0 && (
+            <div className="mb-3">
+              <h4 className="font-semibold mb-2 flex items-center gap-2 text-sm">
+                <Icon name="CheckCircle" size={16} />
+                Требования
+              </h4>
+              <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
+                {vacancy.requirements.map((req, idx) => (
+                  <li key={idx}>{req}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           <div className="flex items-center gap-3 pt-3">
-            <Button onClick={handleApply} size="lg" className="bg-emerald-600 hover:bg-emerald-700">
-              <Icon name="Send" size={18} className="mr-2" />
-              Откликнуться
-            </Button>
-            
-            {vacancy.vacancyLink && (
-              <Button 
-                variant="outline" 
-                size="lg"
-                onClick={() => window.open(vacancy.vacancyLink, '_blank')}
-              >
-                <Icon name="ExternalLink" size={18} className="mr-2" />
-                Подробнее
-              </Button>
+            {isSalonVacancy ? (
+              <>
+                <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700">
+                  <Icon name="Send" size={18} className="mr-2" />
+                  Откликнуться
+                </Button>
+                {vacancy.contacts && (
+                  <Button 
+                    variant="outline" 
+                    size="lg"
+                    onClick={() => window.open(`tel:${vacancy.contacts}`, '_self')}
+                  >
+                    <Icon name="Phone" size={18} className="mr-2" />
+                    Позвонить
+                  </Button>
+                )}
+              </>
+            ) : (
+              <>
+                <Button onClick={handleApply} size="lg" className="bg-emerald-600 hover:bg-emerald-700">
+                  <Icon name="Send" size={18} className="mr-2" />
+                  Откликнуться
+                </Button>
+                
+                {vacancy.vacancyLink && (
+                  <Button 
+                    variant="outline" 
+                    size="lg"
+                    onClick={() => window.open(vacancy.vacancyLink, '_blank')}
+                  >
+                    <Icon name="ExternalLink" size={18} className="mr-2" />
+                    Подробнее
+                  </Button>
+                )}
+              </>
             )}
           </div>
         </div>
