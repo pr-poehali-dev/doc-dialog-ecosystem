@@ -204,7 +204,7 @@ export default function VacanciesCatalog() {
             </div>
           ) : (
             <>
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {currentVacancies.map((vacancy) => (
                   <VacancyCard key={vacancy.id} vacancy={vacancy} />
                 ))}
