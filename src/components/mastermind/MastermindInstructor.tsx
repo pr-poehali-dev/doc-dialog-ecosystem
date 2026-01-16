@@ -2,12 +2,12 @@ import Icon from "@/components/ui/icon";
 
 const MastermindInstructor = () => {
   const credentials = [
-    "Практикующий остеопат с 17-летним опытом",
-    "10 лет частной практики",
-    "Член ассоциации остеопатов",
-    "Мануальный терапевт",
-    "Психолог, регрессолог",
-    "Специалист по работе с ВНС"
+    { text: "Практикующий остеопат с 17-летним опытом", link: null },
+    { text: "10 лет частной практики", link: null },
+    { text: "Член ассоциации остеопатов", link: "https://assotsiatsiya-osteopatov.ru/user/svodopianoff/" },
+    { text: "Мануальный терапевт", link: null },
+    { text: "Психолог, регрессолог", link: null },
+    { text: "Специалист по работе с ВНС", link: null }
   ];
 
   const expertise = [
@@ -49,7 +49,22 @@ const MastermindInstructor = () => {
                   {credentials.map((credential, index) => (
                     <div key={index} className="flex items-start gap-2">
                       <Icon name="Award" size={18} className="text-emerald-600 mt-1 flex-shrink-0" />
-                      <span className="text-gray-700">{credential}</span>
+                      {credential.link ? (
+                        <span className="text-gray-700">
+                          {credential.text.split('ассоциации')[0]}
+                          <a 
+                            href={credential.link} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-emerald-600 hover:text-emerald-700 underline font-medium"
+                          >
+                            ассоциации
+                          </a>
+                          {credential.text.split('ассоциации')[1]}
+                        </span>
+                      ) : (
+                        <span className="text-gray-700">{credential.text}</span>
+                      )}
                     </div>
                   ))}
                 </div>
