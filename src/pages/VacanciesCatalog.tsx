@@ -48,7 +48,7 @@ export default function VacanciesCatalog() {
   const [cityFilter, setCityFilter] = useState('all');
   const [scheduleFilter, setScheduleFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 21;
+  const itemsPerPage = 20;
 
   const fetchVacancies = async () => {
     setLoading(true);
