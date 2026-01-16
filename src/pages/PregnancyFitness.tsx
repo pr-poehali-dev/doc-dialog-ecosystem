@@ -7,6 +7,7 @@ import PregnancyPhilosophy from "@/components/pregnancy/PregnancyPhilosophy";
 import PregnancyPrograms from "@/components/pregnancy/PregnancyPrograms";
 import PregnancyBonuses from "@/components/pregnancy/PregnancyBonuses";
 import PregnancyResults from "@/components/pregnancy/PregnancyResults";
+import PregnancyReviews from "@/components/pregnancy/PregnancyReviews";
 import PregnancyCTA from "@/components/pregnancy/PregnancyCTA";
 
 const PregnancyFitness = () => {
@@ -20,6 +21,7 @@ const PregnancyFitness = () => {
       <PregnancyPrograms />
       <PregnancyBonuses />
       <PregnancyResults />
+      <PregnancyReviews />
       <PregnancyCTA />
       <SchoolsFooter />
     </div>
