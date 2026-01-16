@@ -15,7 +15,7 @@ const ArsenalCourseHero = () => {
       
       <div className="container mx-auto max-w-5xl relative z-10">
         <div className="text-center">
-          <div className="inline-block mb-4 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium">
+          <div className="inline-block mb-4 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium text-white">
             Онлайн-курс
           </div>
           
