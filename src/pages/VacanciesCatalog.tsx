@@ -47,6 +47,8 @@ export default function VacanciesCatalog() {
   const [searchQuery, setSearchQuery] = useState('');
   const [cityFilter, setCityFilter] = useState('all');
   const [scheduleFilter, setScheduleFilter] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 21;
 
   const fetchVacancies = async () => {
     setLoading(true);
@@ -73,12 +75,23 @@ export default function VacanciesCatalog() {
 
   useEffect(() => {
     fetchVacancies();
+    setCurrentPage(1);
   }, [searchQuery, cityFilter]);
 
   const filteredVacancies = vacancies.filter(vacancy => {
     if (scheduleFilter === 'all') return true;
     return vacancy.workSchedule === scheduleFilter;
   });
+
+  const totalPages = Math.ceil(filteredVacancies.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentVacancies = filteredVacancies.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
@@ -155,6 +168,9 @@ export default function VacanciesCatalog() {
           <div className="mb-6 flex items-center justify-between">
             <p className="text-muted-foreground">
               Найдено вакансий: <span className="font-semibold text-foreground">{filteredVacancies.length}</span> из {total}
+              {totalPages > 1 && (
+                <span className="ml-2">• Страница {currentPage} из {totalPages}</span>
+              )}
             </p>
           </div>
 
@@ -187,11 +203,55 @@ export default function VacanciesCatalog() {
               </Button>
             </div>
           ) : (
-            <div className="space-y-4">
-              {filteredVacancies.map((vacancy) => (
-                <VacancyCard key={vacancy.id} vacancy={vacancy} />
-              ))}
-            </div>
+            <>
+              <div className="space-y-4">
+                {currentVacancies.map((vacancy) => (
+                  <VacancyCard key={vacancy.id} vacancy={vacancy} />
+                ))}
+              </div>
+
+              {totalPages > 1 && (
+                <div className="mt-8 flex items-center justify-center gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    <Icon name="ChevronLeft" size={18} />
+                  </Button>
+
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                    if (
+                      page === 1 ||
+                      page === totalPages ||
+                      (page >= currentPage - 1 && page <= currentPage + 1)
+                    ) {
+                      return (
+                        <Button
+                          key={page}
+                          variant={currentPage === page ? 'default' : 'outline'}
+                          onClick={() => handlePageChange(page)}
+                          className={currentPage === page ? 'bg-blue-600 hover:bg-blue-700' : ''}
+                        >
+                          {page}
+                        </Button>
+                      );
+                    } else if (page === currentPage - 2 || page === currentPage + 2) {
+                      return <span key={page} className="px-2">...</span>;
+                    }
+                    return null;
+                  })}
+
+                  <Button
+                    variant="outline"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                  >
+                    <Icon name="ChevronRight" size={18} />
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </main>

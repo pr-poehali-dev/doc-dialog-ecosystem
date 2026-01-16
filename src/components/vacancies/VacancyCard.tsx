@@ -196,7 +196,7 @@ const VacancyCard = ({ vacancy }: VacancyCardProps) => {
           <div className="flex items-center gap-3 pt-3">
             {isSalonVacancy ? (
               <>
-                <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700">
+                <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
                   <Icon name="Send" size={18} className="mr-2" />
                   Откликнуться
                 </Button>
@@ -213,7 +213,7 @@ const VacancyCard = ({ vacancy }: VacancyCardProps) => {
               </>
             ) : (
               <>
-                <Button onClick={handleApply} size="lg" className="bg-emerald-600 hover:bg-emerald-700">
+                <Button onClick={handleApply} size="lg" className="bg-blue-600 hover:bg-blue-700">
                   <Icon name="Send" size={18} className="mr-2" />
                   Откликнуться
                 </Button>
