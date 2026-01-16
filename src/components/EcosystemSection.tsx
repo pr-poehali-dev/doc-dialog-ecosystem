@@ -8,14 +8,14 @@ const EcosystemSection = () => {
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 md:mb-16">
           Что входит в экосистему Док диалог
         </h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 max-w-7xl mx-auto">
           <Card id="education" className="hover:shadow-lg transition-all hover:scale-105">
-            <CardContent className="pt-6">
-              <div className="mb-4 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+            <CardContent className="pt-4 md:pt-6">
+              <div className="mb-3 md:mb-4 w-10 h-10 md:w-12 md:h-12 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Icon name="BookOpen" className="text-primary" size={24} />
               </div>
-              <h3 className="text-xl font-bold mb-3">Образование и курсы</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-bold mb-2 md:mb-3">Образование и курсы</h3>
+              <ul className="space-y-1.5 md:space-y-2 text-sm text-muted-foreground">
                 <li>Онлайн-курсы для новичков и практиков</li>
                 <li>Авторские программы партнёров</li>
                 <li>Повышение квалификации</li>
@@ -25,12 +25,12 @@ const EcosystemSection = () => {
           </Card>
 
           <Card id="tools" className="hover:shadow-lg transition-all hover:scale-105">
-            <CardContent className="pt-6">
-              <div className="mb-4 w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center">
+            <CardContent className="pt-4 md:pt-6">
+              <div className="mb-3 md:mb-4 w-10 h-10 md:w-12 md:h-12 rounded-lg bg-secondary/10 flex items-center justify-center">
                 <Icon name="Wrench" className="text-secondary" size={24} />
               </div>
-              <h3 className="text-xl font-bold mb-3">Инструменты специалиста</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-bold mb-2 md:mb-3">Инструменты специалиста</h3>
+              <ul className="space-y-1.5 md:space-y-2 text-sm text-muted-foreground">
                 <li>Чат-боты для расшифровки диагнозов</li>
                 <li>Работа с МРТ и заключениями</li>
                 <li>Подсказки по тактике работы с телом</li>
@@ -40,12 +40,12 @@ const EcosystemSection = () => {
           </Card>
 
           <Card id="community" className="hover:shadow-lg transition-all hover:scale-105">
-            <CardContent className="pt-6">
-              <div className="mb-4 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+            <CardContent className="pt-4 md:pt-6">
+              <div className="mb-3 md:mb-4 w-10 h-10 md:w-12 md:h-12 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Icon name="Users2" className="text-primary" size={24} />
               </div>
-              <h3 className="text-xl font-bold mb-3">Профессиональный рост</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-bold mb-2 md:mb-3">Профессиональный рост</h3>
+              <ul className="space-y-1.5 md:space-y-2 text-sm text-muted-foreground">
                 <li>Офлайн мастермайнды в Москве</li>
                 <li>Разборы кейсов и ситуаций</li>
                 <li>Живое общение с коллегами</li>
@@ -55,12 +55,12 @@ const EcosystemSection = () => {
           </Card>
 
           <Card id="jobs" className="hover:shadow-lg transition-all hover:scale-105">
-            <CardContent className="pt-6">
-              <div className="mb-4 w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center">
+            <CardContent className="pt-4 md:pt-6">
+              <div className="mb-3 md:mb-4 w-10 h-10 md:w-12 md:h-12 rounded-lg bg-secondary/10 flex items-center justify-center">
                 <Icon name="Briefcase" className="text-secondary" size={24} />
               </div>
-              <h3 className="text-xl font-bold mb-3">Работа и карьера</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-bold mb-2 md:mb-3">Работа и карьера</h3>
+              <ul className="space-y-1.5 md:space-y-2 text-sm text-muted-foreground">
                 <li>Вакансии от проверенных салонов</li>
                 <li>Подбор специалистов</li>
                 <li>Дообучение под стандарты</li>

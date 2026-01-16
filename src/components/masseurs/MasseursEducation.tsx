@@ -7,10 +7,10 @@ export default function MasseursEducation() {
   const navigate = useNavigate();
 
   return (
-    <section className="py-20 sm:py-24 lg:py-28 bg-gradient-to-b from-muted/30 to-primary/5">
+    <section className="py-12 md:py-20 lg:py-24 bg-gradient-to-b from-muted/30 to-primary/5">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center mb-12 sm:mb-16">
+          <div className="grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-center mb-8 md:mb-12">
             <div className="px-4 sm:px-0">
               <div className="inline-flex items-center gap-2 bg-primary/10 backdrop-blur-sm px-4 py-2 rounded-full mb-4 sm:mb-6 border border-primary/20">
                 <Icon name="Sparkles" className="text-primary" size={16} />
@@ -35,7 +35,7 @@ export default function MasseursEducation() {
             </div>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {[
               {
                 icon: "Heart",
@@ -74,7 +74,7 @@ export default function MasseursEducation() {
             ))}
           </div>
 
-          <div className="text-center mt-12">
+          <div className="text-center mt-8 md:mt-12">
             <Button 
               size="lg"
               onClick={() => navigate("/courses")}

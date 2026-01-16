@@ -118,10 +118,10 @@ const MedicalReportLanding = () => {
       </section>
 
       {/* Проблема пользователя с изображением */}
-      <section className="py-12 sm:py-16 bg-white">
+      <section className="py-8 md:py-12 lg:py-16 bg-white">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="max-w-5xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-8 sm:gap-12 items-center">
+            <div className="grid md:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-center">
               <div className="order-2 md:order-1">
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">
                   Медицинские заключения часто непонятны
@@ -148,7 +148,7 @@ const MedicalReportLanding = () => {
       </section>
 
       {/* Решение */}
-      <section className="py-16 bg-gradient-to-br from-slate-50 to-blue-50">
+      <section className="py-10 md:py-16 bg-gradient-to-br from-slate-50 to-blue-50">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
@@ -158,7 +158,7 @@ const MedicalReportLanding = () => {
               Вы загружаете медицинское заключение,
               а ИИ объясняет:
             </p>
-            <div className="grid gap-6">
+            <div className="grid gap-4 md:gap-6">
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
@@ -193,7 +193,7 @@ const MedicalReportLanding = () => {
       </section>
 
       {/* Как это работает с изображением */}
-      <section className="py-12 sm:py-16 bg-white">
+      <section className="py-8 md:py-12 lg:py-16 bg-white">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-12 text-center px-4">
@@ -313,7 +313,7 @@ const MedicalReportLanding = () => {
       </section>
 
       {/* К кому обращаться дальше */}
-      <section className="py-16 bg-gradient-to-br from-slate-50 to-blue-50">
+      <section className="py-10 md:py-16 bg-gradient-to-br from-slate-50 to-blue-50">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
@@ -336,7 +336,7 @@ const MedicalReportLanding = () => {
       </section>
 
       {/* Для кого подходит */}
-      <section className="py-12 sm:py-16 bg-white">
+      <section className="py-8 md:py-12 lg:py-16 bg-white">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 sm:mb-12 text-center px-4">
@@ -403,7 +403,7 @@ const MedicalReportLanding = () => {
       </section>
 
       {/* Пробный период */}
-      <section className="py-12 sm:py-16 bg-white">
+      <section className="py-8 md:py-12 lg:py-16 bg-white">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="max-w-3xl mx-auto">
             <div className="bg-gradient-to-br from-primary/5 to-indigo-50 rounded-2xl p-6 sm:p-8 md:p-12 border border-primary/20 text-center">
@@ -428,7 +428,7 @@ const MedicalReportLanding = () => {
       </section>
 
       {/* Связь с экосистемой */}
-      <section className="py-16 bg-gradient-to-br from-slate-50 to-blue-50">
+      <section className="py-10 md:py-16 bg-gradient-to-br from-slate-50 to-blue-50">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">

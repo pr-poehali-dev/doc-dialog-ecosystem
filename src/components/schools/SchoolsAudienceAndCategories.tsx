@@ -5,15 +5,15 @@ export default function SchoolsAudienceAndCategories() {
   return (
     <>
       {/* Target Audience Section */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-primary/5 to-muted/30">
+      <section className="py-10 md:py-16 lg:py-20 bg-gradient-to-b from-primary/5 to-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 sm:mb-16">
+          <div className="text-center mb-8 md:mb-12">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
               Кто приходит к школам через Док диалог
             </h2>
             <div className="w-20 h-1 bg-gradient-to-r from-primary/50 via-primary to-primary/50 mx-auto rounded-full"></div>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto mb-12">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 max-w-7xl mx-auto mb-8 md:mb-12">
             {[
               { icon: "Sparkles", title: "Начинающие массажисты", desc: "Ищут базовое обучение" },
               { icon: "UserCheck", title: "Практикующие специалисты", desc: "Хотят углубить знания" },
@@ -41,15 +41,15 @@ export default function SchoolsAudienceAndCategories() {
       </section>
 
       {/* Course Categories Section */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-muted/30 to-background">
+      <section className="py-10 md:py-16 lg:py-20 bg-gradient-to-b from-muted/30 to-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8 md:mb-12">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3">
               Не только массаж
             </h2>
             <p className="text-muted-foreground text-lg">Какие курсы можно размещать</p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto mb-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 max-w-7xl mx-auto mb-6 md:mb-8">
             {[
               { icon: "Heart", title: "Профессия и телесные практики" },
               { icon: "Briefcase", title: "Бизнес для массажистов" },

@@ -15,9 +15,9 @@ export default function SchoolsCasesAndFAQ() {
   return (
     <>
       {/* Success Cases Section */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-background to-primary/5">
+      <section className="py-10 md:py-16 lg:py-20 bg-gradient-to-b from-background to-primary/5">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 sm:mb-16">
+          <div className="text-center mb-8 md:mb-12">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
               Школы, которые уже с нами
             </h2>
@@ -128,7 +128,7 @@ export default function SchoolsCasesAndFAQ() {
             </div>
           </div>
           
-          <div className="text-center mt-12">
+          <div className="text-center mt-8 md:mt-12">
             <Button 
               size="lg" 
               onClick={() => navigate("/register/school")}
@@ -142,13 +142,13 @@ export default function SchoolsCasesAndFAQ() {
       </section>
 
       {/* LTV Section */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-primary/5 to-muted/30">
+      <section className="py-10 md:py-16 lg:py-20 bg-gradient-to-b from-primary/5 to-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto text-center">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-8">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 md:mb-8">
               Мы увеличиваем LTV ваших учеников
             </h2>
-            <p className="text-lg sm:text-xl text-muted-foreground mb-10 leading-relaxed">
+            <p className="text-lg sm:text-xl text-muted-foreground mb-6 md:mb-10 leading-relaxed">
               Массажист остаётся внутри экосистемы: он учится, работает, развивается и возвращается за новыми знаниями.
             </p>
             <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-8 sm:p-12 rounded-3xl shadow-xl border border-primary/20">
@@ -161,9 +161,9 @@ export default function SchoolsCasesAndFAQ() {
       </section>
 
       {/* Target Schools Section */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-primary/5 to-muted/30">
+      <section className="py-10 md:py-16 lg:py-20 bg-gradient-to-b from-primary/5 to-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8 md:mb-12">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3">
               Док диалог подойдёт, если вы:
             </h2>
@@ -192,7 +192,7 @@ export default function SchoolsCasesAndFAQ() {
       {/* Pricing Section */}
       <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-muted/30 to-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8 md:mb-12">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3">
               Тарифы для школ
             </h2>
@@ -289,7 +289,7 @@ export default function SchoolsCasesAndFAQ() {
       {/* FAQ Section */}
       <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-background to-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8 md:mb-12">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3">
               Частые вопросы
             </h2>

@@ -6,7 +6,7 @@ export default function ProfessionalHero() {
   const navigate = useNavigate();
 
   return (
-    <section className="relative py-20 sm:py-28 lg:py-36 overflow-hidden">
+    <section className="relative py-12 md:py-20 lg:py-28 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50"></div>
       <div 
         className="absolute inset-0 opacity-15"
@@ -24,15 +24,15 @@ export default function ProfessionalHero() {
             <span className="text-sm font-semibold text-gray-700">Док диалог для специалистов по телу</span>
           </div>
           
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent px-2">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 md:mb-6 leading-tight bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent px-2">
             Настрой диалог с собой
           </h1>
           
-          <p className="text-xl sm:text-2xl lg:text-3xl text-gray-700 mb-10 leading-relaxed px-4 max-w-4xl mx-auto font-medium">
+          <p className="text-xl sm:text-2xl lg:text-3xl text-gray-700 mb-6 md:mb-10 leading-relaxed px-4 max-w-4xl mx-auto font-medium">
             Экосистема для специалистов по телу, которые хотят расти профессионально, а не просто искать клиентов.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center items-center mb-8 md:mb-12">
             <Button 
               size="lg" 
               className="text-lg px-10 py-7 shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 w-full sm:w-auto"
@@ -52,7 +52,7 @@ export default function ProfessionalHero() {
             </Button>
           </div>
 
-          <div className="grid grid-cols-3 gap-6 sm:gap-8 max-w-3xl mx-auto">
+          <div className="grid grid-cols-3 gap-4 md:gap-6 lg:gap-8 max-w-3xl mx-auto">
             {[
               { number: "24/7", label: "AI Поддержка" },
               { number: "6+", label: "AI Инструментов" },

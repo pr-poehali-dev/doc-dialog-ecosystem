@@ -3,10 +3,10 @@ import Icon from "@/components/ui/icon";
 
 export default function MasseursTools() {
   return (
-    <section className="py-20 sm:py-24 lg:py-28 bg-gradient-to-b from-muted/30 to-white">
+    <section className="py-12 md:py-20 lg:py-24 bg-gradient-to-b from-muted/30 to-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12 sm:mb-16 px-4">
+          <div className="text-center mb-8 md:mb-12 px-4">
             <div className="inline-flex items-center gap-2 bg-primary/10 backdrop-blur-sm px-4 py-2 rounded-full mb-4 sm:mb-6 border border-primary/20">
               <Icon name="Zap" className="text-primary" size={16} />
               <span className="text-sm font-semibold text-primary">Эксклюзивные инструменты</span>
@@ -19,7 +19,7 @@ export default function MasseursTools() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6 mb-12">
+          <div className="grid md:grid-cols-2 gap-4 md:gap-6 mb-8 md:mb-12">
             {[
               {
                 icon: "User",

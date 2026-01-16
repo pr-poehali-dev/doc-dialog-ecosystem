@@ -53,12 +53,12 @@ export default function ProfessionalContent() {
   return (
     <>
       {/* Problem Section */}
-      <section className="py-20 lg:py-32 bg-gradient-to-b from-gray-50 to-white">
+      <section className="py-12 md:py-20 lg:py-24 bg-gradient-to-b from-gray-50 to-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="grid md:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-center">
               <div>
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-8 text-gray-900 leading-tight">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 md:mb-8 text-gray-900 leading-tight">
                   Специалист по телу часто остаётся один
                 </h2>
                 <div className="space-y-6 text-lg text-gray-600 mb-8">
@@ -94,10 +94,10 @@ export default function ProfessionalContent() {
       </section>
 
       {/* Three Dialogues */}
-      <section className="py-20 lg:py-32 bg-gradient-to-br from-white via-blue-50 to-purple-50">
+      <section className="py-12 md:py-20 lg:py-24 bg-gradient-to-br from-white via-blue-50 to-purple-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
+            <div className="text-center mb-8 md:mb-12 lg:mb-16">
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-gray-900">
                 Профессия начинается с диалога
               </h2>
@@ -106,7 +106,7 @@ export default function ProfessionalContent() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
               {benefits.map((benefit, index) => (
                 <Card key={index} className="border-2 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 bg-white">
                   <CardContent className="p-8">
@@ -124,10 +124,10 @@ export default function ProfessionalContent() {
       </section>
 
       {/* Professional Profile Section */}
-      <section className="py-20 lg:py-32 bg-gradient-to-b from-white to-gray-50">
+      <section className="py-12 md:py-20 lg:py-24 bg-gradient-to-b from-white to-gray-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
+            <div className="text-center mb-8 md:mb-12 lg:mb-16">
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-gray-900">
                 Ваш профиль — это не анкета
               </h2>
@@ -136,7 +136,7 @@ export default function ProfessionalContent() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8 mb-12">
+            <div className="grid md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 mb-8 md:mb-12">
               {features.map((feature, index) => (
                 <Card key={index} className={`bg-gradient-to-br ${feature.color} border-2 hover:shadow-xl transition-all duration-300 hover:-translate-y-1`}>
                   <CardContent className="p-8">
@@ -167,10 +167,10 @@ export default function ProfessionalContent() {
       </section>
 
       {/* Personal Landing Constructor */}
-      <section className="py-20 lg:py-32 bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50">
+      <section className="py-12 md:py-20 lg:py-24 bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-12">
+            <div className="text-center mb-8 md:mb-12">
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-gray-900">
                 Расскажите о себе так, как чувствуете
               </h2>
@@ -179,7 +179,7 @@ export default function ProfessionalContent() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <div className="grid md:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
               {['ваш подход к работе', 'профессиональный опыт', 'философия практики', 'удобное расположение'].map((item, index) => (
                 <Card key={index} className="border-2 hover:shadow-lg transition-all bg-white">
                   <CardContent className="p-6">
@@ -206,7 +206,7 @@ export default function ProfessionalContent() {
       <section className="py-20 lg:py-32 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
+            <div className="text-center mb-8 md:mb-12 lg:mb-16">
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-gray-900">
                 Автоматизация рутины
               </h2>

@@ -118,7 +118,7 @@ export default function ProfessionalAI() {
   }, [isPaused]);
 
   return (
-    <section className="py-20 lg:py-32 bg-gradient-to-b from-gray-900 to-gray-800 text-white relative overflow-hidden">
+    <section className="py-12 md:py-20 lg:py-24 bg-gradient-to-b from-gray-900 to-gray-800 text-white relative overflow-hidden">
       <div 
         className="absolute inset-0 opacity-10"
         style={{
@@ -129,7 +129,7 @@ export default function ProfessionalAI() {
       ></div>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8 md:mb-12 lg:mb-16">
             <div className="inline-flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full mb-6 shadow-xl">
               <Icon name="Sparkles" size={20} />
               <span className="font-semibold">Ядро экосистемы</span>
@@ -142,7 +142,7 @@ export default function ProfessionalAI() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12">
             {aiTools.map((tool, index) => (
               <Card key={index} className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105">
                 <CardContent className="p-6">
@@ -168,8 +168,8 @@ export default function ProfessionalAI() {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto mt-20">
-          <h3 className="text-3xl sm:text-4xl font-bold text-center mb-12">Отзывы специалистов</h3>
+        <div className="max-w-7xl mx-auto mt-12 md:mt-16 lg:mt-20">
+          <h3 className="text-3xl sm:text-4xl font-bold text-center mb-8 md:mb-12">Отзывы специалистов</h3>
           
           <div 
             ref={scrollRef}
@@ -178,7 +178,7 @@ export default function ProfessionalAI() {
             onMouseLeave={() => setIsPaused(false)}
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            <div className="flex gap-6 w-max">
+            <div className="flex gap-4 md:gap-6 w-max">
               {[...testimonials, ...testimonials].map((testimonial, index) => (
                 <Card 
                   key={index}

@@ -5,15 +5,15 @@ export default function SchoolsProblemsAndSolution() {
   return (
     <>
       {/* Problems Section */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-muted/30 to-background">
+      <section className="py-10 md:py-16 lg:py-20 bg-gradient-to-b from-muted/30 to-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 sm:mb-16">
+          <div className="text-center mb-8 md:mb-12">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
               Почему школам сложно стабильно продавать обучение
             </h2>
             <div className="w-20 h-1 bg-gradient-to-r from-primary/50 via-primary to-primary/50 mx-auto rounded-full"></div>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-7xl mx-auto">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 lg:gap-6 max-w-7xl mx-auto">
             {[
               { icon: "TrendingUp", text: "Реклама дорожает, а качество лидов падает", color: "destructive" },
               { icon: "UserX", text: "Ученик приходит один раз и не возвращается", color: "destructive" },
@@ -36,10 +36,10 @@ export default function SchoolsProblemsAndSolution() {
       </section>
 
       {/* Solution Section */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-background to-primary/5">
+      <section className="py-10 md:py-16 lg:py-20 bg-gradient-to-b from-background to-primary/5">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto">
-            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-12">
+            <div className="grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-center mb-8 md:mb-12">
               <div className="order-2 lg:order-1">
                 <img 
                   src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/7ed1562c-c801-4176-9ecc-e7b12074a8e7.jpg"
@@ -56,7 +56,7 @@ export default function SchoolsProblemsAndSolution() {
                 </p>
               </div>
             </div>
-            <div className="grid sm:grid-cols-3 gap-6 sm:gap-8">
+            <div className="grid sm:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
               {[
                 { icon: "Users", text: "Уже заинтересованная аудитория" },
                 { icon: "Shield", text: "Высокий уровень доверия" },

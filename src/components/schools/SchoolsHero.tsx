@@ -6,7 +6,7 @@ export default function SchoolsHero() {
   const navigate = useNavigate();
 
   return (
-    <section className="relative py-16 sm:py-24 lg:py-32 animate-fade-in overflow-hidden">
+    <section className="relative py-10 md:py-16 lg:py-24 animate-fade-in overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-blue-50/30"></div>
       <div 
         className="absolute inset-0 opacity-[0.15]"
@@ -19,13 +19,13 @@ export default function SchoolsHero() {
       ></div>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-5xl mx-auto text-center">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent animate-fade-in">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent animate-fade-in">
             Экосистема, которая приводит школам целевых учеников
           </h1>
-          <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground mb-8 leading-relaxed animate-fade-in [animation-delay:100ms] px-4">
+          <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground mb-6 md:mb-8 leading-relaxed animate-fade-in [animation-delay:100ms] px-4">
             Док диалог — профессиональная среда для массажистов, где обучение становится логичным шагом развития, а не импульсной покупкой.
           </p>
-          <div className="flex flex-wrap justify-center gap-4 sm:gap-6 lg:gap-8 mb-10 text-sm sm:text-base animate-fade-in [animation-delay:200ms]">
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 mb-6 md:mb-10 text-sm sm:text-base animate-fade-in [animation-delay:200ms]">
             <div className="flex items-center gap-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm">
               <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
                 <Icon name="Check" className="text-primary" size={16} />

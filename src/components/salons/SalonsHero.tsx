@@ -6,7 +6,7 @@ export default function SalonsHero() {
   const navigate = useNavigate();
 
   return (
-    <section className="relative py-20 sm:py-28 lg:py-36 animate-fade-in overflow-hidden">
+    <section className="relative py-12 md:py-20 lg:py-28 animate-fade-in overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-secondary/5"></div>
       <div 
         className="absolute inset-0 opacity-[0.08]"
@@ -24,15 +24,15 @@ export default function SalonsHero() {
             <span className="text-sm font-semibold text-secondary">Для салонов красоты и здоровья</span>
           </div>
           
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 sm:mb-7 leading-tight bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent animate-fade-in [animation-delay:100ms] px-2">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 md:mb-6 leading-tight bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent animate-fade-in [animation-delay:100ms] px-2">
             Найдите проверенных специалистов для вашего салона
           </h1>
           
-          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground mb-8 sm:mb-10 leading-relaxed animate-fade-in [animation-delay:200ms] px-4 max-w-4xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground mb-6 md:mb-8 leading-relaxed animate-fade-in [animation-delay:200ms] px-4 max-w-4xl mx-auto">
             Док диалог — база квалифицированных массажистов с подтверждённым образованием. Решаем проблему текучести кадров навсегда.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-10 sm:mb-12 animate-fade-in [animation-delay:300ms]">
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center items-center mb-6 md:mb-10 animate-fade-in [animation-delay:300ms]">
             <Button 
               size="lg" 
               className="text-base sm:text-lg px-8 sm:px-10 py-6 sm:py-7 shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-r from-secondary to-secondary/90 w-full sm:w-auto"
@@ -52,7 +52,7 @@ export default function SalonsHero() {
             </Button>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-3xl mx-auto animate-fade-in [animation-delay:400ms]">
+          <div className="grid grid-cols-3 gap-3 md:gap-4 lg:gap-6 max-w-3xl mx-auto animate-fade-in [animation-delay:400ms]">
             {[
               { number: "1000+", label: "Проверенных специалистов" },
               { number: "95%", label: "С сертификатами" },
