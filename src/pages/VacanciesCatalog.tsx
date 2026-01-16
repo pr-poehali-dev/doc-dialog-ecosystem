@@ -231,7 +231,8 @@ export default function VacanciesCatalog() {
                           key={page}
                           variant={currentPage === page ? 'default' : 'outline'}
                           onClick={() => handlePageChange(page)}
-                          className={currentPage === page ? 'bg-blue-600 hover:bg-blue-700' : ''}
+                          style={currentPage === page ? { backgroundColor: '#0da2e7' } : {}}
+                          className={currentPage === page ? 'hover:opacity-90' : ''}
                         >
                           {page}
                         </Button>
