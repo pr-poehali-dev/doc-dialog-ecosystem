@@ -91,6 +91,7 @@ import BrandCourse from "./pages/BrandCourse";
 import MastermindMoscow from "./pages/MastermindMoscow";
 import BasicsCourse from "./pages/BasicsCourse";
 import AdvancedCourse from "./pages/AdvancedCourse";
+import CorrectionCourse from "./pages/CorrectionCourse";
 
 const queryClient = new QueryClient();
 
@@ -155,6 +156,7 @@ const App = () => (
           <Route path="/mastermind-moscow" element={<MastermindMoscow />} />
           <Route path="/basics-course" element={<BasicsCourse />} />
           <Route path="/advanced-course" element={<AdvancedCourse />} />
+          <Route path="/correction-course" element={<CorrectionCourse />} />
           <Route path="/dashboard/public-profile" element={<PublicProfile />} />
           <Route path="/dashboard/clients" element={<ClientsCRM />} />
           <Route path="/dashboard/page-builder" element={<PageBuilder />} />
