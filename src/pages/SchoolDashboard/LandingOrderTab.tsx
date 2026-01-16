@@ -55,41 +55,49 @@ export default function LandingOrderTab() {
     setIsSubmitting(true);
 
     try {
-      const API_URL = 'https://functions.poehali.dev/3c603f9a-2c2c-49e8-a7c7-c4fa98866f4c';
+      const API_URL = 'https://functions.poehali.dev/21920113-c479-4edd-9a41-cf0b8a08f47c';
+      
+      const courseTypeText = form.courseType === 'course' ? 'Курс' : form.courseType === 'mastermind' ? 'Мастермайнд' : 'Очное обучение';
+      
+      const htmlContent = `
+        <h2 style="color: #667eea;">Новый заказ продающего лендинга</h2>
+        
+        <h3 style="color: #333; margin-top: 20px;">Информация о курсе:</h3>
+        <p><strong>Название:</strong> ${form.courseName}</p>
+        <p><strong>Тип:</strong> ${courseTypeText}</p>
+        <p><strong>Описание:</strong> ${form.description}</p>
+        <p><strong>Целевая аудитория:</strong> ${form.targetAudience}</p>
+        <p><strong>УТП:</strong> ${form.uniqueSellingPoints}</p>
+        <p><strong>Цена:</strong> ${form.price} ₽</p>
+        <p><strong>Длительность:</strong> ${form.courseDuration}</p>
+        
+        <h3 style="color: #333; margin-top: 20px;">Что получат студенты:</h3>
+        <p>${form.whatStudentsGet}</p>
+        
+        <h3 style="color: #333; margin-top: 20px;">Программа:</h3>
+        <p>${form.program}</p>
+        
+        <h3 style="color: #333; margin-top: 20px;">Автор/преподаватель:</h3>
+        <p><strong>Имя:</strong> ${form.authorName}</p>
+        <p><strong>Биография:</strong> ${form.authorBio}</p>
+        
+        <h3 style="color: #333; margin-top: 20px;">Контакты школы:</h3>
+        <p><strong>Название:</strong> ${form.schoolName}</p>
+        <p><strong>Email:</strong> ${form.contactEmail}</p>
+        <p><strong>Телефон:</strong> ${form.contactPhone}</p>
+        <p><strong>Ссылка на форму записи:</strong> ${form.externalFormUrl}</p>
+        
+        ${form.additionalInfo ? `<h3 style="color: #333; margin-top: 20px;">Дополнительная информация:</h3><p>${form.additionalInfo}</p>` : ''}
+      `;
       
       const emailData = {
         to: 'a.docdialog@mail.ru',
         subject: `Заказ лендинга: ${form.courseName}`,
-        html: `
-          <h2>Новый заказ продающего лендинга</h2>
-          
-          <h3>Информация о курсе:</h3>
-          <p><strong>Название:</strong> ${form.courseName}</p>
-          <p><strong>Тип:</strong> ${form.courseType === 'course' ? 'Курс' : form.courseType === 'mastermind' ? 'Мастермайнд' : 'Очное обучение'}</p>
-          <p><strong>Описание:</strong> ${form.description}</p>
-          <p><strong>Целевая аудитория:</strong> ${form.targetAudience}</p>
-          <p><strong>УТП:</strong> ${form.uniqueSellingPoints}</p>
-          <p><strong>Цена:</strong> ${form.price} ₽</p>
-          <p><strong>Длительность:</strong> ${form.courseDuration}</p>
-          
-          <h3>Что получат студенты:</h3>
-          <p>${form.whatStudentsGet}</p>
-          
-          <h3>Программа:</h3>
-          <p>${form.program}</p>
-          
-          <h3>Автор/преподаватель:</h3>
-          <p><strong>Имя:</strong> ${form.authorName}</p>
-          <p><strong>Биография:</strong> ${form.authorBio}</p>
-          
-          <h3>Контакты школы:</h3>
-          <p><strong>Название:</strong> ${form.schoolName}</p>
-          <p><strong>Email:</strong> ${form.contactEmail}</p>
-          <p><strong>Телефон:</strong> ${form.contactPhone}</p>
-          <p><strong>Ссылка на форму записи:</strong> ${form.externalFormUrl}</p>
-          
-          ${form.additionalInfo ? `<h3>Дополнительная информация:</h3><p>${form.additionalInfo}</p>` : ''}
-        `
+        template: 'notification',
+        data: {
+          title: 'Новый заказ лендинга',
+          message: htmlContent
+        }
       };
 
       const response = await fetch(API_URL, {
@@ -98,7 +106,10 @@ export default function LandingOrderTab() {
         body: JSON.stringify(emailData)
       });
 
-      if (!response.ok) throw new Error('Ошибка отправки');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Ошибка отправки');
+      }
 
       toast({
         title: '✅ Заявка отправлена!',
@@ -107,9 +118,10 @@ export default function LandingOrderTab() {
 
       setForm(INITIAL_FORM);
     } catch (error) {
+      console.error('Error submitting form:', error);
       toast({
         title: '❌ Ошибка',
-        description: 'Не удалось отправить заявку. Попробуйте позже',
+        description: error instanceof Error ? error.message : 'Не удалось отправить заявку. Попробуйте позже',
         variant: 'destructive'
       });
     } finally {
