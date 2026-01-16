@@ -76,9 +76,15 @@ export default function VisceraCourseResults() {
               Присоединяйтесь к курсу и освойте висцеральную терапию на профессиональном уровне
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="text-lg px-8 py-6 bg-white text-primary hover:bg-gray-100">
-                <Icon name="Play" size={20} className="mr-2" />
-                Записаться на курс
+              <Button 
+                size="lg" 
+                className="text-lg px-8 py-6 bg-white text-primary hover:bg-gray-100"
+                asChild
+              >
+                <a href="https://school.brossok.ru/buy/55" target="_blank" rel="noopener noreferrer">
+                  <Icon name="Play" size={20} className="mr-2" />
+                  Записаться на курс
+                </a>
               </Button>
               <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-2 border-white text-white hover:bg-white/10">
                 <Icon name="MessageCircle" size={20} className="mr-2" />
