@@ -1,4 +1,5 @@
-import Navigation from "@/components/Navigation";
+import SchoolsHeader from "@/components/schools/SchoolsHeader";
+import SchoolsFooter from "@/components/schools/SchoolsFooter";
 import ArsenalCourseHero from "@/components/course/ArsenalCourseHero";
 import ArsenalCourseAbout from "@/components/course/ArsenalCourseAbout";
 import ArsenalCourseAudience from "@/components/course/ArsenalCourseAudience";
@@ -8,12 +9,11 @@ import ArsenalCourseProgram from "@/components/course/ArsenalCourseProgram";
 import ArsenalCourseFormat from "@/components/course/ArsenalCourseFormat";
 import ArsenalCourseAdvantages from "@/components/course/ArsenalCourseAdvantages";
 import ArsenalCourseResults from "@/components/course/ArsenalCourseResults";
-import Footer from "@/components/Footer";
 
 const ArsenalCourse = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <Navigation />
+      <SchoolsHeader />
       <ArsenalCourseHero />
       <ArsenalCourseAbout />
       <ArsenalCourseAudience />
@@ -23,7 +23,7 @@ const ArsenalCourse = () => {
       <ArsenalCourseFormat />
       <ArsenalCourseAdvantages />
       <ArsenalCourseResults />
-      <Footer />
+      <SchoolsFooter />
     </div>
   );
 };
