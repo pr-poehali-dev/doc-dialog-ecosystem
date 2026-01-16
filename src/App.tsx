@@ -90,6 +90,7 @@ import ArsenalCourse from "./pages/ArsenalCourse";
 import BrandCourse from "./pages/BrandCourse";
 import MastermindMoscow from "./pages/MastermindMoscow";
 import BasicsCourse from "./pages/BasicsCourse";
+import AdvancedCourse from "./pages/AdvancedCourse";
 
 const queryClient = new QueryClient();
 
@@ -153,6 +154,7 @@ const App = () => (
           <Route path="/brand-course" element={<BrandCourse />} />
           <Route path="/mastermind-moscow" element={<MastermindMoscow />} />
           <Route path="/basics-course" element={<BasicsCourse />} />
+          <Route path="/advanced-course" element={<AdvancedCourse />} />
           <Route path="/dashboard/public-profile" element={<PublicProfile />} />
           <Route path="/dashboard/clients" element={<ClientsCRM />} />
           <Route path="/dashboard/page-builder" element={<PageBuilder />} />
