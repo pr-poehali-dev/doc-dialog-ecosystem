@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import Icon from '@/components/ui/icon';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import * as XLSX from 'xlsx';
 
 const IMPORT_URL = 'https://functions.poehali.dev/118c8db6-1484-4b84-8398-e7f4eb8ab9ee';
 
@@ -169,6 +170,71 @@ export default function ImportVacancies() {
     reader.readAsText(file, 'UTF-8');
   };
 
+  const handleXLSXUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setCsvParsing(true);
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const data = event.target?.result;
+        const workbook = XLSX.read(data, { type: 'binary' });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { 
+          raw: false,
+          defval: ''
+        });
+
+        if (jsonData.length === 0) {
+          throw new Error('Excel файл пустой');
+        }
+
+        const vacancies = jsonData.map((row: any) => {
+          const vacancy: any = {};
+
+          Object.keys(row).forEach((key) => {
+            const value = row[key]?.toString().trim() || '';
+            
+            if (key === 'compensationFrom' || key === 'compensationTo') {
+              vacancy[key] = value ? parseInt(value.replace(/\D/g, '')) : null;
+            } else if (key === 'gross' || key === 'online' || key === 'companyApproved' || 
+                       key === 'itAccreditation' || key === 'withoutResume' || 
+                       key === 'employer-it-accreditation') {
+              vacancy[key] = value.toLowerCase() === 'true' || value === '1' || value.toLowerCase() === 'да';
+            } else if (key === 'employer-hh-rating') {
+              vacancy[key] = value ? parseFloat(value.replace(',', '.')) : null;
+            } else {
+              vacancy[key] = value;
+            }
+          });
+
+          return vacancy;
+        }).filter((v: any) => v['Название'] && v['companyName']);
+
+        const jsonOutput = JSON.stringify({ vacancies }, null, 2);
+        setJsonData(jsonOutput);
+
+        toast({
+          title: 'Excel обработан',
+          description: `Распознано ${vacancies.length} вакансий`,
+        });
+      } catch (error: any) {
+        toast({
+          title: 'Ошибка парсинга Excel',
+          description: error.message,
+          variant: 'destructive',
+        });
+      } finally {
+        setCsvParsing(false);
+      }
+    };
+    reader.readAsBinaryString(file);
+  };
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -241,11 +307,28 @@ export default function ImportVacancies() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="xlsx-upload" className="flex items-center gap-2">
+                    <Icon name="FileSpreadsheet" size={18} className="text-green-600" />
+                    Загрузить Excel (XLSX)
+                  </Label>
+                  <Input
+                    id="xlsx-upload"
+                    type="file"
+                    accept=".xlsx,.xls"
+                    onChange={handleXLSXUpload}
+                    disabled={csvParsing}
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    {csvParsing ? 'Обрабатываю Excel...' : 'Excel файлы (.xlsx, .xls)'}
+                  </p>
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="csv-upload" className="flex items-center gap-2">
-                    <Icon name="FileSpreadsheet" size={18} className="text-emerald-600" />
-                    Загрузить CSV с HH.ru
+                    <Icon name="FileText" size={18} className="text-emerald-600" />
+                    Загрузить CSV/TSV
                   </Label>
                   <Input
                     id="csv-upload"
@@ -255,7 +338,7 @@ export default function ImportVacancies() {
                     disabled={csvParsing}
                   />
                   <p className="text-sm text-muted-foreground">
-                    {csvParsing ? 'Обрабатываю CSV...' : 'Автоматический парсинг CSV/TSV файлов'}
+                    {csvParsing ? 'Обрабатываю...' : 'Текстовые файлы CSV/TSV'}
                   </p>
                 </div>
 
@@ -271,7 +354,7 @@ export default function ImportVacancies() {
                     onChange={handleFileUpload}
                   />
                   <p className="text-sm text-muted-foreground">
-                    JSON файлы с готовыми данными
+                    JSON с готовыми данными
                   </p>
                 </div>
               </div>
@@ -396,7 +479,7 @@ export default function ImportVacancies() {
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <Icon name="FileSpreadsheet" size={20} className="text-emerald-600" />
-                      Импорт CSV с HH.ru
+                      Импорт из HH.ru
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -405,17 +488,19 @@ export default function ImportVacancies() {
                       <ol className="list-decimal list-inside space-y-1 ml-2">
                         <li>Откройте поиск вакансий на hh.ru</li>
                         <li>Настройте нужные фильтры</li>
-                        <li>Используйте расширение для экспорта в CSV/Excel</li>
-                        <li>Загрузите файл в эту форму</li>
+                        <li>Используйте расширение для экспорта</li>
+                        <li>Сохраните как Excel (.xlsx) или CSV</li>
+                        <li>Загрузите файл в форму выше</li>
                       </ol>
-                      <p className="text-xs text-muted-foreground mt-2">
-                        Поддерживаются файлы с разделителями: табуляция, запятая, точка с запятой
+                      <p className="text-xs font-semibold text-emerald-700 mt-3">
+                        Поддерживаемые форматы:
                       </p>
-                      <p className="text-xs font-semibold text-emerald-700 mt-2">
-                        ✓ Автоматическое определение формата<br/>
-                        ✓ Обработка кавычек и спецсимволов<br/>
-                        ✓ Преобразование типов данных
-                      </p>
+                      <ul className="text-xs space-y-1 ml-4">
+                        <li>✓ Excel (.xlsx, .xls) — рекомендуется</li>
+                        <li>✓ CSV с любым разделителем</li>
+                        <li>✓ TSV (табуляция)</li>
+                        <li>✓ Автоматическая кодировка UTF-8</li>
+                      </ul>
                     </div>
                   </CardContent>
                 </Card>
