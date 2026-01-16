@@ -10,7 +10,7 @@ const VNSHero = () => {
           alt="Регуляция ВНС"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/70 via-purple-600/70 to-blue-700/70"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/80 via-purple-600/80 to-blue-700/80"></div>
       </div>
       
       <div className="container mx-auto max-w-5xl relative z-10">
