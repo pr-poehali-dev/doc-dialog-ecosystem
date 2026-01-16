@@ -6,7 +6,8 @@ const PregnancyPhilosophy = () => {
     { icon: "Circle", text: "поддержка таза и ягодиц" },
     { icon: "ShieldCheck", text: "профилактика болей в спине" },
     { icon: "Heart", text: "улучшение кровообращения" },
-    { icon: "Wind", text: "работа с дыханием и нервной системой" }
+    { icon: "Wind", text: "работа с дыханием и нервной системой" },
+    { icon: "Smile", text: "снижение стресса и тревожности" }
   ];
 
   return (
