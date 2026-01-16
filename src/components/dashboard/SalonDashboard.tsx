@@ -222,9 +222,6 @@ export default function SalonDashboard() {
               <p className="text-sm text-gray-600">
                 Все карточки проходят модерацию, и как только каталог заработает — ваш салон автоматически появится в нём.
               </p>
-              <p className="text-sm text-gray-500 italic">
-                Мы собираем реальную базу салонов для качественного запуска каталога.
-              </p>
             </DialogDescription>
           </DialogHeader>
           <div className="flex gap-2">
