@@ -8,6 +8,7 @@ import ArsenalCourseBenefits from "@/components/course/ArsenalCourseBenefits";
 import ArsenalCourseProgram from "@/components/course/ArsenalCourseProgram";
 import ArsenalCourseFormat from "@/components/course/ArsenalCourseFormat";
 import ArsenalCourseAdvantages from "@/components/course/ArsenalCourseAdvantages";
+import ArsenalCourseReviews from "@/components/course/ArsenalCourseReviews";
 import ArsenalCourseResults from "@/components/course/ArsenalCourseResults";
 
 const ArsenalCourse = () => {
@@ -22,6 +23,7 @@ const ArsenalCourse = () => {
       <ArsenalCourseProgram />
       <ArsenalCourseFormat />
       <ArsenalCourseAdvantages />
+      <ArsenalCourseReviews />
       <ArsenalCourseResults />
       <SchoolsFooter />
     </div>

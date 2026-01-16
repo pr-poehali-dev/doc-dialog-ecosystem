@@ -8,6 +8,7 @@ import BrandCourseBenefits from "@/components/course/BrandCourseBenefits";
 import BrandCourseProgram from "@/components/course/BrandCourseProgram";
 import BrandCourseFormat from "@/components/course/BrandCourseFormat";
 import BrandCourseAdvantages from "@/components/course/BrandCourseAdvantages";
+import BrandCourseReviews from "@/components/course/BrandCourseReviews";
 import BrandCourseResults from "@/components/course/BrandCourseResults";
 
 const BrandCourse = () => {
@@ -22,6 +23,7 @@ const BrandCourse = () => {
       <BrandCourseProgram />
       <BrandCourseFormat />
       <BrandCourseAdvantages />
+      <BrandCourseReviews />
       <BrandCourseResults />
       <SchoolsFooter />
     </div>
