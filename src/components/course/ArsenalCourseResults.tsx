@@ -17,7 +17,7 @@ const ArsenalCourseResults = () => {
             className="text-lg px-8 py-6 bg-white text-primary hover:bg-gray-100"
             asChild
           >
-            <a href="https://school.brossok.ru/buy/55" target="_blank" rel="noopener noreferrer">
+            <a href="https://school.brossok.ru/buy/50" target="_blank" rel="noopener noreferrer">
               <Icon name="Play" size={20} className="mr-2" />
               Записаться на курс
             </a>
