@@ -26,6 +26,11 @@ const BrandCourseFormat = () => {
       icon: "FileCheck",
       title: "Итоговые работы по тарифам",
       description: "Проверка знаний и закрепление навыков"
+    },
+    {
+      icon: "Headphones",
+      title: "Поддержка и обратная связь",
+      description: "Помощь кураторов на протяжении всего обучения"
     }
   ];
 
