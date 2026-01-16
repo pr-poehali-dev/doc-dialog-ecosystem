@@ -4,7 +4,14 @@ import Icon from "@/components/ui/icon";
 const VNSHero = () => {
   return (
     <section className="relative pt-32 pb-20 px-4 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/95 via-purple-600/90 to-blue-700/95"></div>
+      <div className="absolute inset-0">
+        <img 
+          src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/792debd4-24e6-4d4c-b926-a60e2e2fa306.jpg" 
+          alt="Регуляция ВНС"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/70 via-purple-600/70 to-blue-700/70"></div>
+      </div>
       
       <div className="container mx-auto max-w-5xl relative z-10">
         <div className="text-center">
