@@ -10,7 +10,7 @@ const CorrectionHero = () => {
           alt="Коррекция фигуры"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-rose-600/70 via-pink-600/70 to-fuchsia-700/70"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-rose-600/50 via-pink-600/50 to-fuchsia-700/50"></div>
       </div>
       
       <div className="container mx-auto max-w-5xl relative z-10">
