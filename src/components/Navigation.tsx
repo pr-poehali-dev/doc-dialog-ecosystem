@@ -7,6 +7,7 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 interface NavigationProps {
   scrollToSection?: (id: string) => void;
@@ -17,6 +18,7 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
   const isHomePage = location.pathname === '/';
   const isLoggedIn = !!localStorage.getItem('token');
   const [isOpen, setIsOpen] = useState(false);
+  const [showCatalogInfo, setShowCatalogInfo] = useState(false);
   
   const userStr = localStorage.getItem('user');
   const isImpersonating = userStr ? JSON.parse(userStr).is_impersonating : false;
@@ -56,7 +58,7 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
     { label: "Специалисты", path: "/masseurs" },
     { label: "Вакансии", path: "/vacancies" },
     { label: "Курсы", path: "/courses" },
-    { label: "Центры", path: "/salons" },
+    { label: "Центры", path: "/salons", disabled: true },
     { label: "О платформе", path: "/about" },
   ];
 
@@ -93,13 +95,23 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
             ) : (
               <>
                 {(isLoggedIn ? loggedInMenuItems : otherPagesMenuItems).map((item, index) => (
-                  <Link
-                    key={index}
-                    to={item.path}
-                    className="text-sm font-medium hover:text-primary transition-colors"
-                  >
-                    {item.label}
-                  </Link>
+                  item.disabled ? (
+                    <button
+                      key={index}
+                      onClick={() => setShowCatalogInfo(true)}
+                      className="text-sm font-medium text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      {item.label}
+                    </button>
+                  ) : (
+                    <Link
+                      key={index}
+                      to={item.path}
+                      className="text-sm font-medium hover:text-primary transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  )
                 ))}
               </>
             )}
@@ -131,14 +143,27 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
                     ) : (
                       <>
                         {(isLoggedIn ? loggedInMenuItems : otherPagesMenuItems).map((item, index) => (
-                          <Link
-                            key={index}
-                            to={item.path}
-                            onClick={() => setIsOpen(false)}
-                            className="text-left py-3 px-4 text-base font-medium hover:bg-muted rounded-lg transition-colors"
-                          >
-                            {item.label}
-                          </Link>
+                          item.disabled ? (
+                            <button
+                              key={index}
+                              onClick={() => {
+                                setIsOpen(false);
+                                setShowCatalogInfo(true);
+                              }}
+                              className="text-left py-3 px-4 text-base font-medium text-gray-400 hover:bg-muted rounded-lg transition-colors"
+                            >
+                              {item.label}
+                            </button>
+                          ) : (
+                            <Link
+                              key={index}
+                              to={item.path}
+                              onClick={() => setIsOpen(false)}
+                              className="text-left py-3 px-4 text-base font-medium hover:bg-muted rounded-lg transition-colors"
+                            >
+                              {item.label}
+                            </Link>
+                          )
                         ))}
                       </>
                     )}
@@ -212,6 +237,43 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
           </div>
         </div>
       </div>
+
+      <Dialog open={showCatalogInfo} onOpenChange={setShowCatalogInfo}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Icon name="Store" size={24} className="text-primary" />
+              Каталог салонов
+            </DialogTitle>
+            <DialogDescription className="text-left space-y-3 pt-4">
+              <p className="text-base text-gray-700">
+                Каталог салонов временно находится в разработке и скоро будет запущен.
+              </p>
+              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+                <p className="text-sm text-emerald-800 font-medium mb-2">
+                  ✓ Если вы владелец салона:
+                </p>
+                <ul className="text-sm text-emerald-700 space-y-1 list-disc list-inside">
+                  <li>Оформляйте и отправляйте карточку на модерацию</li>
+                  <li>Размещайте вакансии массажистов</li>
+                  <li>Обновляйте информацию о салоне</li>
+                </ul>
+              </div>
+              <p className="text-sm text-gray-600">
+                Все карточки проходят модерацию, и как только каталог заработает — ваш салон автоматически появится в нём.
+              </p>
+              <p className="text-sm text-gray-500 italic">
+                Мы собираем реальную базу салонов для качественного запуска каталога.
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-2">
+            <Button onClick={() => setShowCatalogInfo(false)} className="flex-1">
+              Понятно
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </nav>
   );
 };

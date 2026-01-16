@@ -22,6 +22,7 @@ export default function SalonDashboard() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [showCatalogInfo, setShowCatalogInfo] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -174,18 +175,65 @@ export default function SalonDashboard() {
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100">
-        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
-          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-            <Icon name="Store" className="text-primary" size={20} />
-          </div>
-          <h3 className="text-lg md:text-xl font-semibold">Каталог салонов</h3>
+      <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 relative">
+        <div className="absolute top-3 right-3">
+          <Badge variant="secondary" className="bg-amber-100 text-amber-700">
+            Временно
+          </Badge>
         </div>
-        <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Смотреть салоны в каталоге</p>
-        <Link to="/salons">
-          <Button className="w-full">Перейти в каталог</Button>
-        </Link>
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Store" className="text-gray-400" size={20} />
+          </div>
+          <h3 className="text-lg md:text-xl font-semibold text-gray-400">Каталог салонов</h3>
+        </div>
+        <p className="text-sm md:text-base text-gray-500 mb-3 md:mb-4">Каталог временно в разработке</p>
+        <Button 
+          className="w-full" 
+          variant="outline"
+          onClick={() => setShowCatalogInfo(true)}
+        >
+          <Icon name="Info" size={18} className="mr-2" />
+          Подробнее
+        </Button>
       </div>
+
+      <Dialog open={showCatalogInfo} onOpenChange={setShowCatalogInfo}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Icon name="Store" size={24} className="text-primary" />
+              Каталог салонов
+            </DialogTitle>
+            <DialogDescription className="text-left space-y-3 pt-4">
+              <p className="text-base text-gray-700">
+                Каталог салонов временно находится в разработке и скоро будет запущен.
+              </p>
+              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+                <p className="text-sm text-emerald-800 font-medium mb-2">
+                  ✓ Вы можете продолжать работу с карточкой салона:
+                </p>
+                <ul className="text-sm text-emerald-700 space-y-1 list-disc list-inside">
+                  <li>Оформляйте и отправляйте карточку на модерацию</li>
+                  <li>Размещайте вакансии массажистов</li>
+                  <li>Обновляйте информацию о салоне</li>
+                </ul>
+              </div>
+              <p className="text-sm text-gray-600">
+                Все карточки проходят модерацию, и как только каталог заработает — ваш салон автоматически появится в нём.
+              </p>
+              <p className="text-sm text-gray-500 italic">
+                Мы собираем реальную базу салонов для качественного запуска каталога.
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-2">
+            <Button onClick={() => setShowCatalogInfo(false)} className="flex-1">
+              Понятно
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100">
         <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
