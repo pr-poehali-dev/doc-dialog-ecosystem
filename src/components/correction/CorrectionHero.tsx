@@ -4,7 +4,14 @@ import Icon from "@/components/ui/icon";
 const CorrectionHero = () => {
   return (
     <section className="relative pt-32 pb-20 px-4 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-rose-600/95 via-pink-600/90 to-fuchsia-700/95"></div>
+      <div className="absolute inset-0">
+        <img 
+          src="https://cdn.poehali.dev/files/masseur-doing-manual-massage-client-spa-beauty-salon-using-oil.jpg" 
+          alt="Коррекция фигуры"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-rose-600/70 via-pink-600/70 to-fuchsia-700/70"></div>
+      </div>
       
       <div className="container mx-auto max-w-5xl relative z-10">
         <div className="text-center">
