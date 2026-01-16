@@ -1,0 +1,42 @@
+{
+  "tests": [
+    {
+      "name": "Test GET orders",
+      "method": "GET",
+      "path": "/",
+      "headers": {
+        "X-Authorization": "Bearer 1"
+      },
+      "expectedStatus": 200,
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Test POST order",
+      "method": "POST",
+      "path": "/",
+      "headers": {
+        "X-Authorization": "Bearer 1"
+      },
+      "body": {
+        "courseName": "Test Course",
+        "courseType": "course",
+        "description": "Test description",
+        "targetAudience": "Test audience",
+        "uniqueSellingPoints": "Test USP",
+        "price": "1000",
+        "courseDuration": "1 month",
+        "whatStudentsGet": "Test results",
+        "program": "Test program",
+        "authorName": "Test Author",
+        "authorBio": "Test bio",
+        "schoolName": "Test School",
+        "contactEmail": "test@test.com",
+        "contactPhone": "+7 123 456 7890",
+        "externalFormUrl": "https://test.com",
+        "additionalInfo": "Test info"
+      },
+      "expectedStatus": 200,
+      "bodyMatcher": "partial"
+    }
+  ]
+}
