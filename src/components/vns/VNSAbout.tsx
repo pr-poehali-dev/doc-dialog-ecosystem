@@ -28,10 +28,10 @@ const VNSAbout = () => {
         </p>
 
         <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-8 rounded-2xl">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4 text-center">Курс основан на:</h3>
-          <div className="space-y-3">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Курс основан на:</h3>
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {features.map((feature, index) => (
-              <div key={index} className="flex items-center gap-3 justify-center">
+              <div key={index} className="flex items-center gap-3">
                 <Icon name="CheckCircle2" size={24} className="text-indigo-600 flex-shrink-0" />
                 <span className="text-lg text-gray-800">{feature}</span>
               </div>
