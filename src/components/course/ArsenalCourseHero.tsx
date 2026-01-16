@@ -3,8 +3,15 @@ import Icon from "@/components/ui/icon";
 
 const ArsenalCourseHero = () => {
   return (
-    <section className="relative pt-32 pb-20 px-4 bg-gradient-to-br from-primary via-purple-600 to-indigo-700 text-white overflow-hidden">
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLW9wYWNpdHk9Ii4wNSIvPjwvZz48L3N2Zz4=')] opacity-30"></div>
+    <section className="relative pt-32 pb-20 px-4 overflow-hidden">
+      <div className="absolute inset-0">
+        <img 
+          src="https://cdn.poehali.dev/files/doctor-massages-man-hospital.jpg" 
+          alt="Профессиональный массаж" 
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-purple-600/85 to-indigo-700/90"></div>
+      </div>
       
       <div className="container mx-auto max-w-5xl relative z-10">
         <div className="text-center">
