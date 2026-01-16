@@ -92,6 +92,7 @@ import MastermindMoscow from "./pages/MastermindMoscow";
 import BasicsCourse from "./pages/BasicsCourse";
 import AdvancedCourse from "./pages/AdvancedCourse";
 import CorrectionCourse from "./pages/CorrectionCourse";
+import VNSCourse from "./pages/VNSCourse";
 
 const queryClient = new QueryClient();
 
@@ -189,6 +190,7 @@ const App = () => (
           <Route path="/admin/import-specialists" element={<ImportSpecialists />} />
           <Route path="/admin/imported-specialists" element={<ImportedSpecialists />} />
           <Route path="/admin/import-salons" element={<ImportSalons />} />
+          <Route path="/vns-course" element={<VNSCourse />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="*" element={<NotFound />} />
