@@ -6,6 +6,7 @@ import CorrectionAudience from "@/components/correction/CorrectionAudience";
 import CorrectionSkills from "@/components/correction/CorrectionSkills";
 import CorrectionProgram from "@/components/correction/CorrectionProgram";
 import CorrectionResults from "@/components/correction/CorrectionResults";
+import CorrectionReviews from "@/components/correction/CorrectionReviews";
 import CorrectionCTA from "@/components/correction/CorrectionCTA";
 
 const CorrectionCourse = () => {
@@ -18,6 +19,7 @@ const CorrectionCourse = () => {
       <CorrectionSkills />
       <CorrectionProgram />
       <CorrectionResults />
+      <CorrectionReviews />
       <CorrectionCTA />
       <SchoolsFooter />
     </div>
