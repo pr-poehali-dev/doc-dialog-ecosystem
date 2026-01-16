@@ -8,6 +8,7 @@ import AdvancedMassageResults from "@/components/advanced/AdvancedMassageResults
 import AdvancedMassageProgram from "@/components/advanced/AdvancedMassageProgram";
 import AdvancedMassageFormat from "@/components/advanced/AdvancedMassageFormat";
 import AdvancedMassageAdvantages from "@/components/advanced/AdvancedMassageAdvantages";
+import AdvancedMassageReviews from "@/components/advanced/AdvancedMassageReviews";
 import AdvancedMassageCTA from "@/components/advanced/AdvancedMassageCTA";
 
 const AdvancedCourse = () => {
@@ -22,6 +23,7 @@ const AdvancedCourse = () => {
       <AdvancedMassageProgram />
       <AdvancedMassageFormat />
       <AdvancedMassageAdvantages />
+      <AdvancedMassageReviews />
       <AdvancedMassageCTA />
       <SchoolsFooter />
     </div>
