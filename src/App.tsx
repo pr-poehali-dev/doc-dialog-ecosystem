@@ -88,6 +88,7 @@ import AccountSettings from "./pages/dashboard/AccountSettings";
 import VisceraCourse from "./pages/VisceraCourse";
 import ArsenalCourse from "./pages/ArsenalCourse";
 import BrandCourse from "./pages/BrandCourse";
+import MastermindMoscow from "./pages/MastermindMoscow";
 
 const queryClient = new QueryClient();
 
@@ -149,6 +150,7 @@ const App = () => (
           <Route path="/viscera-course" element={<VisceraCourse />} />
           <Route path="/arsenal-course" element={<ArsenalCourse />} />
           <Route path="/brand-course" element={<BrandCourse />} />
+          <Route path="/mastermind-moscow" element={<MastermindMoscow />} />
           <Route path="/dashboard/public-profile" element={<PublicProfile />} />
           <Route path="/dashboard/clients" element={<ClientsCRM />} />
           <Route path="/dashboard/page-builder" element={<PageBuilder />} />
