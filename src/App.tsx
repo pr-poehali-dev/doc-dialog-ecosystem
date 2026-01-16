@@ -86,6 +86,7 @@ import VacanciesCatalog from "./pages/VacanciesCatalog";
 import Premium from "./pages/Premium";
 import AccountSettings from "./pages/dashboard/AccountSettings";
 import VisceraCourse from "./pages/VisceraCourse";
+import ArsenalCourse from "./pages/ArsenalCourse";
 
 const queryClient = new QueryClient();
 
@@ -145,6 +146,7 @@ const App = () => (
           <Route path="/vacancies" element={<VacanciesCatalog />} />
           <Route path="/premium" element={<Premium />} />
           <Route path="/viscera-course" element={<VisceraCourse />} />
+          <Route path="/arsenal-course" element={<ArsenalCourse />} />
           <Route path="/dashboard/public-profile" element={<PublicProfile />} />
           <Route path="/dashboard/clients" element={<ClientsCRM />} />
           <Route path="/dashboard/page-builder" element={<PageBuilder />} />
