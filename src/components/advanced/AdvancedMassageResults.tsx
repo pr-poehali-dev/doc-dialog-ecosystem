@@ -6,7 +6,8 @@ const AdvancedMassageResults = () => {
     { icon: "Smile", title: "Клиенты чувствуют облегчение уже во время сеанса" },
     { icon: "Activity", title: "Улучшается подвижность, дыхание, осанка" },
     { icon: "Sparkles", title: "Работа становится глубже и «чище»" },
-    { icon: "TrendingUp", title: "Повышается средний чек и доверие клиентов" }
+    { icon: "TrendingUp", title: "Повышается средний чек и доверие клиентов" },
+    { icon: "Heart", title: "Появляется возможность помогать сложным клиентам" }
   ];
 
   return (
