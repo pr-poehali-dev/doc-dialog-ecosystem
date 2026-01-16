@@ -78,22 +78,22 @@ export default function VisceraCourseAbout() {
           <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
             <div className="rounded-2xl overflow-hidden shadow-lg">
               <img 
-                src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/78f8621d-0ff5-486d-b0e7-679188b17ba2.jpg" 
-                alt="Висцеральная терапия" 
+                src="https://cdn.poehali.dev/files/close-up-abdomen-massage-concept.jpg" 
+                alt="Висцеральная терапия живота" 
                 className="w-full h-64 object-cover"
               />
             </div>
             <div className="rounded-2xl overflow-hidden shadow-lg">
               <img 
-                src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/ad4157c1-c115-499f-b544-ab00513370f1.jpg" 
-                alt="Обучение висцеральной терапии" 
+                src="https://cdn.poehali.dev/files/hands-massaging-female-abdomen-therapist-applying-pressure-belly (2).jpg" 
+                alt="Массаж внутренних органов" 
                 className="w-full h-64 object-cover"
               />
             </div>
             <div className="rounded-2xl overflow-hidden shadow-lg">
               <img 
-                src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/46e0c9cb-0a4b-4469-810d-1c2d917db915.jpg" 
-                alt="Практика висцеральной терапии" 
+                src="https://cdn.poehali.dev/files/pretty-young-brunette-getting-lymphatic-massage-her-belly-healthy-beauty-spa-clinic.jpg" 
+                alt="Лимфодренажный массаж живота" 
                 className="w-full h-64 object-cover"
               />
             </div>
