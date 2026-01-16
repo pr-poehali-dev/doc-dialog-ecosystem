@@ -3,8 +3,17 @@ import Icon from "@/components/ui/icon";
 
 export default function VisceraCourseHero() {
   return (
-    <section className="relative bg-gradient-to-br from-primary/[0.03] via-purple-500/[0.03] to-primary/[0.06] pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden">
-      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+    <section className="relative bg-gradient-to-br from-slate-50 via-slate-100/30 to-slate-50 pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden">
+      {/* Background image with overlay */}
+      <div 
+        className="absolute inset-0 opacity-[0.15]"
+        style={{
+          backgroundImage: `url('https://cdn.poehali.dev/files/hands-massaging-female-abdomen-therapist-applying-pressure-belly (1).jpg')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      ></div>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-6">
