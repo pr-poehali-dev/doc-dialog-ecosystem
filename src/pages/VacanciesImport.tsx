@@ -42,18 +42,18 @@ const VacanciesImport = () => {
   const [vacancies, setVacancies] = useState<Vacancy[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [cityFilter, setCityFilter] = useState("");
-  const [experienceFilter, setExperienceFilter] = useState("");
-  const [onlineFilter, setOnlineFilter] = useState("");
+  const [cityFilter, setCityFilter] = useState("all");
+  const [experienceFilter, setExperienceFilter] = useState("all");
+  const [onlineFilter, setOnlineFilter] = useState("all");
   const [total, setTotal] = useState(0);
 
   const fetchVacancies = async () => {
     setLoading(true);
     
     const params = new URLSearchParams();
-    if (cityFilter) params.append('city', cityFilter);
-    if (experienceFilter) params.append('workExperience', experienceFilter);
-    if (onlineFilter) params.append('online', onlineFilter);
+    if (cityFilter && cityFilter !== 'all') params.append('city', cityFilter);
+    if (experienceFilter && experienceFilter !== 'all') params.append('workExperience', experienceFilter);
+    if (onlineFilter && onlineFilter !== 'all') params.append('online', onlineFilter);
     params.append('limit', '50');
 
     const url = `${VACANCIES_LIST_URL}?${params.toString()}`;
@@ -122,7 +122,7 @@ const VacanciesImport = () => {
                   <SelectValue placeholder="Все города" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Все города</SelectItem>
+                  <SelectItem value="all">Все города</SelectItem>
                   <SelectItem value="Москва">Москва</SelectItem>
                   <SelectItem value="Санкт-Петербург">Санкт-Петербург</SelectItem>
                   <SelectItem value="Новосибирск">Новосибирск</SelectItem>
@@ -140,7 +140,7 @@ const VacanciesImport = () => {
                   <SelectValue placeholder="Любой опыт" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Любой опыт</SelectItem>
+                  <SelectItem value="all">Любой опыт</SelectItem>
                   <SelectItem value="Нет опыта">Нет опыта</SelectItem>
                   <SelectItem value="От 1 до 3 лет">От 1 до 3 лет</SelectItem>
                   <SelectItem value="От 3 до 6 лет">От 3 до 6 лет</SelectItem>
@@ -158,7 +158,7 @@ const VacanciesImport = () => {
                   <SelectValue placeholder="Любой формат" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Любой формат</SelectItem>
+                  <SelectItem value="all">Любой формат</SelectItem>
                   <SelectItem value="true">Удалённо</SelectItem>
                   <SelectItem value="false">В офисе</SelectItem>
                 </SelectContent>
@@ -166,16 +166,16 @@ const VacanciesImport = () => {
             </div>
           </div>
 
-          {(searchQuery || cityFilter || experienceFilter || onlineFilter) && (
+          {(searchQuery || cityFilter !== 'all' || experienceFilter !== 'all' || onlineFilter !== 'all') && (
             <div className="mt-4 flex items-center gap-2">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => {
                   setSearchQuery("");
-                  setCityFilter("");
-                  setExperienceFilter("");
-                  setOnlineFilter("");
+                  setCityFilter("all");
+                  setExperienceFilter("all");
+                  setOnlineFilter("all");
                 }}
               >
                 <Icon name="X" size={16} className="mr-1" />
@@ -206,9 +206,9 @@ const VacanciesImport = () => {
             <Button
               onClick={() => {
                 setSearchQuery("");
-                setCityFilter("");
-                setExperienceFilter("");
-                setOnlineFilter("");
+                setCityFilter("all");
+                setExperienceFilter("all");
+                setOnlineFilter("all");
               }}
             >
               Сбросить фильтры
