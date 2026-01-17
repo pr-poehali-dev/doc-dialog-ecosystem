@@ -96,6 +96,8 @@ import AdvancedCourse from "./pages/AdvancedCourse";
 import CorrectionCourse from "./pages/CorrectionCourse";
 import VNSCourse from "./pages/VNSCourse";
 import PregnancyFitness from "./pages/PregnancyFitness";
+import InvestorPresentation from "./pages/InvestorPresentation";
+import PremiumPresentation from "./pages/PremiumPresentation";
 
 const queryClient = new QueryClient();
 
@@ -197,6 +199,8 @@ const App = () => (
           <Route path="/admin/import-vacancies" element={<ImportVacancies />} />
           <Route path="/vns-course" element={<VNSCourse />} />
           <Route path="/pregnancy-fitness" element={<PregnancyFitness />} />
+          <Route path="/investor-presentation" element={<InvestorPresentation />} />
+          <Route path="/premium-presentation" element={<PremiumPresentation />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="*" element={<NotFound />} />
