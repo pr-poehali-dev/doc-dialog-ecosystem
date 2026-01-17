@@ -1,8 +1,12 @@
 User-agent: *
 Allow: /
 Disallow: /dashboard/
+Disallow: /school-dashboard/
+Disallow: /salon-dashboard/
 Disallow: /admin/
-Disallow: /profile/edit
+Disallow: /profile/
+Disallow: /settings/
+Disallow: /auth/
 Disallow: /register/
 Disallow: /login
 Disallow: /forgot-password
@@ -12,17 +16,23 @@ Sitemap: https://docdialog.su/sitemap.xml
 User-agent: Yandex
 Allow: /
 Disallow: /dashboard/
+Disallow: /school-dashboard/
+Disallow: /salon-dashboard/
 Disallow: /admin/
 Crawl-delay: 0.5
 
 User-agent: Googlebot
 Allow: /
 Disallow: /dashboard/
+Disallow: /school-dashboard/
+Disallow: /salon-dashboard/
 Disallow: /admin/
 
 User-agent: Bingbot
 Allow: /
 Disallow: /dashboard/
+Disallow: /school-dashboard/
+Disallow: /salon-dashboard/
 Disallow: /admin/
 
 User-agent: Twitterbot
