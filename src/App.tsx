@@ -1,4 +1,4 @@
-
+import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -6,98 +6,99 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SEOManager from "@/components/SEOManager";
 import Index from "./pages/Index";
-import About from "./pages/About";
-import Pricing from "./pages/Pricing";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import ForgotPassword from "./pages/ForgotPassword";
-import RegisterMasseur from "./pages/RegisterMasseur";
-import RegisterSchool from "./pages/RegisterSchool";
-import RegisterSalon from "./pages/RegisterSalon";
-import RegisterClient from "./pages/RegisterClient";
-import Dashboard from "./pages/Dashboard";
-import MasseursDirectory from "./pages/MasseursDirectory";
-import MasseurProfile from "./pages/MasseurProfile";
-import ProfileEdit from "./pages/ProfileEdit";
-import AdminPanel from "./pages/AdminPanel";
-import SchoolDashboard from "./pages/SchoolDashboard";
-import CoursesCatalog from "./pages/CoursesCatalog";
-import CoursePage from "./pages/CoursePage";
-import MastermindPage from "./pages/MastermindPage";
-import CourseLandingEditor from "./pages/CourseLandingEditor";
-import CourseLandingPublic from "./pages/CourseLandingPublic";
-import CourseLandingBuilder from "./pages/CourseLandingBuilder";
-import CoursePublicLanding from "./pages/CoursePublicLanding";
-import MastermindLandingBuilder from "./pages/MastermindLandingBuilder";
-import MastermindPublicLanding from "./pages/MastermindPublicLanding";
-import OfflineTrainingLandingBuilder from "./pages/OfflineTrainingLandingBuilder";
-import OfflineTrainingPublicLanding from "./pages/OfflineTrainingPublicLanding";
-import OfflineTrainingReviews from "./pages/OfflineTrainingReviews";
-import SchoolCatalog from "./pages/SchoolCatalog";
-import SchoolLanding from "./pages/SchoolLanding";
-import SchoolLandingBuilder from "./pages/SchoolLandingBuilder";
-import SchoolAnalytics from "./pages/SchoolAnalytics";
-import SchoolBalance from "./pages/SchoolBalance";
-import SchoolSubscription from "./pages/dashboard/SchoolSubscription";
-import SchoolPromoRequests from "./pages/dashboard/SchoolPromoRequests";
-import SchoolsLanding from "./pages/SchoolsLanding";
-import MasseursLanding from "./pages/MasseursLanding";
-import SalonsLanding from "./pages/SalonsLanding";
-import SalonCabinet from "./pages/SalonCabinet";
-import SalonsCatalog from "./pages/SalonsCatalog";
-import Privacy from "./pages/Privacy";
-import Terms from "./pages/Terms";
-import NotFound from "./pages/NotFound";
-import PublicProfile from "./pages/dashboard/PublicProfile";
-import ClientsCRM from "./pages/dashboard/ClientsCRM";
-import PageBuilder from "./pages/dashboard/PageBuilder";
-import PagePreview from "./pages/dashboard/PagePreview";
-import TrustBadges from "./pages/dashboard/TrustBadges";
-import ClientEducation from "./pages/dashboard/ClientEducation";
-import Community from "./pages/dashboard/Community";
-import Messages from "./pages/dashboard/Messages";
-import AdminMessages from "./pages/dashboard/AdminMessages";
-import PromoCodes from "./pages/dashboard/PromoCodes";
-import Verification from "./pages/dashboard/Verification";
-import MyReviews from "./pages/dashboard/MyReviews";
-import Bookings from "./pages/dashboard/Bookings";
-import SalonBookings from "./pages/dashboard/SalonBookings";
-import Favorites from "./pages/dashboard/Favorites";
-import MasseurBalance from "./pages/dashboard/MasseurBalance";
-import MasseurReviews from "./pages/MasseurReviews";
-import MasseurOrders from "./pages/MasseurOrders";
-import ClientOrders from "./pages/ClientOrders";
-import KnowledgeBase from "./pages/dashboard/KnowledgeBase";
-import Tools from "./pages/dashboard/Tools";
-import AnamnesisHistory from "./pages/dashboard/AnamnesisHistory";
-import MasseurPromoOffers from "./pages/dashboard/MasseurPromoOffers";
-import MasseurDiscountRequests from "./pages/dashboard/MasseurDiscountRequests";
-import SalonPresentation from "./pages/SalonPresentation";
-import MasseurWelcome from "./pages/MasseurWelcome";
-import MasseurProfessionalLanding from "./pages/MasseurProfessionalLanding";
-import AIDialogs from "./pages/dashboard/AIDialogs";
-import AISubscription from "./pages/dashboard/AISubscription";
-import SchoolMarketingAI from "./pages/dashboard/SchoolMarketingAI";
-import ImportSpecialists from "./pages/admin/ImportSpecialists";
-import ImportedSpecialists from "./pages/admin/ImportedSpecialists";
-import ImportSalons from "./pages/admin/ImportSalons";
-import ImportVacancies from "./pages/admin/ImportVacancies";
-import MedicalReportLanding from "./pages/MedicalReportLanding";
-import VacanciesCatalog from "./pages/VacanciesCatalog";
-import VacanciesImport from "./pages/VacanciesImport";
-import Premium from "./pages/Premium";
-import AccountSettings from "./pages/dashboard/AccountSettings";
-import VisceraCourse from "./pages/VisceraCourse";
-import ArsenalCourse from "./pages/ArsenalCourse";
-import BrandCourse from "./pages/BrandCourse";
-import MastermindMoscow from "./pages/MastermindMoscow";
-import BasicsCourse from "./pages/BasicsCourse";
-import AdvancedCourse from "./pages/AdvancedCourse";
-import CorrectionCourse from "./pages/CorrectionCourse";
-import VNSCourse from "./pages/VNSCourse";
-import PregnancyFitness from "./pages/PregnancyFitness";
-import InvestorPresentation from "./pages/InvestorPresentation";
-import PremiumPresentation from "./pages/PremiumPresentation";
+
+const About = lazy(() => import("./pages/About"));
+const Pricing = lazy(() => import("./pages/Pricing"));
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const RegisterMasseur = lazy(() => import("./pages/RegisterMasseur"));
+const RegisterSchool = lazy(() => import("./pages/RegisterSchool"));
+const RegisterSalon = lazy(() => import("./pages/RegisterSalon"));
+const RegisterClient = lazy(() => import("./pages/RegisterClient"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const MasseursDirectory = lazy(() => import("./pages/MasseursDirectory"));
+const MasseurProfile = lazy(() => import("./pages/MasseurProfile"));
+const ProfileEdit = lazy(() => import("./pages/ProfileEdit"));
+const AdminPanel = lazy(() => import("./pages/AdminPanel"));
+const SchoolDashboard = lazy(() => import("./pages/SchoolDashboard"));
+const CoursesCatalog = lazy(() => import("./pages/CoursesCatalog"));
+const CoursePage = lazy(() => import("./pages/CoursePage"));
+const MastermindPage = lazy(() => import("./pages/MastermindPage"));
+const CourseLandingEditor = lazy(() => import("./pages/CourseLandingEditor"));
+const CourseLandingPublic = lazy(() => import("./pages/CourseLandingPublic"));
+const CourseLandingBuilder = lazy(() => import("./pages/CourseLandingBuilder"));
+const CoursePublicLanding = lazy(() => import("./pages/CoursePublicLanding"));
+const MastermindLandingBuilder = lazy(() => import("./pages/MastermindLandingBuilder"));
+const MastermindPublicLanding = lazy(() => import("./pages/MastermindPublicLanding"));
+const OfflineTrainingLandingBuilder = lazy(() => import("./pages/OfflineTrainingLandingBuilder"));
+const OfflineTrainingPublicLanding = lazy(() => import("./pages/OfflineTrainingPublicLanding"));
+const OfflineTrainingReviews = lazy(() => import("./pages/OfflineTrainingReviews"));
+const SchoolCatalog = lazy(() => import("./pages/SchoolCatalog"));
+const SchoolLanding = lazy(() => import("./pages/SchoolLanding"));
+const SchoolLandingBuilder = lazy(() => import("./pages/SchoolLandingBuilder"));
+const SchoolAnalytics = lazy(() => import("./pages/SchoolAnalytics"));
+const SchoolBalance = lazy(() => import("./pages/SchoolBalance"));
+const SchoolSubscription = lazy(() => import("./pages/dashboard/SchoolSubscription"));
+const SchoolPromoRequests = lazy(() => import("./pages/dashboard/SchoolPromoRequests"));
+const SchoolsLanding = lazy(() => import("./pages/SchoolsLanding"));
+const MasseursLanding = lazy(() => import("./pages/MasseursLanding"));
+const SalonsLanding = lazy(() => import("./pages/SalonsLanding"));
+const SalonCabinet = lazy(() => import("./pages/SalonCabinet"));
+const SalonsCatalog = lazy(() => import("./pages/SalonsCatalog"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const PublicProfile = lazy(() => import("./pages/dashboard/PublicProfile"));
+const ClientsCRM = lazy(() => import("./pages/dashboard/ClientsCRM"));
+const PageBuilder = lazy(() => import("./pages/dashboard/PageBuilder"));
+const PagePreview = lazy(() => import("./pages/dashboard/PagePreview"));
+const TrustBadges = lazy(() => import("./pages/dashboard/TrustBadges"));
+const ClientEducation = lazy(() => import("./pages/dashboard/ClientEducation"));
+const Community = lazy(() => import("./pages/dashboard/Community"));
+const Messages = lazy(() => import("./pages/dashboard/Messages"));
+const AdminMessages = lazy(() => import("./pages/dashboard/AdminMessages"));
+const PromoCodes = lazy(() => import("./pages/dashboard/PromoCodes"));
+const Verification = lazy(() => import("./pages/dashboard/Verification"));
+const MyReviews = lazy(() => import("./pages/dashboard/MyReviews"));
+const Bookings = lazy(() => import("./pages/dashboard/Bookings"));
+const SalonBookings = lazy(() => import("./pages/dashboard/SalonBookings"));
+const Favorites = lazy(() => import("./pages/dashboard/Favorites"));
+const MasseurBalance = lazy(() => import("./pages/dashboard/MasseurBalance"));
+const MasseurReviews = lazy(() => import("./pages/MasseurReviews"));
+const MasseurOrders = lazy(() => import("./pages/MasseurOrders"));
+const ClientOrders = lazy(() => import("./pages/ClientOrders"));
+const KnowledgeBase = lazy(() => import("./pages/dashboard/KnowledgeBase"));
+const Tools = lazy(() => import("./pages/dashboard/Tools"));
+const AnamnesisHistory = lazy(() => import("./pages/dashboard/AnamnesisHistory"));
+const MasseurPromoOffers = lazy(() => import("./pages/dashboard/MasseurPromoOffers"));
+const MasseurDiscountRequests = lazy(() => import("./pages/dashboard/MasseurDiscountRequests"));
+const SalonPresentation = lazy(() => import("./pages/SalonPresentation"));
+const MasseurWelcome = lazy(() => import("./pages/MasseurWelcome"));
+const MasseurProfessionalLanding = lazy(() => import("./pages/MasseurProfessionalLanding"));
+const AIDialogs = lazy(() => import("./pages/dashboard/AIDialogs"));
+const AISubscription = lazy(() => import("./pages/dashboard/AISubscription"));
+const SchoolMarketingAI = lazy(() => import("./pages/dashboard/SchoolMarketingAI"));
+const ImportSpecialists = lazy(() => import("./pages/admin/ImportSpecialists"));
+const ImportedSpecialists = lazy(() => import("./pages/admin/ImportedSpecialists"));
+const ImportSalons = lazy(() => import("./pages/admin/ImportSalons"));
+const ImportVacancies = lazy(() => import("./pages/admin/ImportVacancies"));
+const MedicalReportLanding = lazy(() => import("./pages/MedicalReportLanding"));
+const VacanciesCatalog = lazy(() => import("./pages/VacanciesCatalog"));
+const VacanciesImport = lazy(() => import("./pages/VacanciesImport"));
+const Premium = lazy(() => import("./pages/Premium"));
+const AccountSettings = lazy(() => import("./pages/dashboard/AccountSettings"));
+const VisceraCourse = lazy(() => import("./pages/VisceraCourse"));
+const ArsenalCourse = lazy(() => import("./pages/ArsenalCourse"));
+const BrandCourse = lazy(() => import("./pages/BrandCourse"));
+const MastermindMoscow = lazy(() => import("./pages/MastermindMoscow"));
+const BasicsCourse = lazy(() => import("./pages/BasicsCourse"));
+const AdvancedCourse = lazy(() => import("./pages/AdvancedCourse"));
+const CorrectionCourse = lazy(() => import("./pages/CorrectionCourse"));
+const VNSCourse = lazy(() => import("./pages/VNSCourse"));
+const PregnancyFitness = lazy(() => import("./pages/PregnancyFitness"));
+const InvestorPresentation = lazy(() => import("./pages/InvestorPresentation"));
+const PremiumPresentation = lazy(() => import("./pages/PremiumPresentation"));
 
 const queryClient = new QueryClient();
 
@@ -108,7 +109,15 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <SEOManager />
-        <Routes>
+        <Suspense fallback={
+          <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
+            <div className="text-center">
+              <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-slate-600 text-lg">Загрузка...</p>
+            </div>
+          </div>
+        }>
+          <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<About />} />
           <Route path="/pricing" element={<Pricing />} />
@@ -204,7 +213,8 @@ const App = () => (
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="*" element={<NotFound />} />
-        </Routes>
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
