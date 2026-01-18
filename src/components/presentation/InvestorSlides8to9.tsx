@@ -22,7 +22,7 @@ export default function InvestorSlides8to9({
         <div className="animate-fade-in">
           <h2 className="text-5xl font-bold mb-12 text-center">Команда</h2>
           <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <Card className="bg-slate-800 border-slate-700">
+            <Card className="bg-slate-900/90 border-slate-700">
               <CardHeader>
                 <div className="w-24 h-24 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-full mx-auto mb-4 flex items-center justify-center">
                   <Icon name="User" size={48} className="text-white" />
@@ -40,7 +40,7 @@ export default function InvestorSlides8to9({
               </CardContent>
             </Card>
 
-            <Card className="bg-slate-800 border-slate-700">
+            <Card className="bg-slate-900/90 border-slate-700">
               <CardHeader>
                 <div className="w-24 h-24 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full mx-auto mb-4 flex items-center justify-center">
                   <Icon name="Code" size={48} className="text-white" />
@@ -58,7 +58,7 @@ export default function InvestorSlides8to9({
               </CardContent>
             </Card>
 
-            <Card className="bg-slate-800 border-slate-700">
+            <Card className="bg-slate-900/90 border-slate-700">
               <CardHeader>
                 <div className="w-24 h-24 bg-gradient-to-br from-green-600 to-emerald-600 rounded-full mx-auto mb-4 flex items-center justify-center">
                   <Icon name="TrendingUp" size={48} className="text-white" />
@@ -77,7 +77,7 @@ export default function InvestorSlides8to9({
             </Card>
           </div>
 
-          <Card className="bg-slate-800 border-slate-700 mb-8">
+          <Card className="bg-slate-900/90 border-slate-700 mb-8">
             <CardHeader>
               <CardTitle className="text-2xl text-white flex items-center gap-3">
                 <Icon name="Users" size={32} className="text-blue-400" />
@@ -163,7 +163,7 @@ export default function InvestorSlides8to9({
           </Card>
 
           <div className="grid md:grid-cols-2 gap-8 mb-8">
-            <Card className="bg-slate-800 border-slate-700">
+            <Card className="bg-slate-900/90 border-slate-700">
               <CardHeader>
                 <CardTitle className="text-2xl text-white flex items-center gap-3">
                   <Icon name="Target" size={28} className="text-green-400" />
@@ -210,7 +210,7 @@ export default function InvestorSlides8to9({
               </CardContent>
             </Card>
 
-            <Card className="bg-slate-800 border-slate-700">
+            <Card className="bg-slate-900/90 border-slate-700">
               <CardHeader>
                 <CardTitle className="text-2xl text-white flex items-center gap-3">
                   <Icon name="TrendingUp" size={28} className="text-blue-400" />
@@ -266,7 +266,7 @@ export default function InvestorSlides8to9({
 
           <div className="grid md:grid-cols-4 gap-6 mb-8">
             {roadmap.map((item, index) => (
-              <Card key={index} className={`bg-slate-800 border-slate-700 ${item.status === 'in-progress' ? 'ring-2 ring-blue-500' : ''}`}>
+              <Card key={index} className={`bg-slate-900/90 border-slate-700 ${item.status === 'in-progress' ? 'ring-2 ring-blue-500' : ''}`}>
                 <CardHeader>
                   <CardTitle className="text-white flex items-center justify-between">
                     <span>{item.quarter}</span>

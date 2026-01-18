@@ -30,7 +30,7 @@ export default function InvestorSlides6to7({
           <h2 className="text-5xl font-bold mb-12 text-center">Конкурентный анализ</h2>
           <div className="space-y-4 mb-8">
             {competitors.map((competitor, index) => (
-              <Card key={index} className="bg-slate-800 border-slate-700">
+              <Card key={index} className="bg-slate-900/90 border-slate-700">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-xl text-white">{competitor.name}</CardTitle>
@@ -173,7 +173,7 @@ export default function InvestorSlides6to7({
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <Card className="bg-slate-800 border-purple-500/30">
+            <Card className="bg-slate-900/90 border-purple-500/30">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-white">
                   <Icon name="TrendingUp" size={24} className="text-purple-400" />
@@ -198,7 +198,7 @@ export default function InvestorSlides6to7({
               </CardContent>
             </Card>
 
-            <Card className="bg-slate-800 border-orange-500/30">
+            <Card className="bg-slate-900/90 border-orange-500/30">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-white">
                   <Icon name="Users" size={24} className="text-orange-400" />
@@ -223,7 +223,7 @@ export default function InvestorSlides6to7({
               </CardContent>
             </Card>
 
-            <Card className="bg-slate-800 border-blue-500/30">
+            <Card className="bg-slate-900/90 border-blue-500/30">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-white">
                   <Icon name="Zap" size={24} className="text-blue-400" />
@@ -249,7 +249,7 @@ export default function InvestorSlides6to7({
             </Card>
           </div>
 
-          <Card className="bg-slate-800 border-slate-700">
+          <Card className="bg-slate-900/90 border-slate-700">
             <CardHeader>
               <CardTitle className="text-2xl text-white flex items-center gap-3">
                 <Icon name="Award" size={32} className="text-yellow-400" />

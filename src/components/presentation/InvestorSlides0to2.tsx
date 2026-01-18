@@ -35,7 +35,7 @@ export default function InvestorSlides0to2({
           </div>
           <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
             {metrics.map((metric, index) => (
-              <div key={index} className="bg-slate-800/50 rounded-2xl p-6 border border-slate-700">
+              <div key={index} className="bg-slate-900/80 rounded-2xl p-6 border border-slate-700">
                 <div className={`text-4xl font-bold bg-gradient-to-r ${metric.color} bg-clip-text text-transparent mb-2`}>
                   {metric.value}
                 </div>
@@ -51,7 +51,7 @@ export default function InvestorSlides0to2({
         <div className="animate-fade-in">
           <h2 className="text-5xl font-bold mb-12 text-center">Болевые точки рынка</h2>
           <div className="grid md:grid-cols-2 gap-8">
-            <Card className="bg-slate-800 border-red-500/30">
+            <Card className="bg-slate-900/90 border-red-500/30">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-2xl text-white">
                   <Icon name="User" size={32} className="text-red-400" />
@@ -78,7 +78,7 @@ export default function InvestorSlides0to2({
               </CardContent>
             </Card>
 
-            <Card className="bg-slate-800 border-orange-500/30">
+            <Card className="bg-slate-900/90 border-orange-500/30">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-2xl text-white">
                   <Icon name="GraduationCap" size={32} className="text-orange-400" />
@@ -106,7 +106,7 @@ export default function InvestorSlides0to2({
             </Card>
           </div>
 
-          <Card className="bg-slate-800 border-purple-500/30 mt-8">
+          <Card className="bg-slate-900/90 border-purple-500/30 mt-8">
             <CardHeader>
               <CardTitle className="flex items-center gap-3 text-2xl text-white">
                 <Icon name="Building2" size={32} className="text-purple-400" />
@@ -136,7 +136,7 @@ export default function InvestorSlides0to2({
         <div className="animate-fade-in">
           <h2 className="text-5xl font-bold mb-12 text-center">Наше решение</h2>
           <div className="grid md:grid-cols-3 gap-6 mb-12">
-            <Card className="bg-gradient-to-br from-blue-600/20 to-cyan-600/20 border-blue-500/30">
+            <Card className="bg-gradient-to-br from-blue-600/30 to-cyan-600/30 border-blue-500/30">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-white">
                   <Icon name="Briefcase" size={28} className="text-blue-400" />
@@ -162,7 +162,7 @@ export default function InvestorSlides0to2({
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 border-purple-500/30">
+            <Card className="bg-gradient-to-br from-purple-600/30 to-pink-600/30 border-purple-500/30">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-white">
                   <Icon name="GraduationCap" size={28} className="text-purple-400" />
@@ -188,7 +188,7 @@ export default function InvestorSlides0to2({
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-green-600/20 to-emerald-600/20 border-green-500/30">
+            <Card className="bg-gradient-to-br from-green-600/30 to-emerald-600/30 border-green-500/30">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-white">
                   <Icon name="Users" size={28} className="text-green-400" />
@@ -215,7 +215,7 @@ export default function InvestorSlides0to2({
             </Card>
           </div>
 
-          <Card className="bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-pink-600/10 border-blue-500/30">
+          <Card className="bg-gradient-to-r from-blue-600/30 via-purple-600/30 to-pink-600/30 border-blue-500/30">
             <CardContent className="pt-6">
               <div className="text-center">
                 <p className="text-2xl font-semibold text-white mb-4">

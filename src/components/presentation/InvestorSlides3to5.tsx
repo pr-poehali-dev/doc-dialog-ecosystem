@@ -70,7 +70,7 @@ export default function InvestorSlides3to5({
             </Card>
           </div>
 
-          <Card className="bg-slate-800 border-slate-700">
+          <Card className="bg-slate-900/90 border-slate-700">
             <CardHeader>
               <CardTitle className="text-2xl text-white flex items-center gap-3">
                 <Icon name="TrendingUp" size={32} className="text-green-400" />
@@ -132,7 +132,7 @@ export default function InvestorSlides3to5({
         <div className="animate-fade-in">
           <h2 className="text-5xl font-bold mb-12 text-center">Продуктовая линейка</h2>
           <div className="space-y-6">
-            <Card className="bg-slate-800 border-blue-500/30">
+            <Card className="bg-slate-900/90 border-blue-500/30">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-2xl text-white">
                   <Icon name="Users" size={32} className="text-blue-400" />
@@ -168,7 +168,7 @@ export default function InvestorSlides3to5({
               </CardContent>
             </Card>
 
-            <Card className="bg-slate-800 border-purple-500/30">
+            <Card className="bg-slate-900/90 border-purple-500/30">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-2xl text-white">
                   <Icon name="GraduationCap" size={32} className="text-purple-400" />
@@ -204,7 +204,7 @@ export default function InvestorSlides3to5({
               </CardContent>
             </Card>
 
-            <Card className="bg-slate-800 border-green-500/30">
+            <Card className="bg-slate-900/90 border-green-500/30">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-2xl text-white">
                   <Icon name="Building2" size={32} className="text-green-400" />
@@ -248,7 +248,7 @@ export default function InvestorSlides3to5({
         <div className="animate-fade-in">
           <h2 className="text-5xl font-bold mb-12 text-center">Юнит-экономика</h2>
           <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <Card className="bg-gradient-to-br from-blue-600/20 to-cyan-600/20 border-blue-500/30">
+            <Card className="bg-gradient-to-br from-blue-600/30 to-cyan-600/30 border-blue-500/30">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-white">
                   <Icon name="User" size={28} className="text-blue-400" />
@@ -285,7 +285,7 @@ export default function InvestorSlides3to5({
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 border-purple-500/30">
+            <Card className="bg-gradient-to-br from-purple-600/30 to-pink-600/30 border-purple-500/30">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-white">
                   <Icon name="GraduationCap" size={28} className="text-purple-400" />
@@ -322,7 +322,7 @@ export default function InvestorSlides3to5({
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-green-600/20 to-emerald-600/20 border-green-500/30">
+            <Card className="bg-gradient-to-br from-green-600/30 to-emerald-600/30 border-green-500/30">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-white">
                   <Icon name="Building2" size={28} className="text-green-400" />
@@ -360,7 +360,7 @@ export default function InvestorSlides3to5({
             </Card>
           </div>
 
-          <Card className="bg-slate-800 border-slate-700">
+          <Card className="bg-slate-900/90 border-slate-700">
             <CardHeader>
               <CardTitle className="text-2xl text-white">Сводные показатели</CardTitle>
             </CardHeader>
