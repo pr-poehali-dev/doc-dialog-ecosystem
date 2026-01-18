@@ -215,6 +215,7 @@ const App = () => (
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/forum" element={<Forum />} />
+          <Route path="/forum/category/:categoryId" element={<Forum />} />
           <Route path="/forum/topic/:topicId" element={<ForumTopic />} />
           <Route path="*" element={<NotFound />} />
           </Routes>

@@ -85,13 +85,23 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
             {isHomePage && scrollToSection ? (
               <>
                 {homePageMenuItems.map((item, index) => (
-                  <button
-                    key={index}
-                    onClick={item.onClick}
-                    className="text-sm font-medium hover:text-primary transition-colors"
-                  >
-                    {item.label}
-                  </button>
+                  item.path ? (
+                    <Link
+                      key={index}
+                      to={item.path}
+                      className="text-sm font-medium hover:text-primary transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <button
+                      key={index}
+                      onClick={item.onClick}
+                      className="text-sm font-medium hover:text-primary transition-colors"
+                    >
+                      {item.label}
+                    </button>
+                  )
                 ))}
               </>
             ) : (
@@ -133,13 +143,24 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
                     {isHomePage && scrollToSection ? (
                       <>
                         {homePageMenuItems.map((item, index) => (
-                          <button
-                            key={index}
-                            onClick={() => handleMenuClick(item.onClick)}
-                            className="text-left py-3 px-4 text-base font-medium hover:bg-muted rounded-lg transition-colors"
-                          >
-                            {item.label}
-                          </button>
+                          item.path ? (
+                            <Link
+                              key={index}
+                              to={item.path}
+                              onClick={() => setIsOpen(false)}
+                              className="text-left py-3 px-4 text-base font-medium hover:bg-muted rounded-lg transition-colors block"
+                            >
+                              {item.label}
+                            </Link>
+                          ) : (
+                            <button
+                              key={index}
+                              onClick={() => handleMenuClick(item.onClick!)}
+                              className="text-left py-3 px-4 text-base font-medium hover:bg-muted rounded-lg transition-colors"
+                            >
+                              {item.label}
+                            </button>
+                          )
                         ))}
                       </>
                     ) : (

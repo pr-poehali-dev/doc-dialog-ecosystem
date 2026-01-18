@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
@@ -32,25 +32,26 @@ interface Topic {
 
 export default function Forum() {
   const navigate = useNavigate();
+  const { categoryId } = useParams();
   const [categories, setCategories] = useState<Category[]>([]);
   const [recentTopics, setRecentTopics] = useState<Topic[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadForumData();
-  }, []);
+  }, [categoryId]);
 
   const loadForumData = async () => {
     try {
-      const [categoriesRes, topicsRes] = await Promise.all([
-        fetch(`${FORUM_API}?action=categories`),
-        fetch(`${FORUM_API}?action=topics`)
-      ]);
-
+      const categoriesRes = await fetch(`${FORUM_API}?action=categories`);
       const categoriesData = await categoriesRes.json();
-      const topicsData = await topicsRes.json();
-
       setCategories(categoriesData.categories || []);
+
+      const topicsUrl = categoryId 
+        ? `${FORUM_API}?action=topics&category_id=${categoryId}`
+        : `${FORUM_API}?action=topics`;
+      const topicsRes = await fetch(topicsUrl);
+      const topicsData = await topicsRes.json();
       setRecentTopics(topicsData.topics || []);
     } catch (error) {
       console.error('Failed to load forum:', error);
@@ -61,12 +62,12 @@ export default function Forum() {
 
   const getCategoryColor = (color: string) => {
     const colors: Record<string, string> = {
-      blue: 'from-blue-500/20 to-cyan-500/20 border-blue-500/30',
-      purple: 'from-purple-500/20 to-pink-500/20 border-purple-500/30',
-      green: 'from-green-500/20 to-emerald-500/20 border-green-500/30',
-      red: 'from-red-500/20 to-orange-500/20 border-red-500/30',
-      orange: 'from-orange-500/20 to-yellow-500/20 border-orange-500/30',
-      cyan: 'from-cyan-500/20 to-blue-500/20 border-cyan-500/30',
+      blue: 'bg-slate-900/95 border-blue-500/50',
+      purple: 'bg-slate-900/95 border-purple-500/50',
+      green: 'bg-slate-900/95 border-green-500/50',
+      red: 'bg-slate-900/95 border-red-500/50',
+      orange: 'bg-slate-900/95 border-orange-500/50',
+      cyan: 'bg-slate-900/95 border-cyan-500/50',
     };
     return colors[color] || colors.blue;
   };
@@ -125,14 +126,15 @@ export default function Forum() {
         </div>
 
         {/* Categories */}
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold text-white mb-6">Категории</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categories.map((category) => (
-              <Card
-                key={category.id}
-                className={`bg-gradient-to-br ${getCategoryColor(category.color)} cursor-pointer hover:scale-105 transition-transform`}
-                onClick={() => navigate(`/forum/category/${category.id}`)}
+        {!categoryId && (
+          <div className="mb-12">
+            <h2 className="text-3xl font-bold text-white mb-6">Категории</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {categories.map((category) => (
+                <Card
+                  key={category.id}
+                  className={`${getCategoryColor(category.color)} cursor-pointer hover:scale-105 transition-transform`}
+                  onClick={() => navigate(`/forum/category/${category.id}`)}
               >
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3 text-white">
@@ -158,11 +160,21 @@ export default function Forum() {
               </Card>
             ))}
           </div>
-        </div>
+          </div>
+        )}
 
         {/* Recent Topics */}
         <div>
-          <h2 className="text-3xl font-bold text-white mb-6">Последние обсуждения</h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-3xl font-bold text-white">
+              {categoryId ? 'Темы категории' : 'Последние обсуждения'}
+            </h2>
+            {categoryId && (
+              <Button onClick={() => navigate('/forum')} variant="outline">
+                Все категории
+              </Button>
+            )}
+          </div>
           <div className="space-y-4">
             {recentTopics.map((topic) => {
               const roleBadge = getRoleBadge(topic.author_role);
