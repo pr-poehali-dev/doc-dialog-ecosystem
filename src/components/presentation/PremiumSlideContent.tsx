@@ -9,39 +9,33 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
       {activeSlide === 0 && (
         <div className="animate-fade-in text-center py-8 md:py-20">
           <div className="mb-8 md:mb-16 flex justify-center">
-            <div className="relative">
-              <div className="w-24 h-24 md:w-40 md:h-40 rounded-3xl bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-600 flex items-center justify-center shadow-2xl">
-                <svg viewBox="0 0 100 100" className="w-16 h-16 md:w-28 md:h-28 text-white">
-                  <circle cx="30" cy="40" r="8" fill="currentColor" opacity="0.9"/>
-                  <circle cx="70" cy="40" r="8" fill="currentColor" opacity="0.9"/>
-                  <path d="M 25 65 Q 50 85 75 65" stroke="currentColor" strokeWidth="4" fill="none" strokeLinecap="round" opacity="0.9"/>
-                  <circle cx="50" cy="50" r="35" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.3"/>
-                </svg>
-              </div>
-              <div className="absolute -bottom-2 -right-2 w-6 h-6 md:w-10 md:h-10 bg-emerald-400 rounded-full animate-pulse"></div>
-            </div>
+            <img 
+              src="https://cdn.poehali.dev/files/Group 7 (6).png" 
+              alt="Док диалог" 
+              className="h-24 md:h-40 w-auto"
+            />
           </div>
           
           <div className="max-w-3xl mx-auto space-y-3 md:space-y-6">
-            <p className="text-lg md:text-2xl bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent font-light leading-relaxed">
+            <p className="text-lg md:text-2xl bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent font-light leading-relaxed">
               Экосистема осознанного взаимодействия
             </p>
-            <p className="text-lg md:text-2xl bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent font-light leading-relaxed">
+            <p className="text-lg md:text-2xl bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent font-light leading-relaxed">
               с телом, профессией и выбором
             </p>
           </div>
 
-          <div className="mt-12 md:mt-20 flex flex-col md:flex-row items-center justify-center gap-4 md:gap-12 text-sm text-emerald-600">
+          <div className="mt-12 md:mt-20 flex flex-col md:flex-row items-center justify-center gap-4 md:gap-12 text-sm text-purple-600">
             <div className="flex items-center gap-2">
-              <div className="w-1 h-1 bg-emerald-500 rounded-full"></div>
+              <div className="w-1 h-1 bg-pink-500 rounded-full"></div>
               <span>1000+ специалистов</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-1 h-1 bg-emerald-500 rounded-full"></div>
+              <div className="w-1 h-1 bg-purple-500 rounded-full"></div>
               <span>50+ школ</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-1 h-1 bg-emerald-500 rounded-full"></div>
+              <div className="w-1 h-1 bg-cyan-500 rounded-full"></div>
               <span>200+ салонов</span>
             </div>
           </div>
