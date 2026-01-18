@@ -20,12 +20,9 @@ export default function InvestorSlides0to2({
             <img 
               src="https://cdn.poehali.dev/files/Group 7 (7).png" 
               alt="Док диалог" 
-              className="h-32 w-auto mx-auto"
+              className="h-20 sm:h-32 w-auto mx-auto"
             />
           </div>
-          <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-            DocDialog
-          </h1>
           <p className="text-3xl text-slate-300 mb-8">
             Профессиональная экосистема для массажистов
           </p>
