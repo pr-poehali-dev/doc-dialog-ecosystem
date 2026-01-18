@@ -8,34 +8,40 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
       {/* Slide 0: Cover */}
       {activeSlide === 0 && (
         <div className="animate-fade-in text-center py-8 md:py-20">
-          <div className="mb-8 md:mb-16">
-            <div className="w-2 h-2 bg-slate-900 rounded-full mx-auto mb-6 md:mb-12"></div>
+          <div className="mb-8 md:mb-16 flex justify-center">
+            <div className="relative">
+              <div className="w-24 h-24 md:w-40 md:h-40 rounded-3xl bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-600 flex items-center justify-center shadow-2xl">
+                <svg viewBox="0 0 100 100" className="w-16 h-16 md:w-28 md:h-28 text-white">
+                  <circle cx="30" cy="40" r="8" fill="currentColor" opacity="0.9"/>
+                  <circle cx="70" cy="40" r="8" fill="currentColor" opacity="0.9"/>
+                  <path d="M 25 65 Q 50 85 75 65" stroke="currentColor" strokeWidth="4" fill="none" strokeLinecap="round" opacity="0.9"/>
+                  <circle cx="50" cy="50" r="35" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.3"/>
+                </svg>
+              </div>
+              <div className="absolute -bottom-2 -right-2 w-6 h-6 md:w-10 md:h-10 bg-emerald-400 rounded-full animate-pulse"></div>
+            </div>
           </div>
           
-          <h1 className="text-4xl md:text-7xl lg:text-8xl font-light mb-8 md:mb-12 tracking-tight leading-none">
-            Док диалог
-          </h1>
-          
           <div className="max-w-3xl mx-auto space-y-3 md:space-y-6">
-            <p className="text-lg md:text-2xl text-slate-600 font-light leading-relaxed">
+            <p className="text-lg md:text-2xl bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent font-light leading-relaxed">
               Экосистема осознанного взаимодействия
             </p>
-            <p className="text-lg md:text-2xl text-slate-600 font-light leading-relaxed">
+            <p className="text-lg md:text-2xl bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent font-light leading-relaxed">
               с телом, профессией и выбором
             </p>
           </div>
 
-          <div className="mt-12 md:mt-20 flex flex-col md:flex-row items-center justify-center gap-4 md:gap-12 text-sm text-slate-400">
+          <div className="mt-12 md:mt-20 flex flex-col md:flex-row items-center justify-center gap-4 md:gap-12 text-sm text-emerald-600">
             <div className="flex items-center gap-2">
-              <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
+              <div className="w-1 h-1 bg-emerald-500 rounded-full"></div>
               <span>1000+ специалистов</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
+              <div className="w-1 h-1 bg-emerald-500 rounded-full"></div>
               <span>50+ школ</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
+              <div className="w-1 h-1 bg-emerald-500 rounded-full"></div>
               <span>200+ салонов</span>
             </div>
           </div>
@@ -45,14 +51,14 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
       {/* Slide 1: Essence */}
       {activeSlide === 1 && (
         <div className="animate-fade-in py-8 md:py-12">
-          <p className="text-xs md:text-sm uppercase tracking-widest text-slate-400 mb-6 md:mb-12">Что такое Док диалог</p>
+          <p className="text-xs md:text-sm uppercase tracking-widest text-emerald-600 mb-6 md:mb-12">Что такое Док диалог</p>
           
           <div className="space-y-6 md:space-y-12">
             <h2 className="text-2xl md:text-5xl lg:text-6xl font-light leading-tight">
               Профессиональная экосистема, объединяющая специалистов по телу, салоны, школы и клиентов в одном цифровом пространстве
             </h2>
 
-            <div className="border-l-2 border-slate-200 pl-4 md:pl-8 py-2 md:py-4">
+            <div className="border-l-2 border-emerald-300 pl-4 md:pl-8 py-2 md:py-4 bg-gradient-to-r from-emerald-50/50 to-transparent">
               <p className="text-base md:text-2xl text-slate-600 font-light leading-relaxed">
                 Мы создаём среду, где взаимодействие строится на понимании, доверии и прямом диалоге, а не на посредниках, комиссиях и агрессивных продажах
               </p>
@@ -64,15 +70,15 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
       {/* Slide 2: Specialists */}
       {activeSlide === 2 && (
         <div className="animate-fade-in py-8 md:py-12">
-          <p className="text-xs md:text-sm uppercase tracking-widest text-slate-400 mb-4 md:mb-6">Ценность</p>
+          <p className="text-xs md:text-sm uppercase tracking-widest text-emerald-600 mb-4 md:mb-6">Ценность</p>
           <h2 className="text-2xl md:text-5xl font-light mb-3 md:mb-4">Для специалистов по телу</h2>
           <p className="text-sm md:text-base text-slate-500 mb-6 md:mb-12">Массажисты, телесные практики, специалисты по работе с телом</p>
 
           <div className="grid md:grid-cols-2 gap-x-8 md:gap-x-16 gap-y-6 md:gap-y-12">
             <div>
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0 mt-1">
-                  <span className="text-xs md:text-sm font-light">1</span>
+                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-1">
+                  <span className="text-xs md:text-sm font-light text-emerald-700">1</span>
                 </div>
                 <div>
                   <h3 className="text-lg md:text-xl font-normal mb-2 md:mb-3">Видимость и доверие</h3>
@@ -86,8 +92,8 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
 
             <div>
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0 mt-1">
-                  <span className="text-xs md:text-sm font-light">2</span>
+                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-1">
+                  <span className="text-xs md:text-sm font-light text-emerald-700">2</span>
                 </div>
                 <div>
                   <h3 className="text-lg md:text-xl font-normal mb-2 md:mb-3">Прямой контакт с клиентами</h3>
@@ -101,8 +107,8 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
 
             <div>
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0 mt-1">
-                  <span className="text-xs md:text-sm font-light">3</span>
+                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-1">
+                  <span className="text-xs md:text-sm font-light text-emerald-700">3</span>
                 </div>
                 <div>
                   <h3 className="text-lg md:text-xl font-normal mb-2 md:mb-3">Профессиональное развитие</h3>
@@ -117,8 +123,8 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
 
             <div>
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0 mt-1">
-                  <span className="text-xs md:text-sm font-light">4</span>
+                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-1">
+                  <span className="text-xs md:text-sm font-light text-emerald-700">4</span>
                 </div>
                 <div>
                   <h3 className="text-lg md:text-xl font-normal mb-2 md:mb-3">Инструменты для практики</h3>
@@ -130,8 +136,8 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
             </div>
 
             <div className="md:col-span-2">
-              <div className="border-l-2 border-slate-900 pl-4 md:pl-8 py-2">
-                <p className="text-base md:text-lg text-slate-900">
+              <div className="border-l-2 border-emerald-500 pl-4 md:pl-8 py-2 bg-gradient-to-r from-emerald-50 to-transparent">
+                <p className="text-base md:text-lg text-emerald-900 font-medium">
                   Док диалог не участвует в оплатах услуг и не влияет на ваш прайс
                 </p>
               </div>
@@ -143,15 +149,15 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
       {/* Slide 3: Salons */}
       {activeSlide === 3 && (
         <div className="animate-fade-in py-8 md:py-12">
-          <p className="text-xs md:text-sm uppercase tracking-widest text-slate-400 mb-4 md:mb-6">Ценность</p>
+          <p className="text-xs md:text-sm uppercase tracking-widest text-emerald-600 mb-4 md:mb-6">Ценность</p>
           <h2 className="text-2xl md:text-5xl font-light mb-3 md:mb-4">Для салонов и пространств</h2>
           <p className="text-sm md:text-base text-slate-500 mb-6 md:mb-12">SPA, массажные студии, велнес-центры</p>
 
           <div className="grid md:grid-cols-2 gap-x-8 md:gap-x-16 gap-y-6 md:gap-y-12">
             <div>
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0 mt-1">
-                  <span className="text-xs md:text-sm font-light">1</span>
+                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-1">
+                  <span className="text-xs md:text-sm font-light text-emerald-700">1</span>
                 </div>
                 <div>
                   <h3 className="text-lg md:text-xl font-normal mb-2 md:mb-3">Привлечение клиентов</h3>
@@ -165,8 +171,8 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
 
             <div>
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0 mt-1">
-                  <span className="text-xs md:text-sm font-light">2</span>
+                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-1">
+                  <span className="text-xs md:text-sm font-light text-emerald-700">2</span>
                 </div>
                 <div>
                   <h3 className="text-lg md:text-xl font-normal mb-2 md:mb-3">Поиск специалистов</h3>
@@ -180,8 +186,8 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
 
             <div>
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0 mt-1">
-                  <span className="text-xs md:text-sm font-light">3</span>
+                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-1">
+                  <span className="text-xs md:text-sm font-light text-emerald-700">3</span>
                 </div>
                 <div>
                   <h3 className="text-lg md:text-xl font-normal mb-2 md:mb-3">Управление командой</h3>
@@ -195,8 +201,8 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
 
             <div>
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0 mt-1">
-                  <span className="text-xs md:text-sm font-light">4</span>
+                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-1">
+                  <span className="text-xs md:text-sm font-light text-emerald-700">4</span>
                 </div>
                 <div>
                   <h3 className="text-lg md:text-xl font-normal mb-2 md:mb-3">Аренда кабинетов</h3>
@@ -208,8 +214,8 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
             </div>
 
             <div className="md:col-span-2">
-              <div className="border-l-2 border-slate-900 pl-4 md:pl-8 py-2">
-                <p className="text-base md:text-lg text-slate-900">
+              <div className="border-l-2 border-emerald-500 pl-4 md:pl-8 py-2 bg-gradient-to-r from-emerald-50 to-transparent">
+                <p className="text-base md:text-lg text-emerald-900 font-medium">
                   Салон не платит комиссию за привлечение клиентов или специалистов
                 </p>
               </div>
@@ -221,15 +227,15 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
       {/* Slide 4: Schools */}
       {activeSlide === 4 && (
         <div className="animate-fade-in py-8 md:py-12">
-          <p className="text-xs md:text-sm uppercase tracking-widest text-slate-400 mb-4 md:mb-6">Ценность</p>
+          <p className="text-xs md:text-sm uppercase tracking-widest text-emerald-600 mb-4 md:mb-6">Ценность</p>
           <h2 className="text-2xl md:text-5xl font-light mb-3 md:mb-4">Для школ и обучающих центров</h2>
           <p className="text-sm md:text-base text-slate-500 mb-6 md:mb-12">Школы массажа, курсы по работе с телом, образовательные программы</p>
 
           <div className="grid md:grid-cols-2 gap-x-8 md:gap-x-16 gap-y-6 md:gap-y-12">
             <div>
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0 mt-1">
-                  <span className="text-xs md:text-sm font-light">1</span>
+                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-1">
+                  <span className="text-xs md:text-sm font-light text-emerald-700">1</span>
                 </div>
                 <div>
                   <h3 className="text-lg md:text-xl font-normal mb-2 md:mb-3">Прямой доступ к аудитории</h3>
@@ -243,8 +249,8 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
 
             <div>
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0 mt-1">
-                  <span className="text-xs md:text-sm font-light">2</span>
+                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-1">
+                  <span className="text-xs md:text-sm font-light text-emerald-700">2</span>
                 </div>
                 <div>
                   <h3 className="text-lg md:text-xl font-normal mb-2 md:mb-3">Верификация выпускников</h3>
@@ -258,8 +264,8 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
 
             <div>
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0 mt-1">
-                  <span className="text-xs md:text-sm font-light">3</span>
+                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-1">
+                  <span className="text-xs md:text-sm font-light text-emerald-700">3</span>
                 </div>
                 <div>
                   <h3 className="text-lg md:text-xl font-normal mb-2 md:mb-3">Репутация и узнаваемость</h3>
@@ -273,8 +279,8 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
 
             <div>
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0 mt-1">
-                  <span className="text-xs md:text-sm font-light">4</span>
+                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-1">
+                  <span className="text-xs md:text-sm font-light text-emerald-700">4</span>
                 </div>
                 <div>
                   <h3 className="text-lg md:text-xl font-normal mb-2 md:mb-3">Прямая связь с учениками</h3>
@@ -287,8 +293,8 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
             </div>
 
             <div className="md:col-span-2">
-              <div className="border-l-2 border-slate-900 pl-4 md:pl-8 py-2">
-                <p className="text-base md:text-lg text-slate-900">
+              <div className="border-l-2 border-emerald-500 pl-4 md:pl-8 py-2 bg-gradient-to-r from-emerald-50 to-transparent">
+                <p className="text-base md:text-lg text-emerald-900 font-medium">
                   Школа не платит комиссию за привлечение учеников
                 </p>
               </div>
@@ -300,15 +306,15 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
       {/* Slide 5: Clients */}
       {activeSlide === 5 && (
         <div className="animate-fade-in py-8 md:py-12">
-          <p className="text-xs md:text-sm uppercase tracking-widest text-slate-400 mb-4 md:mb-6">Ценность</p>
+          <p className="text-xs md:text-sm uppercase tracking-widest text-emerald-600 mb-4 md:mb-6">Ценность</p>
           <h2 className="text-2xl md:text-5xl font-light mb-3 md:mb-4">Для клиентов</h2>
           <p className="text-sm md:text-base text-slate-500 mb-6 md:mb-12">Люди, ищущие специалистов по телу и осознанный подход к практике</p>
 
           <div className="grid md:grid-cols-2 gap-x-8 md:gap-x-16 gap-y-6 md:gap-y-12">
             <div>
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0 mt-1">
-                  <span className="text-xs md:text-sm font-light">1</span>
+                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-1">
+                  <span className="text-xs md:text-sm font-light text-emerald-700">1</span>
                 </div>
                 <div>
                   <h3 className="text-lg md:text-xl font-normal mb-2 md:mb-3">Простой поиск по геолокации</h3>
@@ -322,8 +328,8 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
 
             <div>
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0 mt-1">
-                  <span className="text-xs md:text-sm font-light">2</span>
+                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-1">
+                  <span className="text-xs md:text-sm font-light text-emerald-700">2</span>
                 </div>
                 <div>
                   <h3 className="text-lg md:text-xl font-normal mb-2 md:mb-3">Прозрачность и доверие</h3>
@@ -337,8 +343,8 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
 
             <div>
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0 mt-1">
-                  <span className="text-xs md:text-sm font-light">3</span>
+                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-1">
+                  <span className="text-xs md:text-sm font-light text-emerald-700">3</span>
                 </div>
                 <div>
                   <h3 className="text-lg md:text-xl font-normal mb-2 md:mb-3">Прямая связь</h3>
@@ -352,8 +358,8 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
 
             <div>
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0 mt-1">
-                  <span className="text-xs md:text-sm font-light">4</span>
+                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-1">
+                  <span className="text-xs md:text-sm font-light text-emerald-700">4</span>
                 </div>
                 <div>
                   <h3 className="text-lg md:text-xl font-normal mb-2 md:mb-3">AI Диалоги для выбора</h3>
@@ -366,8 +372,8 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
             </div>
 
             <div className="md:col-span-2">
-              <div className="border-l-2 border-slate-900 pl-4 md:pl-8 py-2">
-                <p className="text-base md:text-lg text-slate-900">
+              <div className="border-l-2 border-emerald-500 pl-4 md:pl-8 py-2 bg-gradient-to-r from-emerald-50 to-transparent">
+                <p className="text-base md:text-lg text-emerald-900 font-medium">
                   Клиент платит только специалисту, без комиссий платформе
                 </p>
               </div>
@@ -379,7 +385,7 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
       {/* Slide 6: Philosophy */}
       {activeSlide === 6 && (
         <div className="animate-fade-in py-8 md:py-12">
-          <p className="text-xs md:text-sm uppercase tracking-widest text-slate-400 mb-6 md:mb-12">Философия</p>
+          <p className="text-xs md:text-sm uppercase tracking-widest text-emerald-600 mb-6 md:mb-12">Философия</p>
           
           <div className="space-y-8 md:space-y-16">
             <div>
@@ -393,8 +399,8 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
 
             <div className="grid md:grid-cols-3 gap-6 md:gap-12">
               <div>
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-100 flex items-center justify-center mb-4 md:mb-6">
-                  <div className="w-2 h-2 bg-slate-900 rounded-full"></div>
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-emerald-100 flex items-center justify-center mb-4 md:mb-6">
+                  <div className="w-2 h-2 bg-emerald-700 rounded-full"></div>
                 </div>
                 <h3 className="text-lg md:text-xl font-normal mb-3 md:mb-4">Прозрачность</h3>
                 <p className="text-sm md:text-base text-slate-600 leading-relaxed">
@@ -404,8 +410,8 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
               </div>
 
               <div>
-                <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-6">
-                  <div className="w-2 h-2 bg-slate-900 rounded-full"></div>
+                <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center mb-6">
+                  <div className="w-2 h-2 bg-emerald-700 rounded-full"></div>
                 </div>
                 <h3 className="text-xl font-normal mb-4">Экологичность</h3>
                 <p className="text-slate-600 leading-relaxed">
@@ -415,8 +421,8 @@ export default function PremiumSlideContent({ activeSlide }: PremiumSlideContent
               </div>
 
               <div>
-                <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-6">
-                  <div className="w-2 h-2 bg-slate-900 rounded-full"></div>
+                <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center mb-6">
+                  <div className="w-2 h-2 bg-emerald-700 rounded-full"></div>
                 </div>
                 <h3 className="text-xl font-normal mb-4">Долгосрочность</h3>
                 <p className="text-slate-600 leading-relaxed">

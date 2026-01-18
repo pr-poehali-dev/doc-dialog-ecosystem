@@ -20,10 +20,10 @@ export default function PremiumPresentation() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 relative overflow-hidden">
-      <div className="fixed inset-0 opacity-[0.015]">
+    <div className="min-h-screen bg-gradient-to-br from-white via-emerald-50/20 to-teal-50/30 text-slate-900 relative overflow-hidden">
+      <div className="fixed inset-0 opacity-[0.02]">
         <div className="absolute inset-0" style={{
-          backgroundImage: 'radial-gradient(circle at 1px 1px, #000 1px, transparent 0)',
+          backgroundImage: 'radial-gradient(circle at 1px 1px, #10b981 1px, transparent 0)',
           backgroundSize: '40px 40px'
         }}></div>
       </div>
