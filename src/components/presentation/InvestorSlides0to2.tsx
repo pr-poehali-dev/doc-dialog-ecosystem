@@ -136,7 +136,7 @@ export default function InvestorSlides0to2({
         <div className="animate-fade-in">
           <h2 className="text-5xl font-bold mb-12 text-center">Наше решение</h2>
           <div className="grid md:grid-cols-3 gap-6 mb-12">
-            <Card className="bg-gradient-to-br from-blue-600/50 to-cyan-600/50 border-blue-500/50 backdrop-blur">
+            <Card className="bg-slate-900/95 border-blue-500/50">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-white">
                   <Icon name="Briefcase" size={28} className="text-blue-400" />
@@ -162,7 +162,7 @@ export default function InvestorSlides0to2({
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-purple-600/50 to-pink-600/50 border-purple-500/50 backdrop-blur">
+            <Card className="bg-slate-900/95 border-purple-500/50">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-white">
                   <Icon name="GraduationCap" size={28} className="text-purple-400" />
@@ -188,7 +188,7 @@ export default function InvestorSlides0to2({
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-green-600/50 to-emerald-600/50 border-green-500/50 backdrop-blur">
+            <Card className="bg-slate-900/95 border-green-500/50">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-white">
                   <Icon name="Users" size={28} className="text-green-400" />
@@ -215,7 +215,7 @@ export default function InvestorSlides0to2({
             </Card>
           </div>
 
-          <Card className="bg-gradient-to-r from-blue-600/50 via-purple-600/50 to-pink-600/50 border-blue-500/50 backdrop-blur">
+          <Card className="bg-slate-900/95 border-purple-500/50">
             <CardContent className="pt-6">
               <div className="text-center">
                 <p className="text-2xl font-semibold text-white mb-4">
