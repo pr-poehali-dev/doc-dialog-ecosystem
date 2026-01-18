@@ -49,6 +49,7 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
     { label: "Образование", onClick: () => scrollToSection?.('education') },
     { label: "Инструменты", onClick: () => scrollToSection?.('tools') },
     { label: "Сообщество", onClick: () => scrollToSection?.('community') },
+    { label: "Форум", path: "/forum" },
     { label: "Вакансии", onClick: () => scrollToSection?.('jobs') },
     { label: "О платформе", onClick: () => scrollToSection?.('about') },
   ];
@@ -58,6 +59,7 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
     { label: "Специалисты", path: "/masseurs" },
     { label: "Вакансии", path: "/vacancies" },
     { label: "Курсы", path: "/courses" },
+    { label: "Форум", path: "/forum" },
     { label: "Центры", path: "/salons", disabled: true },
     { label: "О платформе", path: "/about" },
   ];

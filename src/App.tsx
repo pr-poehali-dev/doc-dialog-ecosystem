@@ -99,6 +99,8 @@ const VNSCourse = lazy(() => import("./pages/VNSCourse"));
 const PregnancyFitness = lazy(() => import("./pages/PregnancyFitness"));
 const InvestorPresentation = lazy(() => import("./pages/InvestorPresentation"));
 const PremiumPresentation = lazy(() => import("./pages/PremiumPresentation"));
+const Forum = lazy(() => import("./pages/Forum"));
+const ForumTopic = lazy(() => import("./pages/ForumTopic"));
 
 const queryClient = new QueryClient();
 
@@ -212,6 +214,8 @@ const App = () => (
           <Route path="/premium-presentation" element={<PremiumPresentation />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/forum" element={<Forum />} />
+          <Route path="/forum/topic/:topicId" element={<ForumTopic />} />
           <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

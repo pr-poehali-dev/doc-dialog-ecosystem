@@ -1,0 +1,14 @@
+{
+  "tests": [
+    {
+      "name": "Apply forum data",
+      "method": "POST",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

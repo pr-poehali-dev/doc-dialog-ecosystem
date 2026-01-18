@@ -1,0 +1,24 @@
+{
+  "tests": [
+    {
+      "name": "Get forum stats",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "stats": {}
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Get categories",
+      "method": "GET",
+      "path": "/?action=categories",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "categories": []
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
