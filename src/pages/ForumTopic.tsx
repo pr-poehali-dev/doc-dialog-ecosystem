@@ -6,6 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import ForumRules from '@/components/forum/ForumRules';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 
 const FORUM_API = 'https://functions.poehali.dev/12c571f0-4ac4-4674-97a6-42fe8b17072a';
 
@@ -44,12 +51,20 @@ export default function ForumTopic() {
   const [replyContent, setReplyContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [showRules, setShowRules] = useState(false);
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
+  
+  const isLoggedIn = !!localStorage.getItem('token');
 
   useEffect(() => {
+    if (!isLoggedIn) {
+      setShowAuthDialog(true);
+      setLoading(false);
+      return;
+    }
     if (topicId) {
       loadTopic();
     }
-  }, [topicId]);
+  }, [topicId, isLoggedIn]);
 
   const loadTopic = async () => {
     try {
@@ -89,6 +104,11 @@ export default function ForumTopic() {
   };
 
   const handleReply = async () => {
+    if (!isLoggedIn) {
+      setShowAuthDialog(true);
+      return;
+    }
+    
     if (!replyContent.trim()) {
       toast({
         title: 'Ошибка',
@@ -131,6 +151,41 @@ export default function ForumTopic() {
       setSubmitting(false);
     }
   };
+
+  if (!isLoggedIn) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center px-4">
+        <Dialog open={showAuthDialog} onOpenChange={() => navigate('/forum')}>
+          <DialogContent className="sm:max-w-[450px] bg-slate-900 border-slate-700">
+            <DialogHeader>
+              <DialogTitle className="text-white text-xl flex items-center gap-2">
+                <Icon name="Lock" size={24} className="text-blue-400" />
+                Требуется авторизация
+              </DialogTitle>
+              <DialogDescription className="text-slate-400">
+                Для просмотра тем и обсуждений необходимо войти в систему
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+                <p className="text-sm text-slate-300">
+                  Зарегистрируйтесь, чтобы получить доступ к профессиональному форуму и общаться с коллегами
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button onClick={() => navigate('/login')} className="flex-1">
+                Войти
+              </Button>
+              <Button onClick={() => navigate('/register')} variant="outline" className="flex-1">
+                Регистрация
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

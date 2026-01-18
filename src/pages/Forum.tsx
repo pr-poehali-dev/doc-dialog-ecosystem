@@ -64,6 +64,9 @@ export default function Forum() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [showRules, setShowRules] = useState(false);
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
+  
+  const isLoggedIn = !!localStorage.getItem('token');
 
   useEffect(() => {
     loadForumData();
@@ -125,6 +128,11 @@ export default function Forum() {
   };
 
   const handleCreateTopic = async () => {
+    if (!isLoggedIn) {
+      setShowAuthDialog(true);
+      return;
+    }
+    
     if (!newTopic.title.trim() || !newTopic.content.trim() || !newTopic.category_id) {
       toast({
         title: 'Ошибка',
@@ -261,7 +269,17 @@ export default function Forum() {
                   Все категории
                 </Button>
               )}
-              <Button onClick={() => setIsNewTopicOpen(true)} className="gap-2 w-full sm:w-auto" size="sm">
+              <Button 
+                onClick={() => {
+                  if (!isLoggedIn) {
+                    setShowAuthDialog(true);
+                  } else {
+                    setIsNewTopicOpen(true);
+                  }
+                }} 
+                className="gap-2 w-full sm:w-auto" 
+                size="sm"
+              >
                 <Icon name="Plus" size={18} />
                 Создать тему
               </Button>
@@ -314,6 +332,57 @@ export default function Forum() {
           </div>
         </div>
       </div>
+
+      {/* Auth Dialog */}
+      <Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
+        <DialogContent className="sm:max-w-[450px] bg-slate-900 border-slate-700 px-4 sm:px-6">
+          <DialogHeader>
+            <DialogTitle className="text-white text-xl flex items-center gap-2">
+              <Icon name="Lock" size={24} className="text-blue-400" />
+              Требуется авторизация
+            </DialogTitle>
+            <DialogDescription className="text-slate-400 text-sm sm:text-base">
+              Для создания тем и ответов необходимо войти в систему
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+              <p className="text-sm text-slate-300 leading-relaxed">
+                Зарегистрируйтесь, чтобы:
+              </p>
+              <ul className="mt-3 space-y-2 text-sm text-slate-300">
+                <li className="flex items-start gap-2">
+                  <Icon name="Check" size={16} className="mt-0.5 text-blue-400 flex-shrink-0" />
+                  <span>Создавать темы и обсуждения</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Icon name="Check" size={16} className="mt-0.5 text-blue-400 flex-shrink-0" />
+                  <span>Отвечать на вопросы коллег</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Icon name="Check" size={16} className="mt-0.5 text-blue-400 flex-shrink-0" />
+                  <span>Общаться с профессионалами</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button 
+              onClick={() => navigate('/login')} 
+              className="flex-1"
+            >
+              Войти
+            </Button>
+            <Button 
+              onClick={() => navigate('/register')} 
+              variant="outline"
+              className="flex-1"
+            >
+              Регистрация
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Forum Rules Dialog */}
       <ForumRules open={showRules} onOpenChange={setShowRules} />
