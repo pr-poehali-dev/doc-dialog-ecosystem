@@ -175,39 +175,46 @@ export default function Forum() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-12">
         {/* Header */}
-        <div className="mb-12 text-center">
-          <div className="flex justify-between items-start mb-6">
+        <div className="mb-8 sm:mb-12">
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0 mb-6">
             <Button
               onClick={() => navigate('/')}
               variant="ghost"
+              size="sm"
+              className="w-full sm:w-auto"
             >
-              <Icon name="ArrowLeft" size={20} className="mr-2" />
-              На главную
+              <Icon name="ArrowLeft" size={18} className="mr-2" />
+              <span className="hidden sm:inline">На главную</span>
+              <span className="sm:hidden">Назад</span>
             </Button>
             <Button
               onClick={() => setShowRules(true)}
               variant="outline"
-              className="gap-2"
+              size="sm"
+              className="gap-2 w-full sm:w-auto"
             >
-              <Icon name="ShieldCheck" size={20} />
-              Правила форума
+              <Icon name="ShieldCheck" size={18} />
+              <span className="hidden sm:inline">Правила форума</span>
+              <span className="sm:hidden">Правила</span>
             </Button>
           </div>
-          <h1 className="text-5xl font-bold text-white mb-4">
-            Профессиональный форум
-          </h1>
-          <p className="text-xl text-slate-400 max-w-3xl mx-auto">
-            Общайтесь с коллегами, делитесь опытом, получайте советы от профессионалов
-          </p>
+          <div className="text-center">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4">
+              Профессиональный форум
+            </h1>
+            <p className="text-base sm:text-xl text-slate-400 max-w-3xl mx-auto px-2">
+              Общайтесь с коллегами, делитесь опытом, получайте советы от профессионалов
+            </p>
+          </div>
         </div>
 
         {/* Categories */}
         {!categoryId && (
-          <div className="mb-12">
-            <h2 className="text-3xl font-bold text-white mb-6">Категории</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4 sm:mb-6">Категории</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {categories.map((category) => (
                 <Card
                   key={category.id}
@@ -215,9 +222,9 @@ export default function Forum() {
                   onClick={() => navigate(`/forum/category/${category.id}`)}
               >
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-3 text-white">
-                    <Icon name={category.icon as any} size={28} />
-                    {category.name}
+                  <CardTitle className="flex items-center gap-2 sm:gap-3 text-white text-base sm:text-lg">
+                    <Icon name={category.icon as any} size={24} className="flex-shrink-0" />
+                    <span>{category.name}</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -243,18 +250,19 @@ export default function Forum() {
 
         {/* Recent Topics */}
         <div>
-          <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
-            <h2 className="text-3xl font-bold text-white">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white">
               {categoryId ? 'Темы категории' : 'Последние обсуждения'}
             </h2>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
               {categoryId && (
-                <Button onClick={() => navigate('/forum')} variant="outline">
+                <Button onClick={() => navigate('/forum')} variant="outline" size="sm" className="w-full sm:w-auto">
+                  <Icon name="Grid" size={16} className="mr-2" />
                   Все категории
                 </Button>
               )}
-              <Button onClick={() => setIsNewTopicOpen(true)} className="gap-2">
-                <Icon name="Plus" size={20} />
+              <Button onClick={() => setIsNewTopicOpen(true)} className="gap-2 w-full sm:w-auto" size="sm">
+                <Icon name="Plus" size={18} />
                 Создать тему
               </Button>
             </div>
@@ -268,27 +276,27 @@ export default function Forum() {
                   className="bg-slate-900/90 hover:bg-slate-900 cursor-pointer transition-colors"
                   onClick={() => navigate(`/forum/topic/${topic.id}`)}
                 >
-                  <CardContent className="pt-6">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className={`px-2 py-1 rounded-full text-xs ${roleBadge.color}`}>
+                  <CardContent className="pt-4 sm:pt-6 px-4 sm:px-6">
+                    <div className="flex flex-col sm:flex-row items-start justify-between gap-3 sm:gap-4">
+                      <div className="flex-1 w-full">
+                        <div className="flex items-center flex-wrap gap-2 mb-2">
+                          <span className={`px-2 py-0.5 rounded-full text-xs ${roleBadge.color}`}>
                             {roleBadge.label}
                           </span>
-                          <span className="text-slate-400 text-sm">{topic.author_name}</span>
-                          <span className="text-slate-600">•</span>
-                          <span className="text-slate-500 text-sm">
+                          <span className="text-slate-400 text-xs sm:text-sm">{topic.author_name}</span>
+                          <span className="text-slate-600 hidden sm:inline">•</span>
+                          <span className="text-slate-500 text-xs sm:text-sm">
                             {getRelativeTime(topic.created_at)}
                           </span>
                         </div>
-                        <h3 className="text-xl font-semibold text-white mb-2">
+                        <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 leading-tight">
                           {topic.title}
                         </h3>
-                        <p className="text-slate-400 text-sm line-clamp-2">
+                        <p className="text-slate-400 text-sm line-clamp-2 mb-3 sm:mb-0">
                           {topic.content}
                         </p>
                       </div>
-                      <div className="flex flex-col items-end gap-2 text-sm text-slate-500">
+                      <div className="flex sm:flex-col items-center sm:items-end gap-3 sm:gap-2 text-sm text-slate-500 w-full sm:w-auto justify-between sm:justify-start">
                         <div className="flex items-center gap-1">
                           <Icon name="MessageSquare" size={16} />
                           <span>{topic.replies_count}</span>

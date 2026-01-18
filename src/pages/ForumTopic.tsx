@@ -152,60 +152,61 @@ export default function ForumTopic() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
-      <div className="container mx-auto px-4 py-12 max-w-5xl">
+      <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-12 max-w-5xl">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <Button
             onClick={() => navigate('/forum')}
             variant="ghost"
-            className="mb-6 text-slate-400 hover:text-white"
+            size="sm"
+            className="mb-4 sm:mb-6 text-slate-400 hover:text-white"
           >
-            <Icon name="ArrowLeft" size={20} className="mr-2" />
+            <Icon name="ArrowLeft" size={18} className="mr-2" />
             Назад к форуму
           </Button>
-          <div className="flex items-center gap-2 mb-4">
-            <span className="text-sm px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
+          <div className="flex flex-wrap items-center gap-2 mb-3 sm:mb-4">
+            <span className="text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
               {topic.category_name}
             </span>
             <span className="text-slate-600">•</span>
-            <span className="text-slate-500 text-sm flex items-center gap-1">
-              <Icon name="Eye" size={16} />
+            <span className="text-slate-500 text-xs sm:text-sm flex items-center gap-1">
+              <Icon name="Eye" size={14} />
               {topic.views_count} просмотров
             </span>
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2 leading-tight">
             {topic.title}
           </h1>
         </div>
 
         {/* Original Post */}
-        <Card className="bg-slate-900/90 mb-8">
-          <CardContent className="pt-6">
-            <div className="flex gap-6">
+        <Card className="bg-slate-900/90 mb-6 sm:mb-8">
+          <CardContent className="pt-4 sm:pt-6 px-4 sm:px-6">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
               {/* Author Info */}
-              <div className="flex flex-col items-center gap-3 min-w-[160px]">
-                <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-2xl font-bold">
+              <div className="flex sm:flex-col items-center sm:items-center gap-3 sm:gap-3 sm:min-w-[140px]">
+                <div className="w-14 h-14 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-xl sm:text-2xl font-bold">
                     {topic.author_name.charAt(0)}
                   </span>
                 </div>
-                <div className="text-center">
-                  <p className="text-white font-semibold">{topic.author_name}</p>
-                  <span className={`text-xs px-2 py-1 rounded-full border ${authorRole.color} inline-block mt-1`}>
+                <div className="text-left sm:text-center flex-1 sm:flex-initial">
+                  <p className="text-white font-semibold text-sm sm:text-base">{topic.author_name}</p>
+                  <span className={`text-xs px-2 py-0.5 sm:py-1 rounded-full border ${authorRole.color} inline-block mt-1`}>
                     {authorRole.label}
                   </span>
                   {topic.author_specialization && (
-                    <p className="text-slate-500 text-xs mt-2">{topic.author_specialization}</p>
+                    <p className="text-slate-500 text-xs mt-1 sm:mt-2 hidden sm:block">{topic.author_specialization}</p>
                   )}
                 </div>
               </div>
 
               {/* Content */}
               <div className="flex-1">
-                <p className="text-slate-300 text-lg whitespace-pre-wrap leading-relaxed">
+                <p className="text-slate-300 text-base sm:text-lg whitespace-pre-wrap leading-relaxed">
                   {topic.content}
                 </p>
-                <div className="mt-6 pt-4 border-t border-slate-800 text-sm text-slate-500">
+                <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-slate-800 text-xs sm:text-sm text-slate-500">
                   {getRelativeTime(topic.created_at)}
                 </div>
               </div>
@@ -216,11 +217,11 @@ export default function ForumTopic() {
         {/* Replies */}
         {posts.length > 0 && (
           <div>
-            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-              <Icon name="MessageSquare" size={24} />
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6 flex items-center gap-2">
+              <Icon name="MessageSquare" size={20} />
               Ответы ({posts.length})
             </h2>
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {posts.map((post) => {
                 const postAuthorRole = getRoleBadge(post.author_role);
                 return (
@@ -232,38 +233,38 @@ export default function ForumTopic() {
                         : 'bg-slate-900/90'
                     }`}
                   >
-                    <CardContent className="pt-6">
+                    <CardContent className="pt-4 sm:pt-6 px-4 sm:px-6">
                       {post.is_solution && (
-                        <div className="mb-4 flex items-center gap-2 text-green-400">
-                          <Icon name="CheckCircle" size={20} />
-                          <span className="font-semibold">Решение</span>
+                        <div className="mb-3 sm:mb-4 flex items-center gap-2 text-green-400">
+                          <Icon name="CheckCircle" size={18} />
+                          <span className="font-semibold text-sm sm:text-base">Решение</span>
                         </div>
                       )}
-                      <div className="flex gap-6">
+                      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                         {/* Author Info */}
-                        <div className="flex flex-col items-center gap-3 min-w-[160px]">
-                          <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-full flex items-center justify-center">
-                            <span className="text-white text-xl font-bold">
+                        <div className="flex sm:flex-col items-center sm:items-center gap-3 sm:min-w-[140px]">
+                          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                            <span className="text-white text-lg sm:text-xl font-bold">
                               {post.author_name.charAt(0)}
                             </span>
                           </div>
-                          <div className="text-center">
+                          <div className="text-left sm:text-center flex-1 sm:flex-initial">
                             <p className="text-white font-semibold text-sm">{post.author_name}</p>
-                            <span className={`text-xs px-2 py-1 rounded-full border ${postAuthorRole.color} inline-block mt-1`}>
+                            <span className={`text-xs px-2 py-0.5 sm:py-1 rounded-full border ${postAuthorRole.color} inline-block mt-1`}>
                               {postAuthorRole.label}
                             </span>
                             {post.author_specialization && (
-                              <p className="text-slate-500 text-xs mt-2">{post.author_specialization}</p>
+                              <p className="text-slate-500 text-xs mt-1 sm:mt-2 hidden sm:block">{post.author_specialization}</p>
                             )}
                           </div>
                         </div>
 
                         {/* Content */}
                         <div className="flex-1">
-                          <p className="text-slate-300 whitespace-pre-wrap leading-relaxed">
+                          <p className="text-slate-300 text-sm sm:text-base whitespace-pre-wrap leading-relaxed">
                             {post.content}
                           </p>
-                          <div className="mt-4 text-sm text-slate-500">
+                          <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-slate-500">
                             {getRelativeTime(post.created_at)}
                           </div>
                         </div>
@@ -277,22 +278,22 @@ export default function ForumTopic() {
         )}
 
         {/* Reply Form */}
-        <Card className="bg-slate-900/90 mt-8">
-          <CardContent className="pt-6">
-            <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-              <Icon name="MessageSquare" size={20} />
+        <Card className="bg-slate-900/90 mt-6 sm:mt-8">
+          <CardContent className="pt-4 sm:pt-6 px-4 sm:px-6">
+            <h3 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2">
+              <Icon name="MessageSquare" size={18} />
               Написать ответ
             </h3>
             <Textarea
               placeholder="Поделитесь своим мнением или опытом..."
               value={replyContent}
               onChange={(e) => setReplyContent(e.target.value)}
-              className="bg-slate-800 border-slate-700 text-white min-h-[120px] mb-3"
+              className="bg-slate-800 border-slate-700 text-white min-h-[100px] sm:min-h-[120px] mb-3 text-sm sm:text-base"
               maxLength={2000}
             />
-            <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 mb-4">
-              <p className="text-xs text-slate-300">
-                <Icon name="Info" size={14} className="inline mr-1.5 text-blue-400" />
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-2.5 sm:p-3 mb-3 sm:mb-4">
+              <p className="text-xs text-slate-300 leading-relaxed">
+                <Icon name="Info" size={13} className="inline mr-1.5 text-blue-400" />
                 Соблюдайте{' '}
                 <button 
                   onClick={() => setShowRules(true)}
@@ -303,14 +304,15 @@ export default function ForumTopic() {
                 . Запрещены: спам, реклама, ссылки, оскорбления, офф-топик.
               </p>
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <p className="text-xs text-slate-500">
                 {replyContent.length} / 2000 символов
               </p>
               <Button 
                 onClick={handleReply} 
                 disabled={submitting || !replyContent.trim()}
-                className="gap-2"
+                className="gap-2 w-full sm:w-auto"
+                size="sm"
               >
                 <Icon name="Send" size={16} />
                 {submitting ? 'Отправка...' : 'Опубликовать'}
