@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { Card, CardContent } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
@@ -230,10 +231,44 @@ export default function ForumTopic() {
   }
 
   const authorRole = getRoleBadge(topic.author_role);
+  
+  const pageTitle = `${topic.title} - Профессиональный форум`;
+  const pageDescription = topic.content.substring(0, 160);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
-      <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-12 max-w-5xl">
+    <>
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={pageDescription} />
+        <link rel="canonical" href={`https://docdialog.su/forum/topic/${topicId}`} />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "DiscussionForumPosting",
+            "headline": topic.title,
+            "text": topic.content,
+            "author": {
+              "@type": "Person",
+              "name": topic.author_name
+            },
+            "datePublished": topic.created_at,
+            "interactionStatistic": {
+              "@type": "InteractionCounter",
+              "interactionType": "https://schema.org/CommentAction",
+              "userInteractionCount": posts.length
+            }
+          })}
+        </script>
+      </Helmet>
+      
+      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+        <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-12 max-w-5xl">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
           <Button

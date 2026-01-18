@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
@@ -98,11 +99,9 @@ export default function Forum() {
       const topicsData = await topicsRes.json();
       const fetchedTopics = topicsData.topics || [];
       
-      // Сохраняем все темы
       setAllTopics(fetchedTopics);
       setTotalPages(Math.ceil(fetchedTopics.length / TOPICS_PER_PAGE));
       
-      // Пагинация на фронтенде
       const startIndex = (currentPage - 1) * TOPICS_PER_PAGE;
       const endIndex = startIndex + TOPICS_PER_PAGE;
       setRecentTopics(fetchedTopics.slice(startIndex, endIndex));
@@ -112,6 +111,14 @@ export default function Forum() {
       setLoading(false);
     }
   };
+
+  const currentCategory = categories.find(c => c.id === Number(categoryId));
+  const pageTitle = currentCategory 
+    ? `${currentCategory.name} - Профессиональный форум`
+    : 'Профессиональный форум - Обсуждения и советы';
+  const pageDescription = currentCategory
+    ? `${currentCategory.description} - Общайтесь с коллегами и делитесь опытом`
+    : 'Общайтесь с коллегами, делитесь опытом, получайте советы от профессионалов в различных областях';
 
   const getCategoryColor = (color: string) => {
     const colors: Record<string, string> = {
@@ -204,8 +211,54 @@ export default function Forum() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
-      <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-12">
+    <>
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={pageDescription} />
+        {currentCategory && (
+          <link rel="canonical" href={`https://docdialog.su/forum/${categoryId}`} />
+        )}
+        {!currentCategory && (
+          <link rel="canonical" href="https://docdialog.su/forum" />
+        )}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": pageTitle,
+            "description": pageDescription,
+            "url": currentCategory 
+              ? `https://docdialog.su/forum/${categoryId}`
+              : "https://docdialog.su/forum",
+            "breadcrumb": {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Главная",
+                  "item": "https://docdialog.su"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "Форум",
+                  "item": "https://docdialog.su/forum"
+                }
+              ]
+            }
+          })}
+        </script>
+      </Helmet>
+      
+      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+        <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-12">
         {/* Header */}
         <div className="mb-8 sm:mb-12">
           <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0 mb-6">
