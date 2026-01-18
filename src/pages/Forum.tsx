@@ -3,6 +3,23 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
 
 const FORUM_API = 'https://functions.poehali.dev/12c571f0-4ac4-4674-97a6-42fe8b17072a';
 
@@ -33,9 +50,18 @@ interface Topic {
 export default function Forum() {
   const navigate = useNavigate();
   const { categoryId } = useParams();
+  const { toast } = useToast();
   const [categories, setCategories] = useState<Category[]>([]);
   const [recentTopics, setRecentTopics] = useState<Topic[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isNewTopicOpen, setIsNewTopicOpen] = useState(false);
+  const [newTopic, setNewTopic] = useState({
+    title: '',
+    content: '',
+    category_id: categoryId || '',
+    author_id: 1, // Временно: первый пользователь
+  });
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     loadForumData();
@@ -94,6 +120,47 @@ export default function Forum() {
       client: { label: 'Клиент', color: 'bg-gray-500/20 text-gray-300' },
     };
     return roles[role] || roles.masseur;
+  };
+
+  const handleCreateTopic = async () => {
+    if (!newTopic.title.trim() || !newTopic.content.trim() || !newTopic.category_id) {
+      toast({
+        title: 'Ошибка',
+        description: 'Заполните все поля',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const response = await fetch(`${FORUM_API}?action=topic`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newTopic),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        toast({
+          title: 'Успешно!',
+          description: 'Тема создана',
+        });
+        setIsNewTopicOpen(false);
+        setNewTopic({ title: '', content: '', category_id: categoryId || '', author_id: 1 });
+        navigate(`/forum/topic/${data.topic_id}`);
+      } else {
+        throw new Error('Failed to create topic');
+      }
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось создать тему',
+        variant: 'destructive',
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (loading) {
@@ -165,15 +232,21 @@ export default function Forum() {
 
         {/* Recent Topics */}
         <div>
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
             <h2 className="text-3xl font-bold text-white">
               {categoryId ? 'Темы категории' : 'Последние обсуждения'}
             </h2>
-            {categoryId && (
-              <Button onClick={() => navigate('/forum')} variant="outline">
-                Все категории
+            <div className="flex gap-3">
+              {categoryId && (
+                <Button onClick={() => navigate('/forum')} variant="outline">
+                  Все категории
+                </Button>
+              )}
+              <Button onClick={() => setIsNewTopicOpen(true)} className="gap-2">
+                <Icon name="Plus" size={20} />
+                Создать тему
               </Button>
-            )}
+            </div>
           </div>
           <div className="space-y-4">
             {recentTopics.map((topic) => {
@@ -222,6 +295,79 @@ export default function Forum() {
           </div>
         </div>
       </div>
+
+      {/* Create Topic Dialog */}
+      <Dialog open={isNewTopicOpen} onOpenChange={setIsNewTopicOpen}>
+        <DialogContent className="sm:max-w-[600px] bg-slate-900 border-slate-700">
+          <DialogHeader>
+            <DialogTitle className="text-white">Создать новую тему</DialogTitle>
+            <DialogDescription className="text-slate-400">
+              Задайте вопрос или начните обсуждение
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 mt-4">
+            <div>
+              <label className="text-sm font-medium text-slate-300 mb-2 block">
+                Категория
+              </label>
+              <Select
+                value={newTopic.category_id.toString()}
+                onValueChange={(value) => setNewTopic({ ...newTopic, category_id: value })}
+              >
+                <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                  <SelectValue placeholder="Выберите категорию" />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-800 border-slate-700">
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id.toString()} className="text-white">
+                      {cat.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-slate-300 mb-2 block">
+                Заголовок
+              </label>
+              <Input
+                placeholder="О чём вы хотите спросить?"
+                value={newTopic.title}
+                onChange={(e) => setNewTopic({ ...newTopic, title: e.target.value })}
+                className="bg-slate-800 border-slate-700 text-white"
+                maxLength={200}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-slate-300 mb-2 block">
+                Описание
+              </label>
+              <Textarea
+                placeholder="Опишите вашу проблему или вопрос подробнее..."
+                value={newTopic.content}
+                onChange={(e) => setNewTopic({ ...newTopic, content: e.target.value })}
+                className="bg-slate-800 border-slate-700 text-white min-h-[150px]"
+                maxLength={2000}
+              />
+              <p className="text-xs text-slate-500 mt-1">
+                {newTopic.content.length} / 2000 символов
+              </p>
+            </div>
+            <div className="flex gap-3 justify-end pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setIsNewTopicOpen(false)}
+                disabled={submitting}
+              >
+                Отмена
+              </Button>
+              <Button onClick={handleCreateTopic} disabled={submitting}>
+                {submitting ? 'Создание...' : 'Создать тему'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

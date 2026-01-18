@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
 
 const FORUM_API = 'https://functions.poehali.dev/12c571f0-4ac4-4674-97a6-42fe8b17072a';
 
@@ -34,9 +36,12 @@ interface Topic {
 export default function ForumTopic() {
   const { topicId } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [topic, setTopic] = useState<Topic | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [replyContent, setReplyContent] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (topicId) {
@@ -79,6 +84,50 @@ export default function ForumTopic() {
     if (diffHours < 24) return `${diffHours} ч назад`;
     if (diffDays < 7) return `${diffDays} д назад`;
     return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+  };
+
+  const handleReply = async () => {
+    if (!replyContent.trim()) {
+      toast({
+        title: 'Ошибка',
+        description: 'Введите текст ответа',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const response = await fetch(`${FORUM_API}?action=post`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          topic_id: topicId,
+          author_id: 1, // Временно
+          content: replyContent,
+          is_solution: false,
+        }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: 'Успешно!',
+          description: 'Ответ опубликован',
+        });
+        setReplyContent('');
+        loadTopic(); // Перезагружаем тему с новым ответом
+      } else {
+        throw new Error('Failed to post reply');
+      }
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось опубликовать ответ',
+        variant: 'destructive',
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (loading) {
@@ -224,6 +273,36 @@ export default function ForumTopic() {
             </div>
           </div>
         )}
+
+        {/* Reply Form */}
+        <Card className="bg-slate-900/90 mt-8">
+          <CardContent className="pt-6">
+            <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+              <Icon name="MessageSquare" size={20} />
+              Написать ответ
+            </h3>
+            <Textarea
+              placeholder="Поделитесь своим мнением или опытом..."
+              value={replyContent}
+              onChange={(e) => setReplyContent(e.target.value)}
+              className="bg-slate-800 border-slate-700 text-white min-h-[120px] mb-4"
+              maxLength={2000}
+            />
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-slate-500">
+                {replyContent.length} / 2000 символов
+              </p>
+              <Button 
+                onClick={handleReply} 
+                disabled={submitting || !replyContent.trim()}
+                className="gap-2"
+              >
+                <Icon name="Send" size={16} />
+                {submitting ? 'Отправка...' : 'Опубликовать'}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
