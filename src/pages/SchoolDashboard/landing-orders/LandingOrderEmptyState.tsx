@@ -14,8 +14,8 @@ export default function LandingOrderEmptyState({ onCreateClick }: LandingOrderEm
           <Icon name="FileText" size={32} className="text-primary" />
         </div>
         <h3 className="text-xl font-bold mb-2">Создайте свой первый лендинг</h3>
-        <p className="text-gray-600 mb-6">
-          Закажите продающий лендинг для вашего курса всего за 2990 ₽
+        <p className="text-gray-600 mb-6 max-w-md mx-auto">
+          Закажите продающий лендинг для вашего курса всего за 2990 ₽. Профессиональный дизайн, продуманная структура и полная интеграция в экосистему DoctorDialog — всё для максимальной конверсии ваших учеников.
         </p>
         <Button size="lg" onClick={onCreateClick}>
           <Icon name="Plus" size={20} className="mr-2" />
