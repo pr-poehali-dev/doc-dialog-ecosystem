@@ -1,10 +1,12 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, lazy, Suspense } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Icon from '@/components/ui/icon';
-import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
+import { EmojiClickData } from 'emoji-picker-react';
+
+const EmojiPicker = lazy(() => import('emoji-picker-react').then(m => ({ default: m.default })));
 import {
   Popover,
   PopoverContent,
@@ -188,11 +190,13 @@ export default function AdminChatMessages({
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-full p-0 border-0" align="start">
-                <EmojiPicker 
-                  onEmojiClick={onEmojiClick}
-                  width={350}
-                  height={400}
-                />
+                <Suspense fallback={<div className="w-[350px] h-[400px] flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+                  <EmojiPicker 
+                    onEmojiClick={onEmojiClick}
+                    width={350}
+                    height={400}
+                  />
+                </Suspense>
               </PopoverContent>
             </Popover>
 
