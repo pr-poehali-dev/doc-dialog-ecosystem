@@ -70,17 +70,17 @@ const VacancyCard = ({ vacancy }: VacancyCardProps) => {
 
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all p-6">
-      <div className="flex items-start gap-4 mb-4">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all p-4 md:p-6">
+      <div className="flex items-start gap-3 md:gap-4 mb-3 md:mb-4">
         {vacancy.companyLogo ? (
           <img 
             src={vacancy.companyLogo} 
             alt={vacancy.companyName}
-            className="w-16 h-16 object-contain rounded-lg border border-gray-200"
+            className="w-12 h-12 md:w-16 md:h-16 object-contain rounded-lg border border-gray-200"
           />
         ) : (
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
-            <span className="text-white font-bold text-xl">
+          <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+            <span className="text-white font-bold text-lg md:text-xl">
               {vacancy.companyName.charAt(0).toUpperCase()}
             </span>
           </div>
@@ -88,7 +88,7 @@ const VacancyCard = ({ vacancy }: VacancyCardProps) => {
 
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between mb-1">
-            <h3 className="text-xl font-bold text-gray-900 hover:text-blue-600 cursor-pointer flex-1">
+            <h3 className="text-base md:text-xl font-bold text-gray-900 hover:text-blue-600 cursor-pointer flex-1">
               {vacancy.title}
             </h3>
           </div>
@@ -97,7 +97,7 @@ const VacancyCard = ({ vacancy }: VacancyCardProps) => {
             onClick={handleCompanyClick}
             className="flex items-center gap-2 text-gray-700 hover:text-blue-600 cursor-pointer mb-2"
           >
-            <span className="font-medium">{vacancy.companyName}</span>
+            <span className="text-sm md:text-base font-medium">{vacancy.companyName}</span>
             {vacancy.companyApproved && (
               <Badge variant="secondary" className="text-xs">
                 <Icon name="BadgeCheck" size={12} className="mr-1" />
@@ -111,75 +111,75 @@ const VacancyCard = ({ vacancy }: VacancyCardProps) => {
             )}
           </div>
 
-          <div className="text-2xl font-bold mb-3" style={{ color: '#0da2e7' }}>
+          <div className="text-lg md:text-2xl font-bold mb-2 md:mb-3" style={{ color: '#0da2e7' }}>
             {formatSalary()}
           </div>
 
-          <div className="flex flex-wrap gap-2 mb-3">
+          <div className="flex flex-wrap gap-1.5 md:gap-2 mb-2 md:mb-3">
             {vacancy.city && (
-              <Badge variant="outline" className="gap-1">
-                <Icon name="MapPin" size={14} />
+              <Badge variant="outline" className="gap-1 text-xs md:text-sm">
+                <Icon name="MapPin" size={12} className="md:w-3.5 md:h-3.5" />
                 {vacancy.city}
               </Badge>
             )}
             
             {vacancy.online && (
-              <Badge variant="outline" className="gap-1 bg-blue-50 text-blue-700 border-blue-200">
-                <Icon name="Monitor" size={14} />
+              <Badge variant="outline" className="gap-1 bg-blue-50 text-blue-700 border-blue-200 text-xs md:text-sm">
+                <Icon name="Monitor" size={12} className="md:w-3.5 md:h-3.5" />
                 Удалённо
               </Badge>
             )}
 
             {vacancy.workExperience && (
-              <Badge variant="outline" className="gap-1">
-                <Icon name="Briefcase" size={14} />
+              <Badge variant="outline" className="gap-1 text-xs md:text-sm">
+                <Icon name="Briefcase" size={12} className="md:w-3.5 md:h-3.5" />
                 {vacancy.workExperience}
               </Badge>
             )}
 
             {vacancy.workSchedule && (
-              <Badge variant="outline" className="gap-1">
-                <Icon name="Clock" size={14} />
+              <Badge variant="outline" className="gap-1 text-xs md:text-sm">
+                <Icon name="Clock" size={12} className="md:w-3.5 md:h-3.5" />
                 {vacancy.workSchedule}
               </Badge>
             )}
 
             {vacancy.withoutResume && (
-              <Badge variant="outline" className="gap-1 bg-green-50 text-green-700 border-green-200">
-                <Icon name="FileCheck" size={14} />
+              <Badge variant="outline" className="gap-1 bg-green-50 text-green-700 border-green-200 text-xs md:text-sm">
+                <Icon name="FileCheck" size={12} className="md:w-3.5 md:h-3.5" />
                 Без резюме
               </Badge>
             )}
           </div>
 
           {vacancy.metroStations && vacancy.metroStations.length > 0 && (
-            <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-              <Icon name="Train" size={16} className="text-gray-400" />
+            <div className="flex items-center gap-2 text-xs md:text-sm text-gray-600 mb-2 md:mb-3">
+              <Icon name="Train" size={14} className="text-gray-400 md:w-4 md:h-4" />
               <span>{vacancy.metroStations.join(', ')}</span>
             </div>
           )}
 
           {vacancy.employerHhRating && (
-            <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
-              <Icon name="Star" size={16} className="text-amber-400 fill-amber-400" />
+            <div className="flex items-center gap-1 text-xs md:text-sm text-gray-600 mb-2 md:mb-3">
+              <Icon name="Star" size={14} className="text-amber-400 fill-amber-400 md:w-4 md:h-4" />
               <span className="font-medium">{vacancy.employerHhRating.toFixed(1)}</span>
               <span className="text-gray-400">рейтинг работодателя</span>
             </div>
           )}
 
           {vacancy.description && (
-            <div className="mb-3 text-gray-600 text-sm">
+            <div className="mb-2 md:mb-3 text-gray-600 text-xs md:text-sm">
               {vacancy.description}
             </div>
           )}
 
           {vacancy.requirements && vacancy.requirements.length > 0 && (
-            <div className="mb-3">
-              <h4 className="font-semibold mb-2 flex items-center gap-2 text-sm">
-                <Icon name="CheckCircle" size={16} />
+            <div className="mb-2 md:mb-3">
+              <h4 className="font-semibold mb-1.5 md:mb-2 flex items-center gap-2 text-xs md:text-sm">
+                <Icon name="CheckCircle" size={14} className="md:w-4 md:h-4" />
                 Требования
               </h4>
-              <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
+              <ul className="list-disc list-inside space-y-1 text-xs md:text-sm text-gray-600">
                 {vacancy.requirements.map((req, idx) => (
                   <li key={idx}>{req}</li>
                 ))}
@@ -187,19 +187,20 @@ const VacancyCard = ({ vacancy }: VacancyCardProps) => {
             </div>
           )}
 
-          <div className="flex items-center gap-3 pt-3">
-            <Button onClick={handleApply} size="lg" style={{ backgroundColor: '#0da2e7' }} className="hover:opacity-90">
-              <Icon name="Send" size={18} className="mr-2" />
+          <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 md:gap-3 pt-2 md:pt-3">
+            <Button onClick={handleApply} size="default" style={{ backgroundColor: '#0da2e7' }} className="hover:opacity-90 w-full md:w-auto">
+              <Icon name="Send" size={16} className="mr-2 md:w-4.5 md:h-4.5" />
               Откликнуться
             </Button>
             
             {vacancy.vacancyLink && (
               <Button 
                 variant="outline" 
-                size="lg"
+                size="default"
                 onClick={() => window.open(vacancy.vacancyLink, '_blank')}
+                className="w-full md:w-auto"
               >
-                <Icon name="ExternalLink" size={18} className="mr-2" />
+                <Icon name="ExternalLink" size={16} className="mr-2 md:w-4.5 md:h-4.5" />
                 Подробнее
               </Button>
             )}
@@ -208,7 +209,7 @@ const VacancyCard = ({ vacancy }: VacancyCardProps) => {
       </div>
 
       {vacancy.createdAt && (
-        <div className="text-xs text-gray-400 mt-3 pt-3 border-t border-gray-100">
+        <div className="text-xs text-gray-400 mt-2 md:mt-3 pt-2 md:pt-3 border-t border-gray-100">
           Опубликовано: {new Date(vacancy.createdAt).toLocaleDateString('ru-RU')}
         </div>
       )}

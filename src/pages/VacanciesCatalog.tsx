@@ -97,18 +97,18 @@ export default function VacanciesCatalog() {
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <Navigation />
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-6 md:py-8">
         <div className="max-w-6xl mx-auto">
-          <div className="mb-8 text-center">
-            <h1 className="text-4xl font-bold mb-4">Вакансии для массажистов</h1>
-            <p className="text-lg text-muted-foreground">
+          <div className="mb-6 md:mb-8 text-center">
+            <h1 className="text-2xl md:text-4xl font-bold mb-2 md:mb-4">Вакансии для массажистов</h1>
+            <p className="text-sm md:text-lg text-muted-foreground">
               Найдите работу мечты в лучших массажных салонах города
             </p>
           </div>
 
-          <Card className="mb-8">
-            <CardContent className="pt-6">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="mb-6 md:mb-8">
+            <CardContent className="pt-4 md:pt-6">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4">
                 <div className="md:col-span-2 relative">
                   <Icon 
                     name="Search" 
@@ -147,7 +147,7 @@ export default function VacanciesCatalog() {
                 </Select>
               </div>
               {(searchQuery || cityFilter !== 'all' || scheduleFilter !== 'all') && (
-                <div className="mt-4">
+                <div className="mt-3 md:mt-4">
                   <Button
                     variant="outline"
                     size="sm"
@@ -156,6 +156,7 @@ export default function VacanciesCatalog() {
                       setCityFilter('all');
                       setScheduleFilter('all');
                     }}
+                    className="w-full md:w-auto"
                   >
                     <Icon name="X" size={16} className="mr-1" />
                     Сбросить фильтры
@@ -165,31 +166,31 @@ export default function VacanciesCatalog() {
             </CardContent>
           </Card>
 
-          <div className="mb-6 flex items-center justify-between">
-            <p className="text-muted-foreground">
-              Найдено вакансий: <span className="font-semibold text-foreground">{filteredVacancies.length}</span> из {total}
+          <div className="mb-4 md:mb-6 flex items-center justify-between">
+            <p className="text-sm md:text-base text-muted-foreground">
+              Найдено: <span className="font-semibold text-foreground">{filteredVacancies.length}</span> из {total}
               {totalPages > 1 && (
-                <span className="ml-2">• Страница {currentPage} из {totalPages}</span>
+                <span className="ml-2 hidden md:inline">• Страница {currentPage} из {totalPages}</span>
               )}
             </p>
           </div>
 
           {loading ? (
-            <div className="flex items-center justify-center py-20">
+            <div className="flex items-center justify-center py-12 md:py-20">
               <div className="text-center">
-                <div className="w-16 h-16 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-gray-600">Загрузка вакансий...</p>
+                <div className="w-12 h-12 md:w-16 md:h-16 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-sm md:text-base text-gray-600">Загрузка вакансий...</p>
               </div>
             </div>
           ) : filteredVacancies.length === 0 ? (
-            <div className="text-center py-20">
-              <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Icon name="Briefcase" size={48} className="text-gray-400" />
+            <div className="text-center py-12 md:py-20">
+              <div className="w-16 h-16 md:w-24 md:h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon name="Briefcase" size={36} className="text-gray-400 md:w-12 md:h-12" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
                 Вакансии не найдены
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-sm md:text-base text-gray-600 mb-6">
                 Попробуйте изменить параметры поиска
               </p>
               <Button
