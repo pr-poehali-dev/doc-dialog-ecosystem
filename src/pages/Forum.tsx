@@ -211,7 +211,7 @@ export default function Forum() {
           <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0 mb-6">
             <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
               <Button
-                onClick={() => window.location.href = 'https://poehali.dev/dashboard'}
+                onClick={() => navigate('/dashboard')}
                 variant="outline"
                 size="sm"
                 className="flex-1 sm:flex-initial"
