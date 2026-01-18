@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import ForumRules from '@/components/forum/ForumRules';
+import Pagination from '@/components/forum/Pagination';
 
 const FORUM_API = 'https://functions.poehali.dev/12c571f0-4ac4-4674-97a6-42fe8b17072a';
 
@@ -53,7 +54,8 @@ export default function Forum() {
   const { categoryId } = useParams();
   const { toast } = useToast();
   const [categories, setCategories] = useState<Category[]>([]);
-  const [recentTopics, setRecentTopics] = useState<Topic[]>([]);
+  const [allTopics, setAllTopics] = useState<Topic[]>([]); // Все темы
+  const [recentTopics, setRecentTopics] = useState<Topic[]>([]); // Отображаемые темы
   const [loading, setLoading] = useState(true);
   const [isNewTopicOpen, setIsNewTopicOpen] = useState(false);
   const [newTopic, setNewTopic] = useState({
@@ -65,12 +67,23 @@ export default function Forum() {
   const [submitting, setSubmitting] = useState(false);
   const [showRules, setShowRules] = useState(false);
   const [showAuthDialog, setShowAuthDialog] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const TOPICS_PER_PAGE = 10;
   
   const isLoggedIn = !!localStorage.getItem('token');
 
   useEffect(() => {
+    setCurrentPage(1); // Сброс на первую страницу при смене категории
     loadForumData();
   }, [categoryId]);
+
+  useEffect(() => {
+    // Обновляем отображаемые темы при смене страницы
+    const startIndex = (currentPage - 1) * TOPICS_PER_PAGE;
+    const endIndex = startIndex + TOPICS_PER_PAGE;
+    setRecentTopics(allTopics.slice(startIndex, endIndex));
+  }, [currentPage, allTopics]);
 
   const loadForumData = async () => {
     try {
@@ -83,7 +96,16 @@ export default function Forum() {
         : `${FORUM_API}?action=topics`;
       const topicsRes = await fetch(topicsUrl);
       const topicsData = await topicsRes.json();
-      setRecentTopics(topicsData.topics || []);
+      const fetchedTopics = topicsData.topics || [];
+      
+      // Сохраняем все темы
+      setAllTopics(fetchedTopics);
+      setTotalPages(Math.ceil(fetchedTopics.length / TOPICS_PER_PAGE));
+      
+      // Пагинация на фронтенде
+      const startIndex = (currentPage - 1) * TOPICS_PER_PAGE;
+      const endIndex = startIndex + TOPICS_PER_PAGE;
+      setRecentTopics(fetchedTopics.slice(startIndex, endIndex));
     } catch (error) {
       console.error('Failed to load forum:', error);
     } finally {
@@ -330,6 +352,16 @@ export default function Forum() {
               );
             })}
           </div>
+          
+          {/* Pagination */}
+          <Pagination 
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => {
+              setCurrentPage(page);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
         </div>
       </div>
 

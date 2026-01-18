@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import ForumRules from '@/components/forum/ForumRules';
+import Pagination from '@/components/forum/Pagination';
 import {
   Dialog,
   DialogContent,
@@ -52,6 +53,9 @@ export default function ForumTopic() {
   const [submitting, setSubmitting] = useState(false);
   const [showRules, setShowRules] = useState(false);
   const [showAuthDialog, setShowAuthDialog] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [displayedPosts, setDisplayedPosts] = useState<Post[]>([]);
+  const POSTS_PER_PAGE = 10;
   
   const isLoggedIn = !!localStorage.getItem('token');
 
@@ -66,17 +70,35 @@ export default function ForumTopic() {
     }
   }, [topicId, isLoggedIn]);
 
+  useEffect(() => {
+    // Обновляем отображаемые посты при изменении страницы
+    if (posts.length > 0) {
+      updateDisplayedPosts(posts, currentPage);
+    }
+  }, [currentPage]);
+
   const loadTopic = async () => {
     try {
       const res = await fetch(`${FORUM_API}?action=topic&topic_id=${topicId}`);
       const data = await res.json();
       setTopic(data.topic);
-      setPosts(data.posts || []);
+      const allPosts = data.posts || [];
+      setPosts(allPosts);
+      
+      // Пагинация ответов
+      updateDisplayedPosts(allPosts, 1);
     } catch (error) {
       console.error('Failed to load topic:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const updateDisplayedPosts = (allPosts: Post[], page: number) => {
+    const startIndex = (page - 1) * POSTS_PER_PAGE;
+    const endIndex = startIndex + POSTS_PER_PAGE;
+    setDisplayedPosts(allPosts.slice(startIndex, endIndex));
+    setCurrentPage(page);
   };
 
   const getRoleBadge = (role: string) => {
@@ -137,7 +159,11 @@ export default function ForumTopic() {
           description: 'Ответ опубликован',
         });
         setReplyContent('');
-        loadTopic(); // Перезагружаем тему с новым ответом
+        await loadTopic(); // Перезагружаем тему с новым ответом
+        // Переходим на последнюю страницу после добавления ответа
+        const totalPages = Math.ceil((posts.length + 1) / POSTS_PER_PAGE);
+        updateDisplayedPosts([...posts], totalPages);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         throw new Error('Failed to post reply');
       }
@@ -277,7 +303,7 @@ export default function ForumTopic() {
               Ответы ({posts.length})
             </h2>
             <div className="space-y-4 sm:space-y-6">
-              {posts.map((post) => {
+              {displayedPosts.map((post) => {
                 const postAuthorRole = getRoleBadge(post.author_role);
                 return (
                   <Card
@@ -329,6 +355,19 @@ export default function ForumTopic() {
                 );
               })}
             </div>
+            
+            {/* Pagination for replies */}
+            {posts.length > POSTS_PER_PAGE && (
+              <Pagination 
+                currentPage={currentPage}
+                totalPages={Math.ceil(posts.length / POSTS_PER_PAGE)}
+                onPageChange={(page) => {
+                  updateDisplayedPosts(posts, page);
+                  // Скроллим к началу ответов
+                  document.querySelector('h2')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }}
+              />
+            )}
           </div>
         )}
 
