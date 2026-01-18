@@ -66,7 +66,7 @@ export default function WebinarOrdersList({ orders, onCreateClick, onDelete }: W
               <div>
                 <p className="text-gray-600">Тариф:</p>
                 <p className="font-medium">
-                  {PACKAGE_PRICES[order.packageType].label} — {PACKAGE_PRICES[order.packageType].price} ₽
+                  {PACKAGE_PRICES[order.packageType]?.label || 'Не указан'} — {PACKAGE_PRICES[order.packageType]?.price || 0} ₽
                 </p>
               </div>
               <div>
