@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import ForumRules from '@/components/forum/ForumRules';
 
 const FORUM_API = 'https://functions.poehali.dev/12c571f0-4ac4-4674-97a6-42fe8b17072a';
 
@@ -62,6 +63,7 @@ export default function Forum() {
     author_id: 1, // Временно: первый пользователь
   });
   const [submitting, setSubmitting] = useState(false);
+  const [showRules, setShowRules] = useState(false);
 
   useEffect(() => {
     loadForumData();
@@ -176,14 +178,23 @@ export default function Forum() {
       <div className="container mx-auto px-4 py-12">
         {/* Header */}
         <div className="mb-12 text-center">
-          <Button
-            onClick={() => navigate('/')}
-            variant="ghost"
-            className="mb-6"
-          >
-            <Icon name="ArrowLeft" size={20} className="mr-2" />
-            На главную
-          </Button>
+          <div className="flex justify-between items-start mb-6">
+            <Button
+              onClick={() => navigate('/')}
+              variant="ghost"
+            >
+              <Icon name="ArrowLeft" size={20} className="mr-2" />
+              На главную
+            </Button>
+            <Button
+              onClick={() => setShowRules(true)}
+              variant="outline"
+              className="gap-2"
+            >
+              <Icon name="ShieldCheck" size={20} />
+              Правила форума
+            </Button>
+          </div>
           <h1 className="text-5xl font-bold text-white mb-4">
             Профессиональный форум
           </h1>
@@ -296,6 +307,9 @@ export default function Forum() {
         </div>
       </div>
 
+      {/* Forum Rules Dialog */}
+      <ForumRules open={showRules} onOpenChange={setShowRules} />
+
       {/* Create Topic Dialog */}
       <Dialog open={isNewTopicOpen} onOpenChange={setIsNewTopicOpen}>
         <DialogContent className="sm:max-w-[600px] bg-slate-900 border-slate-700">
@@ -351,6 +365,22 @@ export default function Forum() {
               />
               <p className="text-xs text-slate-500 mt-1">
                 {newTopic.content.length} / 2000 символов
+              </p>
+            </div>
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
+              <p className="text-xs text-slate-300">
+                <Icon name="Info" size={14} className="inline mr-1.5 text-blue-400" />
+                Пожалуйста, соблюдайте{' '}
+                <button 
+                  onClick={() => {
+                    setIsNewTopicOpen(false);
+                    setShowRules(true);
+                  }}
+                  className="text-blue-400 hover:text-blue-300 underline"
+                >
+                  правила форума
+                </button>
+                . Запрещены: спам, реклама, ссылки, оскорбления, офф-топик.
               </p>
             </div>
             <div className="flex gap-3 justify-end pt-4">

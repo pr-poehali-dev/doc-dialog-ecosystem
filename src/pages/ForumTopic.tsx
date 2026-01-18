@@ -5,6 +5,7 @@ import Icon from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+import ForumRules from '@/components/forum/ForumRules';
 
 const FORUM_API = 'https://functions.poehali.dev/12c571f0-4ac4-4674-97a6-42fe8b17072a';
 
@@ -42,6 +43,7 @@ export default function ForumTopic() {
   const [loading, setLoading] = useState(true);
   const [replyContent, setReplyContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [showRules, setShowRules] = useState(false);
 
   useEffect(() => {
     if (topicId) {
@@ -285,9 +287,22 @@ export default function ForumTopic() {
               placeholder="Поделитесь своим мнением или опытом..."
               value={replyContent}
               onChange={(e) => setReplyContent(e.target.value)}
-              className="bg-slate-800 border-slate-700 text-white min-h-[120px] mb-4"
+              className="bg-slate-800 border-slate-700 text-white min-h-[120px] mb-3"
               maxLength={2000}
             />
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 mb-4">
+              <p className="text-xs text-slate-300">
+                <Icon name="Info" size={14} className="inline mr-1.5 text-blue-400" />
+                Соблюдайте{' '}
+                <button 
+                  onClick={() => setShowRules(true)}
+                  className="text-blue-400 hover:text-blue-300 underline"
+                >
+                  правила форума
+                </button>
+                . Запрещены: спам, реклама, ссылки, оскорбления, офф-топик.
+              </p>
+            </div>
             <div className="flex items-center justify-between">
               <p className="text-xs text-slate-500">
                 {replyContent.length} / 2000 символов
@@ -304,6 +319,9 @@ export default function ForumTopic() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Forum Rules Dialog */}
+      <ForumRules open={showRules} onOpenChange={setShowRules} />
     </div>
   );
 }
