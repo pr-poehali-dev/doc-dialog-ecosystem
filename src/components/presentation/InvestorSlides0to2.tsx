@@ -17,9 +17,11 @@ export default function InvestorSlides0to2({
       {activeSlide === 0 && (
         <div className="text-center py-20 animate-fade-in">
           <div className="mb-8">
-            <div className="w-32 h-32 bg-gradient-to-br from-blue-600 to-purple-600 rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-2xl">
-              <Icon name="Heart" size={64} className="text-white" />
-            </div>
+            <img 
+              src="https://cdn.poehali.dev/files/Group 7 (7).png" 
+              alt="Док диалог" 
+              className="h-32 w-auto mx-auto"
+            />
           </div>
           <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
             DocDialog
