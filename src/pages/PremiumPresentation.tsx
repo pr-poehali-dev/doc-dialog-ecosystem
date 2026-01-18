@@ -34,7 +34,7 @@ export default function PremiumPresentation() {
         onSlideChange={setActiveSlide}
       />
 
-      <div className="relative z-10 min-h-screen flex items-center justify-center px-6 md:px-12">
+      <div className="relative z-10 min-h-screen flex items-center justify-center px-4 md:px-12 py-16 md:py-0">
         <div className="max-w-5xl w-full">
           <PremiumSlideContent activeSlide={activeSlide} />
         </div>
