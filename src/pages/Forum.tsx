@@ -572,6 +572,7 @@ export default function Forum() {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+      </div>
+    </>
   );
 }

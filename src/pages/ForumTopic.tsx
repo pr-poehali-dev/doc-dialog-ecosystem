@@ -453,6 +453,7 @@ export default function ForumTopic() {
 
       {/* Forum Rules Dialog */}
       <ForumRules open={showRules} onOpenChange={setShowRules} />
-    </div>
+      </div>
+    </>
   );
 }
