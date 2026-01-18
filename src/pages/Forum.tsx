@@ -209,16 +209,28 @@ export default function Forum() {
         {/* Header */}
         <div className="mb-8 sm:mb-12">
           <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0 mb-6">
-            <Button
-              onClick={() => navigate('/')}
-              variant="ghost"
-              size="sm"
-              className="w-full sm:w-auto"
-            >
-              <Icon name="ArrowLeft" size={18} className="mr-2" />
-              <span className="hidden sm:inline">На главную</span>
-              <span className="sm:hidden">Назад</span>
-            </Button>
+            <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
+              <Button
+                onClick={() => window.location.href = 'https://poehali.dev'}
+                variant="outline"
+                size="sm"
+                className="flex-1 sm:flex-initial"
+              >
+                <Icon name="Rocket" size={18} className="mr-2" />
+                <span className="hidden sm:inline">Платформа</span>
+                <span className="sm:hidden">Платформа</span>
+              </Button>
+              <Button
+                onClick={() => navigate('/')}
+                variant="ghost"
+                size="sm"
+                className="flex-1 sm:flex-initial"
+              >
+                <Icon name="ArrowLeft" size={18} className="mr-2" />
+                <span className="hidden sm:inline">На главную</span>
+                <span className="sm:hidden">Главная</span>
+              </Button>
+            </div>
             <Button
               onClick={() => setShowRules(true)}
               variant="outline"
