@@ -2,11 +2,12 @@ import ItemsList from '@/components/school/ItemsList';
 import PromoRequestsTab from '@/components/school/PromoRequestsTab';
 import SubscriptionTab from './SubscriptionTab';
 import LandingOrderTab from './LandingOrderTab';
+import WebinarOrderTab from './WebinarOrderTab';
 import { Course, Mastermind } from './types';
 import Icon from '@/components/ui/icon';
 
 interface DashboardContentProps {
-  activeTab: 'courses' | 'masterminds' | 'offline-training' | 'promo-requests' | 'subscription' | 'landing-order';
+  activeTab: 'courses' | 'masterminds' | 'offline-training' | 'promo-requests' | 'subscription' | 'landing-order' | 'webinar-order';
   showAddForm: boolean;
   courses: Course[];
   masterminds: Mastermind[];
@@ -92,7 +93,7 @@ export default function DashboardContent({
   onSubmitDraftTraining,
   setPendingPromoRequestsCount
 }: DashboardContentProps) {
-  if (!showAddForm && activeTab !== 'promo-requests' && activeTab !== 'subscription' && activeTab !== 'landing-order') {
+  if (!showAddForm && activeTab !== 'promo-requests' && activeTab !== 'subscription' && activeTab !== 'landing-order' && activeTab !== 'webinar-order') {
     return (
       <ItemsList
         activeTab={activeTab}
@@ -127,6 +128,10 @@ export default function DashboardContent({
 
   if (activeTab === 'landing-order') {
     return <LandingOrderTab />;
+  }
+
+  if (activeTab === 'webinar-order') {
+    return <WebinarOrderTab />;
   }
 
   return null;
