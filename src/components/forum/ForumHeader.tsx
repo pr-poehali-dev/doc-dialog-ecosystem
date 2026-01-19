@@ -23,16 +23,6 @@ export default function ForumHeader({ onShowRules }: ForumHeaderProps) {
             <span className="hidden sm:inline">Платформа</span>
             <span className="sm:hidden">Платформа</span>
           </Button>
-          <Button
-            onClick={() => navigate('/')}
-            variant="outline"
-            size="sm"
-            className="flex-1 sm:flex-initial border-white/50 text-white/90 hover:border-white hover:bg-white hover:text-slate-900 transition-all"
-          >
-            <Icon name="ArrowLeft" size={18} className="mr-2" />
-            <span className="hidden sm:inline">На главную</span>
-            <span className="sm:hidden">Главная</span>
-          </Button>
         </div>
         <Button
           onClick={onShowRules}
