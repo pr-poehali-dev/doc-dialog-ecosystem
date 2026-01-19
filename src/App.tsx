@@ -26,10 +26,6 @@ const SchoolDashboard = lazy(() => import("./pages/SchoolDashboard"));
 const CoursesCatalog = lazy(() => import("./pages/CoursesCatalog"));
 const CoursePage = lazy(() => import("./pages/CoursePage"));
 const MastermindPage = lazy(() => import("./pages/MastermindPage"));
-const CourseLandingEditor = lazy(() => import("./pages/CourseLandingEditor"));
-const CourseLandingPublic = lazy(() => import("./pages/CourseLandingPublic"));
-const CourseLandingBuilder = lazy(() => import("./pages/CourseLandingBuilder"));
-const CoursePublicLanding = lazy(() => import("./pages/CoursePublicLanding"));
 const MastermindLandingBuilder = lazy(() => import("./pages/MastermindLandingBuilder"));
 const MastermindPublicLanding = lazy(() => import("./pages/MastermindPublicLanding"));
 const OfflineTrainingLandingBuilder = lazy(() => import("./pages/OfflineTrainingLandingBuilder"));
@@ -163,9 +159,6 @@ const App = () => (
           <Route path="/mastermind/:id" element={<MastermindPage />} />
           <Route path="/school/landing/builder" element={<SchoolLandingBuilder />} />
           <Route path="/school/landing/:id" element={<SchoolLandingBuilder />} />
-          <Route path="/landing/:slug" element={<CourseLandingPublic />} />
-          <Route path="/course/landing/builder" element={<CourseLandingBuilder />} />
-          <Route path="/course/landing/:slug" element={<CoursePublicLanding />} />
           <Route path="/mastermind/landing/builder" element={<MastermindLandingBuilder />} />
           <Route path="/mastermind/landing/:slug" element={<MastermindPublicLanding />} />
           <Route path="/offline-training/landing/builder" element={<OfflineTrainingLandingBuilder />} />
