@@ -69,7 +69,14 @@ export default function CatalogItemCard({ item }: CatalogItemCardProps) {
     e.stopPropagation();
     
     if (!user || !token) {
-      navigate('/register');
+      toast({
+        title: 'Регистрация специалиста',
+        description: 'Зарегистрируйтесь как массажист, чтобы получать скидки от школ',
+        action: {
+          label: 'Регистрация',
+          onClick: () => navigate('/register')
+        }
+      });
       return;
     }
     
@@ -96,7 +103,19 @@ export default function CatalogItemCard({ item }: CatalogItemCardProps) {
         });
       } else {
         const error = await response.json();
-        toast({ title: 'Ошибка', description: error.error || 'Не удалось отправить запрос', variant: 'destructive' });
+        if (error.error?.includes('массажист')) {
+          toast({ 
+            title: 'Требуется регистрация',
+            description: 'Эта функция доступна только для зарегистрированных массажистов',
+            variant: 'destructive',
+            action: {
+              label: 'Регистрация',
+              onClick: () => navigate('/register')
+            }
+          });
+        } else {
+          toast({ title: 'Ошибка', description: error.error || 'Не удалось отправить запрос', variant: 'destructive' });
+        }
       }
     } catch (error) {
       toast({ title: 'Ошибка', description: 'Не удалось отправить запрос', variant: 'destructive' });
