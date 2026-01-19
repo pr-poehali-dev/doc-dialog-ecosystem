@@ -33,7 +33,26 @@ interface CourseCardProps {
   onSubmitDraft?: (courseId: number) => void;
 }
 
+const COURSES_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f';
+
 export default function CourseCard({ course, canPromoteToTop, getStatusBadge, onEdit, onDelete, onPromote, onSubmitDraft }: CourseCardProps) {
+  const handleExternalLinkClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    
+    // Track view
+    try {
+      await fetch(`${COURSES_API_URL}?action=track_view&id=${course.id}&type=courses`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+    } catch (error) {
+      console.error('Failed to track view:', error);
+    }
+    
+    // Open external URL
+    window.open(course.external_url, '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <Card key={course.id}>
       <CardHeader>
@@ -119,8 +138,7 @@ export default function CourseCard({ course, canPromoteToTop, getStatusBadge, on
           {course.external_url && (
             <a
               href={course.external_url}
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={handleExternalLinkClick}
               className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors font-medium"
             >
               <Icon name="ExternalLink" size={16} />

@@ -42,6 +42,45 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
+    # POST /courses?action=track_view - Increment view count
+    if method == 'POST' and action == 'track_view':
+        if not course_id:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Missing course ID'}),
+                'isBase64Encoded': False
+            }
+        
+        # Определяем таблицу по entity_type
+        table_name = 'courses'
+        if entity_type == 'masterminds':
+            table_name = 'masterminds'
+        elif entity_type in ('offline_training', 'offline-training', 'offline_trainings'):
+            table_name = 'offline_training'
+        
+        try:
+            cur.execute(f"UPDATE {schema}.{table_name} SET view_count = view_count + 1 WHERE id = {course_id}")
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 200,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'success': True}),
+                'isBase64Encoded': False
+            }
+        except Exception as e:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 500,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': str(e)}),
+                'isBase64Encoded': False
+            }
+    
     # POST /courses?action=submit_draft - Submit draft for moderation (check BEFORE body parsing!)
     if method == 'POST' and action == 'submit_draft':
         if not course_id:
