@@ -69,15 +69,7 @@ export default function CatalogItemCard({ item }: CatalogItemCardProps) {
     e.stopPropagation();
     
     if (!user || !token) {
-      toast({ 
-        title: 'Требуется авторизация', 
-        description: 'Войдите в аккаунт, чтобы запросить скидку',
-        variant: 'destructive',
-        action: {
-          label: 'Войти',
-          onClick: () => navigate('/login')
-        }
-      });
+      navigate('/register');
       return;
     }
     
@@ -227,7 +219,7 @@ export default function CatalogItemCard({ item }: CatalogItemCardProps) {
             </Button>
           </div>
           
-          {isMasseur && item.promo_requests_allowed !== false && (item.price || item.discount_price) && (item.price > 0 || (item.discount_price && item.discount_price > 0)) && (
+          {item.promo_requests_allowed !== false && (item.price || item.discount_price) && (item.price > 0 || (item.discount_price && item.discount_price > 0)) && (
             <Button 
               size="sm" 
               variant="outline"
