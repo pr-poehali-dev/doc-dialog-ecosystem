@@ -153,7 +153,21 @@ def handler(event: dict, context) -> dict:
                 'views_year': row[5]
             })
         
+        # Получаем общие затраты школы (тарифы + все промо)
+        cur.execute(f"""
+            SELECT COALESCE(SUM(ABS(amount)), 0)
+            FROM {schema}.balance_transactions
+            WHERE school_id = {school_id}
+              AND type = 'withdrawal'
+        """)
+        total_school_spent = float(cur.fetchone()[0]) if cur.fetchone() else 0
+        
+        # Получаем общее количество просмотров по всем продуктам
+        total_views = sum(p['views_total'] for p in products)
+        
+        # Считаем затраты на каждый продукт
         for product in products:
+            # Затраты на промо конкретного продукта
             cur.execute(f"""
                 SELECT COALESCE(SUM(ABS(bt.amount)), 0)
                 FROM {schema}.balance_transactions bt
@@ -164,9 +178,18 @@ def handler(event: dict, context) -> dict:
                   AND ip.item_type = '{product['product_type']}'
                   AND ip.item_id = {product['product_id']}
             """)
-            spent_row = cur.fetchone()
-            product['spent_total'] = float(spent_row[0]) if spent_row else 0
+            promo_spent = float(cur.fetchone()[0]) if cur.fetchone() else 0
             
+            # Пропорциональная доля от общих затрат на тарифы
+            if total_views > 0:
+                tariff_share = (product['views_total'] / total_views) * total_school_spent
+            else:
+                tariff_share = 0
+            
+            # Итоговые затраты = промо + доля тарифа
+            product['spent_total'] = promo_spent + tariff_share
+            
+            # Стоимость просмотра
             if product['spent_total'] > 0 and product['views_total'] > 0:
                 product['cost_per_view'] = round(product['spent_total'] / product['views_total'], 2)
             else:
