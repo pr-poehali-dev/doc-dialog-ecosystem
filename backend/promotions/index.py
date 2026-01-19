@@ -1,8 +1,11 @@
 import json
 import os
 import psycopg2
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
+
+# Московская временная зона (UTC+3)
+MOSCOW_TZ = timezone(timedelta(hours=3))
 
 PROMOTION_PRICES = {
     'own_category': {
@@ -303,8 +306,9 @@ def handler(event: dict, context) -> dict:
                 balance_row = cur.fetchone()
                 new_balance = balance_row[0] if balance_row else 0
             
-            # Создаём промо-позицию
-            promoted_until = datetime.now() + timedelta(days=days)
+            # Создаём промо-позицию (время в московской зоне)
+            moscow_now = datetime.now(MOSCOW_TZ)
+            promoted_until = moscow_now + timedelta(days=days)
             
             cur.execute("""
                 INSERT INTO item_promotions 

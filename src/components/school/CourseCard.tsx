@@ -69,7 +69,7 @@ export default function CourseCard({ course, canPromoteToTop, getStatusBadge, on
               <span>В топе {course.promotion_type === 'all_categories' ? 'во всех категориях' : 'в своей категории'}</span>
             </div>
             <div className="text-amber-700 mt-1">
-              До {formatMoscowDateTime(course.promoted_until, 'ru-RU', { day: 'numeric', month: 'long' })}
+              До {formatMoscowDateTime(course.promoted_until, 'ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
             </div>
           </div>
         )}

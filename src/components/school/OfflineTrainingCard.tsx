@@ -44,7 +44,7 @@ export default function OfflineTrainingCard({ training, canPromoteToTop, getStat
               <span>В топе {training.promotion_type === 'all_categories' ? 'во всех категориях' : 'в своей категории'}</span>
             </div>
             <div className="text-amber-700 mt-1">
-              До {formatMoscowDateTime(training.promoted_until, 'ru-RU', { day: 'numeric', month: 'long' })}
+              До {formatMoscowDateTime(training.promoted_until, 'ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
             </div>
           </div>
         )}
