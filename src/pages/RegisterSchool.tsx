@@ -51,16 +51,12 @@ export default function RegisterSchool() {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        localStorage.setItem('userRole', 'school');
-        
         toast({
-          title: 'Регистрация успешна',
-          description: 'Добро пожаловать в экосистему Док диалог!',
+          title: 'Регистрация успешна!',
+          description: data.message || 'Проверьте email для подтверждения аккаунта',
         });
 
-        navigate('/school/dashboard');
+        setTimeout(() => navigate('/login'), 2000);
       } else {
         toast({
           title: 'Ошибка регистрации',

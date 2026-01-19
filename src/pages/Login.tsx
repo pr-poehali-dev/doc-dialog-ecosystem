@@ -40,6 +40,12 @@ export default function Login() {
         });
 
         navigate('/dashboard');
+      } else if (response.status === 403 && data.email_verified === false) {
+        toast({
+          title: 'Email не подтвержден',
+          description: data.message || 'Пожалуйста, проверьте почту и подтвердите email',
+          variant: 'destructive',
+        });
       } else {
         toast({
           title: 'Ошибка входа',

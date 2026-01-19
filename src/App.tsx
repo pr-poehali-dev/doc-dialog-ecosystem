@@ -110,6 +110,7 @@ const ForumTopic = lazy(() => import("./pages/ForumTopic").catch((error) => {
   window.location.reload();
   return import("./pages/ForumTopic");
 }));
+const VerifyEmail = lazy(() => import("./pages/VerifyEmail"));
 
 const queryClient = new QueryClient();
 
@@ -135,6 +136,7 @@ const App = () => (
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/register/masseur" element={<RegisterMasseur />} />
           <Route path="/register/school" element={<RegisterSchool />} />

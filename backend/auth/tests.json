@@ -1,11 +1,11 @@
 {
   "tests": [
     {
-      "name": "Register new masseur - auto verified",
+      "name": "Register new masseur - email verification required",
       "method": "POST",
       "path": "/?action=register",
       "body": {
-        "email": "test-new-user@example.com",
+        "email": "test-verification@example.com",
         "password": "testpass123",
         "role": "masseur",
         "profile": {
@@ -16,31 +16,24 @@
       },
       "expectedStatus": 201,
       "expectedBody": {
-        "token": "string",
-        "user": {
-          "id": "number",
-          "email": "string",
-          "role": "string"
-        }
+        "message": "string",
+        "email": "string",
+        "email_sent": "boolean"
       },
       "bodyMatcher": "partial"
     },
     {
-      "name": "Login with verified user",
+      "name": "Login with unverified user fails",
       "method": "POST",
       "path": "/?action=login",
       "body": {
-        "email": "test-new-user@example.com",
+        "email": "test-verification@example.com",
         "password": "testpass123"
       },
-      "expectedStatus": 200,
+      "expectedStatus": 403,
       "expectedBody": {
-        "token": "string",
-        "user": {
-          "id": "number",
-          "email": "string",
-          "role": "string"
-        }
+        "error": "string",
+        "email_verified": false
       },
       "bodyMatcher": "partial"
     }
