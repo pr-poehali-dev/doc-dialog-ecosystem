@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { ToastAction } from '@/components/ui/toast';
 import Icon from '@/components/ui/icon';
 import RatingDisplay from '@/components/RatingDisplay';
 import { CatalogItem } from './types';
@@ -72,10 +73,11 @@ export default function CatalogItemCard({ item }: CatalogItemCardProps) {
       toast({
         title: 'Регистрация специалиста',
         description: 'Зарегистрируйтесь как массажист, чтобы получать скидки от школ',
-        action: {
-          label: 'Регистрация',
-          onClick: () => navigate('/register')
-        }
+        action: (
+          <ToastAction altText="Регистрация" onClick={() => navigate('/register')}>
+            Регистрация
+          </ToastAction>
+        )
       });
       return;
     }
@@ -108,10 +110,11 @@ export default function CatalogItemCard({ item }: CatalogItemCardProps) {
             title: 'Требуется регистрация',
             description: 'Эта функция доступна только для зарегистрированных массажистов',
             variant: 'destructive',
-            action: {
-              label: 'Регистрация',
-              onClick: () => navigate('/register')
-            }
+            action: (
+              <ToastAction altText="Регистрация" onClick={() => navigate('/register')}>
+                Регистрация
+              </ToastAction>
+            )
           });
         } else {
           toast({ title: 'Ошибка', description: error.error || 'Не удалось отправить запрос', variant: 'destructive' });
