@@ -6,6 +6,9 @@ from datetime import datetime, timedelta
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import secrets
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from email_utils import send_registration_email, send_password_reset_email
 
 def handler(event: dict, context) -> dict:
