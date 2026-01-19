@@ -14,6 +14,8 @@ interface OfflineTrainingFormProps {
     duration_hours: string;
     image_url: string;
     external_url: string;
+    price: string;
+    event_date: string;
   };
   setTrainingForm: React.Dispatch<React.SetStateAction<{
     title: string;
@@ -24,6 +26,8 @@ interface OfflineTrainingFormProps {
     duration_hours: string;
     image_url: string;
     external_url: string;
+    price: string;
+    event_date: string;
   }>>;
   onSubmit: () => void;
   onCancel: () => void;
@@ -70,9 +74,19 @@ export default function OfflineTrainingForm({ trainingForm, setTrainingForm, onS
           <input type="checkbox" checked={trainingForm.has_certificate} onChange={(e) => setTrainingForm({...trainingForm, has_certificate: e.target.checked})} className="w-4 h-4" id="cert-ot" />
           <Label htmlFor="cert-ot" className="cursor-pointer">Выдаётся сертификат</Label>
         </div>
-        <div>
-          <Label>Длительность (часов)*</Label>
-          <Input type="number" value={trainingForm.duration_hours} onChange={(e) => setTrainingForm({...trainingForm, duration_hours: e.target.value})} placeholder="16" />
+        <div className="grid md:grid-cols-3 gap-4">
+          <div>
+            <Label>Дата проведения*</Label>
+            <Input type="datetime-local" value={trainingForm.event_date} onChange={(e) => setTrainingForm({...trainingForm, event_date: e.target.value})} />
+          </div>
+          <div>
+            <Label>Длительность (часов)*</Label>
+            <Input type="number" value={trainingForm.duration_hours} onChange={(e) => setTrainingForm({...trainingForm, duration_hours: e.target.value})} placeholder="16" />
+          </div>
+          <div>
+            <Label>Стоимость (₽)*</Label>
+            <Input type="number" value={trainingForm.price} onChange={(e) => setTrainingForm({...trainingForm, price: e.target.value})} placeholder="25000" />
+          </div>
         </div>
         <div>
           <Label>Картинка (URL)*</Label>

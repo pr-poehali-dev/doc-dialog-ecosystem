@@ -16,7 +16,7 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
         body: JSON.stringify({
           school_id: schoolId,
           school_name: '',
-          event_date: new Date().toISOString().split('T')[0],
+          event_date: trainingForm.event_date || new Date().toISOString(),
           title: trainingForm.title,
           course_type: trainingForm.course_type,
           category: trainingForm.category,
@@ -24,7 +24,9 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
           has_certificate: trainingForm.has_certificate,
           duration_hours: trainingForm.duration_hours ? parseInt(trainingForm.duration_hours) : null,
           image_url: trainingForm.image_url,
-          external_url: trainingForm.external_url
+          external_url: trainingForm.external_url,
+          price: trainingForm.price ? parseFloat(trainingForm.price) : null,
+          currency: 'RUB'
         })
       });
       
@@ -44,6 +46,7 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
   };
 
   const handleEditTraining = (training: any) => {
+    const eventDate = training.event_date ? new Date(training.event_date).toISOString().slice(0, 16) : '';
     setTrainingForm({
       title: training.title,
       course_type: training.course_type || 'offline',
@@ -52,7 +55,9 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
       has_certificate: (training as any).has_certificate || false,
       duration_hours: training.duration_hours?.toString() || '',
       image_url: training.image_url || '',
-      external_url: training.external_url || ''
+      external_url: training.external_url || '',
+      price: training.price?.toString() || '',
+      event_date: eventDate
     });
     setEditingTrainingId(training.id);
     setShowAddForm(true);
@@ -71,7 +76,7 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
         },
         body: JSON.stringify({
           school_name: '',
-          event_date: new Date().toISOString().split('T')[0],
+          event_date: trainingForm.event_date || new Date().toISOString(),
           title: trainingForm.title,
           course_type: trainingForm.course_type,
           category: trainingForm.category,
@@ -79,7 +84,9 @@ export function useOfflineTrainingHandlers({ schoolId, trainingForm, setTraining
           has_certificate: trainingForm.has_certificate,
           duration_hours: trainingForm.duration_hours ? parseInt(trainingForm.duration_hours) : null,
           image_url: trainingForm.image_url,
-          external_url: trainingForm.external_url
+          external_url: trainingForm.external_url,
+          price: trainingForm.price ? parseFloat(trainingForm.price) : null,
+          currency: 'RUB'
         })
       });
       

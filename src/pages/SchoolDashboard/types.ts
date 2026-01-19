@@ -92,6 +92,8 @@ export interface OfflineTrainingFormData {
   duration_hours: string;
   image_url: string;
   external_url: string;
+  price: string;
+  event_date: string;
 }
 
 export const COURSE_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f';
@@ -129,5 +131,7 @@ export const INITIAL_OFFLINE_TRAINING_FORM: OfflineTrainingFormData = {
   has_certificate: false,
   duration_hours: '',
   image_url: '',
-  external_url: ''
+  external_url: '',
+  price: '',
+  event_date: ''
 };
