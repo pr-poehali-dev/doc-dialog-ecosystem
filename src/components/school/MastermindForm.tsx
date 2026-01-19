@@ -15,6 +15,7 @@ interface MastermindFormProps {
     duration_hours: string;
     image_url: string;
     external_url: string;
+    price: string;
   };
   setMastermindForm: React.Dispatch<React.SetStateAction<{
     title: string;
@@ -25,6 +26,7 @@ interface MastermindFormProps {
     duration_hours: string;
     image_url: string;
     external_url: string;
+    price: string;
   }>>;
   onSubmit: () => void;
   onCancel: () => void;
@@ -71,9 +73,15 @@ export default function MastermindForm({ mastermindForm, setMastermindForm, onSu
           <input type="checkbox" checked={mastermindForm.has_certificate} onChange={(e) => setMastermindForm({...mastermindForm, has_certificate: e.target.checked})} className="w-4 h-4" id="cert-mm" />
           <Label htmlFor="cert-mm" className="cursor-pointer">Выдаётся сертификат</Label>
         </div>
-        <div>
-          <Label>Длительность (часов)*</Label>
-          <Input type="number" value={mastermindForm.duration_hours} onChange={(e) => setMastermindForm({...mastermindForm, duration_hours: e.target.value})} placeholder="8" />
+        <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <Label>Длительность (часов)*</Label>
+            <Input type="number" value={mastermindForm.duration_hours} onChange={(e) => setMastermindForm({...mastermindForm, duration_hours: e.target.value})} placeholder="8" />
+          </div>
+          <div>
+            <Label>Стоимость (₽)*</Label>
+            <Input type="number" value={mastermindForm.price} onChange={(e) => setMastermindForm({...mastermindForm, price: e.target.value})} placeholder="15000" />
+          </div>
         </div>
         <div>
           <Label>Картинка (URL)*</Label>

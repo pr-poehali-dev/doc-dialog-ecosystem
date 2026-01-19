@@ -79,6 +79,7 @@ export interface MastermindFormData {
   duration_hours: string;
   image_url: string;
   external_url: string;
+  price: string;
 }
 
 export interface OfflineTrainingFormData {
@@ -114,7 +115,8 @@ export const INITIAL_MASTERMIND_FORM: MastermindFormData = {
   has_certificate: false,
   duration_hours: '',
   image_url: '',
-  external_url: ''
+  external_url: '',
+  price: ''
 };
 
 export const INITIAL_OFFLINE_TRAINING_FORM: OfflineTrainingFormData = {

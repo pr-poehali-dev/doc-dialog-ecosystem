@@ -43,7 +43,9 @@ export function useMastermindHandlers({
           has_certificate: mastermindForm.has_certificate,
           duration_hours: mastermindForm.duration_hours ? parseInt(mastermindForm.duration_hours) : null,
           image_url: mastermindForm.image_url,
-          external_url: mastermindForm.external_url
+          external_url: mastermindForm.external_url,
+          price: mastermindForm.price ? parseFloat(mastermindForm.price) : null,
+          currency: 'RUB'
         })
       });
       
@@ -67,7 +69,8 @@ export function useMastermindHandlers({
       has_certificate: (mastermind as any).has_certificate || false,
       duration_hours: mastermind.duration_hours?.toString() || '',
       image_url: mastermind.image_url || '',
-      external_url: mastermind.external_url || ''
+      external_url: mastermind.external_url || '',
+      price: mastermind.price?.toString() || ''
     });
     setEditingMastermindId(mastermind.id);
     setShowAddForm(true);
@@ -94,7 +97,9 @@ export function useMastermindHandlers({
           has_certificate: mastermindForm.has_certificate,
           duration_hours: mastermindForm.duration_hours ? parseInt(mastermindForm.duration_hours) : null,
           image_url: mastermindForm.image_url,
-          external_url: mastermindForm.external_url
+          external_url: mastermindForm.external_url,
+          price: mastermindForm.price ? parseFloat(mastermindForm.price) : null,
+          currency: 'RUB'
         })
       });
       
