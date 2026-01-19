@@ -160,7 +160,8 @@ def handler(event: dict, context) -> dict:
             WHERE school_id = {school_id}
               AND type = 'withdrawal'
         """)
-        total_school_spent = float(cur.fetchone()[0]) if cur.fetchone() else 0
+        spent_row = cur.fetchone()
+        total_school_spent = float(spent_row[0]) if spent_row else 0
         
         # Получаем общее количество просмотров по всем продуктам
         total_views = sum(p['views_total'] for p in products)
@@ -178,7 +179,8 @@ def handler(event: dict, context) -> dict:
                   AND ip.item_type = '{product['product_type']}'
                   AND ip.item_id = {product['product_id']}
             """)
-            promo_spent = float(cur.fetchone()[0]) if cur.fetchone() else 0
+            promo_row = cur.fetchone()
+            promo_spent = float(promo_row[0]) if promo_row else 0
             
             # Пропорциональная доля от общих затрат на тарифы
             if total_views > 0:
