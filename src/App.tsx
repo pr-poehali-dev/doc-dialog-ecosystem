@@ -100,8 +100,16 @@ const VNSCourse = lazy(() => import("./pages/VNSCourse"));
 const PregnancyFitness = lazy(() => import("./pages/PregnancyFitness"));
 const InvestorPresentation = lazy(() => import("./pages/InvestorPresentation"));
 const PremiumPresentation = lazy(() => import("./pages/PremiumPresentation"));
-const Forum = lazy(() => import("./pages/Forum"));
-const ForumTopic = lazy(() => import("./pages/ForumTopic"));
+const Forum = lazy(() => import("./pages/Forum").catch((error) => {
+  console.error('Failed to load Forum, retrying...', error);
+  window.location.reload();
+  return import("./pages/Forum");
+}));
+const ForumTopic = lazy(() => import("./pages/ForumTopic").catch((error) => {
+  console.error('Failed to load ForumTopic, retrying...', error);
+  window.location.reload();
+  return import("./pages/ForumTopic");
+}));
 
 const queryClient = new QueryClient();
 
