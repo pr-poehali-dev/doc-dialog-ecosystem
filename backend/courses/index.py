@@ -44,6 +44,8 @@ def handler(event: dict, context) -> dict:
     
     # POST /courses?action=track_view - Increment view count
     if method == 'POST' and action == 'track_view':
+        print(f"[DEBUG] track_view called: course_id={course_id}, entity_type={entity_type}")
+        
         if not course_id:
             cur.close()
             conn.close()
@@ -62,7 +64,10 @@ def handler(event: dict, context) -> dict:
             table_name = 'offline_training'
         
         try:
-            cur.execute(f"UPDATE {schema}.{table_name} SET view_count = view_count + 1 WHERE id = {course_id}")
+            query = f"UPDATE {schema}.{table_name} SET view_count = view_count + 1 WHERE id = {course_id}"
+            print(f"[DEBUG] Executing: {query}")
+            cur.execute(query)
+            print(f"[DEBUG] View count incremented for {table_name} id={course_id}")
             cur.close()
             conn.close()
             return {
@@ -72,6 +77,7 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         except Exception as e:
+            print(f"[ERROR] track_view failed: {str(e)}")
             cur.close()
             conn.close()
             return {
