@@ -35,7 +35,23 @@ interface MastermindCardProps {
   onSubmitDraft?: (mastermindId: number) => void;
 }
 
+const COURSES_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f';
+
 export default function MastermindCard({ mastermind: mm, canPromoteToTop, getStatusBadge, onEdit, onDelete, onPromote, onSubmitDraft }: MastermindCardProps) {
+  const handleExternalLinkClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    
+    try {
+      await fetch(`${COURSES_API_URL}?action=track_view&id=${mm.id}&type=masterminds`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+    } catch (error) {
+      console.error('Failed to track view:', error);
+    }
+    
+    window.open(mm.external_url, '_blank', 'noopener,noreferrer');
+  };
   return (
     <Card key={mm.id}>
       <CardHeader>
@@ -134,8 +150,7 @@ export default function MastermindCard({ mastermind: mm, canPromoteToTop, getSta
           {mm.external_url && (
             <a
               href={mm.external_url}
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={handleExternalLinkClick}
               className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors font-medium"
             >
               <Icon name="ExternalLink" size={16} />
