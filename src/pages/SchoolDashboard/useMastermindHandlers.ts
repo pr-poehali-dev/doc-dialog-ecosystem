@@ -35,7 +35,7 @@ export function useMastermindHandlers({
         body: JSON.stringify({
           school_id: schoolId,
           school_name: '',
-          event_date: new Date().toISOString().split('T')[0],
+          event_date: mastermindForm.event_date || new Date().toISOString(),
           title: mastermindForm.title,
           course_type: mastermindForm.course_type,
           category: mastermindForm.category,
@@ -61,6 +61,7 @@ export function useMastermindHandlers({
   };
 
   const handleEditMastermind = (mastermind: any) => {
+    const eventDate = mastermind.event_date ? new Date(mastermind.event_date).toISOString().slice(0, 16) : '';
     setMastermindForm({
       title: mastermind.title,
       course_type: mastermind.course_type || 'online',
@@ -70,7 +71,8 @@ export function useMastermindHandlers({
       duration_hours: mastermind.duration_hours?.toString() || '',
       image_url: mastermind.image_url || '',
       external_url: mastermind.external_url || '',
-      price: mastermind.price?.toString() || ''
+      price: mastermind.price?.toString() || '',
+      event_date: eventDate
     });
     setEditingMastermindId(mastermind.id);
     setShowAddForm(true);
@@ -89,7 +91,7 @@ export function useMastermindHandlers({
         },
         body: JSON.stringify({
           school_name: '',
-          event_date: new Date().toISOString().split('T')[0],
+          event_date: mastermindForm.event_date || new Date().toISOString(),
           title: mastermindForm.title,
           course_type: mastermindForm.course_type,
           category: mastermindForm.category,

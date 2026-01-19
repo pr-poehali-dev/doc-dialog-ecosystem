@@ -80,6 +80,7 @@ export interface MastermindFormData {
   image_url: string;
   external_url: string;
   price: string;
+  event_date: string;
 }
 
 export interface OfflineTrainingFormData {
@@ -116,7 +117,8 @@ export const INITIAL_MASTERMIND_FORM: MastermindFormData = {
   duration_hours: '',
   image_url: '',
   external_url: '',
-  price: ''
+  price: '',
+  event_date: ''
 };
 
 export const INITIAL_OFFLINE_TRAINING_FORM: OfflineTrainingFormData = {
