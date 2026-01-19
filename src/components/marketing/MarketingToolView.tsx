@@ -73,6 +73,26 @@ export default function MarketingToolView({
     return text.split('\n').map((line, index) => {
       const trimmed = line.trim();
       
+      if (/^#{1,3}\s+/.test(trimmed)) {
+        const text = trimmed.replace(/^#{1,3}\s+/, '');
+        return (
+          <h2 key={index} className="text-xl font-bold text-gray-900 mt-8 mb-3 pb-2 border-b border-gray-200">
+            {text}
+          </h2>
+        );
+      }
+      
+      if (/^\d+\.\s+\*\*/.test(trimmed)) {
+        const text = trimmed.replace(/^\d+\.\s+\*\*([^*]+)\*\*:?\s*(.*)/, (_, title, rest) => {
+          return `${title}${rest ? ': ' + rest : ''}`;
+        });
+        return (
+          <h3 key={index} className="text-lg font-bold text-gray-900 mt-6 mb-2">
+            {text}
+          </h3>
+        );
+      }
+      
       if (/^\d+\.\s+[А-Яа-яA-Za-z]/.test(trimmed)) {
         return (
           <h3 key={index} className="text-lg font-bold text-gray-900 mt-6 mb-2">
@@ -82,20 +102,24 @@ export default function MarketingToolView({
       }
       
       if (/^[-—–]\s*\*\*/.test(trimmed)) {
-        const text = trimmed.replace(/^[-—–]\s*\*\*([^*]+)\*\*:?\s*/, '$1');
+        const cleanText = trimmed
+          .replace(/^[-—–]\s*/, '')
+          .replace(/\*\*([^*]+)\*\*/g, '$1');
         return (
-          <h4 key={index} className="text-base font-semibold text-gray-800 mt-4 mb-1 pl-4">
-            {text}
+          <h4 key={index} className="text-base font-semibold text-gray-800 mt-4 mb-2">
+            {cleanText}
           </h4>
         );
       }
       
       if (/^[-—–*•]\s+/.test(trimmed)) {
-        const text = trimmed.replace(/^[-—–*•]\s+/, '');
+        const cleanText = trimmed
+          .replace(/^[-—–*•]\s+/, '')
+          .replace(/\*\*([^*]+)\*\*/g, '$1');
         return (
-          <div key={index} className="flex gap-2 pl-4">
-            <span className="text-primary mt-1.5">•</span>
-            <p className="flex-1 leading-relaxed">{text}</p>
+          <div key={index} className="flex gap-3 my-2">
+            <span className="text-primary mt-1 flex-shrink-0">•</span>
+            <p className="flex-1 leading-relaxed text-gray-700">{cleanText}</p>
           </div>
         );
       }
@@ -103,13 +127,13 @@ export default function MarketingToolView({
       if (trimmed.includes('**')) {
         const parts = trimmed.split(/(\*\*[^*]+\*\*)/g);
         return (
-          <p key={index} className="leading-relaxed">
+          <p key={index} className="leading-relaxed text-gray-700 my-2">
             {parts.map((part, i) => {
               if (part.startsWith('**') && part.endsWith('**')) {
                 return (
-                  <strong key={i} className="font-semibold text-gray-900">
+                  <span key={i} className="font-semibold text-gray-900">
                     {part.slice(2, -2)}
-                  </strong>
+                  </span>
                 );
               }
               return part;
@@ -119,11 +143,11 @@ export default function MarketingToolView({
       }
       
       if (!trimmed) {
-        return <div key={index} className="h-2" />;
+        return <div key={index} className="h-3" />;
       }
       
       return (
-        <p key={index} className="leading-relaxed">
+        <p key={index} className="leading-relaxed text-gray-700 my-2">
           {trimmed}
         </p>
       );
@@ -200,45 +224,50 @@ export default function MarketingToolView({
                 <div className="flex items-start gap-2 text-sm text-blue-800">
                   <Icon name="Info" size={16} className="flex-shrink-0 mt-0.5" />
                   <p>
-                    Сервис не хранит данные запросов и диалогов. Нажмите кнопку "Выделить всё" и скопируйте через Ctrl+C (или Cmd+C на Mac).
+                    Сервис не хранит данные запросов и диалогов. Нажмите кнопку "Скопировать" чтобы сохранить результат.
                   </p>
                 </div>
               </div>
 
-              <div className="mt-6 p-4 md:p-6 bg-white rounded-lg border shadow-sm">
-                <div className="flex items-start justify-between gap-3 mb-4 pb-3 border-b">
+              <div className="mt-6 p-6 md:p-8 bg-white rounded-lg border shadow-sm">
+                <div className="flex items-start justify-between gap-3 mb-6 pb-4 border-b-2 border-gray-200">
                   <div className="flex items-start gap-3">
                     <div className="p-2 bg-primary/10 rounded-lg">
-                      <Icon name="Sparkles" size={20} className="text-primary" />
+                      <Icon name="FileText" size={24} className="text-primary" />
                     </div>
-                    <h3 className="text-lg font-semibold">Результат</h3>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900">Результат анализа</h3>
+                      <p className="text-sm text-gray-500 mt-1">
+                        {new Date().toLocaleDateString('ru-RU', { 
+                          day: 'numeric', 
+                          month: 'long', 
+                          year: 'numeric' 
+                        })}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={selectAllText}
-                    >
-                      <Icon name="MousePointerClick" size={16} className="mr-2" />
-                      Выделить всё
-                    </Button>
-                    <Button
-                      variant="default"
-                      size="sm"
-                      onClick={copyToClipboard}
-                    >
-                      <Icon name="Copy" size={16} className="mr-2" />
-                      Копировать
-                    </Button>
-                  </div>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={copyToClipboard}
+                    className="flex-shrink-0"
+                  >
+                    <Icon name="Copy" size={16} className="mr-2" />
+                    Копировать
+                  </Button>
                 </div>
-                <textarea
-                  ref={copyTextAreaRef}
-                  value={resultText}
-                  readOnly
-                  className="w-full h-96 p-4 border rounded-lg font-mono text-sm resize-y focus:outline-none focus:ring-2 focus:ring-primary"
-                />
+                <div className="space-y-4 text-[15px] leading-relaxed">
+                  {formatResponse(response)}
+                </div>
               </div>
+              
+              <textarea
+                ref={copyTextAreaRef}
+                value={resultText}
+                readOnly
+                className="sr-only"
+                aria-hidden="true"
+              />
             </>
           )}
         </CardContent>
