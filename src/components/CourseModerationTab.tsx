@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import Icon from '@/components/ui/icon';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { formatMoscowDateTime } from '@/utils/datetime';
 
 interface Course {
   id: number;
@@ -207,7 +208,7 @@ export default function CourseModerationTab({ onModerationComplete }: CourseMode
                       <div>Тип: {getCourseTypeLabel(course.course_type)}</div>
                       {course.price && <div>Цена: {course.price.toLocaleString()} {course.currency}</div>}
                       {course.duration_hours && <div>Длительность: {course.duration_hours} часов</div>}
-                      <div>Добавлен: {new Date(course.created_at).toLocaleString('ru-RU')}</div>
+                      <div>Добавлен: {formatMoscowDateTime(course.created_at)}</div>
                     </div>
                   </CardDescription>
                 </div>

@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import Icon from '@/components/ui/icon';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { formatMoscowDateTime } from '@/utils/datetime';
 
 interface Mastermind {
   id: number;
@@ -194,7 +195,7 @@ export default function MastermindModerationTab({ onModerationComplete }: Master
                       </div>
                       <div className="flex items-center gap-2">
                         <Icon name="Calendar" size={14} />
-                        <span>Дата: {new Date(mastermind.event_date).toLocaleString('ru-RU')}</span>
+                        <span>Дата: {formatMoscowDateTime(mastermind.event_date)}</span>
                       </div>
                       {mastermind.location && (
                         <div className="flex items-center gap-2">

@@ -1,35 +1,41 @@
+export const MOSCOW_TIMEZONE = 'Europe/Moscow';
+
 export function toMoscowTime(timestamp: string | Date): Date {
   const date = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
-  const moscowTime = new Date(date.getTime() + (3 * 60 * 60 * 1000));
-  return moscowTime;
+  return date;
 }
 
-export function formatMoscowTime(timestamp: string, locale: string = 'ru-RU'): string {
+export function formatMoscowTime(timestamp: string | Date, locale: string = 'ru-RU'): string {
   if (!timestamp) return '';
   
-  const date = toMoscowTime(timestamp);
+  const date = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
   return date.toLocaleTimeString(locale, { 
+    timeZone: MOSCOW_TIMEZONE,
     hour: '2-digit', 
     minute: '2-digit'
   });
 }
 
-export function formatMoscowDate(timestamp: string, locale: string = 'ru-RU'): string {
+export function formatMoscowDate(timestamp: string | Date, locale: string = 'ru-RU'): string {
   if (!timestamp) return '';
   
-  const date = toMoscowTime(timestamp);
-  return date.toLocaleDateString(locale);
+  const date = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
+  return date.toLocaleDateString(locale, { 
+    timeZone: MOSCOW_TIMEZONE 
+  });
 }
 
-export function formatMoscowDateTime(timestamp: string, locale: string = 'ru-RU'): string {
+export function formatMoscowDateTime(timestamp: string | Date, locale: string = 'ru-RU', options?: Intl.DateTimeFormatOptions): string {
   if (!timestamp) return '';
   
-  const date = toMoscowTime(timestamp);
+  const date = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
   return date.toLocaleString(locale, {
+    timeZone: MOSCOW_TIMEZONE,
     day: 'numeric',
     month: 'short',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
+    ...options
   });
 }
 

@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
+import { formatMoscowDateTime, MOSCOW_TIMEZONE } from '@/utils/datetime';
 
 interface Mastermind {
   id: number;
@@ -67,13 +68,7 @@ export default function MastermindCard({ mastermind: mm, canPromoteToTop, getSta
               <span>В топе {mm.promotion_type === 'all_categories' ? 'во всех категориях' : 'в своей категории'}</span>
             </div>
             <div className="text-amber-700 mt-1">
-              До {new Date(mm.promoted_until).toLocaleString('ru-RU', { 
-                day: 'numeric', 
-                month: 'long', 
-                hour: '2-digit', 
-                minute: '2-digit',
-                timeZone: 'Europe/Moscow'
-              })}
+              До {formatMoscowDateTime(mm.promoted_until, 'ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
             </div>
           </div>
         )}
@@ -98,7 +93,7 @@ export default function MastermindCard({ mastermind: mm, canPromoteToTop, getSta
           </div>
           <div className="flex items-center gap-2">
             <Icon name="Calendar" size={16} className="text-primary" />
-            <span>{new Date(mm.event_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+            <span>{formatMoscowDateTime(mm.event_date, 'ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
           </div>
           {mm.location && (
             <div className="flex items-center gap-2">

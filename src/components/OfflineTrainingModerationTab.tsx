@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import Icon from "@/components/ui/icon";
+import { formatMoscowDateTime } from '@/utils/datetime';
 
 interface OfflineTraining {
   id: number;
@@ -205,7 +206,7 @@ export default function OfflineTrainingModerationTab({ onModerationComplete }: O
                     )}
                     <div className="space-y-2">
                       <p className="text-sm"><strong>Описание:</strong> {training.description}</p>
-                      <p className="text-sm"><strong>Дата:</strong> {new Date(training.event_date).toLocaleString('ru-RU')}</p>
+                      <p className="text-sm"><strong>Дата:</strong> {formatMoscowDateTime(training.event_date)}</p>
                       <p className="text-sm"><strong>Место:</strong> {training.location}</p>
                       <p className="text-sm"><strong>Макс. участников:</strong> {training.max_participants}</p>
                       <p className="text-sm"><strong>Цена:</strong> {training.price} ₽</p>

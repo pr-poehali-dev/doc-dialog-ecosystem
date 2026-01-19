@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
+import { formatMoscowDateTime, formatMoscowDate } from '@/utils/datetime';
 
 interface OfflineTrainingCardProps {
   training: any;
@@ -43,7 +44,7 @@ export default function OfflineTrainingCard({ training, canPromoteToTop, getStat
               <span>В топе {training.promotion_type === 'all_categories' ? 'во всех категориях' : 'в своей категории'}</span>
             </div>
             <div className="text-amber-700 mt-1">
-              До {new Date(training.promoted_until).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
+              До {formatMoscowDateTime(training.promoted_until, 'ru-RU', { day: 'numeric', month: 'long' })}
             </div>
           </div>
         )}
@@ -68,7 +69,7 @@ export default function OfflineTrainingCard({ training, canPromoteToTop, getStat
           </div>
           <div className="flex items-center gap-2">
             <Icon name="Calendar" size={16} className="text-primary" />
-            <span>{new Date(training.event_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+            <span>{formatMoscowDate(training.event_date, 'ru-RU')}</span>
           </div>
           {training.location && (
             <div className="flex items-center gap-2">
