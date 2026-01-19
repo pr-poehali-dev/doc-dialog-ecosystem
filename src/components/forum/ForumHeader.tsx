@@ -27,7 +27,7 @@ export default function ForumHeader({ onShowRules }: ForumHeaderProps) {
             onClick={() => navigate('/')}
             variant="outline"
             size="sm"
-            className="flex-1 sm:flex-initial border-white text-white hover:bg-white hover:text-slate-900"
+            className="flex-1 sm:flex-initial border-white/50 text-white/90 hover:border-white hover:bg-white hover:text-slate-900 transition-all"
           >
             <Icon name="ArrowLeft" size={18} className="mr-2" />
             <span className="hidden sm:inline">На главную</span>
