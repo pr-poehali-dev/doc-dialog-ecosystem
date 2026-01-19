@@ -111,65 +111,9 @@ export default function MasseurBalance() {
     }
   };
 
-  const handleAddFunds = async () => {
-    const amountNum = parseFloat(amount);
-    
-    if (!amountNum || amountNum <= 0) {
-      toast({
-        title: 'Ошибка',
-        description: 'Введите корректную сумму',
-        variant: 'destructive'
-      });
-      return;
-    }
-
-    if (!description.trim()) {
-      toast({
-        title: 'Ошибка',
-        description: 'Введите описание платежа',
-        variant: 'destructive'
-      });
-      return;
-    }
-
-    const token = localStorage.getItem('token');
-    setProcessing(true);
-
-    try {
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          action: 'add',
-          amount: amountNum,
-          description: description.trim()
-        })
-      });
-
-      if (response.ok) {
-        toast({
-          title: 'Успешно',
-          description: `Баланс пополнен на ${amountNum.toFixed(2)} ₽`
-        });
-        setAmount('');
-        setDescription('');
-        setIsDialogOpen(false);
-        loadBalance();
-      } else {
-        throw new Error('Failed to add funds');
-      }
-    } catch (error) {
-      toast({
-        title: 'Ошибка',
-        description: 'Не удалось пополнить баланс',
-        variant: 'destructive'
-      });
-    } finally {
-      setProcessing(false);
-    }
+  const handleAddFunds = () => {
+    setIsDialogOpen(false);
+    navigate('/dashboard/masseur-balance-topup');
   };
 
   const formatMoney = (amount: number) => {
@@ -287,89 +231,23 @@ export default function MasseurBalance() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Пополнить баланс</CardTitle>
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button>
-                      <Icon name="Plus" size={18} className="mr-2" />
-                      Пополнить
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Пополнение баланса</DialogTitle>
-                      <DialogDescription>
-                        Баланс используется для продвижения вашего профиля в каталоге
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4 pt-4">
-                      <div>
-                        <Label htmlFor="amount">Сумма пополнения (₽)</Label>
-                        <Input
-                          id="amount"
-                          type="number"
-                          placeholder="1000"
-                          value={amount}
-                          onChange={(e) => setAmount(e.target.value)}
-                          min="1"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="description">Описание платежа</Label>
-                        <Input
-                          id="description"
-                          placeholder="Пополнение для продвижения"
-                          value={description}
-                          onChange={(e) => setDescription(e.target.value)}
-                        />
-                      </div>
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <p className="text-sm text-blue-900">
-                          <Icon name="Info" size={16} className="inline mr-2" />
-                          Средства будут доступны сразу после пополнения
-                        </p>
-                      </div>
-                      <Button
-                        className="w-full"
-                        onClick={handleAddFunds}
-                        disabled={processing}
-                      >
-                        {processing ? (
-                          <>
-                            <Icon name="Loader2" className="mr-2 animate-spin" size={18} />
-                            Обработка...
-                          </>
-                        ) : (
-                          <>
-                            <Icon name="Wallet" className="mr-2" size={18} />
-                            Пополнить баланс
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
+                <Button onClick={handleAddFunds}>
+                  <Icon name="Plus" size={18} className="mr-2" />
+                  Пополнить
+                </Button>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[150, 400, 800, 2000].map((preset) => (
-                  <Button
-                    key={preset}
-                    variant="outline"
-                    className="h-20 flex flex-col"
-                    onClick={() => {
-                      setAmount(preset.toString());
-                      setDescription('Пополнение для продвижения');
-                      setIsDialogOpen(true);
-                    }}
-                  >
-                    <span className="text-2xl font-bold">{preset} ₽</span>
-                    <span className="text-xs text-gray-500 mt-1">
-                      {preset === 150 ? '1 день' : preset === 400 ? '3 дня' : preset === 800 ? '7 дней' : 'Произвольно'}
-                    </span>
-                  </Button>
-                ))}
-              </div>
+              <p className="text-gray-600 mb-4">
+                Выберите удобный тариф пополнения с бонусами или укажите свою сумму
+              </p>
+              <Button
+                className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                onClick={handleAddFunds}
+              >
+                <Icon name="CreditCard" size={18} className="mr-2" />
+                Выбрать тариф и пополнить
+              </Button>
             </CardContent>
           </Card>
 

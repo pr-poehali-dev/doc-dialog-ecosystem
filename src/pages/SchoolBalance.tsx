@@ -85,64 +85,9 @@ export default function SchoolBalance() {
     }
   };
 
-  const handleAddFunds = async () => {
-    const amountNum = parseFloat(amount);
-    
-    if (!amountNum || amountNum <= 0) {
-      toast({
-        title: 'Ошибка',
-        description: 'Введите корректную сумму',
-        variant: 'destructive'
-      });
-      return;
-    }
-
-    if (!description.trim()) {
-      toast({
-        title: 'Ошибка',
-        description: 'Введите описание платежа',
-        variant: 'destructive'
-      });
-      return;
-    }
-
-    const token = localStorage.getItem('token');
-    setProcessing(true);
-
-    try {
-      const response = await fetch(`${API_URL}?token=${encodeURIComponent(token)}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          action: 'add',
-          amount: amountNum,
-          description: description.trim()
-        })
-      });
-
-      if (response.ok) {
-        toast({
-          title: 'Успешно',
-          description: `Баланс пополнен на ${amountNum.toFixed(2)} ₽`
-        });
-        setAmount('');
-        setDescription('');
-        setIsDialogOpen(false);
-        loadBalance();
-      } else {
-        throw new Error('Failed to add funds');
-      }
-    } catch (error) {
-      toast({
-        title: 'Ошибка',
-        description: 'Не удалось пополнить баланс',
-        variant: 'destructive'
-      });
-    } finally {
-      setProcessing(false);
-    }
+  const handleAddFunds = () => {
+    setIsDialogOpen(false);
+    navigate('/dashboard/school-balance-topup');
   };
 
   const formatMoney = (amount: number) => {
@@ -198,57 +143,10 @@ export default function SchoolBalance() {
                       <div className="text-3xl font-bold">{formatMoney(balanceData.current_balance)}</div>
                     </div>
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                      <DialogTrigger asChild>
-                        <Button size="sm">
-                          <Icon name="Plus" size={16} className="mr-1" />
-                          Пополнить
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Пополнение баланса</DialogTitle>
-                          <DialogDescription>
-                            Введите сумму и описание платежа
-                          </DialogDescription>
-                        </DialogHeader>
-                        <div className="space-y-4 mt-4">
-                          <div>
-                            <Label htmlFor="amount">Сумма (₽)</Label>
-                            <Input
-                              id="amount"
-                              type="number"
-                              min="0"
-                              step="0.01"
-                              placeholder="1000.00"
-                              value={amount}
-                              onChange={(e) => setAmount(e.target.value)}
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="description">Описание</Label>
-                            <Input
-                              id="description"
-                              placeholder="Пополнение баланса"
-                              value={description}
-                              onChange={(e) => setDescription(e.target.value)}
-                            />
-                          </div>
-                          <Button 
-                            onClick={handleAddFunds} 
-                            disabled={processing}
-                            className="w-full"
-                          >
-                            {processing ? (
-                              <>
-                                <Icon name="Loader2" className="animate-spin mr-2" size={16} />
-                                Обработка...
-                              </>
-                            ) : (
-                              'Пополнить баланс'
-                            )}
-                          </Button>
-                        </div>
-                      </DialogContent>
+                      <Button size="sm" onClick={handleAddFunds}>
+                        <Icon name="Plus" size={16} className="mr-1" />
+                        Пополнить
+                      </Button>
                     </Dialog>
                   </div>
                 </CardContent>

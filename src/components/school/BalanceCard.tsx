@@ -73,44 +73,8 @@ export default function BalanceCard() {
     }
   };
 
-  const handleTopUp = async () => {
-    const amount = parseFloat(topUpAmount);
-    
-    if (!amount || amount <= 0) {
-      toast({ title: 'Ошибка', description: 'Введите корректную сумму', variant: 'destructive' });
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
-      
-      const response = await fetch(`${BALANCE_API_URL}?token=${encodeURIComponent(token)}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          action: 'add',
-          amount,
-          description: 'Пополнение баланса (тестовое)'
-        })
-      });
-
-      if (response.ok) {
-        await loadBalance();
-        setTopUpAmount('');
-        setShowTopUp(false);
-        toast({ title: 'Успешно', description: `Баланс пополнен на ${amount} ₽` });
-      } else {
-        toast({ title: 'Ошибка', description: 'Не удалось пополнить баланс', variant: 'destructive' });
-      }
-    } catch (error) {
-      toast({ title: 'Ошибка', description: 'Ошибка при пополнении баланса', variant: 'destructive' });
-    } finally {
-      setLoading(false);
-    }
+  const handleTopUp = () => {
+    window.location.href = '/dashboard/school-balance-topup';
   };
 
   const getTransactionIcon = (type: string) => {
@@ -181,59 +145,10 @@ export default function BalanceCard() {
             </DialogContent>
           </Dialog>
 
-          <Dialog open={showTopUp} onOpenChange={setShowTopUp}>
-            <DialogTrigger asChild>
-              <Button size="sm" className="flex-1 sm:flex-none">
-                <Icon name="Plus" size={16} className="sm:mr-2" />
-                <span className="hidden sm:inline">Пополнить</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Пополнить баланс</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="amount">Сумма пополнения</Label>
-                  <Input
-                    id="amount"
-                    type="number"
-                    placeholder="Введите сумму"
-                    value={topUpAmount}
-                    onChange={(e) => setTopUpAmount(e.target.value)}
-                  />
-                  <p className="text-sm text-gray-500 mt-1">
-                    Минимальная сумма: 100 ₽
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-3 gap-2">
-                  {[1000, 5000, 10000].map((amount) => (
-                    <Button
-                      key={amount}
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setTopUpAmount(amount.toString())}
-                    >
-                      {amount.toLocaleString('ru-RU')} ₽
-                    </Button>
-                  ))}
-                </div>
-
-                <Button
-                  className="w-full"
-                  onClick={handleTopUp}
-                  disabled={loading}
-                >
-                  {loading ? 'Обработка...' : 'Пополнить баланс'}
-                </Button>
-
-                <p className="text-xs text-gray-500 text-center">
-                  Сейчас работает тестовый режим. В продакшене здесь будет интеграция с платежной системой.
-                </p>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <Button size="sm" onClick={handleTopUp} className="flex-1 sm:flex-none">
+            <Icon name="Plus" size={16} className="sm:mr-2" />
+            <span className="hidden sm:inline">Пополнить</span>
+          </Button>
         </div>
       </CardHeader>
       <CardContent>

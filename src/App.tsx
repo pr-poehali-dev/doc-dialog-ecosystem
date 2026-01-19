@@ -40,6 +40,7 @@ const SchoolLanding = lazy(() => import("./pages/SchoolLanding"));
 const SchoolLandingBuilder = lazy(() => import("./pages/SchoolLandingBuilder"));
 const SchoolAnalytics = lazy(() => import("./pages/SchoolAnalytics"));
 const SchoolBalance = lazy(() => import("./pages/SchoolBalance"));
+const SchoolBalanceTopup = lazy(() => import("./pages/dashboard/SchoolBalanceTopup"));
 const SchoolSubscription = lazy(() => import("./pages/dashboard/SchoolSubscription"));
 const SchoolPromoRequests = lazy(() => import("./pages/dashboard/SchoolPromoRequests"));
 const SchoolsLanding = lazy(() => import("./pages/SchoolsLanding"));
@@ -66,6 +67,7 @@ const Bookings = lazy(() => import("./pages/dashboard/Bookings"));
 const SalonBookings = lazy(() => import("./pages/dashboard/SalonBookings"));
 const Favorites = lazy(() => import("./pages/dashboard/Favorites"));
 const MasseurBalance = lazy(() => import("./pages/dashboard/MasseurBalance"));
+const MasseurBalanceTopup = lazy(() => import("./pages/dashboard/MasseurBalanceTopup"));
 const MasseurReviews = lazy(() => import("./pages/MasseurReviews"));
 const MasseurOrders = lazy(() => import("./pages/MasseurOrders"));
 const ClientOrders = lazy(() => import("./pages/ClientOrders"));
@@ -153,6 +155,7 @@ const App = () => (
           <Route path="/school/dashboard" element={<SchoolDashboard />} />
           <Route path="/school/analytics" element={<SchoolAnalytics />} />
           <Route path="/school/balance" element={<SchoolBalance />} />
+          <Route path="/dashboard/school-balance-topup" element={<SchoolBalanceTopup />} />
           <Route path="/school/subscription" element={<SchoolSubscription />} />
           <Route path="/school/promo-requests" element={<SchoolPromoRequests />} />
           <Route path="/courses" element={<CoursesCatalog />} />
@@ -207,6 +210,7 @@ const App = () => (
           <Route path="/dashboard/salon-bookings" element={<SalonBookings />} />
           <Route path="/dashboard/favorites" element={<Favorites />} />
           <Route path="/dashboard/balance" element={<MasseurBalance />} />
+          <Route path="/dashboard/masseur-balance-topup" element={<MasseurBalanceTopup />} />
           <Route path="/dashboard/knowledge-base" element={<KnowledgeBase />} />
           <Route path="/dashboard/tools" element={<Tools />} />
           <Route path="/dashboard/anamnesis-history" element={<AnamnesisHistory />} />
