@@ -13,6 +13,7 @@ interface CatalogItemCardProps {
 }
 
 const PROMO_API_URL = 'https://functions.poehali.dev/0e44bf6d-cb4d-404e-832f-02070e6e8b13';
+const COURSES_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f';
 
 const getCourseTypeLabel = (type: string) => {
   const labels: Record<string, string> = {
@@ -43,7 +44,21 @@ export default function CatalogItemCard({ item }: CatalogItemCardProps) {
   const user = userData ? JSON.parse(userData) : null;
   const isMasseur = user?.role === 'masseur';
   
-  const handleClick = () => {
+  const handleClick = async () => {
+    // Отслеживаем просмотр
+    try {
+      const entityType = item.itemType === 'mastermind' ? 'masterminds' : 
+                         item.itemType === 'offline_training' ? 'offline_trainings' : 
+                         'courses';
+      
+      await fetch(`${COURSES_API_URL}?action=track_view&id=${item.id}&type=${entityType}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+    } catch (error) {
+      console.error('Failed to track view:', error);
+    }
+    
     // Открываем external_url напрямую
     if (item.external_url) {
       window.open(item.external_url, '_blank');
