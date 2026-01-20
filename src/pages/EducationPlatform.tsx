@@ -416,9 +416,11 @@ export default function EducationPlatform() {
             Выберите курс и сделайте следующий шаг в профессиональном развитии
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" className="text-lg px-8" onClick={() => scrollToSection('courses')}>
-              <Icon name="GraduationCap" className="mr-2" size={20} />
-              Смотреть курсы
+            <Button size="lg" variant="secondary" className="text-lg px-8" asChild>
+              <a href="https://docdialog.su/courses" target="_blank" rel="noopener noreferrer">
+                <Icon name="GraduationCap" className="mr-2" size={20} />
+                Смотреть курсы
+              </a>
             </Button>
             <Button size="lg" variant="outline" className="text-lg px-8 bg-white/10 border-white text-white hover:bg-white hover:text-primary" onClick={() => scrollToSection('free')}>
               <Icon name="Gift" className="mr-2" size={20} />
