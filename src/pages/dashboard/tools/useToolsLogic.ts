@@ -42,27 +42,8 @@ export function useToolsLogic() {
   };
 
   const loadUsageData = async () => {
-    try {
-      const userId = getUserId();
-      if (!userId) return;
-
-      const response = await fetch(`${USER_TOOLS_URL}?action=usage`, {
-        headers: { 'X-User-Id': userId }
-      });
-
-      if (!response.ok) return;
-      
-      const data = await response.json();
-      setUsageData({
-        limit: data.limit,
-        dialogs_used: data.dialogs_used,
-        tools_used: data.tools_used,
-        total_used: data.total_used,
-        extra_requests: data.extra_requests || 0
-      });
-    } catch (error) {
-      console.error('Failed to load usage data:', error);
-    }
+    // Больше не используется - всё через баланс
+    return;
   };
 
   useEffect(() => {
