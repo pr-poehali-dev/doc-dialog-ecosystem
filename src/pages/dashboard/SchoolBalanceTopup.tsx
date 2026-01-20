@@ -29,10 +29,10 @@ const TOPUP_PACKAGES = [
   },
   {
     id: 'large',
-    amount: 10000,
-    bonus: 1500,
+    amount: 15000,
+    bonus: 2500,
     title: 'Максимальный',
-    description: 'Выгоднее на 15%',
+    description: 'Выгоднее на 17%',
     icon: 'Crown',
     color: 'from-orange-500/10 to-orange-500/5'
   }
