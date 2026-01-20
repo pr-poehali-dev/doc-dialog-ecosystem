@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
@@ -19,10 +19,18 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
   const isLoggedIn = !!localStorage.getItem('token');
   const [isOpen, setIsOpen] = useState(false);
   const [showCatalogInfo, setShowCatalogInfo] = useState(false);
+  const [balance, setBalance] = useState<number | null>(null);
   
   const userStr = localStorage.getItem('user');
   const isImpersonating = userStr ? JSON.parse(userStr).is_impersonating : false;
   const originalAdminEmail = userStr ? JSON.parse(userStr).original_admin_email : null;
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      // Временно показываем 0, потом подключим API
+      setBalance(0);
+    }
+  }, [isLoggedIn]);
 
   const handleReturnToAdmin = () => {
     const adminUser = localStorage.getItem('admin_backup_user');
@@ -202,12 +210,24 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
                       </Button>
                     )}
                     {isLoggedIn ? (
-                      <Button
-                        onClick={() => handleMenuClick(() => window.location.href = '/dashboard')}
-                        className="w-full"
-                      >
-                        Личный кабинет
-                      </Button>
+                      <>
+                        {balance !== null && (
+                          <Button
+                            variant="outline"
+                            onClick={() => handleMenuClick(() => window.location.href = '/dashboard/ai-subscription')}
+                            className="w-full gap-2"
+                          >
+                            <Icon name="Wallet" size={16} />
+                            Баланс: {balance.toFixed(2)} ₽
+                          </Button>
+                        )}
+                        <Button
+                          onClick={() => handleMenuClick(() => window.location.href = '/dashboard')}
+                          className="w-full"
+                        >
+                          Личный кабинет
+                        </Button>
+                      </>
                     ) : (
                       <>
                         <Button
@@ -244,9 +264,19 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
               </Button>
             )}
             {isLoggedIn ? (
-              <Link to="/dashboard">
-                <Button>Личный кабинет</Button>
-              </Link>
+              <>
+                {balance !== null && (
+                  <Link to="/dashboard/ai-subscription">
+                    <Button variant="outline" size="sm" className="gap-2">
+                      <Icon name="Wallet" size={16} />
+                      {balance.toFixed(2)} ₽
+                    </Button>
+                  </Link>
+                )}
+                <Link to="/dashboard">
+                  <Button>Личный кабинет</Button>
+                </Link>
+              </>
             ) : (
               <>
                 <Link to="/login">

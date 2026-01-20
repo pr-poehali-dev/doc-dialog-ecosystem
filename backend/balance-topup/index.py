@@ -48,11 +48,11 @@ def handler(event: dict, context) -> dict:
         bonus = body.get('bonus', 0)
         package_id = body.get('package_id', 'custom')
         
-        if not amount or amount <= 0:
+        if not amount or amount < 300:
             return {
                 'statusCode': 400,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Укажите корректную сумму'}),
+                'body': json.dumps({'error': 'Минимальная сумма пополнения — 300 ₽'}),
                 'isBase64Encoded': False
             }
         
