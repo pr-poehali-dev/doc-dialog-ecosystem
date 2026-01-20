@@ -123,12 +123,11 @@ export default function AdminTabNavigation({ activeTab, setActiveTab, stats, pen
         <span className="hidden sm:inline">Салоны</span>
       </Button>
       <Button 
-        variant={activeTab === 'payments' ? 'default' : 'outline'}
-        onClick={() => setActiveTab('payments')}
-        className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm"
+        onClick={() => navigate('/admin/payment-history')}
+        className="whitespace-nowrap flex-shrink-0 text-xs sm:text-sm bg-gradient-to-r from-green-600 to-emerald-600"
       >
         <Icon name="CreditCard" size={16} className="sm:mr-2" />
-        <span className="hidden sm:inline">Платежи</span>
+        <span className="hidden sm:inline">История платежей</span>
       </Button>
       <Button 
         variant={activeTab === 'tools' ? 'default' : 'outline'}
