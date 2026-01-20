@@ -424,9 +424,11 @@ export default function EducationPlatform() {
                 Смотреть курсы
               </a>
             </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8 bg-white/10 border-white text-white hover:bg-white hover:text-primary" onClick={() => scrollToSection('free')}>
-              <Icon name="Gift" className="mr-2" size={20} />
-              Бесплатное обучение
+            <Button size="lg" variant="outline" className="text-lg px-8 bg-white/10 border-white text-white hover:bg-white hover:text-primary" asChild>
+              <a href="https://docdialog.su/courses" target="_blank" rel="noopener noreferrer">
+                <Icon name="Gift" className="mr-2" size={20} />
+                Бесплатное обучение
+              </a>
             </Button>
           </div>
         </div>
