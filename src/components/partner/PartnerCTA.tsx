@@ -19,7 +19,7 @@ export default function PartnerCTA() {
             </a>
           </Button>
           <Button size="lg" variant="outline" className="text-lg px-8 bg-white/10 border-white text-white hover:bg-white hover:text-primary" asChild>
-            <a href="https://school.brossok.ru/aff" target="_blank" rel="noopener noreferrer">
+            <a href="https://school.brossok.ru/login" target="_blank" rel="noopener noreferrer">
               <Icon name="LogIn" className="mr-2" size={20} />
               Войти в личный кабинет
             </a>
