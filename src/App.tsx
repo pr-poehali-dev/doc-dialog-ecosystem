@@ -110,6 +110,7 @@ const ForumTopic = lazy(() => import("./pages/ForumTopic").catch((error) => {
 }));
 const VerifyEmail = lazy(() => import("./pages/VerifyEmail"));
 const EducationPlatform = lazy(() => import("./pages/EducationPlatform"));
+const PartnerProgram = lazy(() => import("./pages/PartnerProgram"));
 
 const queryClient = new QueryClient();
 
@@ -228,6 +229,7 @@ const App = () => (
           <Route path="/forum/category/:categoryId" element={<Forum />} />
           <Route path="/forum/topic/:topicId" element={<ForumTopic />} />
           <Route path="/education-platform" element={<EducationPlatform />} />
+          <Route path="/partner-program" element={<PartnerProgram />} />
           <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
