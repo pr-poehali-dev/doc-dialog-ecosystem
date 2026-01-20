@@ -113,6 +113,7 @@ const EducationPlatform = lazy(() => import("./pages/EducationPlatform"));
 const PartnerProgram = lazy(() => import("./pages/PartnerProgram"));
 const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
 const PaymentFailed = lazy(() => import("./pages/PaymentFailed"));
+const PaymentProcessing = lazy(() => import("./pages/PaymentProcessing"));
 
 const queryClient = new QueryClient();
 
@@ -232,6 +233,7 @@ const App = () => (
           <Route path="/forum/topic/:topicId" element={<ForumTopic />} />
           <Route path="/education-platform" element={<EducationPlatform />} />
           <Route path="/partner-program" element={<PartnerProgram />} />
+          <Route path="/payment/processing" element={<PaymentProcessing />} />
           <Route path="/payment/success" element={<PaymentSuccess />} />
           <Route path="/payment/failed" element={<PaymentFailed />} />
           <Route path="*" element={<NotFound />} />
