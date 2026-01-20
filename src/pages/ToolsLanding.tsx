@@ -167,6 +167,14 @@ const ToolsLanding = () => {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
+                  {/* Placeholder для фото */}
+                  <div className="w-full h-64 bg-white/50 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center">
+                    <div className="text-center text-gray-400">
+                      <Icon name="Image" size={48} className="mx-auto mb-2 opacity-30" />
+                      <p className="text-sm">Место для фото</p>
+                    </div>
+                  </div>
+                  
                   <p className="text-lg leading-relaxed">{tool.description}</p>
                   
                   {tool.helps && (
