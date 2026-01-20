@@ -166,30 +166,6 @@ const AIDialogs = () => {
               В личный кабинет
             </Button>
           </div>
-          <div className="mt-4 p-4 bg-secondary/50 rounded-lg border">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm">Использовано AI-операций в этом месяце:</span>
-              <span className="font-semibold">{dialogsData.total_used} / {dialogsData.limit}</span>
-            </div>
-            <div className="text-xs text-muted-foreground mb-3">
-              Диалоги: {dialogsData.dialogs_used} • Инструменты: {dialogsData.tools_used}
-            </div>
-            <div className="w-full bg-secondary rounded-full h-2 mb-3">
-              <div 
-                className="bg-primary rounded-full h-2 transition-all"
-                style={{ width: `${Math.min((dialogsData.total_used / dialogsData.limit) * 100, 100)}%` }}
-              />
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate('/dashboard/ai-subscription')}
-              className="w-full"
-            >
-              <Icon name="Sparkles" size={16} className="mr-2" />
-              Управление подпиской
-            </Button>
-          </div>
         </div>
 
         <Tabs defaultValue="new" className="space-y-6">
