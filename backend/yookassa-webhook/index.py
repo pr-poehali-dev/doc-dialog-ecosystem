@@ -91,7 +91,8 @@ def handler(event: dict, context) -> dict:
                 
                 user_id = payment_log['user_id']
                 payment_type = payment_log['type']
-                log_metadata = json.loads(payment_log['metadata']) if payment_log['metadata'] else {}
+                # metadata уже dict, не нужно парсить
+                log_metadata = payment_log['metadata'] if payment_log['metadata'] else {}
                 
                 print(f"Processing payment: user_id={user_id}, type={payment_type}, metadata={log_metadata}")
                 
