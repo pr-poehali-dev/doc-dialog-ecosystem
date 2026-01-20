@@ -1,4 +1,6 @@
 {
+  "balance-topup": "https://functions.poehali.dev/b84cb21a-1329-492f-b6c6-236e25aa0a83",
+  "ai-subscription-payment": "https://functions.poehali.dev/38a90d9f-d456-4ae4-b34d-f73b951823a7",
   "yoomoney-payment": "https://functions.poehali.dev/224f20a2-10f0-411d-b145-70387e81d2ec",
   "webinar-orders": "https://functions.poehali.dev/65701c32-e4b9-4f74-9a8f-83bfb3eb8d10",
   "forum": "https://functions.poehali.dev/12c571f0-4ac4-4674-97a6-42fe8b17072a",

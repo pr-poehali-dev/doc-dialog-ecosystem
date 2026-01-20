@@ -6,7 +6,7 @@ import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
 import { Navigation } from '@/components/Navigation';
 
-const YOOMONEY_PAYMENT_URL = 'https://functions.poehali.dev/YOUR_YOOMONEY_FUNCTION_ID';
+const BALANCE_TOPUP_URL = 'https://functions.poehali.dev/b84cb21a-1329-492f-b6c6-236e25aa0a83';
 
 const TOPUP_PACKAGES = [
   {
@@ -66,15 +66,40 @@ export default function MasseurBalanceTopup() {
     setLoading(pkg.id);
 
     try {
-      const token = localStorage.getItem('token');
-      const totalAmount = pkg.amount + pkg.bonus;
-      
-      // TODO: Создать реальный платёж через ЮMoney
-      toast({
-        title: 'В разработке',
-        description: 'Оплата через ЮMoney будет доступна после настройки.',
-        variant: 'default'
+      const response = await fetch(BALANCE_TOPUP_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-User-Id': userId
+        },
+        body: JSON.stringify({
+          amount: pkg.amount,
+          bonus: pkg.bonus,
+          package_id: pkg.id
+        })
       });
+
+      if (!response.ok) {
+        const error = await response.json();
+        toast({
+          title: 'Ошибка оплаты',
+          description: error.error || 'Не удалось создать платёж',
+          variant: 'destructive'
+        });
+        return;
+      }
+
+      const data = await response.json();
+      
+      if (data.payment_url) {
+        window.location.href = data.payment_url;
+      } else {
+        toast({
+          title: 'Ошибка',
+          description: 'Не получен URL для оплаты',
+          variant: 'destructive'
+        });
+      }
       
     } catch (error) {
       toast({

@@ -14,7 +14,7 @@ interface SubscriptionData {
   subscription_expires?: string;
 }
 
-const PAYMENT_URL = 'https://functions.poehali.dev/YOUR_PAYMENT_FUNCTION_ID';
+const PAYMENT_URL = 'https://functions.poehali.dev/38a90d9f-d456-4ae4-b34d-f73b951823a7';
 
 const AISubscription = () => {
   const [subscription, setSubscription] = useState<SubscriptionData | null>(null);
@@ -154,26 +154,39 @@ const AISubscription = () => {
         return;
       }
 
-      // TODO: Подключить реальную оплату через ЮMoney
-      toast({ 
-        title: 'В разработке', 
-        description: 'Оплата через ЮMoney будет доступна после настройки секретов',
-        variant: 'default'
+      const response = await fetch(PAYMENT_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-User-Id': userId
+        },
+        body: JSON.stringify({
+          plan: planId,
+          amount: price
+        })
       });
 
-      // Пример будущего запроса:
-      // const response = await fetch(PAYMENT_URL, {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'X-User-Id': userId
-      //   },
-      //   body: JSON.stringify({
-      //     action: 'create_payment',
-      //     plan: planId,
-      //     amount: price
-      //   })
-      // });
+      if (!response.ok) {
+        const error = await response.json();
+        toast({ 
+          title: 'Ошибка оплаты', 
+          description: error.error || 'Не удалось создать платёж',
+          variant: 'destructive' 
+        });
+        return;
+      }
+
+      const data = await response.json();
+      
+      if (data.payment_url) {
+        window.location.href = data.payment_url;
+      } else {
+        toast({ 
+          title: 'Ошибка', 
+          description: 'Не получен URL для оплаты',
+          variant: 'destructive' 
+        });
+      }
       
     } catch (error) {
       toast({ title: 'Ошибка', description: 'Не удалось создать платёж', variant: 'destructive' });

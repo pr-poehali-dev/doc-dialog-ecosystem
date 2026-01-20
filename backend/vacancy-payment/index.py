@@ -117,6 +117,10 @@ def handler(event: dict, context) -> dict:
             
             idempotence_key = str(uuid.uuid4())
             
+            cur.execute(f"SELECT email FROM {schema}.users WHERE id = %s", (user_id,))
+            user = cur.fetchone()
+            user_email = user['email'] if user else 'noreply@brossok.ru'
+            
             payment_data = {
                 'amount': {
                     'value': f'{total_amount}.00',
@@ -128,6 +132,24 @@ def handler(event: dict, context) -> dict:
                 },
                 'capture': True,
                 'description': f'Оплата {vacancy_count} доп. вакансий для салона {salon_name}',
+                'receipt': {
+                    'customer': {
+                        'email': user_email
+                    },
+                    'items': [
+                        {
+                            'description': f'Дополнительные слоты для вакансий ({vacancy_count} шт.)',
+                            'quantity': str(vacancy_count),
+                            'amount': {
+                                'value': f'{price_per_vacancy}.00',
+                                'currency': 'RUB'
+                            },
+                            'vat_code': 1,
+                            'payment_mode': 'full_payment',
+                            'payment_subject': 'service'
+                        }
+                    ]
+                },
                 'metadata': {
                     'user_id': str(user_id),
                     'salon_id': str(salon_id),
