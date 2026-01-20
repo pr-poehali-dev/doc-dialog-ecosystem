@@ -298,9 +298,9 @@ const ToolsLanding = () => {
                 <p className="text-lg">Чтобы специалист не оставался один на один со сложными решениями.</p>
               </div>
 
-              <Button size="lg" className="w-full sm:w-auto">
-                Подробнее об инструменте
-                <Icon name="ArrowRight" className="ml-2" size={20} />
+              <Button size="lg" className="w-full sm:w-auto" onClick={() => navigate('/register')}>
+                Начать общение бесплатно
+                <Icon name="Sparkles" className="ml-2" size={20} />
               </Button>
             </CardContent>
           </Card>
