@@ -1,4 +1,5 @@
 """API для ИИ-инструментов пользователей: расшифровка заключений и анализ болей"""
+
 import json
 import os
 import base64
@@ -106,8 +107,8 @@ def get_usage(user_id: str) -> dict:
         cur.execute(f"""
             SELECT tools_limit, tools_used, extra_requests, first_purchase_bonus_used 
             FROM {schema}.users 
-            WHERE id = %s
-        """, (user_id,))
+            WHERE id = '{user_id.replace("'", "''")}'
+        """)
         
         user = cur.fetchone()
         if not user:
@@ -154,7 +155,7 @@ def analyze_with_tool(user_id: str, body: dict) -> dict:
     schema = os.environ.get('MAIN_DB_SCHEMA', 't_p46047379_doc_dialog_ecosystem')
     
     try:
-        cur.execute(f"SELECT tools_limit, tools_used FROM {schema}.users WHERE id = %s", (user_id,))
+        cur.execute(f"SELECT tools_limit, tools_used FROM {schema}.users WHERE id = '{user_id.replace("'", "''")}' ")
         user = cur.fetchone()
         
         if not user:
@@ -165,33 +166,26 @@ def analyze_with_tool(user_id: str, body: dict) -> dict:
                 'isBase64Encoded': False
             }
         
-        # Списываем с баланса 15₽
-        balance_response = requests.post(
-            'https://functions.poehali.dev/619d5197-066f-4380-8bef-994c71c76fa0',
-            json={'amount': 15, 'service_type': 'medical_tool', 'description': 'Медицинский анализ'},
-            headers={'Content-Type': 'application/json', 'X-User-Id': user_id},
-            timeout=10
-        )
+        # Проверяем лимит (старая логика восстановлена)
+        limit = user.get('tools_limit', 10)
+        tools_used = user.get('tools_used', 0)
+        extra_requests = user.get('extra_requests', 0)
+        total_available = limit + extra_requests
         
-        if balance_response.status_code != 200:
-            error_data = balance_response.json()
+        if tools_used >= total_available:
             return {
                 'statusCode': 403,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
                 'body': json.dumps({
-                    'error': error_data.get('error', 'Недостаточно средств'),
-                    'balance': error_data.get('balance', 0),
-                    'required': 15,
+                    'error': 'Исп ользованы все доступные запросы',
+                    'limit': limit,
+                    'tools_used': tools_used,
+                    'extra_requests': extra_requests,
+                    'total_available': total_available,
                     'limit_reached': True
                 }),
                 'isBase64Encoded': False
             }
-        
-        # Старая проверка лимита - отключена
-        # limit = user.get('tools_limit', 10)
-        # tools_used = user.get('tools_used', 0)
-        # extra_requests = user.get('extra_requests', 0)
-        # if tools_used >= total_available: ...
 
         
         text = body.get('text', '')
@@ -271,8 +265,8 @@ def analyze_with_tool(user_id: str, body: dict) -> dict:
         cur.execute(f"""
             UPDATE {schema}.users 
             SET tools_used = tools_used + 1 
-            WHERE id = %s
-        """, (user_id,))
+            WHERE id = '{user_id.replace("'", "''")}'
+        """)
         conn.commit()
         
         return {
@@ -331,7 +325,7 @@ def buy_extra_requests(user_id: str, body: dict, event: dict) -> dict:
                 'isBase64Encoded': False
             }
         
-        cur.execute(f"SELECT email, first_purchase_bonus_used FROM {schema}.users WHERE id = %s", (user_id,))
+        cur.execute(f"SELECT email, first_purchase_bonus_used FROM {schema}.users WHERE id = '{user_id.replace("'", "''")}' ")
         user = cur.fetchone()
         
         first_purchase_bonus_used = user.get('first_purchase_bonus_used', False)
@@ -439,10 +433,11 @@ def buy_extra_requests(user_id: str, body: dict, event: dict) -> dict:
         payment_result = response.json()
         payment_url = payment_result.get('confirmation', {}).get('confirmation_url', '')
         
+        metadata_json = json.dumps({'count': count}).replace("'", "''")
         cur.execute(f"""
             INSERT INTO {schema}.payment_logs (user_id, payment_id, amount, type, status, metadata)
-            VALUES (%s, %s, %s, %s, %s, %s)
-        """, (user_id, payment_result.get('id'), amount, 'extra_requests', 'pending', json.dumps({'count': count})))
+            VALUES ('{user_id.replace("'", "''")}', '{payment_result.get('id')}', {amount}, 'extra_requests', 'pending', '{metadata_json}')
+        """)
         conn.commit()
         
         return {
@@ -474,6 +469,29 @@ def save_anamnesis(user_id: str, body: dict) -> dict:
         form_data = body.get('formData', {})
         ai_analysis = body.get('aiAnalysis', '')
         
+        age_value = int(form_data.get("age")) if form_data.get("age") else None
+        age_str = str(age_value) if age_value is not None else "NULL"
+        
+        full_name = str(form_data.get("fullName") or "").replace("'", "''")
+        gender = str(form_data.get("gender") or "").replace("'", "''")
+        main_complaint = str(form_data.get("mainComplaint") or "").replace("'", "''")
+        complaint_duration = str(form_data.get("complaintDuration") or "").replace("'", "''")
+        pain_location = str(form_data.get("painLocation") or "").replace("'", "''")
+        pain_intensity = str(form_data.get("painIntensity") or "").replace("'", "''")
+        pain_character = str(form_data.get("painCharacter") or "").replace("'", "''")
+        chronic_diseases = str(form_data.get("chronicDiseases") or "").replace("'", "''")
+        medications = str(form_data.get("medications") or "").replace("'", "''")
+        injuries = str(form_data.get("injuries") or "").replace("'", "''")
+        surgeries = str(form_data.get("surgeries") or "").replace("'", "''")
+        lifestyle = str(form_data.get("lifestyle") or "").replace("'", "''")
+        physical_activity = str(form_data.get("physicalActivity") or "").replace("'", "''")
+        sleep = str(form_data.get("sleep") or "").replace("'", "''")
+        stress = str(form_data.get("stress") or "").replace("'", "''")
+        goals = str(form_data.get("goals") or "").replace("'", "''")
+        contraindications = str(form_data.get("contraindications") or "").replace("'", "''")
+        additional_info = str(form_data.get("additionalInfo") or "").replace("'", "''")
+        ai_analysis_escaped = str(ai_analysis or "").replace("'", "''")
+        
         cur.execute(f"""
             INSERT INTO {schema}.anamnesis_records (
                 user_id, client_full_name, client_age, client_gender,
@@ -481,31 +499,16 @@ def save_anamnesis(user_id: str, body: dict) -> dict:
                 chronic_diseases, medications, injuries, surgeries,
                 lifestyle, physical_activity, sleep, stress,
                 goals, contraindications, additional_info, ai_analysis
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ) VALUES (
+                '{user_id.replace("'", "''")}',
+                '{full_name}', {age_str}, '{gender}',
+                '{main_complaint}', '{complaint_duration}', '{pain_location}', '{pain_intensity}', '{pain_character}',
+                '{chronic_diseases}', '{medications}', '{injuries}', '{surgeries}',
+                '{lifestyle}', '{physical_activity}', '{sleep}', '{stress}',
+                '{goals}', '{contraindications}', '{additional_info}', '{ai_analysis_escaped}'
+            )
             RETURNING id
-        """, (
-            user_id,
-            form_data.get('fullName'),
-            int(form_data.get('age')) if form_data.get('age') else None,
-            form_data.get('gender'),
-            form_data.get('mainComplaint'),
-            form_data.get('complaintDuration'),
-            form_data.get('painLocation'),
-            form_data.get('painIntensity'),
-            form_data.get('painCharacter'),
-            form_data.get('chronicDiseases'),
-            form_data.get('medications'),
-            form_data.get('injuries'),
-            form_data.get('surgeries'),
-            form_data.get('lifestyle'),
-            form_data.get('physicalActivity'),
-            form_data.get('sleep'),
-            form_data.get('stress'),
-            form_data.get('goals'),
-            form_data.get('contraindications'),
-            form_data.get('additionalInfo'),
-            ai_analysis
-        ))
+        """)
         
         result = cur.fetchone()
         conn.commit()
@@ -542,9 +545,9 @@ def get_anamnesis_list(user_id: str) -> dict:
                 id, client_full_name, client_age, main_complaint, 
                 created_at, updated_at
             FROM {schema}.anamnesis_records
-            WHERE user_id = %s
+            WHERE user_id = '{user_id.replace("'", "''")}'
             ORDER BY created_at DESC
-        """, (user_id,))
+        """)
         
         records = cur.fetchall()
         
@@ -589,8 +592,8 @@ def get_anamnesis(user_id: str, body: dict) -> dict:
         
         cur.execute(f"""
             SELECT * FROM {schema}.anamnesis_records
-            WHERE user_id = %s AND id = %s
-        """, (user_id, anamnesis_id))
+            WHERE user_id = '{user_id.replace("'", "''")}' AND id = {anamnesis_id}
+        """)
         
         record = cur.fetchone()
         
