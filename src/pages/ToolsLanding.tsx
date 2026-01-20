@@ -167,13 +167,15 @@ const ToolsLanding = () => {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="w-full h-64 rounded-xl overflow-hidden">
-                    <img 
-                      src="https://cdn.poehali.dev/files/ea54ba01-bf8d-4fa1-b924-a18290ba8469.jpg" 
-                      alt="Специалист анализирует медицинские снимки"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                  {index === 0 && (
+                    <div className="w-full h-64 rounded-xl overflow-hidden">
+                      <img 
+                        src="https://cdn.poehali.dev/files/ea54ba01-bf8d-4fa1-b924-a18290ba8469.jpg" 
+                        alt="Специалист анализирует медицинские снимки"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
                   
                   <p className="text-lg leading-relaxed">{tool.description}</p>
                   
