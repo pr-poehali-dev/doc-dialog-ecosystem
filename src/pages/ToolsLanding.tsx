@@ -166,32 +166,32 @@ const ToolsLanding = () => {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="p-6">
+                <CardContent className="p-6 space-y-6">
                   <div className="flex flex-col md:flex-row gap-6">
                     {index === 0 && (
-                      <div className="w-full md:w-64 aspect-square rounded-xl overflow-hidden flex-shrink-0">
+                      <div className="w-full md:w-64 aspect-square rounded-xl overflow-hidden flex-shrink-0 bg-white p-2">
                         <img 
                           src="https://cdn.poehali.dev/files/ea54ba01-bf8d-4fa1-b924-a18290ba8469.jpg" 
                           alt="Специалист анализирует медицинские снимки"
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover rounded-lg"
                         />
                       </div>
                     )}
                     {index === 1 && (
-                      <div className="w-full md:w-64 aspect-square rounded-xl overflow-hidden flex-shrink-0">
+                      <div className="w-full md:w-64 aspect-square rounded-xl overflow-hidden flex-shrink-0 bg-white p-2">
                         <img 
                           src="https://cdn.poehali.dev/files/19f3d66b-a720-4516-a2cd-29f24e014739.jpg" 
                           alt="Специалист проводит онлайн консультацию"
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover rounded-lg"
                         />
                       </div>
                     )}
                     {index === 2 && (
-                      <div className="w-full md:w-64 aspect-square rounded-xl overflow-hidden flex-shrink-0">
+                      <div className="w-full md:w-64 aspect-square rounded-xl overflow-hidden flex-shrink-0 bg-white p-2">
                         <img 
                           src="https://cdn.poehali.dev/files/1e5360de-56c2-49e0-8d56-4582113d6b2b.jpg" 
                           alt="Врач проводит медицинский осмотр"
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover rounded-lg"
                         />
                       </div>
                     )}
