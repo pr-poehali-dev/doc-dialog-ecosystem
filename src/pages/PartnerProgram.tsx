@@ -22,13 +22,17 @@ export default function PartnerProgram() {
                 Присоединяйтесь к партнерской программе школы <span className="font-semibold text-primary">«Док Диалог»</span> и получайте высокое вознаграждение, рекомендуя лучшие образовательные продукты для массажистов и специалистов по здоровью. Мы ценим наших партнеров и создали максимально прозрачную и выгодную систему сотрудничества.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="text-lg px-8">
-                  <Icon name="Handshake" className="mr-2" size={20} />
-                  Стать партнером
+                <Button size="lg" className="text-lg px-8" asChild>
+                  <a href="https://school.brossok.ru/aff/reg" target="_blank" rel="noopener noreferrer">
+                    <Icon name="Handshake" className="mr-2" size={20} />
+                    Стать партнером
+                  </a>
                 </Button>
-                <Button size="lg" variant="outline" className="text-lg px-8">
-                  <Icon name="LogIn" className="mr-2" size={20} />
-                  Войти в личный кабинет
+                <Button size="lg" variant="outline" className="text-lg px-8" asChild>
+                  <a href="https://school.brossok.ru/aff" target="_blank" rel="noopener noreferrer">
+                    <Icon name="LogIn" className="mr-2" size={20} />
+                    Войти в личный кабинет
+                  </a>
                 </Button>
               </div>
             </div>
@@ -522,13 +526,17 @@ export default function PartnerProgram() {
             Присоединяйтесь к сообществу успешных партнеров сегодня. Регистрация займет менее 1 минуты.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" className="text-lg px-8">
-              <Icon name="Handshake" className="mr-2" size={20} />
-              Стать партнером
+            <Button size="lg" variant="secondary" className="text-lg px-8" asChild>
+              <a href="https://school.brossok.ru/aff/reg" target="_blank" rel="noopener noreferrer">
+                <Icon name="Handshake" className="mr-2" size={20} />
+                Стать партнером
+              </a>
             </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8 bg-white/10 border-white text-white hover:bg-white hover:text-primary">
-              <Icon name="LogIn" className="mr-2" size={20} />
-              Войти в личный кабинет
+            <Button size="lg" variant="outline" className="text-lg px-8 bg-white/10 border-white text-white hover:bg-white hover:text-primary" asChild>
+              <a href="https://school.brossok.ru/aff" target="_blank" rel="noopener noreferrer">
+                <Icon name="LogIn" className="mr-2" size={20} />
+                Войти в личный кабинет
+              </a>
             </Button>
           </div>
         </div>
