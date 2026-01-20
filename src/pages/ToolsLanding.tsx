@@ -166,18 +166,22 @@ const ToolsLanding = () => {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  {index === 0 && (
-                    <div className="w-full h-64 rounded-xl overflow-hidden">
-                      <img 
-                        src="https://cdn.poehali.dev/files/ea54ba01-bf8d-4fa1-b924-a18290ba8469.jpg" 
-                        alt="Специалист анализирует медицинские снимки"
-                        className="w-full h-full object-cover"
-                      />
+                <CardContent className="p-6">
+                  <div className="flex flex-col md:flex-row gap-6">
+                    {index === 0 && (
+                      <div className="w-full md:w-64 aspect-square rounded-xl overflow-hidden flex-shrink-0">
+                        <img 
+                          src="https://cdn.poehali.dev/files/ea54ba01-bf8d-4fa1-b924-a18290ba8469.jpg" 
+                          alt="Специалист анализирует медицинские снимки"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    
+                    <div className="flex-1 flex items-center">
+                      <p className="text-lg leading-relaxed">{tool.description}</p>
                     </div>
-                  )}
-                  
-                  <p className="text-lg leading-relaxed">{tool.description}</p>
+                  </div>
                   
                   {tool.helps && (
                     <div className="bg-white/80 rounded-xl p-6">
