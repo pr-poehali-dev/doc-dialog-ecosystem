@@ -43,8 +43,8 @@ def handler(event: dict, context) -> dict:
             cur.execute(f"""
                 SELECT balance 
                 FROM {schema}.users 
-                WHERE id = %s
-            """, (user_id,))
+                WHERE id = '{user_id}'
+            """)
             
             user = cur.fetchone()
             
@@ -91,8 +91,8 @@ def handler(event: dict, context) -> dict:
             cur.execute(f"""
                 SELECT balance 
                 FROM {schema}.users 
-                WHERE id = %s
-            """, (user_id,))
+                WHERE id = '{user_id}'
+            """)
             
             user = cur.fetchone()
             
@@ -125,10 +125,10 @@ def handler(event: dict, context) -> dict:
             # Списываем с баланса
             cur.execute(f"""
                 UPDATE {schema}.users
-                SET balance = balance - %s
-                WHERE id = %s
+                SET balance = balance - {amount}
+                WHERE id = '{user_id}'
                 RETURNING balance
-            """, (amount, user_id))
+            """)
             
             updated_user = cur.fetchone()
             new_balance = float(updated_user['balance']) if updated_user['balance'] else 0
@@ -137,8 +137,8 @@ def handler(event: dict, context) -> dict:
             cur.execute(f"""
                 INSERT INTO {schema}.balance_transactions 
                 (user_id, amount, type, description, created_at)
-                VALUES (%s, %s, %s, %s, NOW())
-            """, (user_id, -amount, service_type or 'service', description))
+                VALUES ('{user_id}', {-amount}, '{service_type or "service"}', '{description.replace("'", "''")}', NOW())
+            """)
             
             conn.commit()
             cur.close()
