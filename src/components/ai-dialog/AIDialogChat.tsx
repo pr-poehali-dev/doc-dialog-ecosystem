@@ -97,7 +97,10 @@ const AIDialogChat = ({ dialog }: AIDialogChatProps) => {
 
     try {
       const userId = getUserId();
-      if (!userId) return;
+      if (!userId) {
+        setSending(false);
+        return;
+      }
 
       const response = await fetch(AI_DIALOG_URL, {
         method: 'POST',
@@ -111,6 +114,18 @@ const AIDialogChat = ({ dialog }: AIDialogChatProps) => {
           message: userMessage
         })
       });
+
+      if (response.status === 403) {
+        const errorData = await response.json();
+        toast({
+          title: 'Недостаточно средств',
+          description: `${errorData.error}. Пополните баланс на странице тарифов.`,
+          variant: 'destructive'
+        });
+        setMessages(prev => prev.slice(0, -1));
+        setSending(false);
+        return;
+      }
 
       if (!response.ok) throw new Error('Failed to send message');
       
