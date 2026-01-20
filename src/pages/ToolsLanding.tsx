@@ -103,7 +103,7 @@ const ToolsLanding = () => {
                 <Icon name="Search" className="mr-2" size={22} />
                 Смотреть инструменты
               </Button>
-              <Button size="lg" variant="outline" onClick={() => navigate('/register')} className="text-lg px-10 py-6 bg-blue-600 text-white border-2 border-white hover:bg-blue-700 shadow-xl">
+              <Button size="lg" variant="outline" onClick={() => navigate('/register/specialist')} className="text-lg px-10 py-6 bg-blue-600 text-white border-2 border-white hover:bg-blue-700 shadow-xl">
                 <Icon name="Sparkles" className="mr-2" size={22} />
                 Попробовать бесплатно
               </Button>
@@ -389,7 +389,7 @@ const ToolsLanding = () => {
                 Вы можете попробовать их в работе и понять, насколько они подходят именно вам.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" onClick={() => navigate('/register')} className="text-lg px-8">
+                <Button size="lg" onClick={() => navigate('/register/specialist')} className="text-lg px-8">
                   <Icon name="Sparkles" className="mr-2" size={20} />
                   Попробовать бесплатно
                 </Button>
@@ -416,7 +416,7 @@ const ToolsLanding = () => {
             <Button size="lg" onClick={scrollToTools} className="text-lg px-10 py-6">
               Смотреть инструменты
             </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate('/register')} className="text-lg px-10 py-6">
+            <Button size="lg" variant="outline" onClick={() => navigate('/register/specialist')} className="text-lg px-10 py-6">
               Начать бесплатно
             </Button>
           </div>
