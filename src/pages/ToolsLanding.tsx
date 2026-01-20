@@ -71,8 +71,16 @@ const ToolsLanding = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30">
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-20">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="relative container mx-auto px-4 py-20">
+        <div className="absolute inset-0 overflow-hidden rounded-3xl">
+          <img 
+            src="https://cdn.poehali.dev/files/3b1b03fe-2310-4289-ab50-fcf2d3334a04.jpg" 
+            alt="Технологии для специалистов"
+            className="w-full h-full object-cover opacity-30"
+          />
+          <div className="absolute inset-0 bg-white/70"></div>
+        </div>
+        <div className="relative max-w-4xl mx-auto text-center">
           <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Инструменты Док диалог для специалистов
           </h1>
