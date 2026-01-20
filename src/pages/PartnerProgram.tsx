@@ -39,7 +39,7 @@ export default function PartnerProgram() {
             <div className="relative">
               <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-primary/10 rounded-2xl blur-2xl" />
               <img 
-                src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/97cd9a0e-406b-4bc6-a1a4-f9e41305f466.jpg" 
+                src="https://cdn.poehali.dev/files/f22d16f2-3ade-422b-ab72-960f10198776.jpg" 
                 alt="Партнерство" 
                 className="relative rounded-2xl shadow-2xl w-full h-[400px] sm:h-[500px] object-cover"
               />
