@@ -17,7 +17,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 
-const API_URL = 'https://functions.poehali.dev/8c82911e-481f-4a63-92ff-aae203e992cc';
+const USER_BALANCE_URL = 'https://functions.poehali.dev/619d5197-066f-4380-8bef-994c71c76fa0';
 const MASSEURS_API = 'https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436';
 
 interface Transaction {
@@ -74,25 +74,42 @@ export default function MasseurBalance() {
     }
   };
 
-  const loadBalance = async () => {
+  const getUserId = () => {
     const token = localStorage.getItem('token');
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.user_id || payload.userId || payload.sub;
+    } catch {
+      return null;
+    }
+  };
+
+  const loadBalance = async () => {
+    const userId = getUserId();
     
-    if (!token) {
+    if (!userId) {
       navigate('/login');
       return;
     }
 
     try {
-      const response = await fetch(`${API_URL}?action=get`, {
+      const response = await fetch(USER_BALANCE_URL, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'X-User-Id': String(userId)
         }
       });
 
       if (response.ok) {
         const data = await response.json();
-        setBalanceData(data);
+        // Адаптируем формат под старую структуру
+        setBalanceData({
+          current_balance: data.balance || 0,
+          total_added: 0, // Эти данные больше не актуальны
+          total_spent: 0,
+          transactions: []
+        });
       } else if (response.status === 401) {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
@@ -159,7 +176,7 @@ export default function MasseurBalance() {
             </Button>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
+          <div className="grid md:grid-cols-1 gap-6 mb-8">
             <Card className="border-2 border-primary/20">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
@@ -174,33 +191,7 @@ export default function MasseurBalance() {
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <Icon name="TrendingUp" className="text-green-600" size={24} />
-                  Всего пополнено
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-3xl font-bold text-green-600">
-                  {formatMoney(balanceData?.total_added || 0)}
-                </p>
-              </CardContent>
-            </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <Icon name="TrendingDown" className="text-red-600" size={24} />
-                  Всего потрачено
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-3xl font-bold text-red-600">
-                  {formatMoney(balanceData?.total_spent || 0)}
-                </p>
-              </CardContent>
-            </Card>
           </div>
 
           <Card className="mb-8 bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200">
@@ -251,52 +242,7 @@ export default function MasseurBalance() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>История операций</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {!balanceData?.transactions || balanceData.transactions.length === 0 ? (
-                <div className="text-center py-12 text-gray-500">
-                  <Icon name="Receipt" size={48} className="mx-auto mb-4 opacity-20" />
-                  <p>История операций пуста</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {balanceData.transactions.map((transaction) => (
-                    <div
-                      key={transaction.id}
-                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                          transaction.type === 'deposit' 
-                            ? 'bg-green-100' 
-                            : 'bg-red-100'
-                        }`}>
-                          <Icon
-                            name={transaction.type === 'deposit' ? 'ArrowDown' : 'ArrowUp'}
-                            className={transaction.type === 'deposit' ? 'text-green-600' : 'text-red-600'}
-                            size={20}
-                          />
-                        </div>
-                        <div>
-                          <p className="font-medium">{transaction.description}</p>
-                          <p className="text-sm text-gray-500">{formatDate(transaction.created_at)}</p>
-                        </div>
-                      </div>
-                      <div className={`text-lg font-bold ${
-                        transaction.type === 'deposit' ? 'text-green-600' : 'text-red-600'
-                      }`}>
-                        {transaction.type === 'deposit' ? '+' : '-'}
-                        {formatMoney(Math.abs(transaction.amount))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+
         </div>
       </div>
 
