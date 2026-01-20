@@ -235,9 +235,9 @@ const ToolsLanding = () => {
                     </div>
                   )}
 
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto" onClick={() => navigate('/medical-report')}>
-                    Подробнее о продукте
-                    <Icon name="ArrowRight" className="ml-2" size={20} />
+                  <Button variant="outline" size="lg" className="w-full sm:w-auto" onClick={() => navigate('/register')}>
+                    Попробовать бесплатно
+                    <Icon name="Sparkles" className="ml-2" size={20} />
                   </Button>
                 </CardContent>
               </Card>
