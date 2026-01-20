@@ -43,6 +43,15 @@ export default function SchoolBalanceTopup() {
   const { toast } = useToast();
   const [loading, setLoading] = useState<string | null>(null);
 
+  const getUserRole = () => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      const user = JSON.parse(userData);
+      return user.role;
+    }
+    return null;
+  };
+
   const getUserId = () => {
     const token = localStorage.getItem('token');
     if (!token) return null;
@@ -129,7 +138,9 @@ export default function SchoolBalanceTopup() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Пополнение баланса</h1>
           <p className="text-muted-foreground">
-            Выберите пакет для продвижения ваших курсов
+            {getUserRole() === 'school' 
+              ? 'Выберите пакет для продвижения ваших курсов'
+              : 'Выберите удобный пакет пополнения для AI-инструментов'}
           </p>
         </div>
 
@@ -224,7 +235,9 @@ export default function SchoolBalanceTopup() {
               3. Средства моментально зачисляются на ваш баланс
             </p>
             <p>
-              4. Используйте баланс для продвижения курсов, мастермайндов и оффлайн-мероприятий
+              4. {getUserRole() === 'school'
+                ? 'Используйте баланс для продвижения курсов, мастермайндов и оффлайн-мероприятий'
+                : 'Используйте баланс для AI-инструментов: расшифровка заключений, сбор анамнеза, анализ боли'}
             </p>
           </CardContent>
         </Card>

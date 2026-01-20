@@ -47,6 +47,19 @@ export default function DashboardCards({
           <Button className="w-full" onClick={onAddVacancy}>Добавить вакансию</Button>
         </div>
 
+        <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 hover:border-primary/50 transition-colors">
+          <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+              <Icon name="Wallet" className="text-green-600" size={20} />
+            </div>
+            <h3 className="text-lg md:text-xl font-semibold">Баланс</h3>
+          </div>
+          <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Пополнение для AI-инструментов</p>
+          <Link to="/dashboard/balance">
+            <Button className="w-full">Управление балансом</Button>
+          </Link>
+        </div>
+
         <div className="relative bg-gradient-to-br from-primary/5 via-white to-primary/10 rounded-xl p-4 md:p-6 shadow-lg border-2 border-primary/30 hover:border-primary/60 transition-all hover:shadow-xl">
           <div className="absolute -top-3 -right-3 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
             Premium
