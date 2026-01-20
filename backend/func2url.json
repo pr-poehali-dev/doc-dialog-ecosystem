@@ -1,4 +1,5 @@
 {
+  "payment-check": "https://functions.poehali.dev/28a74790-e33c-49a3-bf24-8443c39e1d9d",
   "yookassa-webhook": "https://functions.poehali.dev/4e409f53-0fa4-4745-89fe-1eb38510b196",
   "balance-topup": "https://functions.poehali.dev/b84cb21a-1329-492f-b6c6-236e25aa0a83",
   "ai-subscription-payment": "https://functions.poehali.dev/38a90d9f-d456-4ae4-b34d-f73b951823a7",

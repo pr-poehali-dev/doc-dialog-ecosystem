@@ -1,137 +1,116 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
+import { useToast } from '@/hooks/use-toast';
+
+const PAYMENT_CHECK_URL = 'https://functions.poehali.dev/28a74790-e33c-49a3-bf24-8443c39e1d9d';
 
 const PaymentProcessing = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [showOptions, setShowOptions] = useState(false);
+  const { toast } = useToast();
+  const [statusText, setStatusText] = useState('Проверяем статус платежа...');
 
   useEffect(() => {
-    // Показываем опции через 2 секунды
-    const timer = setTimeout(() => {
-      setShowOptions(true);
-    }, 2000);
+    const checkPayment = async () => {
+      const type = searchParams.get('type') || 'payment';
+      
+      // Ищем payment_id в URL
+      const fullUrl = window.location.href;
+      const urlObj = new URL(fullUrl);
+      const paymentId = urlObj.searchParams.get('payment_id');
+      
+      // Если нет - пользователь вернулся без оплаты
+      if (!paymentId) {
+        console.log('No payment_id found');
+        setStatusText('Платёж не найден');
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        navigate(`/payment/failed?type=${type}`);
+        return;
+      }
 
-    return () => clearTimeout(timer);
-  }, []);
+      console.log('Checking payment:', paymentId);
+      setStatusText('Связываемся с платёжной системой...');
 
-  const type = searchParams.get('type') || 'payment';
+      try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        setStatusText('Получаем информацию о платеже...');
+        
+        const response = await fetch(`${PAYMENT_CHECK_URL}?payment_id=${paymentId}`);
+        
+        if (!response.ok) {
+          throw new Error('Не удалось проверить статус');
+        }
 
-  const handleSuccess = () => {
-    navigate(`/payment/success?type=${type}`);
-  };
+        const data = await response.json();
+        console.log('Payment status:', data);
 
-  const handleCancel = () => {
-    navigate(`/payment/failed?type=${type}`);
-  };
-
-  const getRedirectPath = () => {
-    switch (type) {
-      case 'ai_subscription':
-        return '/dashboard/ai-subscription';
-      case 'balance_topup':
-        return '/dashboard/balance';
-      case 'extra_requests':
-        return '/dashboard/tools';
-      case 'vacancy':
-        return '/dashboard/vacancies';
-      default:
-        return '/dashboard';
-    }
-  };
-
-  if (!showOptions) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-950/20 dark:via-indigo-950/20 dark:to-purple-950/20">
-        <Card className="max-w-md w-full shadow-2xl">
-          <CardHeader className="text-center pb-4">
-            <div className="mx-auto mb-4 w-20 h-20 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-              <Icon name="Loader2" size={48} className="text-blue-600 dark:text-blue-400 animate-spin" />
-            </div>
-            <CardTitle className="text-2xl font-bold">
-              Обрабатываем возврат...
-            </CardTitle>
-          </CardHeader>
+        if (data.status === 'succeeded' && data.paid) {
+          setStatusText('Платёж подтверждён!');
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          navigate(`/payment/success?type=${type}`);
+        } else if (data.status === 'canceled') {
+          setStatusText('Платёж отменён');
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          navigate(`/payment/failed?type=${type}`);
+        } else if (data.status === 'pending' || data.status === 'waiting_for_capture') {
+          setStatusText('Платёж обрабатывается...');
+          await new Promise(resolve => setTimeout(resolve, 3000));
           
-          <CardContent>
-            <div className="text-center space-y-4">
-              <p className="text-muted-foreground">
-                Пожалуйста, подождите
-              </p>
-              <div className="flex justify-center gap-2">
-                <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+          const response2 = await fetch(`${PAYMENT_CHECK_URL}?payment_id=${paymentId}`);
+          if (response2.ok) {
+            const data2 = await response2.json();
+            if (data2.status === 'succeeded' && data2.paid) {
+              navigate(`/payment/success?type=${type}`);
+            } else {
+              navigate(`/payment/success?type=${type}`);
+            }
+          } else {
+            navigate(`/payment/success?type=${type}`);
+          }
+        } else {
+          navigate(`/payment/failed?type=${type}`);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        toast({
+          title: 'Ошибка проверки',
+          description: 'Проверьте баланс через несколько минут',
+          variant: 'destructive'
+        });
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        navigate(`/payment/success?type=${type}`);
+      }
+    };
+
+    checkPayment();
+  }, [navigate, searchParams, toast]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-50 via-gray-50 to-zinc-50 dark:from-slate-950/20 dark:via-gray-950/20 dark:to-zinc-950/20">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-950/20 dark:via-indigo-950/20 dark:to-purple-950/20">
       <Card className="max-w-md w-full shadow-2xl">
         <CardHeader className="text-center pb-4">
-          <div className="mx-auto mb-4 w-20 h-20 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center">
-            <Icon name="HelpCircle" size={48} className="text-amber-600 dark:text-amber-400" />
+          <div className="mx-auto mb-4 w-20 h-20 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+            <Icon name="Loader2" size={48} className="text-blue-600 dark:text-blue-400 animate-spin" />
           </div>
           <CardTitle className="text-2xl font-bold">
-            Вы завершили оплату?
+            {statusText}
           </CardTitle>
-          <CardDescription className="text-base mt-3">
-            Выберите действие в зависимости от того, оплатили ли вы заказ
-          </CardDescription>
         </CardHeader>
         
-        <CardContent className="space-y-4">
-          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
-            <h4 className="font-semibold text-blue-900 dark:text-blue-300 mb-2 flex items-center gap-2">
-              <Icon name="CheckCircle2" size={18} />
-              Я оплатил заказ
-            </h4>
-            <p className="text-sm text-blue-800 dark:text-blue-400 mb-3">
-              Средства поступят на счёт в течение 5 минут. Вы можете обновить страницу через пару минут для проверки.
+        <CardContent>
+          <div className="text-center space-y-4">
+            <p className="text-muted-foreground">
+              Пожалуйста, не закрывайте эту страницу
             </p>
-            <Button 
-              onClick={handleSuccess}
-              className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"
-            >
-              <Icon name="CheckCircle2" size={20} className="mr-2" />
-              Да, я оплатил
-            </Button>
+            <div className="flex justify-center gap-2">
+              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+            </div>
           </div>
-
-          <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-4 border border-red-200 dark:border-red-800">
-            <h4 className="font-semibold text-red-900 dark:text-red-300 mb-2 flex items-center gap-2">
-              <Icon name="XCircle" size={18} />
-              Я отменил оплату
-            </h4>
-            <p className="text-sm text-red-800 dark:text-red-400 mb-3">
-              Если вы закрыли окно оплаты или нажали "Назад", средства не будут списаны.
-            </p>
-            <Button 
-              onClick={handleCancel}
-              variant="outline"
-              className="w-full border-red-300 text-red-700 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/30"
-            >
-              <Icon name="XCircle" size={20} className="mr-2" />
-              Я отменил
-            </Button>
-          </div>
-
-          <Button 
-            onClick={() => navigate(getRedirectPath())}
-            variant="ghost"
-            className="w-full"
-          >
-            <Icon name="ArrowLeft" size={20} className="mr-2" />
-            Вернуться назад
-          </Button>
         </CardContent>
       </Card>
     </div>
