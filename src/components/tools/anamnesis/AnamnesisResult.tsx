@@ -86,8 +86,8 @@ ${response}`;
 
   return (
     <div className="space-y-4 py-4">
-      <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-        <div className="flex items-start gap-2 text-sm text-blue-800">
+      <div className="p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-200">
+        <div className="flex items-start gap-2 text-xs sm:text-sm text-blue-800">
           <Icon name="Info" size={16} className="flex-shrink-0 mt-0.5" />
           <p>
             Сервис не хранит данные запросов и диалогов. Нажмите кнопку "Выделить весь текст" и скопируйте через Ctrl+C (или Cmd+C на Mac).
@@ -96,38 +96,41 @@ ${response}`;
       </div>
 
       <Card className="border-primary/20">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between text-base">
+        <CardHeader className="p-3 sm:p-6">
+          <CardTitle className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-base">
             <div className="flex items-center gap-2">
               <Icon name="Brain" className="text-primary flex-shrink-0" size={20} />
               <span className="truncate">Результат</span>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 w-full sm:w-auto">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={selectAllText}
+                className="flex-1 sm:flex-initial"
               >
-                <Icon name="MousePointerClick" size={16} className="mr-2" />
-                Выделить всё
+                <Icon name="MousePointerClick" size={16} className="mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Выделить всё</span>
+                <span className="sm:hidden">Выделить</span>
               </Button>
               <Button
                 variant="default"
                 size="sm"
                 onClick={copyToClipboard}
+                className="flex-1 sm:flex-initial"
               >
-                <Icon name="Copy" size={16} className="mr-2" />
+                <Icon name="Copy" size={16} className="mr-1 sm:mr-2" />
                 Копировать
               </Button>
             </div>
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-3 sm:p-6">
           <textarea
             ref={textAreaRef}
             value={anamnesisText}
             readOnly
-            className="w-full h-96 p-4 border rounded-lg font-mono text-sm resize-y focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full h-64 sm:h-96 p-3 sm:p-4 border rounded-lg font-mono text-xs sm:text-sm resize-y focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </CardContent>
       </Card>

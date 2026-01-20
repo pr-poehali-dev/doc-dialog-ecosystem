@@ -84,10 +84,10 @@ export default function ToolDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto w-[95vw] sm:w-full">
         <DialogHeader>
-          <DialogTitle>{toolTitle}</DialogTitle>
-          <DialogDescription>{toolDescription}</DialogDescription>
+          <DialogTitle className="text-base sm:text-lg">{toolTitle}</DialogTitle>
+          <DialogDescription className="text-sm">{toolDescription}</DialogDescription>
         </DialogHeader>
         
         <div className="space-y-4">
@@ -160,8 +160,8 @@ export default function ToolDialog({
 
           {response && (
             <div className="mt-6 space-y-3">
-              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <div className="flex items-start gap-2 text-sm text-blue-800">
+              <div className="p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="flex items-start gap-2 text-xs sm:text-sm text-blue-800">
                   <Icon name="Info" size={16} className="flex-shrink-0 mt-0.5" />
                   <p>
                     Сервис не хранит данные запросов и диалогов. Нажмите кнопку "Выделить весь текст" и скопируйте через Ctrl+C (или Cmd+C на Mac).
@@ -169,31 +169,34 @@ export default function ToolDialog({
                 </div>
               </div>
               
-              <div className="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
-                <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
+              <div className="p-4 sm:p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-gray-200">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
                       <Icon name="FileText" size={18} className="text-blue-600" />
                     </div>
-                    <span className="text-lg font-semibold text-gray-900">
+                    <span className="text-base sm:text-lg font-semibold text-gray-900">
                       Результат
                     </span>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 w-full sm:w-auto">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={selectAllText}
+                      className="flex-1 sm:flex-initial"
                     >
-                      <Icon name="MousePointerClick" size={16} className="mr-2" />
-                      Выделить всё
+                      <Icon name="MousePointerClick" size={16} className="mr-1 sm:mr-2" />
+                      <span className="hidden sm:inline">Выделить всё</span>
+                      <span className="sm:hidden">Выделить</span>
                     </Button>
                     <Button
                       variant="default"
                       size="sm"
                       onClick={copyToClipboard}
+                      className="flex-1 sm:flex-initial"
                     >
-                      <Icon name="Copy" size={16} className="mr-2" />
+                      <Icon name="Copy" size={16} className="mr-1 sm:mr-2" />
                       Копировать
                     </Button>
                   </div>
@@ -202,7 +205,7 @@ export default function ToolDialog({
                   ref={copyTextAreaRef}
                   value={dialogText}
                   readOnly
-                  className="w-full h-96 p-4 border rounded-lg font-mono text-sm resize-y focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full h-64 sm:h-96 p-3 sm:p-4 border rounded-lg font-mono text-xs sm:text-sm resize-y focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
