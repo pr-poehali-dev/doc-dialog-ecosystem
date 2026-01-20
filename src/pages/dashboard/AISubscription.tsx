@@ -140,17 +140,30 @@ const AISubscription = () => {
 
   const userRole = getUserRole();
   const isSchool = userRole === 'school';
+  const isSalon = userRole === 'salon';
+
+  const getBackRoute = () => {
+    if (isSchool) return '/school/marketing-ai';
+    if (isSalon) return '/dashboard';
+    return '/dashboard/ai-dialogs';
+  };
+
+  const getBackLabel = () => {
+    if (isSchool) return 'Вернуться к инструментам';
+    if (isSalon) return 'Вернуться в дашборд';
+    return 'Вернуться к диалогам';
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-7xl mx-auto">
         <Button
           variant="ghost"
-          onClick={() => navigate(isSchool ? '/school/marketing-ai' : '/dashboard/ai-dialogs')}
+          onClick={() => navigate(getBackRoute())}
           className="mb-6"
         >
           <Icon name="ArrowLeft" size={20} className="mr-2" />
-          {isSchool ? 'Вернуться к инструментам' : 'Вернуться к диалогам'}
+          {getBackLabel()}
         </Button>
 
         <div className="mb-8">
