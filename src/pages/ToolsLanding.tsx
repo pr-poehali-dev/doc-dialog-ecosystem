@@ -84,7 +84,7 @@ const ToolsLanding = () => {
         <div className="relative container mx-auto px-4 py-24 md:py-32">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl md:text-7xl font-bold mb-8 text-white drop-shadow-2xl leading-tight">
-              Инструменты Док диалог для специалистов
+              Инструменты для специалиста
             </h1>
             <p className="text-xl md:text-2xl text-blue-50 mb-10 leading-relaxed drop-shadow-lg font-medium">
               Цифровые помощники, которые помогают безопасно работать с клиентами, 
