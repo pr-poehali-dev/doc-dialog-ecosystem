@@ -6,7 +6,7 @@ from psycopg2.extras import RealDictCursor
 import requests
 
 def handler(event: dict, context) -> dict:
-    '''Backend функция для работы с AI-диалогами специалистов: создание диалогов, отправка сообщений, получение истории'''
+    '''Backend функция для работы с AI-диалогами: создание, сообщения, история. Списание 15₽ с баланса за сообщение'''
     
     method = event.get('httpMethod', 'GET')
     
@@ -287,6 +287,27 @@ def handler(event: dict, context) -> dict:
                         'statusCode': 404,
                         'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
                         'body': json.dumps({'error': 'Dialog not found'}),
+                        'isBase64Encoded': False
+                    }
+                
+                # Списываем 15₽ с баланса ПЕРЕД отправкой сообщения
+                balance_response = requests.post(
+                    'https://functions.poehali.dev/619d5197-066f-4380-8bef-994c71c76fa0',
+                    json={'amount': 15, 'service_type': 'ai_dialog', 'description': 'AI-диалог'},
+                    headers={'Content-Type': 'application/json', 'X-User-Id': str(user_id)},
+                    timeout=10
+                )
+                
+                if balance_response.status_code != 200:
+                    error_data = balance_response.json()
+                    return {
+                        'statusCode': 403,
+                        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                        'body': json.dumps({
+                            'error': error_data.get('error', 'Недостаточно средств на балансе'),
+                            'balance': error_data.get('balance', 0),
+                            'required': 15
+                        }),
                         'isBase64Encoded': False
                     }
                 
