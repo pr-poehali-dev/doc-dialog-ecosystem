@@ -354,7 +354,11 @@ def buy_extra_requests(user_id: str, body: dict) -> dict:
         else:
             description = f"Покупка {count} AI-запросов"
         
-        return_url = f"https://{os.environ.get('PROJECT_ID', 'app')}.poehali.dev/payment/success?type=extra_requests"
+        # Используем реферер для определения домена или дефолтный домен
+        headers = event.get('headers', {})
+        origin = headers.get('Origin') or headers.get('origin') or headers.get('Referer') or headers.get('referer') or 'https://docdialog.su'
+        base_domain = origin.split('//')[1].split('/')[0] if '//' in origin else 'docdialog.su'
+        return_url = f"https://{base_domain}/payment/success?type=extra_requests"
         
         payment_data = {
             'amount': {

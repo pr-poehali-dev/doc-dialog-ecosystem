@@ -100,8 +100,11 @@ def handler(event: dict, context) -> dict:
         if bonus > 0:
             description += f" (бонус +{bonus} ₽)"
         
-        project_id = os.environ.get('PROJECT_ID', 'app')
-        return_url = f"https://{project_id}.poehali.dev/payment/success?type=balance_topup"
+        # Используем реферер для определения домена
+        headers = event.get('headers', {})
+        origin = headers.get('Origin') or headers.get('origin') or headers.get('Referer') or headers.get('referer') or 'https://docdialog.su'
+        base_domain = origin.split('//')[1].split('/')[0] if '//' in origin else 'docdialog.su'
+        return_url = f"https://{base_domain}/payment/success?type=balance_topup"
         
         payment_data = {
             'amount': {

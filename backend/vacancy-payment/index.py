@@ -128,7 +128,7 @@ def handler(event: dict, context) -> dict:
                 },
                 'confirmation': {
                     'type': 'redirect',
-                    'return_url': f'https://{os.environ.get("PROJECT_ID", "app")}.poehali.dev/payment/success?type=vacancy'
+                    'return_url': f'https://docdialog.su/payment/success?type=vacancy'
                 },
                 'capture': True,
                 'description': f'Оплата {vacancy_count} доп. вакансий для салона {salon_name}',
