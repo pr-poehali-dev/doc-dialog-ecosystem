@@ -4,6 +4,7 @@ import VacancyForm from '@/components/dashboard/VacancyForm';
 import VerificationBanner from '@/components/dashboard/salon/VerificationBanner';
 import DashboardCards from '@/components/dashboard/salon/DashboardCards';
 import SalonProfileDialog from '@/components/dashboard/salon/SalonProfileDialog';
+import VacancyInfoCard from '@/components/dashboard/salon/VacancyInfoCard';
 
 const SALON_API = 'https://functions.poehali.dev/01aa5a2f-6476-4fbc-ba10-6808960c8a21';
 
@@ -26,6 +27,7 @@ export default function SalonDashboard() {
     photos: [] as string[]
   });
   const [showVacancyForm, setShowVacancyForm] = useState(false);
+  const [vacancyFormKey, setVacancyFormKey] = useState(0);
 
   useEffect(() => {
     loadSalonStatus();
@@ -76,6 +78,8 @@ export default function SalonDashboard() {
         onEditProfile={() => setShowForm(true)}
       />
 
+      <VacancyInfoCard key={vacancyFormKey} onAddVacancy={() => setShowVacancyForm(true)} />
+
       <DashboardCards
         unreadCount={unreadCount}
         showCatalogInfo={showCatalogInfo}
@@ -97,6 +101,7 @@ export default function SalonDashboard() {
         isOpen={showVacancyForm}
         onClose={() => setShowVacancyForm(false)}
         salonName={formData.name}
+        onSuccess={() => setVacancyFormKey(prev => prev + 1)}
       />
     </>
   );
