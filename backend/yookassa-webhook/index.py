@@ -50,7 +50,7 @@ def handler(event: dict, context) -> dict:
         
         print(f"Webhook received: event={event_type}, payment_id={payment_id}, status={status}, metadata={metadata}")
         
-        # Обрабатываем только успешные платежи
+        # Обрабатываем успешные платежи и возвраты
         if event_type == 'payment.succeeded' and status == 'succeeded':
             dsn = os.environ.get('DATABASE_URL')
             schema = os.environ.get('MAIN_DB_SCHEMA', 't_p46047379_doc_dialog_ecosystem')
@@ -172,6 +172,110 @@ def handler(event: dict, context) -> dict:
                 cur.close()
                 conn.close()
                 print(f"Error processing payment: {str(e)}")
+                raise
+        
+        # Обработка возвратов платежей
+        elif event_type == 'refund.succeeded':
+            refund_object = body.get('object', {})
+            payment_id = refund_object.get('payment_id')
+            refund_amount = float(refund_object.get('amount', {}).get('value', 0))
+            
+            print(f"Refund received for payment {payment_id}, amount: {refund_amount}")
+            
+            dsn = os.environ.get('DATABASE_URL')
+            schema = os.environ.get('MAIN_DB_SCHEMA', 't_p46047379_doc_dialog_ecosystem')
+            
+            conn = psycopg2.connect(dsn)
+            cur = conn.cursor(cursor_factory=RealDictCursor)
+            
+            try:
+                # Находим платёж
+                cur.execute(f"""
+                    SELECT * FROM {schema}.payment_logs
+                    WHERE payment_id = %s AND status = 'succeeded'
+                """, (payment_id,))
+                
+                payment_log = cur.fetchone()
+                
+                if not payment_log:
+                    print(f"Payment {payment_id} not found or not succeeded")
+                    cur.close()
+                    conn.close()
+                    return {
+                        'statusCode': 404,
+                        'headers': {'Content-Type': 'application/json'},
+                        'body': json.dumps({'error': 'Платёж не найден'}),
+                        'isBase64Encoded': False
+                    }
+                
+                user_id = payment_log['user_id']
+                payment_type = payment_log['type']
+                log_metadata = payment_log['metadata'] if payment_log['metadata'] else {}
+                
+                print(f"Processing refund: user_id={user_id}, type={payment_type}")
+                
+                # Откатываем услуги в зависимости от типа платежа
+                if payment_type == 'extra_requests':
+                    # Списываем AI-запросы (если они ещё не потрачены)
+                    count = int(log_metadata.get('count', 0))
+                    
+                    cur.execute(f"""
+                        UPDATE {schema}.users
+                        SET extra_requests = GREATEST(0, COALESCE(extra_requests, 0) - %s)
+                        WHERE id = %s
+                    """, (count, user_id))
+                    
+                    print(f"Removed {count} extra requests from user {user_id}")
+                
+                elif payment_type == 'balance_topup':
+                    # Списываем баланс (если он ещё не потрачен)
+                    amount = int(log_metadata.get('amount', 0))
+                    bonus = int(log_metadata.get('bonus', 0))
+                    total = amount + bonus
+                    
+                    cur.execute(f"""
+                        UPDATE {schema}.users
+                        SET balance = GREATEST(0, COALESCE(balance, 0) - %s)
+                        WHERE id = %s
+                    """, (total, user_id))
+                    
+                    print(f"Removed {total} RUB from user {user_id} balance")
+                
+                elif payment_type == 'ai_subscription':
+                    # Отключаем подписку
+                    cur.execute(f"""
+                        UPDATE {schema}.users
+                        SET ai_dialogs_limit = 10,
+                            subscription_tier = 'free',
+                            subscription_expires = NULL
+                        WHERE id = %s
+                    """, (user_id,))
+                    
+                    print(f"Cancelled subscription for user {user_id}")
+                
+                # Обновляем статус платежа на 'refunded'
+                cur.execute(f"""
+                    UPDATE {schema}.payment_logs
+                    SET status = 'refunded', updated_at = NOW()
+                    WHERE payment_id = %s
+                """, (payment_id,))
+                
+                conn.commit()
+                cur.close()
+                conn.close()
+                
+                return {
+                    'statusCode': 200,
+                    'headers': {'Content-Type': 'application/json'},
+                    'body': json.dumps({'status': 'refund_processed', 'payment_type': payment_type}),
+                    'isBase64Encoded': False
+                }
+                
+            except Exception as e:
+                conn.rollback()
+                cur.close()
+                conn.close()
+                print(f"Error processing refund: {str(e)}")
                 raise
         
         # Для других событий просто возвращаем 200
