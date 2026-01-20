@@ -6,7 +6,7 @@ import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
 
-const BALANCE_API_URL = 'https://functions.poehali.dev/8c82911e-481f-4a63-92ff-aae203e992cc';
+const USER_BALANCE_URL = 'https://functions.poehali.dev/619d5197-066f-4380-8bef-994c71c76fa0';
 const PROMOTION_API_URL = 'https://functions.poehali.dev/71ef96ce-7019-4622-8253-573a2e8a6567';
 
 
@@ -46,20 +46,31 @@ export default function PromoteMasseurDialog({
     }
   }, [open]);
 
+  const getUserId = () => {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.user_id || payload.userId || payload.sub;
+    } catch {
+      return null;
+    }
+  };
+
   const loadBalance = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      const userId = getUserId();
+      if (!userId) return;
 
-      const balanceRes = await fetch(`${BALANCE_API_URL}?action=get`, {
+      const balanceRes = await fetch(USER_BALANCE_URL, {
         headers: { 
-          'Authorization': `Bearer ${token}`
+          'X-User-Id': String(userId)
         }
       });
       
       if (balanceRes.ok) {
         const balanceData = await balanceRes.json();
-        setBalance(balanceData.current_balance || 0);
+        setBalance(balanceData.balance || 0);
       }
     } catch (error) {
       console.error('Error loading balance:', error);

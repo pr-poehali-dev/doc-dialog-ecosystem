@@ -2,6 +2,7 @@ import json
 import os
 import psycopg2
 import jwt
+import requests
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 
@@ -76,7 +77,7 @@ def handler(event: dict, context) -> dict:
             }
         
         # Получаем профиль массажиста
-        cur.execute(f"SELECT id, balance, city FROM {schema}.masseur_profiles WHERE user_id = {user_id}")
+        cur.execute(f"SELECT id, city FROM {schema}.masseur_profiles WHERE user_id = {user_id}")
         masseur = cur.fetchone()
         
         if not masseur:
@@ -90,8 +91,27 @@ def handler(event: dict, context) -> dict:
             }
         
         masseur_id = masseur[0]
-        current_balance = float(masseur[1]) if masseur[1] else 0
-        city = masseur[2]
+        city = masseur[1]
+        
+        # Получаем баланс из users через user-balance API
+        balance_response = requests.get(
+            'https://functions.poehali.dev/619d5197-066f-4380-8bef-994c71c76fa0',
+            headers={'X-User-Id': str(user_id)},
+            timeout=10
+        )
+        
+        if balance_response.status_code != 200:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 500,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Не удалось получить баланс'}),
+                'isBase64Encoded': False
+            }
+        
+        balance_data = balance_response.json()
+        current_balance = balance_data.get('balance', 0)
         
         if method == 'GET':
             # Получение информации о текущем продвижении
@@ -139,17 +159,27 @@ def handler(event: dict, context) -> dict:
             
             price = PROMOTION_PRICES[days]
             
-            # Проверяем баланс
-            if current_balance < price:
+            # Списываем с баланса через user-balance API
+            description = f"Продвижение в каталоге на {days} {'день' if days == 1 else 'дня' if days <= 4 else 'дней'} в городе {city}"
+            
+            charge_response = requests.post(
+                'https://functions.poehali.dev/619d5197-066f-4380-8bef-994c71c76fa0',
+                json={'amount': price, 'service_type': 'masseur_promotion', 'description': description},
+                headers={'Content-Type': 'application/json', 'X-User-Id': str(user_id)},
+                timeout=10
+            )
+            
+            if charge_response.status_code != 200:
+                error_data = charge_response.json()
                 cur.close()
                 conn.close()
                 return {
-                    'statusCode': 400,
+                    'statusCode': 403,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
                     'body': json.dumps({
-                        'error': 'Недостаточно средств',
-                        'required': price,
-                        'available': current_balance
+                        'error': error_data.get('error', 'Недостаточно средств на балансе'),
+                        'balance': error_data.get('balance', 0),
+                        'required': price
                     }),
                     'isBase64Encoded': False
                 }
@@ -165,24 +195,13 @@ def handler(event: dict, context) -> dict:
             start_date = max(now_utc, current_promotion[0] if current_promotion[0] > now_utc else now_utc)
             promoted_until = start_date + timedelta(days=days)
             
-            # Списываем средства
+            # Активируем продвижение
             cur.execute(f"""
                 UPDATE {schema}.masseur_profiles
-                SET balance = balance - {price},
-                    promoted_until = '{promoted_until.isoformat()}'::timestamp,
+                SET promoted_until = '{promoted_until.isoformat()}'::timestamp,
                     is_premium = true,
                     premium_until = '{promoted_until.isoformat()}'::timestamp
                 WHERE id = {masseur_id}
-            """)
-            
-            # Записываем транзакцию
-            description = f"Продвижение в каталоге на {days} {'день' if days == 1 else 'дня' if days <= 4 else 'дней'} в городе {city}"
-            description_escaped = description.replace("'", "''")
-            
-            cur.execute(f"""
-                INSERT INTO {schema}.balance_transactions 
-                (school_id, masseur_id, amount, type, description, related_entity_type, related_entity_id, created_at)
-                VALUES (-1, {masseur_id}, {price}, 'withdrawal', '{description_escaped}', 'promotion', {masseur_id}, NOW())
             """)
             
             cur.close()
