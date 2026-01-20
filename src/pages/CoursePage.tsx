@@ -39,6 +39,7 @@ interface CourseDetails {
 }
 
 const COURSE_API_URL = 'https://functions.poehali.dev/95b5e0a7-51f7-4fb1-b196-a49f5feff58f';
+const PAYMENT_API_URL = 'https://functions.poehali.dev/224f20a2-10f0-411d-b145-70387e81d2ec';
 
 export default function CoursePage() {
   const { id } = useParams<{ id: string }>();
@@ -46,6 +47,7 @@ export default function CoursePage() {
   const [loading, setLoading] = useState(true);
   const [rating, setRating] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
+  const [paymentLoading, setPaymentLoading] = useState(false);
 
   useEffect(() => {
     loadCourse();

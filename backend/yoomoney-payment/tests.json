@@ -1,0 +1,33 @@
+{
+  "tests": [
+    {
+      "name": "Create payment with valid data",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "amount": 5000,
+        "courseTitle": "Тестовый курс",
+        "email": "test@example.com"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "paymentUrl": "string",
+        "paymentId": "string",
+        "amount": 5000
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Reject request without amount",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "courseTitle": "Тестовый курс"
+      },
+      "expectedStatus": 400,
+      "expectedBody": {
+        "error": "Amount is required"
+      }
+    }
+  ]
+}
