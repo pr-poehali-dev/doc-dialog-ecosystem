@@ -165,20 +165,33 @@ def analyze_with_tool(user_id: str, body: dict) -> dict:
                 'isBase64Encoded': False
             }
         
-        limit = user.get('tools_limit', 10)
-        tools_used = user.get('tools_used', 0)
-        extra_requests = user.get('extra_requests', 0)
+        # Списываем с баланса 15₽
+        balance_response = requests.post(
+            'https://functions.poehali.dev/619d5197-066f-4380-8bef-994c71c76fa0',
+            json={'amount': 15, 'service_type': 'medical_tool', 'description': 'Медицинский анализ'},
+            headers={'Content-Type': 'application/json', 'X-User-Id': user_id},
+            timeout=10
+        )
         
-        # Проверка лимита: базовый лимит + купленные запросы
-        total_available = limit + extra_requests
-        
-        if tools_used >= total_available:
+        if balance_response.status_code != 200:
+            error_data = balance_response.json()
             return {
-                'statusCode': 429,
+                'statusCode': 403,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Превышен лимит использования инструментов', 'limit_reached': True}),
+                'body': json.dumps({
+                    'error': error_data.get('error', 'Недостаточно средств'),
+                    'balance': error_data.get('balance', 0),
+                    'required': 15,
+                    'limit_reached': True
+                }),
                 'isBase64Encoded': False
             }
+        
+        # Старая проверка лимита - отключена
+        # limit = user.get('tools_limit', 10)
+        # tools_used = user.get('tools_used', 0)
+        # extra_requests = user.get('extra_requests', 0)
+        # if tools_used >= total_available: ...
 
         
         text = body.get('text', '')

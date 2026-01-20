@@ -26,10 +26,34 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
   const originalAdminEmail = userStr ? JSON.parse(userStr).original_admin_email : null;
 
   useEffect(() => {
-    if (isLoggedIn) {
-      // Временно показываем 0, потом подключим API
-      setBalance(0);
-    }
+    const loadBalance = async () => {
+      if (!isLoggedIn) return;
+      
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+        
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const userId = payload.user_id || payload.userId || payload.sub;
+        
+        if (!userId) return;
+        
+        const response = await fetch('https://functions.poehali.dev/619d5197-066f-4380-8bef-994c71c76fa0', {
+          headers: {
+            'X-User-Id': userId
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setBalance(data.balance || 0);
+        }
+      } catch (error) {
+        console.error('Failed to load balance:', error);
+      }
+    };
+    
+    loadBalance();
   }, [isLoggedIn]);
 
   const handleReturnToAdmin = () => {

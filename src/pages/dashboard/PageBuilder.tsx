@@ -305,34 +305,66 @@ export default function PageBuilder() {
 
   const handlePurchaseTemplate = async () => {
     const templatePrice = selectedTemplate === 'premium' ? 2990 : 4990;
+    const templateName = selectedTemplate === 'premium' ? 'Premium' : 'Супер Premium';
     
-    // Проверяем баланс (пока заглушка, потом добавим API)
-    const userBalance = 0; // TODO: загрузить реальный баланс из API
-    
-    if (userBalance < templatePrice) {
-      toast({
-        title: "Недостаточно средств",
-        description: `На вашем балансе ${userBalance.toFixed(2)} ₽, а требуется ${templatePrice} ₽. Пополните баланс.`,
-        variant: "destructive",
+    try {
+      const token = localStorage.getItem('token');
+      const userId = token ? JSON.parse(atob(token.split('.')[1])).user_id : null;
+      
+      if (!userId) {
+        toast({
+          title: "Ошибка",
+          description: "Требуется авторизация",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Списываем с баланса
+      const response = await fetch('https://functions.poehali.dev/619d5197-066f-4380-8bef-994c71c76fa0', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-User-Id': userId
+        },
+        body: JSON.stringify({
+          amount: templatePrice,
+          service_type: 'landing_template',
+          description: `Покупка шаблона "${templateName}"`
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        toast({
+          title: "Недостаточно средств",
+          description: `На вашем балансе ${data.balance?.toFixed(2) || 0} ₽, а требуется ${templatePrice} ₽. Пополните баланс.`,
+          variant: "destructive",
+        });
+        setIsPremiumDialogOpen(false);
+        setTimeout(() => navigate('/dashboard/ai-subscription'), 500);
+        return;
+      }
+      
+      // Успешная покупка
+      setPageData({
+        ...pageData,
+        template: selectedTemplate,
       });
       setIsPremiumDialogOpen(false);
-      // Перенаправляем на страницу пополнения
-      setTimeout(() => navigate('/dashboard/ai-subscription'), 500);
-      return;
+      applyTemplate(selectedTemplate as 'premium' | 'luxury');
+      toast({
+        title: "Шаблон приобретен!",
+        description: `Списано ${templatePrice} ₽. Остаток: ${data.balance.toFixed(2)} ₽`,
+      });
+    } catch (error) {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось обработать покупку",
+        variant: "destructive",
+      });
     }
-    
-    // TODO: Здесь будет API-запрос на списание с баланса
-    
-    setPageData({
-      ...pageData,
-      template: selectedTemplate,
-    });
-    setIsPremiumDialogOpen(false);
-    applyTemplate(selectedTemplate as 'premium' | 'luxury');
-    toast({
-      title: "Шаблон приобретен!",
-      description: "Теперь вам доступны все возможности выбранного шаблона",
-    });
   };
 
   return (

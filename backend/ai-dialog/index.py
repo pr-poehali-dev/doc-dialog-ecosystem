@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 import psycopg2
 from psycopg2.extras import RealDictCursor
+import requests
 
 def handler(event: dict, context) -> dict:
     '''Backend функция для работы с AI-диалогами специалистов: создание диалогов, отправка сообщений, получение истории'''
@@ -121,21 +122,30 @@ def handler(event: dict, context) -> dict:
                 title = body.get('title', 'Новый диалог')
                 dialog_type = body.get('type', 'supervision')
                 
-                total_used = specialist['ai_dialogs_used'] + specialist.get('ai_tools_used', 0)
+                # Списываем с баланса 15₽
+                headers_req = event.get('headers', {})
+                user_id_header = headers_req.get('X-User-Id', '') or headers_req.get('x-user-id', '')
                 
-                if total_used >= specialist['ai_dialogs_limit']:
-                    return {
-                        'statusCode': 403,
-                        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                        'body': json.dumps({
-                            'error': 'Limit exceeded',
-                            'limit': specialist['ai_dialogs_limit'],
-                            'dialogs_used': specialist['ai_dialogs_used'],
-                            'tools_used': specialist.get('ai_tools_used', 0),
-                            'total_used': total_used
-                        }),
-                        'isBase64Encoded': False
-                    }
+                if user_id_header:
+                    balance_response = requests.post(
+                        'https://functions.poehali.dev/619d5197-066f-4380-8bef-994c71c76fa0',
+                        json={'amount': 15, 'service_type': 'ai_dialog', 'description': 'AI-диалог'},
+                        headers={'Content-Type': 'application/json', 'X-User-Id': user_id_header},
+                        timeout=10
+                    )
+                    
+                    if balance_response.status_code != 200:
+                        error_data = balance_response.json()
+                        return {
+                            'statusCode': 403,
+                            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                            'body': json.dumps({
+                                'error': error_data.get('error', 'Недостаточно средств'),
+                                'balance': error_data.get('balance', 0),
+                                'required': 15
+                            }),
+                            'isBase64Encoded': False
+                        }
                 
                 cursor.execute('''
                     INSERT INTO ai_dialogs (specialist_id, title, dialog_type)
@@ -172,9 +182,35 @@ def handler(event: dict, context) -> dict:
                         'isBase64Encoded': False
                     }
                 
-                total_used = specialist['ai_dialogs_used'] + specialist.get('ai_tools_used', 0)
+                # Списываем с баланса 15₽
+                headers_req = event.get('headers', {})
+                user_id_header = headers_req.get('X-User-Id', '') or headers_req.get('x-user-id', '')
                 
-                if total_used >= specialist['ai_dialogs_limit']:
+                if user_id_header:
+                    balance_response = requests.post(
+                        'https://functions.poehali.dev/619d5197-066f-4380-8bef-994c71c76fa0',
+                        json={'amount': 15, 'service_type': 'ai_tool', 'description': 'AI-инструмент'},
+                        headers={'Content-Type': 'application/json', 'X-User-Id': user_id_header},
+                        timeout=10
+                    )
+                    
+                    if balance_response.status_code != 200:
+                        error_data = balance_response.json()
+                        return {
+                            'statusCode': 403,
+                            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                            'body': json.dumps({
+                                'error': error_data.get('error', 'Недостаточно средств'),
+                                'balance': error_data.get('balance', 0),
+                                'required': 15
+                            }),
+                            'isBase64Encoded': False
+                        }
+                
+                # Старая проверка лимита - отключена
+                # total_used = specialist['ai_dialogs_used'] + specialist.get('ai_tools_used', 0)
+                # if total_used >= specialist['ai_dialogs_limit']:
+                if False:
                     return {
                         'statusCode': 403,
                         'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},

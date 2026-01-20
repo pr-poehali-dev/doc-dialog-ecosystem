@@ -56,11 +56,24 @@ const AISubscription = () => {
       const userId = getUserId();
       if (!userId) return;
 
-      // Временно: показываем нулевой баланс
-      setBalance({
-        balance: 0,
-        ai_operations_used: 0
+      const response = await fetch('https://functions.poehali.dev/619d5197-066f-4380-8bef-994c71c76fa0', {
+        headers: {
+          'X-User-Id': userId
+        }
       });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setBalance({
+          balance: data.balance || 0,
+          ai_operations_used: 0
+        });
+      } else {
+        setBalance({
+          balance: 0,
+          ai_operations_used: 0
+        });
+      }
     } catch (error) {
       toast({ title: 'Ошибка', description: 'Не удалось загрузить данные баланса', variant: 'destructive' });
     } finally {
