@@ -7,7 +7,7 @@ from psycopg2.extras import RealDictCursor
 import requests
 
 def handler(event: dict, context) -> dict:
-    """Создание платежа для пополнения баланса массажистов и школ"""
+    """Создание платежа для пополнения баланса пользователей"""
     
     method = event.get('httpMethod', 'GET')
     
@@ -183,7 +183,7 @@ def handler(event: dict, context) -> dict:
             amount, 
             'balance_topup', 
             'pending', 
-            json.dumps({'bonus': bonus, 'total_amount': total_amount, 'package_id': package_id})
+            json.dumps({'amount': amount, 'bonus': bonus, 'total': total_amount, 'package_id': package_id})
         ))
         conn.commit()
         

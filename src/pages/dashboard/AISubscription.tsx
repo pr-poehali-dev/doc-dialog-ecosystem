@@ -5,101 +5,28 @@ import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 
-interface SubscriptionData {
-  current_tier: string;
-  ai_dialogs_limit: number;
-  dialogs_used: number;
-  tools_used: number;
-  total_used: number;
-  subscription_expires?: string;
+interface BalanceData {
+  balance: number;
+  ai_operations_used: number;
 }
 
-const PAYMENT_URL = 'https://functions.poehali.dev/38a90d9f-d456-4ae4-b34d-f73b951823a7';
+const TOPUP_URL = 'https://functions.poehali.dev/b84cb21a-1329-492f-b6c6-236e25aa0a83';
+
+const TOPUP_AMOUNTS = [
+  { amount: 300, bonus: 0, label: '300 ₽', operations: '~20 операций' },
+  { amount: 600, bonus: 100, label: '600 ₽ + 100 ₽', operations: '~47 операций', popular: true },
+  { amount: 1000, bonus: 200, label: '1000 ₽ + 200 ₽', operations: '~80 операций' },
+  { amount: 2000, bonus: 500, label: '2000 ₽ + 500 ₽', operations: '~167 операций' }
+];
 
 const AISubscription = () => {
-  const [subscription, setSubscription] = useState<SubscriptionData | null>(null);
+  const [balance, setBalance] = useState<BalanceData | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const plans = [
-    {
-      id: 'free',
-      name: 'Бесплатный',
-      price: 0,
-      operations: 5,
-      features: [
-        '5 AI-операций в месяц',
-        'Диалоги + Инструменты',
-        'Все типы супервизии',
-        'Медицинский анализ',
-        'Анализ симптомов',
-        'Конструктор программ'
-      ],
-      color: 'from-gray-500/10 to-gray-500/5',
-      icon: 'Sparkles'
-    },
-    {
-      id: 'basic',
-      name: 'Базовый',
-      price: 299,
-      operations: 20,
-      features: [
-        '20 AI-операций в месяц',
-        'Диалоги + Инструменты',
-        'Все типы супервизии',
-        'Медицинский анализ',
-        'Анализ симптомов',
-        'Конструктор программ',
-        'История всех операций'
-      ],
-      color: 'from-blue-500/10 to-blue-500/5',
-      icon: 'Zap',
-      popular: false
-    },
-    {
-      id: 'pro',
-      name: 'Профи',
-      price: 599,
-      operations: 100,
-      features: [
-        '100 AI-операций в месяц',
-        'Диалоги + Инструменты',
-        'Все типы супервизии',
-        'Медицинский анализ',
-        'Анализ симптомов',
-        'Конструктор программ',
-        'История всех операций',
-        'Приоритетная обработка'
-      ],
-      color: 'from-purple-500/10 to-purple-500/5',
-      icon: 'Crown',
-      popular: true
-    },
-    {
-      id: 'unlimited',
-      name: 'Безлимит',
-      price: 999,
-      operations: -1,
-      features: [
-        'Неограниченные AI-операции',
-        'Диалоги + Инструменты',
-        'Все типы супервизии',
-        'Медицинский анализ',
-        'Анализ симптомов',
-        'Конструктор программ',
-        'История всех операций',
-        'Максимальный приоритет',
-        'VIP поддержка 24/7'
-      ],
-      color: 'from-orange-500/10 to-orange-500/5',
-      icon: 'Infinity',
-      popular: false
-    }
-  ];
-
   useEffect(() => {
-    loadSubscription();
+    loadBalance();
   }, []);
 
   const getUserId = () => {
@@ -124,29 +51,24 @@ const AISubscription = () => {
     }
   };
 
-  const loadSubscription = async () => {
+  const loadBalance = async () => {
     try {
       const userId = getUserId();
       if (!userId) return;
 
-      // Временно: показываем free тариф
-      setSubscription({
-        current_tier: 'free',
-        ai_dialogs_limit: 5,
-        dialogs_used: 0,
-        tools_used: 0,
-        total_used: 0
+      // Временно: показываем нулевой баланс
+      setBalance({
+        balance: 0,
+        ai_operations_used: 0
       });
     } catch (error) {
-      toast({ title: 'Ошибка', description: 'Не удалось загрузить данные подписки', variant: 'destructive' });
+      toast({ title: 'Ошибка', description: 'Не удалось загрузить данные баланса', variant: 'destructive' });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleUpgrade = async (planId: string, price: number) => {
-    if (planId === 'free') return;
-
+  const handleTopUp = async (amount: number, bonus: number) => {
     try {
       const userId = getUserId();
       if (!userId) {
@@ -154,15 +76,15 @@ const AISubscription = () => {
         return;
       }
 
-      const response = await fetch(PAYMENT_URL, {
+      const response = await fetch(TOPUP_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-User-Id': userId
         },
         body: JSON.stringify({
-          plan: planId,
-          amount: price
+          amount: amount,
+          bonus: bonus
         })
       });
 
@@ -179,9 +101,8 @@ const AISubscription = () => {
       const data = await response.json();
       
       if (data.payment_url && data.payment_id) {
-        // Сохраняем payment_id перед редиректом на оплату
         localStorage.setItem('pending_payment_id', data.payment_id);
-        localStorage.setItem('pending_payment_type', 'ai_subscription');
+        localStorage.setItem('pending_payment_type', 'balance_topup');
         window.location.href = data.payment_url;
       } else {
         toast({ 
@@ -204,7 +125,6 @@ const AISubscription = () => {
     );
   }
 
-  const currentPlan = plans.find(p => p.id === subscription?.current_tier) || plans[0];
   const userRole = getUserRole();
   const isSchool = userRole === 'school';
 
@@ -221,97 +141,93 @@ const AISubscription = () => {
         </Button>
 
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Тарифы и подписка</h1>
+          <h1 className="text-3xl font-bold mb-2">Баланс и пополнение</h1>
           <p className="text-muted-foreground">
-            Единая подписка на все AI-возможности: диалоги, инструменты и анализы
+            Единый баланс для всех AI-возможностей: диалоги, инструменты и анализы
           </p>
         </div>
 
-        {subscription && (
+        {balance && (
           <Card className="mb-8 bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-primary/20">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Icon name={currentPlan.icon as any} size={24} />
-                Ваш текущий тариф: {currentPlan.name}
+                <Icon name="Wallet" size={24} />
+                Ваш баланс: {balance.balance.toFixed(2)} ₽
               </CardTitle>
               <CardDescription>
-                Использовано AI-операций в этом месяце: {subscription.total_used} из {subscription.ai_dialogs_limit === -1 ? '∞' : subscription.ai_dialogs_limit}
+                AI-операций использовано в этом месяце: {balance.ai_operations_used}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="mb-3 text-sm text-muted-foreground">
-                Диалоги: {subscription.dialogs_used} • Инструменты: {subscription.tools_used}
-              </div>
-              <div className="w-full bg-secondary rounded-full h-3 overflow-hidden">
-                <div 
-                  className="bg-primary h-full transition-all rounded-full"
-                  style={{ 
-                    width: subscription.ai_dialogs_limit === -1 
-                      ? '100%' 
-                      : `${Math.min((subscription.total_used / subscription.ai_dialogs_limit) * 100, 100)}%` 
-                  }}
-                />
+              <div className="p-4 bg-background/50 rounded-lg">
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                  <Icon name="Info" size={16} />
+                  <span>
+                    Стоимость AI-операции: <strong className="text-foreground">15 ₽</strong> (диалоги и инструменты)
+                  </span>
+                </div>
               </div>
             </CardContent>
           </Card>
         )}
 
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold mb-4">Пополнить баланс</h2>
+          <p className="text-sm text-muted-foreground mb-6">
+            Чем больше сумма пополнения — тем больше бонус
+          </p>
+        </div>
+
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {plans.map((plan) => {
-            const isCurrent = plan.id === subscription?.current_tier;
+          {TOPUP_AMOUNTS.map((option) => {
+            const totalAmount = option.amount + option.bonus;
+            const operations = Math.floor(totalAmount / 15);
             
             return (
               <Card 
-                key={plan.id}
-                className={`relative flex flex-col ${plan.popular ? 'border-2 border-primary shadow-xl' : ''} bg-gradient-to-br ${plan.color}`}
+                key={option.amount}
+                className={`relative flex flex-col ${option.popular ? 'border-2 border-primary shadow-xl' : ''} bg-gradient-to-br from-blue-500/10 to-blue-500/5`}
               >
-                {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold">
-                    Популярный
+                {option.popular && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
+                    Популярное
                   </div>
                 )}
                 
                 <CardHeader>
-                  <Icon name={plan.icon as any} size={40} className="text-primary mb-3" />
-                  <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                  <CardDescription className="text-3xl font-bold text-foreground mt-2">
-                    {plan.price === 0 ? 'Бесплатно' : `${plan.price}₽`}
-                    {plan.price > 0 && <span className="text-sm font-normal text-muted-foreground">/месяц</span>}
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Icon name="Wallet" size={20} />
+                    {option.label}
+                  </CardTitle>
+                  <CardDescription>
+                    {option.operations}
                   </CardDescription>
                 </CardHeader>
                 
                 <CardContent className="flex-1 flex flex-col">
-                  <div className="mb-4 p-3 bg-background/50 rounded-lg">
-                    <p className="text-sm text-center font-semibold">
-                      {plan.operations === -1 ? 'Неограниченно' : `${plan.operations} операций`}
-                    </p>
-                  </div>
-                  
-                  <ul className="space-y-3 mb-6 flex-1">
-                    {plan.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-start gap-2 text-sm">
-                        <Icon name="Check" size={16} className="mt-0.5 text-primary flex-shrink-0" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  
-                  <Button 
-                    onClick={() => handleUpgrade(plan.id, plan.price)}
-                    disabled={isCurrent || plan.id === 'free'}
-                    className={`w-full ${plan.popular ? 'bg-primary hover:bg-primary/90' : ''}`}
-                    variant={plan.popular ? 'default' : 'outline'}
-                  >
-                    {isCurrent ? (
-                      <>
-                        <Icon name="Check" size={16} className="mr-2" />
-                        Текущий тариф
-                      </>
-                    ) : plan.id === 'free' ? (
-                      'Базовый тариф'
-                    ) : (
-                      'Выбрать тариф'
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Icon name="Check" size={16} className="text-green-500" />
+                      <span>Пополнение: {option.amount} ₽</span>
+                    </div>
+                    {option.bonus > 0 && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Icon name="Gift" size={16} className="text-orange-500" />
+                        <span className="font-semibold text-orange-600">Бонус: +{option.bonus} ₽</span>
+                      </div>
                     )}
+                    <div className="flex items-center gap-2 text-sm">
+                      <Icon name="Zap" size={16} className="text-blue-500" />
+                      <span>Итого: {totalAmount} ₽ (~{operations} операций)</span>
+                    </div>
+                  </div>
+
+                  <Button 
+                    className="w-full mt-auto"
+                    variant={option.popular ? 'default' : 'outline'}
+                    onClick={() => handleTopUp(option.amount, option.bonus)}
+                  >
+                    Пополнить
                   </Button>
                 </CardContent>
               </Card>
@@ -319,19 +235,30 @@ const AISubscription = () => {
           })}
         </div>
 
-        <Card className="mt-8 bg-secondary/30">
+        <Card className="mt-8 bg-muted/30">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Icon name="Info" size={20} />
-              Информация об оплате
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Icon name="HelpCircle" size={20} />
+              Как работает баланс?
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm">
-            <p>• Оплата производится через ЮMoney (безопасный платёжный сервис)</p>
-            <p>• Подписка продлевается автоматически каждый месяц</p>
-            <p>• Отменить подписку можно в любой момент</p>
-            <p>• Неиспользованные диалоги не переносятся на следующий месяц</p>
-            <p>• При смене тарифа изменения вступают в силу немедленно</p>
+          <CardContent className="space-y-3 text-sm text-muted-foreground">
+            <div className="flex gap-3">
+              <Icon name="Check" size={16} className="text-green-500 mt-0.5 flex-shrink-0" />
+              <span>Пополняйте баланс один раз и используйте для всех AI-функций</span>
+            </div>
+            <div className="flex gap-3">
+              <Icon name="Check" size={16} className="text-green-500 mt-0.5 flex-shrink-0" />
+              <span>Каждая AI-операция (диалог или инструмент) стоит 15 ₽</span>
+            </div>
+            <div className="flex gap-3">
+              <Icon name="Check" size={16} className="text-green-500 mt-0.5 flex-shrink-0" />
+              <span>Чем больше пополнение — тем больше бонусных рублей вы получаете</span>
+            </div>
+            <div className="flex gap-3">
+              <Icon name="Check" size={16} className="text-green-500 mt-0.5 flex-shrink-0" />
+              <span>Баланс не сгорает и действует бессрочно</span>
+            </div>
           </CardContent>
         </Card>
       </div>
