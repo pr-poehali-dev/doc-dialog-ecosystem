@@ -239,7 +239,7 @@ export default function EducationPlatform() {
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div>
                 <img 
-                  src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/d9d5b03d-dc0f-4176-91a8-dbf186b47830.jpg" 
+                  src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/34b6ea30-0448-45cc-b86a-484ad6990af5.jpg" 
                   alt="Профессиональная работа" 
                   className="rounded-2xl shadow-xl w-full h-[450px] object-cover"
                 />
