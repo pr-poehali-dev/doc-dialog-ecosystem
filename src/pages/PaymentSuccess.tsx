@@ -9,6 +9,17 @@ const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const paymentType = searchParams.get('type') || 'payment';
 
+  const getUserRole = () => {
+    const userStr = localStorage.getItem('user');
+    if (!userStr) return null;
+    try {
+      const user = JSON.parse(userStr);
+      return user.role;
+    } catch {
+      return null;
+    }
+  };
+
   useEffect(() => {
     const confetti = () => {
       const duration = 3000;
@@ -43,11 +54,16 @@ const PaymentSuccess = () => {
   }, []);
 
   const getRedirectPath = () => {
+    const userRole = getUserRole();
+    
     switch (paymentType) {
       case 'ai_subscription':
         return '/dashboard/ai-subscription';
       case 'balance_topup':
-        return '/dashboard/balance';
+        // Только masseur и school имеют страницу баланса
+        if (userRole === 'masseur') return '/dashboard/balance';
+        if (userRole === 'school') return '/school/balance';
+        return '/dashboard';
       case 'extra_requests':
         return '/dashboard/tools';
       case 'vacancy':

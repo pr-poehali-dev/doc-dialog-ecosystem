@@ -8,12 +8,28 @@ const PaymentFailed = () => {
   const [searchParams] = useSearchParams();
   const paymentType = searchParams.get('type') || 'payment';
 
+  const getUserRole = () => {
+    const userStr = localStorage.getItem('user');
+    if (!userStr) return null;
+    try {
+      const user = JSON.parse(userStr);
+      return user.role;
+    } catch {
+      return null;
+    }
+  };
+
   const getRedirectPath = () => {
+    const userRole = getUserRole();
+    
     switch (paymentType) {
       case 'ai_subscription':
         return '/dashboard/ai-subscription';
       case 'balance_topup':
-        return '/dashboard/balance';
+        // Редирект на страницу пополнения для повторной попытки
+        if (userRole === 'masseur') return '/dashboard/masseur-balance-topup';
+        if (userRole === 'school') return '/dashboard/school-balance-topup';
+        return '/dashboard';
       case 'extra_requests':
         return '/dashboard/tools';
       case 'vacancy':
