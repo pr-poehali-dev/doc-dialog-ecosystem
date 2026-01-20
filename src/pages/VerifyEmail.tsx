@@ -32,7 +32,15 @@ export default function VerifyEmail() {
 
       if (response.ok) {
         setStatus('success');
-        setMessage('Email успешно подтвержден! Теперь вы можете войти в систему.');
+        setMessage(data.message || 'Email успешно подтвержден! Теперь вы можете войти в систему.');
+        
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('userRole', data.role);
+          setTimeout(() => {
+            window.location.href = 'https://doc-dialog-ecosystem.poehali.dev';
+          }, 2000);
+        }
       } else {
         setStatus('error');
         setMessage(data.error || 'Ошибка подтверждения email');

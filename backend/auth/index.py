@@ -361,8 +361,8 @@ def verify_email(token: str) -> dict:
     if not token:
         return {
             'statusCode': 400,
-            'headers': {'Content-Type': 'text/html', 'Access-Control-Allow-Origin': '*'},
-            'body': '<html><body><h1>Ошибка</h1><p>Токен не предоставлен</p></body></html>',
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Токен не предоставлен'}),
             'isBase64Encoded': False
         }
     
@@ -378,24 +378,24 @@ def verify_email(token: str) -> dict:
         if not user:
             return {
                 'statusCode': 400,
-                'headers': {'Content-Type': 'text/html', 'Access-Control-Allow-Origin': '*'},
-                'body': '<html><body><h1>Ошибка</h1><p>Неверный токен подтверждения</p></body></html>',
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Неверный токен подтверждения'}),
                 'isBase64Encoded': False
             }
         
         if user['email_verified']:
             return {
                 'statusCode': 200,
-                'headers': {'Content-Type': 'text/html', 'Access-Control-Allow-Origin': '*'},
-                'body': '<html><body><h1>Email уже подтверждён</h1><p>Вы можете <a href="https://doc-dialog-ecosystem.poehali.dev">войти в личный кабинет</a></p></body></html>',
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'message': 'Email уже подтверждён'}),
                 'isBase64Encoded': False
             }
         
         if user['verification_token_expires'] < datetime.utcnow():
             return {
                 'statusCode': 400,
-                'headers': {'Content-Type': 'text/html', 'Access-Control-Allow-Origin': '*'},
-                'body': '<html><body><h1>Ошибка</h1><p>Токен истёк. Запросите новое письмо для подтверждения.</p></body></html>',
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Токен истёк. Запросите новое письмо для подтверждения.'}),
                 'isBase64Encoded': False
             }
         
@@ -407,30 +407,14 @@ def verify_email(token: str) -> dict:
         
         auth_token = generate_token(user['id'], user['email'], user['role'])
         
-        dashboard_url = 'https://doc-dialog-ecosystem.poehali.dev'
-        redirect_html = f"""
-        <html>
-          <head>
-            <script>
-              localStorage.setItem('token', '{auth_token}');
-              localStorage.setItem('userRole', '{user['role']}');
-              setTimeout(function() {{
-                window.location.href = '{dashboard_url}';
-              }}, 2000);
-            </script>
-          </head>
-          <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
-            <h1 style="color: #2563eb;">Email успешно подтверждён!</h1>
-            <p>Перенаправляем вас в личный кабинет...</p>
-            <p><a href="{dashboard_url}">Нажмите здесь</a>, если перенаправление не произошло автоматически.</p>
-          </body>
-        </html>
-        """
-        
         return {
             'statusCode': 200,
-            'headers': {'Content-Type': 'text/html', 'Access-Control-Allow-Origin': '*'},
-            'body': redirect_html,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({
+                'message': 'Email успешно подтверждён',
+                'token': auth_token,
+                'role': user['role']
+            }),
             'isBase64Encoded': False
         }
     
