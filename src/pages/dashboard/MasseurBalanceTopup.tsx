@@ -91,7 +91,10 @@ export default function MasseurBalanceTopup() {
 
       const data = await response.json();
       
-      if (data.payment_url) {
+      if (data.payment_url && data.payment_id) {
+        // Сохраняем payment_id перед редиректом на оплату
+        localStorage.setItem('pending_payment_id', data.payment_id);
+        localStorage.setItem('pending_payment_type', 'balance_topup');
         window.location.href = data.payment_url;
       } else {
         toast({
