@@ -167,12 +167,12 @@ const ToolsLanding = () => {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  {/* Placeholder для фото */}
-                  <div className="w-full h-64 bg-white/50 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center">
-                    <div className="text-center text-gray-400">
-                      <Icon name="Image" size={48} className="mx-auto mb-2 opacity-30" />
-                      <p className="text-sm">Место для фото</p>
-                    </div>
+                  <div className="w-full h-64 rounded-xl overflow-hidden">
+                    <img 
+                      src="https://cdn.poehali.dev/files/ea54ba01-bf8d-4fa1-b924-a18290ba8469.jpg" 
+                      alt="Специалист анализирует медицинские снимки"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   
                   <p className="text-lg leading-relaxed">{tool.description}</p>
