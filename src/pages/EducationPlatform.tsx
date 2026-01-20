@@ -28,9 +28,11 @@ export default function EducationPlatform() {
                 от бесплатных вводных курсов до профессиональных авторских программ и вебинаров.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="text-lg px-8" onClick={() => scrollToSection('courses')}>
-                  <Icon name="BookOpen" className="mr-2" size={20} />
-                  Перейти к курсам
+                <Button size="lg" className="text-lg px-8" asChild>
+                  <a href="https://school.brossok.ru/training" target="_blank" rel="noopener noreferrer">
+                    <Icon name="BookOpen" className="mr-2" size={20} />
+                    Перейти к курсам
+                  </a>
                 </Button>
                 <Button size="lg" variant="outline" className="text-lg px-8" onClick={() => scrollToSection('free')}>
                   <Icon name="GraduationCap" className="mr-2" size={20} />
