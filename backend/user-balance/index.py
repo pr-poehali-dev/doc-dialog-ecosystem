@@ -134,10 +134,11 @@ def handler(event: dict, context) -> dict:
             new_balance = float(updated_user['balance']) if updated_user['balance'] else 0
             
             # Логируем транзакцию
+            negative_amount = -amount
             cur.execute(f"""
                 INSERT INTO {schema}.balance_transactions 
                 (user_id, amount, type, description, created_at)
-                VALUES ('{user_id}', {-amount}, '{service_type or "service"}', '{description.replace("'", "''")}', NOW())
+                VALUES ('{user_id}', {negative_amount}, '{service_type or "service"}', '{description.replace("'", "''")}', NOW())
             """)
             
             conn.commit()
