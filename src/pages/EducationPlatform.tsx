@@ -34,9 +34,11 @@ export default function EducationPlatform() {
                     Перейти к курсам
                   </a>
                 </Button>
-                <Button size="lg" variant="outline" className="text-lg px-8" onClick={() => scrollToSection('free')}>
-                  <Icon name="GraduationCap" className="mr-2" size={20} />
-                  Бесплатные материалы
+                <Button size="lg" variant="outline" className="text-lg px-8" asChild>
+                  <a href="https://docdialog.su/courses" target="_blank" rel="noopener noreferrer">
+                    <Icon name="GraduationCap" className="mr-2" size={20} />
+                    Бесплатные материалы
+                  </a>
                 </Button>
               </div>
             </div>
