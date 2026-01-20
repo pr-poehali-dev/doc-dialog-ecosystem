@@ -343,6 +343,8 @@ def buy_extra_requests(user_id: str, body: dict, event: dict) -> dict:
             }
         
         import uuid
+        import requests
+        import base64
         
         payment_id = str(uuid.uuid4())
         
@@ -397,9 +399,6 @@ def buy_extra_requests(user_id: str, body: dict, event: dict) -> dict:
                 'type': 'extra_requests'
             }
         }
-        
-        import requests
-        import base64
         
         auth_string = f"{yoomoney_shop_id}:{yoomoney_secret_key}"
         auth_header = base64.b64encode(auth_string.encode()).decode()

@@ -14,14 +14,19 @@ const PaymentProcessing = () => {
 
   useEffect(() => {
     const checkPayment = async () => {
-      const type = searchParams.get('type') || 'payment';
+      const type = searchParams.get('type') || localStorage.getItem('pending_payment_type') || 'payment';
       
-      // Ищем payment_id в URL
+      // Ищем payment_id в URL или localStorage
       const fullUrl = window.location.href;
       const urlObj = new URL(fullUrl);
-      const paymentId = urlObj.searchParams.get('payment_id');
+      let paymentId = urlObj.searchParams.get('payment_id');
       
-      // Если нет - пользователь вернулся без оплаты
+      // Если в URL нет - проверяем localStorage
+      if (!paymentId) {
+        paymentId = localStorage.getItem('pending_payment_id');
+      }
+      
+      // Если нет нигде - пользователь вернулся без оплаты
       if (!paymentId) {
         console.log('No payment_id found');
         setStatusText('Платёж не найден');
@@ -29,6 +34,10 @@ const PaymentProcessing = () => {
         navigate(`/payment/failed?type=${type}`);
         return;
       }
+      
+      // Очищаем сохранённый payment_id
+      localStorage.removeItem('pending_payment_id');
+      localStorage.removeItem('pending_payment_type');
 
       console.log('Checking payment:', paymentId);
       setStatusText('Связываемся с платёжной системой...');

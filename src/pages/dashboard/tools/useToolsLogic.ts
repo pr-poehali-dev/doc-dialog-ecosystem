@@ -216,7 +216,10 @@ export function useToolsLogic() {
         throw new Error(data.error || 'Ошибка создания платежа');
       }
 
-      if (data.payment_url) {
+      if (data.payment_url && data.payment_id) {
+        // Сохраняем payment_id для проверки после возврата
+        localStorage.setItem('pending_payment_id', data.payment_id);
+        localStorage.setItem('pending_payment_type', 'extra_requests');
         window.location.href = data.payment_url;
       } else {
         throw new Error('Не получена ссылка для оплаты');
