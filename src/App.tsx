@@ -111,6 +111,8 @@ const ForumTopic = lazy(() => import("./pages/ForumTopic").catch((error) => {
 const VerifyEmail = lazy(() => import("./pages/VerifyEmail"));
 const EducationPlatform = lazy(() => import("./pages/EducationPlatform"));
 const PartnerProgram = lazy(() => import("./pages/PartnerProgram"));
+const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
+const PaymentFailed = lazy(() => import("./pages/PaymentFailed"));
 
 const queryClient = new QueryClient();
 
@@ -230,6 +232,8 @@ const App = () => (
           <Route path="/forum/topic/:topicId" element={<ForumTopic />} />
           <Route path="/education-platform" element={<EducationPlatform />} />
           <Route path="/partner-program" element={<PartnerProgram />} />
+          <Route path="/payment/success" element={<PaymentSuccess />} />
+          <Route path="/payment/failed" element={<PaymentFailed />} />
           <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

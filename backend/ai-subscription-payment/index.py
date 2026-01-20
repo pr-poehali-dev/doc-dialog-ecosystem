@@ -111,7 +111,7 @@ def handler(event: dict, context) -> dict:
         description = f"Подписка AI-тариф «{plan_info['name']}» на 1 месяц"
         
         project_id = os.environ.get('PROJECT_ID', 'app')
-        return_url = f"https://{project_id}.poehali.dev/dashboard/ai-subscription?payment=success"
+        return_url = f"https://{project_id}.poehali.dev/payment/success?type=ai_subscription"
         
         payment_data = {
             'amount': {

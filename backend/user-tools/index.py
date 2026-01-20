@@ -354,7 +354,7 @@ def buy_extra_requests(user_id: str, body: dict) -> dict:
         else:
             description = f"Покупка {count} AI-запросов"
         
-        return_url = f"https://{os.environ.get('PROJECT_ID', 'app')}.poehali.dev/dashboard/tools?payment=success"
+        return_url = f"https://{os.environ.get('PROJECT_ID', 'app')}.poehali.dev/payment/success?type=extra_requests"
         
         payment_data = {
             'amount': {

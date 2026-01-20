@@ -101,7 +101,7 @@ def handler(event: dict, context) -> dict:
             description += f" (бонус +{bonus} ₽)"
         
         project_id = os.environ.get('PROJECT_ID', 'app')
-        return_url = f"https://{project_id}.poehali.dev/dashboard/balance?payment=success"
+        return_url = f"https://{project_id}.poehali.dev/payment/success?type=balance_topup"
         
         payment_data = {
             'amount': {
