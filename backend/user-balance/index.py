@@ -39,36 +39,63 @@ def handler(event: dict, context) -> dict:
         cur = conn.cursor(cursor_factory=RealDictCursor)
         
         if method == 'GET':
-            # Получаем баланс пользователя
-            cur.execute(f"""
-                SELECT balance 
-                FROM {schema}.users 
-                WHERE id = '{user_id}'
-            """)
+            query_params = event.get('queryStringParameters') or {}
+            action = query_params.get('action', '')
             
-            user = cur.fetchone()
-            
-            if not user:
+            if action == 'transactions':
+                # Получаем историю транзакций
+                cur.execute(f"""
+                    SELECT id, amount, type, description, created_at
+                    FROM {schema}.user_balance_transactions
+                    WHERE user_id = '{user_id}'
+                    ORDER BY created_at DESC
+                    LIMIT 50
+                """)
+                
+                transactions = cur.fetchall()
+                
                 cur.close()
                 conn.close()
+                
                 return {
-                    'statusCode': 404,
+                    'statusCode': 200,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                    'body': json.dumps({'error': 'Пользователь не найден'}),
+                    'body': json.dumps({
+                        'transactions': [dict(t) for t in transactions]
+                    }, default=str),
                     'isBase64Encoded': False
                 }
-            
-            cur.close()
-            conn.close()
-            
-            return {
-                'statusCode': 200,
-                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({
-                    'balance': float(user['balance']) if user['balance'] else 0
-                }),
-                'isBase64Encoded': False
-            }
+            else:
+                # Получаем баланс пользователя
+                cur.execute(f"""
+                    SELECT balance 
+                    FROM {schema}.users 
+                    WHERE id = '{user_id}'
+                """)
+                
+                user = cur.fetchone()
+                
+                if not user:
+                    cur.close()
+                    conn.close()
+                    return {
+                        'statusCode': 404,
+                        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                        'body': json.dumps({'error': 'Пользователь не найден'}),
+                        'isBase64Encoded': False
+                    }
+                
+                cur.close()
+                conn.close()
+                
+                return {
+                    'statusCode': 200,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({
+                        'balance': float(user['balance']) if user['balance'] else 0
+                    }),
+                    'isBase64Encoded': False
+                }
         
         elif method == 'POST':
             # Списание с баланса

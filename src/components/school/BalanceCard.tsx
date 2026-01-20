@@ -8,12 +8,12 @@ import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
 import { getUserId } from '@/utils/auth';
 
-const BALANCE_API_URL = 'https://functions.poehali.dev/8c82911e-481f-4a63-92ff-aae203e992cc';
+const USER_BALANCE_URL = 'https://functions.poehali.dev/619d5197-066f-4380-8bef-994c71c76fa0';
 
 interface Transaction {
   id: number;
   amount: number;
-  type: 'credit' | 'debit';
+  type: string;
   description: string;
   created_at: string;
 }
@@ -33,19 +33,19 @@ export default function BalanceCard() {
 
   const loadBalance = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      const userId = getUserId();
+      if (!userId) return;
       
-      const response = await fetch(`${BALANCE_API_URL}?token=${encodeURIComponent(token)}&action=get`, {
+      const response = await fetch(USER_BALANCE_URL, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json'
+          'X-User-Id': String(userId)
         }
       });
 
       if (response.ok) {
         const data = await response.json();
-        setBalance(data.current_balance);
+        setBalance(data.balance || 0);
       }
     } catch (error) {
       console.error('Load balance error:', error);
@@ -54,13 +54,13 @@ export default function BalanceCard() {
 
   const loadTransactions = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+      const userId = getUserId();
+      if (!userId) return;
       
-      const response = await fetch(`${BALANCE_API_URL}?token=${encodeURIComponent(token)}&action=get`, {
+      const response = await fetch(`${USER_BALANCE_URL}?action=transactions`, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json'
+          'X-User-Id': String(userId)
         }
       });
 
@@ -77,20 +77,12 @@ export default function BalanceCard() {
     window.location.href = '/dashboard/school-balance-topup';
   };
 
-  const getTransactionIcon = (type: string) => {
-    switch (type) {
-      case 'credit': return 'ArrowDownToLine';
-      case 'debit': return 'ArrowUpFromLine';
-      default: return 'Circle';
-    }
+  const getTransactionIcon = (amount: number) => {
+    return amount > 0 ? 'ArrowDownToLine' : 'ArrowUpFromLine';
   };
 
-  const getTransactionColor = (type: string) => {
-    switch (type) {
-      case 'credit': return 'text-green-600';
-      case 'debit': return 'text-red-600';
-      default: return 'text-gray-600';
-    }
+  const getTransactionColor = (amount: number) => {
+    return amount > 0 ? 'text-green-600' : 'text-red-600';
   };
 
   return (
@@ -120,7 +112,7 @@ export default function BalanceCard() {
                     {transactions.map((t) => (
                       <div key={t.id} className="flex items-center justify-between p-3 border rounded-lg">
                         <div className="flex items-center gap-3">
-                          <Icon name={getTransactionIcon(t.type)} className={getTransactionColor(t.type)} size={20} />
+                          <Icon name={getTransactionIcon(t.amount)} className={getTransactionColor(t.amount)} size={20} />
                           <div>
                             <p className="font-medium">{t.description}</p>
                             <p className="text-sm text-gray-500">
@@ -134,7 +126,7 @@ export default function BalanceCard() {
                             </p>
                           </div>
                         </div>
-                        <span className={`font-bold ${getTransactionColor(t.type)}`}>
+                        <span className={`font-bold ${getTransactionColor(t.amount)}`}>
                           {t.amount > 0 ? '+' : ''}{t.amount.toLocaleString('ru-RU')} ₽
                         </span>
                       </div>
@@ -157,7 +149,7 @@ export default function BalanceCard() {
             {balance.toLocaleString('ru-RU')} ₽
           </div>
           <p className="text-xs sm:text-sm text-gray-500">
-            Используйте баланс для подъёма курсов в топ
+            Используйте баланс для подъёма курсов в топ и AI-инструментов (15₽ за анализ)
           </p>
         </div>
       </CardContent>
