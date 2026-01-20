@@ -1,4 +1,4 @@
-export const USER_TOOLS_URL = 'https://functions.poehali.dev/41dbcf47-a8d5-45ff-bb56-f9754581a0d7';
+export const USER_TOOLS_URL = 'https://functions.poehali.dev/f392e088-3274-4326-8906-2c23f7045160';
 
 export interface UsageData {
   limit: number;

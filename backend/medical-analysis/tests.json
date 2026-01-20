@@ -1,0 +1,34 @@
+{
+  "tests": [
+    {
+      "name": "Test analyze medical text",
+      "method": "POST",
+      "headers": {
+        "X-User-Id": "223"
+      },
+      "body": {
+        "action": "analyze_tool",
+        "text": "МРТ пояснично-крестцового отдела позвоночника: дегенеративные изменения, протрузия L4-L5",
+        "system_prompt": "Проанализируй медицинское заключение"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "response": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Test unauthorized access",
+      "method": "POST",
+      "body": {
+        "action": "analyze_tool",
+        "text": "test"
+      },
+      "expectedStatus": 401,
+      "expectedBody": {
+        "error": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
