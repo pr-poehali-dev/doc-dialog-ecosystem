@@ -367,6 +367,24 @@ def buy_extra_requests(user_id: str, body: dict) -> dict:
             },
             'capture': True,
             'description': description,
+            'receipt': {
+                'customer': {
+                    'email': user.get('email', 'noreply@brossok.ru')
+                },
+                'items': [
+                    {
+                        'description': description,
+                        'quantity': '1',
+                        'amount': {
+                            'value': str(amount),
+                            'currency': 'RUB'
+                        },
+                        'vat_code': 1,
+                        'payment_mode': 'full_payment',
+                        'payment_subject': 'service'
+                    }
+                ]
+            },
             'metadata': {
                 'user_id': str(user_id),
                 'count': str(actual_count),  # Сохраняем фактическое количество с бонусом
