@@ -4,7 +4,7 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 
 def handler(event: dict, context) -> dict:
-    """Получение баланса пользователя и операции с балансом (v3 debug)"""
+    """Получение баланса пользователя и операции с балансом (v4 fixed)"""
     
     method = event.get('httpMethod', 'GET')
     
@@ -138,9 +138,9 @@ def handler(event: dict, context) -> dict:
             safe_service_type = (service_type or 'service').replace("'", "''")
             safe_description = description.replace("'", "''")
             cur.execute(f"""
-                INSERT INTO {schema}.balance_transactions 
+                INSERT INTO {schema}.user_balance_transactions 
                 (user_id, amount, type, description, created_at)
-                VALUES ('{user_id}', {negative_amount}, '{safe_service_type}', '{safe_description}', NOW())
+                VALUES ({user_id}, {negative_amount}, '{safe_service_type}', '{safe_description}', NOW())
             """)
             
             conn.commit()
