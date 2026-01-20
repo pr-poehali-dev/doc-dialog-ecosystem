@@ -73,14 +73,15 @@ export default function VacancyForm({ isOpen, onClose, onSuccess, salonName: pro
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      const res = await fetch(PAYMENT_API, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await fetch(`${SALON_API}?action=salon_profile`, {
+        headers: { 'X-Authorization': `Bearer ${token}` },
       });
 
       if (res.ok) {
         const data = await res.json();
-        setVacancyCount(data.count || 0);
-        setNeedsPayment(data.count > 0);
+        const count = data.vacancies?.length || 0;
+        setVacancyCount(count);
+        setNeedsPayment(count > 0);
       }
     } catch (error) {
       console.error('Ошибка проверки количества вакансий:', error);
@@ -121,7 +122,6 @@ export default function VacancyForm({ isOpen, onClose, onSuccess, salonName: pro
         return;
       }
 
-      // Тестовый режим - все вакансии создаются бесплатно
       const res = await fetch(`${SALON_API}?action=add_vacancy`, {
         method: 'POST',
         headers: {
@@ -146,12 +146,10 @@ export default function VacancyForm({ isOpen, onClose, onSuccess, salonName: pro
         const error = await res.json();
         
         if (res.status === 403 && error.requires_payment) {
-          setSalonName(formData.salon_name);
-          setShowPaymentModal(true);
           toast({
-            title: 'Требуется оплата',
-            description: error.message,
-            variant: 'default',
+            title: 'Недостаточно средств',
+            description: error.message || 'Пополните баланс для публикации вакансии',
+            variant: 'destructive',
           });
         } else {
           toast({
@@ -187,10 +185,17 @@ export default function VacancyForm({ isOpen, onClose, onSuccess, salonName: pro
         <DialogHeader>
           <DialogTitle>Добавить вакансию</DialogTitle>
           <DialogDescription>
-            <span className="text-green-600 font-medium">
-              <Icon name="Gift" size={14} className="inline mr-1" />
-              Первая вакансия бесплатно
-            </span>
+            {vacancyCount === 0 ? (
+              <span className="text-green-600 font-medium">
+                <Icon name="Gift" size={14} className="inline mr-1" />
+                Первая вакансия бесплатно
+              </span>
+            ) : (
+              <span className="text-orange-600 font-medium">
+                <Icon name="Wallet" size={14} className="inline mr-1" />
+                Стоимость публикации: 100₽ (списание с баланса)
+              </span>
+            )}
           </DialogDescription>
         </DialogHeader>
 

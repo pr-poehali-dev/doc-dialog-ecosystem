@@ -429,18 +429,6 @@ def handler(event: dict, context) -> dict:
                     """, (salon_id,))
                     paid_slots = cur.fetchone()['paid_slots']
                     
-                    # Первая вакансия бесплатно, остальные требуют оплаты
-                    available_slots = 1 + paid_slots
-                    if vacancy_count >= available_slots:
-                        conn.close()
-                        return response(403, {
-                            'error': 'Лимит вакансий исчерпан',
-                            'message': f'У вас {vacancy_count} активных вакансий. Доступно: {available_slots} (1 бесплатная + {paid_slots} оплаченных)',
-                            'current_count': vacancy_count,
-                            'available_slots': available_slots,
-                            'requires_payment': True
-                        })
-                    
                     # Проверяем что выбрана только одна специализация
                     specializations = body.get('specializations', [])
                     if len(specializations) != 1:
@@ -449,6 +437,41 @@ def handler(event: dict, context) -> dict:
                             'error': 'Выберите одну специализацию',
                             'message': 'Одна вакансия = один вид массажа'
                         })
+                    
+                    # Первая вакансия бесплатно, остальные — 100₽ со списанием с баланса
+                    if vacancy_count >= 1:
+                        # Проверяем баланс и списываем
+                        cur.execute("""
+                            SELECT balance FROM t_p46047379_doc_dialog_ecosystem.users
+                            WHERE id = %s
+                        """, (user_id,))
+                        user_balance = cur.fetchone()
+                        current_balance = user_balance['balance'] if user_balance else 0
+                        
+                        vacancy_price = 100.0
+                        if current_balance < vacancy_price:
+                            conn.close()
+                            return response(403, {
+                                'error': 'Недостаточно средств на балансе',
+                                'message': f'Для добавления вакансии нужно {vacancy_price}₽. Ваш баланс: {current_balance}₽',
+                                'balance': current_balance,
+                                'required': vacancy_price,
+                                'requires_payment': True
+                            })
+                        
+                        # Списываем с баланса
+                        cur.execute("""
+                            UPDATE t_p46047379_doc_dialog_ecosystem.users
+                            SET balance = balance - %s
+                            WHERE id = %s
+                        """, (vacancy_price, user_id))
+                        
+                        # Добавляем транзакцию
+                        cur.execute("""
+                            INSERT INTO t_p46047379_doc_dialog_ecosystem.user_balance_transactions
+                            (user_id, amount, type, description, created_at)
+                            VALUES (%s, %s, 'withdrawal', 'Публикация вакансии в каталоге салонов', NOW())
+                        """, (user_id, -vacancy_price))
                     
                     # Добавляем вакансию
                     cur.execute("""
