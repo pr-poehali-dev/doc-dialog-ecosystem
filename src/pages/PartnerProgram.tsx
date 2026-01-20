@@ -119,7 +119,7 @@ export default function PartnerProgram() {
 
             <div className="relative">
               <img 
-                src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/a1776ecc-cc53-4714-8201-7ececc37dad1.jpg" 
+                src="https://cdn.poehali.dev/files/d1e24142-7677-4823-ae55-9b6fd7dc3016.jpg" 
                 alt="Обучение практике" 
                 className="rounded-2xl shadow-xl w-full h-[400px] object-cover"
               />
