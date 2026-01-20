@@ -64,7 +64,7 @@ def handler(event: dict, context) -> dict:
                 return analyze_with_tool(user_id, body)
             
             if action == 'buy_extra_requests':
-                return buy_extra_requests(user_id, body)
+                return buy_extra_requests(user_id, body, event)
             
             if action == 'save_anamnesis':
                 return save_anamnesis(user_id, body)
@@ -284,7 +284,7 @@ def analyze_with_tool(user_id: str, body: dict) -> dict:
         cur.close()
         conn.close()
 
-def buy_extra_requests(user_id: str, body: dict) -> dict:
+def buy_extra_requests(user_id: str, body: dict, event: dict) -> dict:
     """Создание платежа для покупки дополнительных запросов"""
     from datetime import datetime
     conn = get_db()
