@@ -16,8 +16,21 @@ export default function VacancyInfoCard({ onAddVacancy }: VacancyInfoCardProps) 
   const [balance, setBalance] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  const getUserRole = () => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      const user = JSON.parse(userData);
+      return user.role;
+    }
+    return null;
+  };
+
   useEffect(() => {
-    loadData();
+    if (getUserRole() === 'salon') {
+      loadData();
+    } else {
+      setLoading(false);
+    }
   }, []);
 
   const getUserId = () => {
@@ -62,7 +75,7 @@ export default function VacancyInfoCard({ onAddVacancy }: VacancyInfoCardProps) 
     }
   };
 
-  if (loading) return null;
+  if (loading || getUserRole() !== 'salon') return null;
 
   const isFirstVacancyFree = vacancyCount === 0;
   const canAffordNextVacancy = balance >= 100 || isFirstVacancyFree;

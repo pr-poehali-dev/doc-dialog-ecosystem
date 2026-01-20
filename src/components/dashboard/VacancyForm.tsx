@@ -23,7 +23,6 @@ import { useToast } from '@/hooks/use-toast';
 import VacancyPaymentModal from './VacancyPaymentModal';
 
 const SALON_API = 'https://functions.poehali.dev/01aa5a2f-6476-4fbc-ba10-6808960c8a21';
-const PAYMENT_API = 'https://functions.poehali.dev/7497cf71-d442-407d-99d7-d6ec11e01322';
 
 const SPECIALIZATIONS = [
   'Классический массаж',
