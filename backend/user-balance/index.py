@@ -4,7 +4,7 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 
 def handler(event: dict, context) -> dict:
-    """Получение баланса пользователя и операции с балансом"""
+    """Получение баланса пользователя и операции с балансом (v2)"""
     
     method = event.get('httpMethod', 'GET')
     
