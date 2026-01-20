@@ -132,8 +132,8 @@ def register_user(data: dict) -> dict:
         verification_expires = datetime.now() + timedelta(hours=24)
         
         cursor.execute(
-            "INSERT INTO users (email, password_hash, role, email_verified, verification_token, verification_token_expires) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
-            (email, password_hash, role, False, verification_token, verification_expires)
+            "INSERT INTO users (email, password_hash, role, email_verified, verification_token, verification_token_expires, balance) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id",
+            (email, password_hash, role, False, verification_token, verification_expires, 150)
         )
         user_id = cursor.fetchone()['id']
         
