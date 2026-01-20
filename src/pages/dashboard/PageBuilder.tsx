@@ -303,8 +303,26 @@ export default function PageBuilder() {
     });
   };
 
-  const handlePurchaseTemplate = () => {
-    // Здесь будет логика оплаты
+  const handlePurchaseTemplate = async () => {
+    const templatePrice = selectedTemplate === 'premium' ? 2990 : 4990;
+    
+    // Проверяем баланс (пока заглушка, потом добавим API)
+    const userBalance = 0; // TODO: загрузить реальный баланс из API
+    
+    if (userBalance < templatePrice) {
+      toast({
+        title: "Недостаточно средств",
+        description: `На вашем балансе ${userBalance.toFixed(2)} ₽, а требуется ${templatePrice} ₽. Пополните баланс.`,
+        variant: "destructive",
+      });
+      setIsPremiumDialogOpen(false);
+      // Перенаправляем на страницу пополнения
+      setTimeout(() => navigate('/dashboard/ai-subscription'), 500);
+      return;
+    }
+    
+    // TODO: Здесь будет API-запрос на списание с баланса
+    
     setPageData({
       ...pageData,
       template: selectedTemplate,
