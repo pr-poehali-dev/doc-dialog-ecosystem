@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
@@ -168,13 +167,7 @@ const AIDialogs = () => {
           </div>
         </div>
 
-        <Tabs defaultValue="new" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="new">Новый диалог</TabsTrigger>
-            <TabsTrigger value="history">История ({dialogsData.dialogs.length})</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="new" className="space-y-6">
+        <div className="space-y-6">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {dialogTypes.map((type) => (
                 <Card 
@@ -220,56 +213,7 @@ const AIDialogs = () => {
                 </li>
               </ul>
             </div>
-          </TabsContent>
-
-          <TabsContent value="history">
-            {dialogsData.dialogs.length === 0 ? (
-              <div className="text-center py-12">
-                <Icon name="MessageSquare" size={48} className="mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-xl font-semibold mb-2">Пока нет диалогов</h3>
-                <p className="text-muted-foreground mb-4">Начните новый диалог, чтобы получить поддержку</p>
-              </div>
-            ) : (
-              <div className="grid gap-4">
-                {dialogsData.dialogs.map((dialog) => {
-                  const dialogType = dialogTypes.find(t => t.id === dialog.dialog_type);
-                  return (
-                    <Card 
-                      key={dialog.id}
-                      className="cursor-pointer hover:shadow-lg transition-all"
-                      onClick={() => setActiveDialog(dialog)}
-                    >
-                      <CardHeader className="pb-3">
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-center gap-3">
-                            <Icon name={dialogType?.icon as any || 'MessageSquare'} size={24} className="text-primary" />
-                            <div>
-                              <CardTitle className="text-lg">{dialog.title}</CardTitle>
-                              <p className="text-sm text-muted-foreground mt-1">
-                                {dialogType?.label || dialog.dialog_type}
-                              </p>
-                            </div>
-                          </div>
-                          <Icon name="ChevronRight" size={20} className="text-muted-foreground" />
-                        </div>
-                      </CardHeader>
-                      <CardContent className="pt-0">
-                        <div className="text-xs text-muted-foreground">
-                          Обновлено: {new Date(dialog.updated_at).toLocaleDateString('ru-RU', {
-                            day: 'numeric',
-                            month: 'long',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
+        </div>
       </div>
 
       <Dialog open={showLimitModal} onOpenChange={setShowLimitModal}>
