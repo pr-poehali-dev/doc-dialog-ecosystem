@@ -4,7 +4,7 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 
 def handler(event: dict, context) -> dict:
-    """Получение баланса пользователя и операции с балансом (v2)"""
+    """Получение баланса пользователя и операции с балансом (v3 debug)"""
     
     method = event.get('httpMethod', 'GET')
     
@@ -169,7 +169,9 @@ def handler(event: dict, context) -> dict:
             }
         
     except Exception as e:
+        import traceback
         print(f"Error: {str(e)}")
+        print(f"Traceback: {traceback.format_exc()}")
         return {
             'statusCode': 500,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
