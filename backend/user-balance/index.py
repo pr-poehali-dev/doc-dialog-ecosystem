@@ -135,10 +135,12 @@ def handler(event: dict, context) -> dict:
             
             # Логируем транзакцию
             negative_amount = -amount
+            safe_service_type = (service_type or 'service').replace("'", "''")
+            safe_description = description.replace("'", "''")
             cur.execute(f"""
                 INSERT INTO {schema}.balance_transactions 
                 (user_id, amount, type, description, created_at)
-                VALUES ('{user_id}', {negative_amount}, '{service_type or "service"}', '{description.replace("'", "''")}', NOW())
+                VALUES ('{user_id}', {negative_amount}, '{safe_service_type}', '{safe_description}', NOW())
             """)
             
             conn.commit()
