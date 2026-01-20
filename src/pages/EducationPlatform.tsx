@@ -12,10 +12,10 @@ export default function EducationPlatform() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary/5 via-background to-primary/5 overflow-hidden">
+      <section className="relative bg-gradient-to-br from-primary/5 via-background to-primary/5 overflow-hidden pt-[100px]">
         <div className="absolute inset-0 bg-grid-slate-900/[0.04] bg-[size:20px_20px]" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center py-16 sm:py-24">
+          <div className="grid lg:grid-cols-2 gap-12 items-center pb-16 sm:pb-24">
             <div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
                 Обучающая платформа Док диалог
