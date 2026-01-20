@@ -177,6 +177,15 @@ const ToolsLanding = () => {
                         />
                       </div>
                     )}
+                    {index === 1 && (
+                      <div className="w-full md:w-64 aspect-square rounded-xl overflow-hidden flex-shrink-0">
+                        <img 
+                          src="https://cdn.poehali.dev/files/19f3d66b-a720-4516-a2cd-29f24e014739.jpg" 
+                          alt="Специалист проводит онлайн консультацию"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
                     
                     <div className="flex-1 flex items-center">
                       <p className="text-lg leading-relaxed">{tool.description}</p>
