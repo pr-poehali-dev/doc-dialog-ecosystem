@@ -1,5 +1,6 @@
 import json
 import os
+import jwt
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
@@ -43,29 +44,34 @@ def handler(event: dict, context) -> dict:
         
         token = auth_header.replace('Bearer ', '')
         
-        dsn = os.environ.get('DATABASE_URL')
-        schema = os.environ.get('MAIN_DB_SCHEMA', 't_p46047379_doc_dialog_ecosystem')
-        
-        conn = psycopg2.connect(dsn)
-        cur = conn.cursor(cursor_factory=RealDictCursor)
+        # Декодируем JWT токен
+        jwt_secret = os.environ.get('JWT_SECRET')
+        try:
+            payload = jwt.decode(token, jwt_secret, algorithms=['HS256'])
+            user_id = payload.get('user_id')
+            user_role = payload.get('role')
+        except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
+            return {
+                'statusCode': 401,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Неверный или истёкший токен'}),
+                'isBase64Encoded': False
+            }
         
         # Проверяем, что пользователь - администратор
-        cur.execute(f"""
-            SELECT id, role FROM {schema}.users
-            WHERE token = %s
-        """, (token,))
-        
-        user = cur.fetchone()
-        
-        if not user or user['role'] != 'admin':
-            cur.close()
-            conn.close()
+        if user_role != 'admin':
             return {
                 'statusCode': 403,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
                 'body': json.dumps({'error': 'Доступ запрещён'}),
                 'isBase64Encoded': False
             }
+        
+        dsn = os.environ.get('DATABASE_URL')
+        schema = os.environ.get('MAIN_DB_SCHEMA', 't_p46047379_doc_dialog_ecosystem')
+        
+        conn = psycopg2.connect(dsn)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
         
         # Получаем все платежи с информацией о пользователях
         cur.execute(f"""
