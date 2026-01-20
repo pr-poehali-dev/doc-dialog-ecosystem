@@ -17,26 +17,14 @@ import MarketingToolView from '@/components/marketing/MarketingToolView';
 
 const AI_TOOLS_URL = 'https://functions.poehali.dev/7c4b9e29-6778-42e7-9ac9-c30966d1765e';
 
-interface UsageData {
-  limit: number;
-  dialogs_used: number;
-  tools_used: number;
-  total_used: number;
-}
-
 export default function SchoolMarketingAI() {
   const [activeToolId, setActiveToolId] = useState<string | null>(null);
   const [inputText, setInputText] = useState('');
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
-  const [usageData, setUsageData] = useState<UsageData | null>(null);
   const [showLimitModal, setShowLimitModal] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    loadUsageData();
-  }, []);
 
   const getUserId = () => {
     const token = localStorage.getItem('token');
@@ -46,29 +34,6 @@ export default function SchoolMarketingAI() {
       return payload.user_id || payload.userId || payload.sub;
     } catch {
       return null;
-    }
-  };
-
-  const loadUsageData = async () => {
-    try {
-      const userId = getUserId();
-      if (!userId) return;
-
-      const response = await fetch(`${AI_TOOLS_URL}?action=list_dialogs`, {
-        headers: { 'X-User-Id': userId }
-      });
-
-      if (!response.ok) return;
-      
-      const data = await response.json();
-      setUsageData({
-        limit: data.limit,
-        dialogs_used: data.dialogs_used,
-        tools_used: data.tools_used,
-        total_used: data.total_used
-      });
-    } catch (error) {
-      console.error('Failed to load usage data:', error);
     }
   };
 
@@ -105,19 +70,23 @@ export default function SchoolMarketingAI() {
         })
       });
 
+      if (createResponse.status === 403) {
+        const errorData = await createResponse.json();
+        toast({
+          title: 'Недостаточно средств',
+          description: `${errorData.error || 'Недостаточно средств на балансе'}. Пополните баланс.`,
+          variant: 'destructive'
+        });
+        return;
+      }
+
       if (!createResponse.ok) {
         const errorData = await createResponse.json();
         throw new Error(errorData.error || 'Ошибка анализа');
       }
 
-      if (createResponse.status === 403) {
-        setShowLimitModal(true);
-        return;
-      }
-
       const data = await createResponse.json();
       setResponse(data.analysis);
-      loadUsageData();
       
     } catch (error) {
       toast({ 
@@ -176,22 +145,8 @@ export default function SchoolMarketingAI() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold">Маркетинговые AI-инструменты</h1>
-          <p className="text-gray-600 mt-1">Анализ аудитории и создание востребованных курсов</p>
+          <p className="text-gray-600 mt-1">Анализ аудитории и создание востребованных курсов — 15₽ за анализ</p>
         </div>
-        {usageData && (
-          <Card className="w-full md:w-auto">
-            <CardContent className="p-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-primary">
-                  {usageData.total_used} / {usageData.limit}
-                </div>
-                <div className="text-xs text-gray-600 mt-1">
-                  Использовано запросов
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
@@ -213,10 +168,7 @@ export default function SchoolMarketingAI() {
         </CardHeader>
         <CardContent className="space-y-3 text-sm text-gray-700">
           <p>
-            <strong>5 бесплатных запросов</strong> — попробуйте AI-инструменты без оплаты
-          </p>
-          <p>
-            После использования бесплатных запросов доступ к инструментам предоставляется по подписке
+            <strong>15₽ за анализ</strong> — списывается с баланса школы
           </p>
           <p>
             Все рекомендации основаны на анализе реальных потребностей массажистов на платформе Док диалог
@@ -224,9 +176,9 @@ export default function SchoolMarketingAI() {
           <Button 
             variant="default" 
             className="mt-2"
-            onClick={() => navigate('/dashboard/ai-subscription')}
+            onClick={() => navigate('/dashboard/balance')}
           >
-            Посмотреть тарифы
+            Пополнить баланс
           </Button>
         </CardContent>
       </Card>
@@ -240,20 +192,23 @@ export default function SchoolMarketingAI() {
             </DialogTitle>
             <DialogDescription className="space-y-4 pt-4">
               <p>
-                Вы использовали все бесплатные запросы к AI-инструментам.
+                Недостаточно средств на балансе для анализа.
               </p>
               <p>
-                Оформите подписку, чтобы продолжить использовать маркетинговые инструменты для анализа аудитории и создания востребованных курсов.
+                Стоимость одного анализа: <strong>15₽</strong>
+              </p>
+              <p>
+                Пополните баланс школы, чтобы продолжить использовать AI-инструменты.
               </p>
               <div className="flex gap-2 pt-2">
                 <Button 
                   onClick={() => {
                     setShowLimitModal(false);
-                    navigate('/dashboard/ai-subscription');
+                    navigate('/dashboard/balance');
                   }}
                   className="flex-1"
                 >
-                  Посмотреть тарифы
+                  Пополнить баланс
                 </Button>
                 <Button 
                   variant="outline"
