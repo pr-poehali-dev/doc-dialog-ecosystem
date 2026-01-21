@@ -72,19 +72,21 @@ export default function ToolsListSection() {
               <CardContent className="space-y-4 sm:space-y-6">
                 <p className="text-base sm:text-lg leading-relaxed">{tool.description}</p>
                 
-                <div className="space-y-3">
-                  <p className="font-semibold text-base sm:text-lg">Инструмент помогает понять:</p>
-                  <div className="space-y-2">
-                    {tool.helps.map((help, i) => (
-                      <div key={i} className="flex items-start gap-2 sm:gap-3">
-                        <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Icon name="Check" size={14} className="text-blue-600" />
+                {tool.helps && (
+                  <div className="space-y-3">
+                    <p className="font-semibold text-base sm:text-lg">Инструмент помогает понять:</p>
+                    <div className="space-y-2">
+                      {tool.helps.map((help, i) => (
+                        <div key={i} className="flex items-start gap-2 sm:gap-3">
+                          <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Icon name="Check" size={14} className="text-blue-600" />
+                          </div>
+                          <span className="text-sm sm:text-base">{help}</span>
                         </div>
-                        <span className="text-sm sm:text-base">{help}</span>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {tool.important && (
                   <div className="bg-orange-50 border-l-4 border-orange-500 p-4 rounded-r-lg">
