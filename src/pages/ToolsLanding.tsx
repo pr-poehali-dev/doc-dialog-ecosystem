@@ -548,26 +548,6 @@ const ToolsLanding = () => {
         </div>
       </section>
 
-      {/* Final CTA Section */}
-      <section className="container mx-auto px-4 py-20 bg-gradient-to-br from-purple-50/50 to-blue-50/50">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Инструменты, которые поддерживают специалиста
-          </h2>
-          <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-8 sm:mb-12 font-medium px-2">
-            Не чтобы лечить — а чтобы понимать, принимать решения и работать безопасно
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center px-2">
-            <Button size="lg" onClick={scrollToTools} className="text-base sm:text-lg px-8 sm:px-10 py-5 sm:py-6">
-              Смотреть инструменты
-            </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate('/register')} className="text-base sm:text-lg px-8 sm:px-10 py-5 sm:py-6">
-              Начать бесплатно
-            </Button>
-          </div>
-        </div>
-      </section>
-
       <SchoolsFooter />
     </div>
   );
