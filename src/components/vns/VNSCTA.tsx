@@ -3,26 +3,27 @@ import Icon from "@/components/ui/icon";
 
 const VNSCTA = () => {
   return (
-    <section className="py-20 px-4 bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700">
-      <div className="container mx-auto max-w-4xl">
+    <section className="py-12 md:py-20 px-4 bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 relative overflow-hidden">
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDE0YzAtNi42MjcgNS4zNzMtMTIgMTItMTJzMTIgNS4zNzMgMTIgMTItNS4zNzMgMTItMTIgMTItMTItNS4zNzMtMTItMTJ6TTAgMTRjMC02LjYyNyA1LjM3My0xMiAxMi0xMnMxMiA1LjM3MyAxMiAxMi01LjM3MyAxMi0xMiAxMi0xMi01LjM3My0xMi0xMnoiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-30"></div>
+      <div className="container mx-auto max-w-4xl relative z-10">
         <div className="text-center text-white">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 drop-shadow-lg">
             Готовы выйти на новый уровень?
           </h2>
-          <p className="text-xl mb-8 text-white/90 max-w-2xl mx-auto">
+          <p className="text-base md:text-lg lg:text-xl mb-6 md:mb-8 text-white/95 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
             Освойте регуляцию ВНС и работайте с глубинными причинами боли, стресса и напряжения
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="text-lg px-8 py-6 bg-white text-primary hover:bg-gray-100" asChild>
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
+            <Button size="lg" className="text-base md:text-lg px-6 md:px-8 py-4 md:py-6 bg-white text-indigo-600 hover:bg-gray-100 shadow-2xl hover:shadow-3xl transition-all font-semibold" asChild>
               <a href="https://school.brossok.ru/buy/42" target="_blank" rel="noopener noreferrer">
-                <Icon name="Play" size={20} className="mr-2" />
+                <Icon name="Play" size={18} className="mr-2" />
                 Записаться на курс
               </a>
             </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-2 border-white bg-transparent text-white hover:bg-white hover:text-primary" asChild>
+            <Button size="lg" variant="outline" className="text-base md:text-lg px-6 md:px-8 py-4 md:py-6 border-2 border-white bg-white/15 backdrop-blur-md text-white hover:bg-white hover:text-indigo-600 transition-all font-semibold" asChild>
               <a href="https://t.me/docdialogs_bot" target="_blank" rel="noopener noreferrer">
-                <Icon name="MessageCircle" size={20} className="mr-2" />
+                <Icon name="MessageCircle" size={18} className="mr-2" />
                 Задать вопрос
               </a>
             </Button>

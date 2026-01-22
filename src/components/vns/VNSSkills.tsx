@@ -50,25 +50,25 @@ const VNSSkills = () => {
   ];
 
   return (
-    <section className="py-20 px-4 bg-white">
+    <section className="py-12 md:py-20 px-4 bg-white">
       <div className="container mx-auto max-w-6xl">
-        <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 text-gray-900">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-12 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
           Чему вы научитесь
         </h2>
         
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {skills.map((skill, index) => (
             <div 
               key={index}
-              className="bg-gradient-to-br from-indigo-50 to-purple-50 p-6 rounded-2xl shadow-md hover:shadow-lg transition-all hover:-translate-y-1"
+              className="bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50 p-5 md:p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 border border-indigo-100/50"
             >
-              <div className="mb-4">
-                <div className="inline-block p-3 bg-white rounded-full">
-                  <Icon name={skill.icon as any} size={32} className="text-indigo-600" />
+              <div className="mb-3 md:mb-4">
+                <div className="inline-block p-2.5 md:p-3 bg-white rounded-full shadow-md">
+                  <Icon name={skill.icon as any} size={24} className="text-indigo-600 md:scale-125" />
                 </div>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">{skill.title}</h3>
-              <p className="text-gray-600 text-sm">{skill.description}</p>
+              <h3 className="text-base md:text-lg font-bold text-gray-900 mb-1.5 md:mb-2 leading-snug">{skill.title}</h3>
+              <p className="text-gray-600 text-xs md:text-sm leading-relaxed">{skill.description}</p>
             </div>
           ))}
         </div>
