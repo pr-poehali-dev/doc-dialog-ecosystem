@@ -16,6 +16,7 @@ export default function PlatformHeader() {
     { label: "Инструменты", path: "/tools" },
     { label: "Партнерская программа", path: "/partner-program" },
     { label: "Обо мне", path: "https://osteopatplus.ru/" },
+    { label: "Написать нам", path: "/contact" },
   ];
 
   const handleMenuClick = (action: () => void) => {
