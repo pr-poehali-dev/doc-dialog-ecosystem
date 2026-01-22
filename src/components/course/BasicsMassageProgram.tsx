@@ -105,13 +105,13 @@ const BasicsMassageProgram = () => {
   ];
 
   return (
-    <section className="py-20 px-4">
+    <section className="py-12 md:py-20 px-4">
       <div className="container mx-auto max-w-4xl">
-        <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 text-gray-900">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-12 text-gray-900">
           Программа курса
         </h2>
         
-        <div className="space-y-4">
+        <div className="space-y-3 md:space-y-4">
           {modules.map((module, index) => (
             <div 
               key={index}
@@ -119,13 +119,13 @@ const BasicsMassageProgram = () => {
             >
               <button
                 onClick={() => setOpenModule(openModule === index ? null : index)}
-                className="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                className="w-full p-4 md:p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
               >
-                <div className="flex items-center gap-4">
-                  <div className="p-2 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg">
-                    <Icon name="BookOpen" size={24} className="text-blue-600" />
+                <div className="flex items-center gap-3 md:gap-4">
+                  <div className="p-1.5 md:p-2 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg flex-shrink-0">
+                    <Icon name="BookOpen" size={20} className="text-blue-600" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 text-left">{module.title}</h3>
+                  <h3 className="text-sm md:text-base lg:text-lg font-semibold text-gray-900 text-left">{module.title}</h3>
                 </div>
                 <Icon 
                   name={openModule === index ? "ChevronUp" : "ChevronDown"} 
@@ -135,12 +135,12 @@ const BasicsMassageProgram = () => {
               </button>
               
               {openModule === index && (
-                <div className="px-6 pb-6">
-                  <ul className="space-y-2 ml-14">
+                <div className="px-4 md:px-6 pb-4 md:pb-6">
+                  <ul className="space-y-2 ml-0 md:ml-14">
                     {module.topics.map((topic, topicIndex) => (
                       <li key={topicIndex} className="flex items-start gap-2">
-                        <Icon name="CheckCircle2" size={18} className="text-blue-600 mt-1 flex-shrink-0" />
-                        <span className="text-gray-700">{topic}</span>
+                        <Icon name="CheckCircle2" size={16} className="text-blue-600 mt-0.5 flex-shrink-0" />
+                        <span className="text-sm md:text-base text-gray-700">{topic}</span>
                       </li>
                     ))}
                   </ul>
