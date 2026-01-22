@@ -116,6 +116,7 @@ const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
 const PaymentFailed = lazy(() => import("./pages/PaymentFailed"));
 const PaymentProcessing = lazy(() => import("./pages/PaymentProcessing"));
 const ToolsLanding = lazy(() => import("./pages/ToolsLanding"));
+const Contact = lazy(() => import("./pages/Contact"));
 
 const queryClient = new QueryClient();
 
@@ -240,6 +241,7 @@ const App = () => (
           <Route path="/payment/success" element={<PaymentSuccess />} />
           <Route path="/payment/failed" element={<PaymentFailed />} />
           <Route path="/tools" element={<ToolsLanding />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
