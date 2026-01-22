@@ -107,13 +107,13 @@ const PregnancyPrograms = () => {
   ];
 
   return (
-    <section className="py-20 px-4 bg-gradient-to-b from-white to-emerald-50">
+    <section className="py-12 md:py-20 px-4 bg-gradient-to-b from-white to-emerald-50">
       <div className="container mx-auto max-w-6xl">
-        <h2 className="text-4xl md:text-5xl font-bold text-center mb-8 text-gray-900">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 md:mb-8 text-gray-900">
           Какую программу выбрать?
         </h2>
         
-        <p className="text-xl text-gray-700 text-center mb-12">
+        <p className="text-base md:text-lg lg:text-xl text-gray-700 mb-8 md:mb-12">
           В тренинге представлены 3 уровня нагрузки, чтобы каждая женщина могла выбрать комфортный формат.
         </p>
 
@@ -130,33 +130,33 @@ const PregnancyPrograms = () => {
               <div key={index} className="bg-white rounded-2xl shadow-lg overflow-hidden">
                 <button
                   onClick={() => setOpenProgram(isOpen ? null : index)}
-                  className="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  className="w-full p-4 md:p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className={`p-3 bg-gradient-to-br ${colorClasses[program.color as keyof typeof colorClasses]} rounded-xl`}>
-                      <Icon name={program.icon as any} size={28} className="text-white" />
+                  <div className="flex items-center gap-3 md:gap-4">
+                    <div className={`p-2 md:p-3 bg-gradient-to-br ${colorClasses[program.color as keyof typeof colorClasses]} rounded-xl`}>
+                      <Icon name={program.icon as any} size={24} className="text-white" />
                     </div>
                     <div className="text-left">
-                      <h3 className="text-2xl font-bold text-gray-900">{program.title}</h3>
-                      <p className="text-gray-600 mt-1">{program.subtitle}</p>
+                      <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900">{program.title}</h3>
+                      <p className="text-sm md:text-base text-gray-600 mt-0.5 md:mt-1">{program.subtitle}</p>
                     </div>
                   </div>
                   <Icon 
                     name={isOpen ? "ChevronUp" : "ChevronDown"} 
-                    size={28} 
+                    size={24} 
                     className="text-gray-400"
                   />
                 </button>
 
                 {isOpen && (
-                  <div className="px-6 pb-6">
-                    <div className="bg-gray-50 p-6 rounded-xl mb-6">
-                      <h4 className="font-bold text-gray-900 mb-3">Подходит:</h4>
+                  <div className="px-4 md:px-6 pb-4 md:pb-6">
+                    <div className="bg-gray-50 p-4 md:p-6 rounded-xl mb-4 md:mb-6">
+                      <h4 className="text-base md:text-lg font-bold text-gray-900 mb-2 md:mb-3">Подходит:</h4>
                       <ul className="space-y-2">
                         {program.suitableFor.map((item, i) => (
                           <li key={i} className="flex items-start gap-2">
                             <Icon name="Check" size={20} className="text-emerald-600 flex-shrink-0 mt-0.5" />
-                            <span className="text-gray-700">{item}</span>
+                            <span className="text-sm md:text-base text-gray-700">{item}</span>
                           </li>
                         ))}
                       </ul>
@@ -164,9 +164,9 @@ const PregnancyPrograms = () => {
 
                     <div className="space-y-4">
                       {program.workouts.map((workout, i) => (
-                        <div key={i} className="bg-gradient-to-br from-emerald-50 to-teal-50 p-5 rounded-xl">
-                          <h5 className="font-bold text-gray-900 mb-2">{workout.name}</h5>
-                          <p className="text-gray-700 mb-3">{workout.accent}</p>
+                        <div key={i} className="bg-gradient-to-br from-emerald-50 to-teal-50 p-4 md:p-5 rounded-xl">
+                          <h5 className="text-sm md:text-base font-bold text-gray-900 mb-1.5 md:mb-2">{workout.name}</h5>
+                          <p className="text-xs md:text-sm text-gray-700 mb-2 md:mb-3">{workout.accent}</p>
                           {workout.goals.length > 0 && (
                             <ul className="space-y-1">
                               {workout.goals.map((goal, j) => (
