@@ -3,24 +3,24 @@ import Icon from "@/components/ui/icon";
 
 const AdvancedMassageCTA = () => {
   return (
-    <section className="py-20 px-4 bg-gradient-to-br from-purple-600 via-fuchsia-600 to-pink-700">
+    <section className="py-12 md:py-20 px-4 bg-gradient-to-br from-purple-600 via-fuchsia-600 to-pink-700">
       <div className="container mx-auto max-w-4xl">
         <div className="text-center text-white">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6">
             Готовы выйти на новый уровень?
           </h2>
-          <p className="text-xl mb-8 text-white/90 max-w-2xl mx-auto">
+          <p className="text-base md:text-lg lg:text-xl mb-6 md:mb-8 text-white/90 max-w-2xl mx-auto">
             Освойте продвинутые техники восстановительного массажа и работайте с первопричинами дисфункций
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="text-lg px-8 py-6 bg-white text-primary hover:bg-gray-100" asChild>
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
+            <Button size="lg" className="text-base md:text-lg px-6 md:px-8 py-4 md:py-6 bg-white text-primary hover:bg-gray-100" asChild>
               <a href="https://school.brossok.ru/buy/5" target="_blank" rel="noopener noreferrer">
                 <Icon name="Play" size={20} className="mr-2" />
                 Записаться на курс
               </a>
             </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-2 border-white bg-transparent text-white hover:bg-white hover:text-primary" asChild>
+            <Button size="lg" variant="outline" className="text-base md:text-lg px-6 md:px-8 py-4 md:py-6 border-2 border-white bg-transparent text-white hover:bg-white hover:text-primary" asChild>
               <a href="https://t.me/docdialogs_bot" target="_blank" rel="noopener noreferrer">
                 <Icon name="MessageCircle" size={20} className="mr-2" />
                 Задать вопрос

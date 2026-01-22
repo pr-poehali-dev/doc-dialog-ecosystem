@@ -77,13 +77,13 @@ const AdvancedMassageProgram = () => {
   ];
 
   return (
-    <section className="py-20 px-4 bg-white">
+    <section className="py-12 md:py-20 px-4 bg-white">
       <div className="container mx-auto max-w-5xl">
-        <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 text-gray-900">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-8 md:mb-12 text-gray-900">
           Программа курса
         </h2>
         
-        <div className="space-y-4">
+        <div className="space-y-3 md:space-y-4">
           {modules.map((module, index) => (
             <div 
               key={index}
@@ -91,13 +91,13 @@ const AdvancedMassageProgram = () => {
             >
               <button
                 onClick={() => setOpenModule(openModule === index ? null : index)}
-                className="w-full p-6 flex items-center justify-between text-left hover:bg-purple-50 transition-colors"
+                className="w-full p-4 md:p-6 flex items-center justify-between text-left hover:bg-purple-50 transition-colors"
               >
-                <div className="flex items-center gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-purple-600 to-fuchsia-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                <div className="flex items-center gap-3 md:gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-purple-600 to-fuchsia-600 rounded-full flex items-center justify-center text-white font-bold text-base md:text-lg">
                     {index + 1}
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900">{module.title}</h3>
+                  <h3 className="text-base md:text-lg lg:text-xl font-bold text-gray-900">{module.title}</h3>
                 </div>
                 <Icon 
                   name={openModule === index ? "ChevronUp" : "ChevronDown"} 
@@ -107,12 +107,12 @@ const AdvancedMassageProgram = () => {
               </button>
               
               {openModule === index && (
-                <div className="px-6 pb-6 bg-gradient-to-br from-purple-50 to-fuchsia-50">
-                  <ul className="space-y-3">
+                <div className="px-4 md:px-6 pb-4 md:pb-6 bg-gradient-to-br from-purple-50 to-fuchsia-50">
+                  <ul className="space-y-2 md:space-y-3">
                     {module.topics.map((topic, topicIndex) => (
-                      <li key={topicIndex} className="flex items-start gap-3">
-                        <Icon name="CheckCircle2" size={20} className="text-purple-600 flex-shrink-0 mt-1" />
-                        <span className="text-gray-700">{topic}</span>
+                      <li key={topicIndex} className="flex items-start gap-2 md:gap-3">
+                        <Icon name="CheckCircle2" size={18} className="text-purple-600 flex-shrink-0 mt-0.5 md:mt-1" />
+                        <span className="text-sm md:text-base text-gray-700">{topic}</span>
                       </li>
                     ))}
                   </ul>

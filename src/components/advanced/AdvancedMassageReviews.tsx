@@ -91,13 +91,13 @@ const AdvancedMassageReviews = () => {
   };
 
   return (
-    <section className="py-20 px-4 bg-gradient-to-b from-white to-gray-50">
+    <section className="py-12 md:py-20 px-4 bg-gradient-to-b from-white to-gray-50">
       <div className="container mx-auto max-w-7xl">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
+        <div className="text-center mb-8 md:mb-12">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 text-gray-900">
             Отзывы выпускников
           </h2>
-          <p className="text-xl text-gray-600">
+          <p className="text-base md:text-lg lg:text-xl text-gray-600">
             Реальный опыт специалистов, которые прошли продвинутый курс
           </p>
         </div>
@@ -105,7 +105,7 @@ const AdvancedMassageReviews = () => {
         <div className="relative">
           <button
             onClick={() => scroll('left')}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white rounded-full p-3 shadow-lg hover:bg-gray-50 transition-colors"
+            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white rounded-full p-3 shadow-lg hover:bg-gray-50 transition-colors items-center justify-center"
             aria-label="Предыдущий отзыв"
           >
             <Icon name="ChevronLeft" size={24} className="text-gray-700" />
@@ -113,19 +113,19 @@ const AdvancedMassageReviews = () => {
 
           <div
             ref={scrollContainerRef}
-            className="flex gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4"
+            className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {reviews.map((review, index) => (
               <div
                 key={index}
-                className="flex-shrink-0 w-[400px] bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow snap-start border border-purple-100"
+                className="flex-shrink-0 w-[280px] sm:w-[320px] md:w-[400px] bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow snap-start border border-purple-100"
               >
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-4">
+                <div className="p-4 md:p-6">
+                  <div className="flex items-start justify-between mb-3 md:mb-4">
                     <div>
-                      <h3 className="font-bold text-lg text-gray-900">{review.name}</h3>
-                      <p className="text-sm text-gray-600">{review.specialty}</p>
+                      <h3 className="font-bold text-base md:text-lg text-gray-900">{review.name}</h3>
+                      <p className="text-xs md:text-sm text-gray-600">{review.specialty}</p>
                     </div>
                     <div className="flex gap-1">
                       {Array.from({ length: review.rating }).map((_, i) => (
@@ -134,14 +134,14 @@ const AdvancedMassageReviews = () => {
                     </div>
                   </div>
 
-                  <p className="text-gray-700 leading-relaxed mb-4">
+                  <p className="text-sm md:text-base text-gray-700 leading-relaxed mb-3 md:mb-4">
                     {review.text}
                   </p>
 
-                  <div className="pt-4 border-t border-gray-100">
+                  <div className="pt-3 md:pt-4 border-t border-gray-100">
                     <div className="flex items-center gap-2 text-purple-600">
-                      <Icon name="CheckCircle2" size={18} />
-                      <span className="font-medium text-sm">{review.result}</span>
+                      <Icon name="CheckCircle2" size={16} />
+                      <span className="font-medium text-xs md:text-sm">{review.result}</span>
                     </div>
                   </div>
                 </div>
@@ -151,15 +151,15 @@ const AdvancedMassageReviews = () => {
 
           <button
             onClick={() => scroll('right')}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white rounded-full p-3 shadow-lg hover:bg-gray-50 transition-colors"
+            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white rounded-full p-3 shadow-lg hover:bg-gray-50 transition-colors items-center justify-center"
             aria-label="Следующий отзыв"
           >
             <Icon name="ChevronRight" size={24} className="text-gray-700" />
           </button>
         </div>
 
-        <div className="text-center mt-8">
-          <p className="text-gray-600">
+        <div className="text-center mt-6 md:mt-8">
+          <p className="text-sm md:text-base text-gray-600">
             Листайте отзывы или используйте мышку для прокрутки →
           </p>
         </div>
