@@ -67,12 +67,12 @@ const CorrectionReviews = () => {
   ];
 
   return (
-    <section className="py-20 px-4 bg-white">
+    <section className="py-12 md:py-20 px-4 bg-white">
       <div className="container mx-auto max-w-7xl">
-        <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 text-gray-900">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
           Отзывы участников
         </h2>
-        <p className="text-center text-gray-600 mb-12 text-lg">
+        <p className="text-gray-600 mb-8 md:mb-12 text-base md:text-lg font-medium">
           Реальные результаты специалистов после курса
         </p>
 
@@ -88,29 +88,29 @@ const CorrectionReviews = () => {
 
           <div 
             ref={scrollContainerRef}
-            className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
+            className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {reviews.map((review, index) => (
               <div
                 key={index}
-                className="flex-shrink-0 w-[350px] bg-gradient-to-br from-rose-50 to-pink-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all"
+                className="flex-shrink-0 w-[280px] sm:w-[320px] md:w-[350px] bg-gradient-to-br from-rose-50 via-pink-50 to-fuchsia-50 p-4 md:p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all border border-rose-100/50"
               >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-rose-600 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-white font-bold text-lg">
+                <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+                  <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-rose-600 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
+                    <span className="text-white font-bold text-base md:text-lg">
                       {review.name.charAt(0)}
                     </span>
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900">{review.name}</h3>
+                    <h3 className="text-sm md:text-base font-bold text-gray-900">{review.name}</h3>
                     <p className="text-sm text-gray-600">{review.specialty}</p>
                   </div>
                 </div>
-                <p className="text-gray-700 leading-relaxed">{review.text}</p>
-                <div className="flex gap-1 mt-4">
+                <p className="text-xs md:text-sm text-gray-700 leading-relaxed">{review.text}</p>
+                <div className="flex gap-1 mt-3 md:mt-4">
                   {[...Array(5)].map((_, i) => (
-                    <Icon key={i} name="Star" size={16} className="text-amber-400 fill-amber-400" />
+                    <Icon key={i} name="Star" size={14} className="text-amber-400 fill-amber-400" />
                   ))}
                 </div>
               </div>
@@ -127,7 +127,7 @@ const CorrectionReviews = () => {
           </Button>
         </div>
 
-        <p className="text-center text-gray-500 mt-8 text-sm">
+        <p className="text-center text-gray-500 mt-6 md:mt-8 text-xs md:text-sm">
           Прокрутите, чтобы увидеть больше отзывов →
         </p>
       </div>
