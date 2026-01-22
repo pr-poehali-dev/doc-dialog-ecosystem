@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
 import SchoolsFooter from "@/components/schools/SchoolsFooter";
+import PlatformHeader from "@/components/platform/PlatformHeader";
 import { useNavigate } from "react-router-dom";
 
 const ToolsLanding = () => {
@@ -70,8 +71,10 @@ const ToolsLanding = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30">
+      <PlatformHeader />
+      
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden pt-16">
         <div className="absolute inset-0">
           <img 
             src="https://cdn.poehali.dev/files/3b1b03fe-2310-4289-ab50-fcf2d3334a04.jpg" 

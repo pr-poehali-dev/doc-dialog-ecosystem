@@ -117,6 +117,7 @@ const PaymentFailed = lazy(() => import("./pages/PaymentFailed"));
 const PaymentProcessing = lazy(() => import("./pages/PaymentProcessing"));
 const ToolsLanding = lazy(() => import("./pages/ToolsLanding"));
 const Contact = lazy(() => import("./pages/Contact"));
+const CoursesRedirect = lazy(() => import("./pages/CoursesRedirect"));
 
 const queryClient = new QueryClient();
 
@@ -236,6 +237,7 @@ const App = () => (
           <Route path="/forum/category/:categoryId" element={<Forum />} />
           <Route path="/forum/topic/:topicId" element={<ForumTopic />} />
           <Route path="/education-platform" element={<EducationPlatform />} />
+          <Route path="/courses" element={<CoursesRedirect />} />
           <Route path="/partner-program" element={<PartnerProgram />} />
           <Route path="/payment/processing" element={<PaymentProcessing />} />
           <Route path="/payment/success" element={<PaymentSuccess />} />
