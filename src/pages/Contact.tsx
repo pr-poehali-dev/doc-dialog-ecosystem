@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
+import SchoolsFooter from "@/components/schools/SchoolsFooter";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -164,6 +165,8 @@ const Contact = () => {
           </Card>
         </div>
       </div>
+
+      <SchoolsFooter />
     </div>
   );
 };
