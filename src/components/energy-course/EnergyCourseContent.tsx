@@ -39,11 +39,12 @@ export default function EnergyCourseContent() {
 
           <div className="grid lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12 lg:gap-16 items-center">
             <div className="order-2 lg:order-1">
-              <div className="w-full aspect-[3/4] bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 rounded-2xl sm:rounded-3xl border-2 sm:border-4 border-indigo-200 flex items-center justify-center shadow-2xl">
-                <div className="text-center">
-                  <Icon name="User" size={64} className="mx-auto mb-2 text-indigo-300 sm:w-20 sm:h-20 md:w-24 md:h-24" />
-                  <p className="text-gray-600 text-sm sm:text-base">Фото Сергея Водопьянова</p>
-                </div>
+              <div className="w-full aspect-[3/4] rounded-2xl sm:rounded-3xl border-2 sm:border-4 border-indigo-200 overflow-hidden shadow-2xl">
+                <img 
+                  src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/bucket/c7cae210-3f9f-415d-915e-2e190e35bf81.png"
+                  alt="Сергей Водопьянов"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
 
