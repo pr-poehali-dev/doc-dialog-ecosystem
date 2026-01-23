@@ -118,6 +118,7 @@ const PaymentProcessing = lazy(() => import("./pages/PaymentProcessing"));
 const ToolsLanding = lazy(() => import("./pages/ToolsLanding"));
 const Contact = lazy(() => import("./pages/Contact"));
 const CoursesRedirect = lazy(() => import("./pages/CoursesRedirect"));
+const EnergyCourse = lazy(() => import("./pages/EnergyCourse"));
 
 const queryClient = new QueryClient();
 
@@ -244,6 +245,7 @@ const App = () => (
           <Route path="/payment/failed" element={<PaymentFailed />} />
           <Route path="/tools" element={<ToolsLanding />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/energy-course" element={<EnergyCourse />} />
           <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
