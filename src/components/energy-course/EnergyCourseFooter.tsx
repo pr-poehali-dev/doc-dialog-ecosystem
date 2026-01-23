@@ -7,23 +7,25 @@ export default function EnergyCourseFooter() {
 
   return (
     <>
-      <section className="py-12 md:py-20 px-4 bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMC41IiBvcGFjaXR5PSIwLjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-20"></div>
+      <section className="py-16 sm:py-20 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-950 via-purple-900 to-slate-900 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(120,119,198,0.3),transparent_50%),radial-gradient(circle_at_80%_80%,rgba(168,85,247,0.2),transparent_50%)]"></div>
         
-        <div className="container mx-auto max-w-4xl relative z-10">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-              Готовы работать из наполненного состояния?
+        <div className="container mx-auto max-w-5xl relative z-10">
+          <div className="text-center mb-10 sm:mb-12 md:mb-16">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 sm:mb-8 leading-tight">
+              <span className="bg-gradient-to-r from-white via-purple-100 to-indigo-200 bg-clip-text text-transparent">
+                Готовы работать из наполненного состояния?
+              </span>
             </h2>
-            <p className="text-xl text-purple-200 mb-8">
+            <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-purple-200 font-light">
               Запишитесь на курс или задайте вопросы в Telegram
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+          <div className="flex flex-col sm:flex-row gap-5 sm:gap-6 max-w-3xl mx-auto">
             <Button 
               size="lg"
-              className="text-lg px-10 py-7 bg-white text-indigo-900 hover:bg-gray-100 shadow-2xl hover:shadow-white/50 transition-all"
+              className="w-full sm:flex-1 text-base sm:text-lg md:text-xl px-8 sm:px-10 py-6 sm:py-7 md:py-8 bg-white text-indigo-900 hover:bg-gray-50 shadow-2xl hover:shadow-white/50 transition-all duration-300 hover:scale-105 font-semibold"
               onClick={() => window.open('https://t.me/docdialog', '_blank')}
             >
               <Icon name="Rocket" size={22} className="mr-2" />
@@ -32,7 +34,7 @@ export default function EnergyCourseFooter() {
             <Button 
               size="lg"
               variant="outline"
-              className="text-lg px-10 py-7 border-2 border-white bg-white/10 backdrop-blur-md text-white hover:bg-white/20"
+              className="w-full sm:flex-1 text-base sm:text-lg md:text-xl px-8 sm:px-10 py-6 sm:py-7 md:py-8 border-2 border-white bg-white/5 backdrop-blur-xl text-white hover:bg-white/15 transition-all duration-300 hover:scale-105 font-semibold"
               onClick={() => window.open('https://t.me/docdialog_bot', '_blank')}
             >
               <Icon name="MessageCircle" size={22} className="mr-2" />
