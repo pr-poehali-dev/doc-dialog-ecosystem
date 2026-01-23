@@ -154,8 +154,14 @@ export default function ProfessionalFooter() {
                 <p>ОГРНИП 321508100047334</p>
               </div>
               <div className="flex items-center gap-4">
-                <a href="https://t.me/SergeuVodopianov" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition-colors">
-                  <Icon name="MessageCircle" size={20} />
+                <a 
+                  href="https://t.me/docdialog" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
+                >
+                  <Icon name="Send" size={20} className="text-primary" />
+                  <span className="text-sm font-medium text-primary">Telegram</span>
                 </a>
               </div>
             </div>
