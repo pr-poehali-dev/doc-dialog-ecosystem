@@ -42,82 +42,82 @@ const MastermindTariffs = () => {
   ];
 
   return (
-    <section className="py-20 px-4 bg-gradient-to-b from-gray-50 to-white">
+    <section className="py-12 md:py-20 px-4 bg-gradient-to-b from-gray-50 to-white">
       <div className="container mx-auto max-w-6xl">
-        <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 text-gray-900">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-8 md:mb-12 bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
           Форматы участия и тарифы
         </h2>
         
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid lg:grid-cols-2 gap-6 md:gap-8">
           {tariffs.map((tariff, index) => (
             <div 
               key={index}
-              className="bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-emerald-100 hover:shadow-2xl transition-shadow"
+              className="bg-gradient-to-br from-white to-emerald-50 rounded-2xl shadow-xl overflow-hidden border border-emerald-200 hover:shadow-2xl transition-all hover:-translate-y-1"
             >
-              <div className={`bg-gradient-to-r ${tariff.gradient} p-6 text-white`}>
-                <h3 className="text-2xl font-bold mb-4">{tariff.name}</h3>
-                <ul className="space-y-2">
+              <div className={`bg-gradient-to-r ${tariff.gradient} p-4 md:p-6 text-white`}>
+                <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4">{tariff.name}</h3>
+                <ul className="space-y-1.5 md:space-y-2">
                   {tariff.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start gap-2">
-                      <Icon name="CheckCircle2" size={18} className="mt-1 flex-shrink-0" />
-                      <span>{feature}</span>
+                    <li key={idx} className="flex items-start gap-1.5 md:gap-2">
+                      <Icon name="CheckCircle2" size={16} className="mt-0.5 flex-shrink-0" />
+                      <span className="text-sm md:text-base">{feature}</span>
                     </li>
                   ))}
                 </ul>
               </div>
               
-              <div className="p-6 space-y-4">
-                <div className="flex items-start gap-3">
-                  <Icon name="MapPin" size={20} className="text-emerald-600 mt-1 flex-shrink-0" />
+              <div className="p-4 md:p-6 space-y-3 md:space-y-4">
+                <div className="flex items-start gap-2 md:gap-3">
+                  <Icon name="MapPin" size={18} className="text-emerald-600 mt-0.5 md:mt-1 flex-shrink-0" />
                   <div>
-                    <p className="text-sm text-gray-600">Адрес:</p>
-                    <p className="font-semibold text-gray-900">{tariff.location}</p>
+                    <p className="text-xs md:text-sm text-gray-600">Адрес:</p>
+                    <p className="text-sm md:text-base font-semibold text-gray-900">{tariff.location}</p>
                   </div>
                 </div>
                 
-                <div className="flex items-start gap-3">
-                  <Icon name="Calendar" size={20} className="text-emerald-600 mt-1 flex-shrink-0" />
+                <div className="flex items-start gap-2 md:gap-3">
+                  <Icon name="Calendar" size={18} className="text-emerald-600 mt-0.5 md:mt-1 flex-shrink-0" />
                   <div>
-                    <p className="text-sm text-gray-600">Дата:</p>
-                    <p className="font-semibold text-gray-900">{tariff.date}</p>
+                    <p className="text-xs md:text-sm text-gray-600">Дата:</p>
+                    <p className="text-sm md:text-base font-semibold text-gray-900">{tariff.date}</p>
                   </div>
                 </div>
                 
-                <div className="flex items-start gap-3">
-                  <Icon name="Clock" size={20} className="text-emerald-600 mt-1 flex-shrink-0" />
+                <div className="flex items-start gap-2 md:gap-3">
+                  <Icon name="Clock" size={18} className="text-emerald-600 mt-0.5 md:mt-1 flex-shrink-0" />
                   <div>
-                    <p className="text-sm text-gray-600">Время:</p>
-                    <p className="font-semibold text-gray-900">{tariff.time}</p>
+                    <p className="text-xs md:text-sm text-gray-600">Время:</p>
+                    <p className="text-sm md:text-base font-semibold text-gray-900">{tariff.time}</p>
                   </div>
                 </div>
                 
-                <div className="border-t pt-4 mt-4">
+                <div className="border-t border-emerald-100 pt-3 md:pt-4 mt-3 md:mt-4">
                   <div className="flex items-baseline justify-between mb-2">
-                    <span className="text-lg text-gray-600">Стоимость:</span>
-                    <span className="text-3xl font-bold text-emerald-600">{tariff.price}</span>
+                    <span className="text-base md:text-lg text-gray-600">Стоимость:</span>
+                    <span className="text-2xl md:text-3xl font-bold text-emerald-600">{tariff.price}</span>
                   </div>
                   
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-2 md:p-3 mb-3 md:mb-4">
                     <p className="text-sm font-medium text-yellow-800 flex items-center gap-2">
                       <Icon name="AlertCircle" size={16} />
                       Осталось: <span className="font-bold">{tariff.spots}</span>
                     </p>
                   </div>
                   
-                  <div className="bg-gray-50 rounded-lg p-3 mb-4">
-                    <p className="text-sm text-gray-700">
+                  <div className="bg-gray-50 rounded-lg p-2 md:p-3 mb-3 md:mb-4">
+                    <p className="text-xs md:text-sm text-gray-700">
                       Предоплата: <span className="font-bold text-gray-900">{tariff.prepayment}</span>
                     </p>
-                    <p className="text-xs text-gray-600 mt-1">({tariff.note})</p>
+                    <p className="text-[10px] md:text-xs text-gray-600 mt-1">({tariff.note})</p>
                   </div>
                   
                   <Button 
                     size="lg" 
-                    className="w-full text-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700" 
+                    className="w-full text-base md:text-lg py-4 md:py-6 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-lg hover:shadow-xl transition-all" 
                     asChild
                   >
                     <a href={tariff.url || "https://t.me/docdialogs_bot"} target="_blank" rel="noopener noreferrer">
-                      <Icon name="Calendar" size={20} className="mr-2" />
+                      <Icon name="Calendar" size={18} className="mr-2" />
                       Забронировать место
                     </a>
                   </Button>
