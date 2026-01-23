@@ -26,7 +26,7 @@ export default function EnergyCourseFooter() {
             <Button 
               size="lg"
               className="w-full sm:flex-1 text-base sm:text-lg md:text-xl px-8 sm:px-10 py-6 sm:py-7 md:py-8 bg-white text-indigo-900 hover:bg-gray-50 shadow-2xl hover:shadow-white/50 transition-all duration-300 hover:scale-105 font-semibold"
-              onClick={() => window.open('https://t.me/docdialog', '_blank')}
+              onClick={() => window.open('https://school.brossok.ru/buy/61', '_blank')}
             >
               <Icon name="Rocket" size={22} className="mr-2" />
               Записаться на курс
