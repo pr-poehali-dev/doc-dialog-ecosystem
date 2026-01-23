@@ -78,19 +78,19 @@ const BrandCourseReviews = () => {
   ];
 
   return (
-    <section className="py-20 px-4 bg-gradient-to-b from-indigo-50 via-purple-50 to-pink-50">
+    <section className="py-12 md:py-20 px-4 bg-gradient-to-b from-indigo-50 via-purple-50 to-pink-50">
       <div className="container mx-auto max-w-7xl">
-        <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 text-gray-900">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-3 md:mb-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
           Истории успеха
         </h2>
-        <p className="text-xl text-center text-gray-600 mb-12">
+        <p className="text-base md:text-lg lg:text-xl text-center text-gray-600 mb-8 md:mb-12">
           Как массажисты создали личный бренд и увеличили доход
         </p>
 
         <div className="relative">
           <button
             onClick={() => scroll('left')}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-shadow"
+            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white rounded-full p-3 shadow-lg hover:bg-indigo-50 transition-all items-center justify-center"
             aria-label="Предыдущий отзыв"
           >
             <Icon name="ChevronLeft" size={24} className="text-primary" />
@@ -98,25 +98,25 @@ const BrandCourseReviews = () => {
 
           <div
             ref={scrollRef}
-            className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory pb-4"
+            className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory pb-4"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {reviews.map((review, index) => (
               <div
                 key={index}
-                className="flex-shrink-0 w-[350px] snap-start bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow border border-primary/20"
+                className="flex-shrink-0 w-[280px] sm:w-[320px] md:w-[350px] snap-start bg-gradient-to-br from-white to-indigo-50 p-4 md:p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border border-indigo-200"
               >
-                <div className="flex gap-1 mb-4">
+                <div className="flex gap-0.5 md:gap-1 mb-3 md:mb-4">
                   {[...Array(review.rating)].map((_, i) => (
-                    <Icon key={i} name="Star" size={20} className="text-yellow-400 fill-yellow-400" />
+                    <Icon key={i} name="Star" size={16} className="text-yellow-400 fill-yellow-400" />
                   ))}
                 </div>
                 
-                <p className="text-gray-700 mb-4 leading-relaxed">{review.text}</p>
+                <p className="text-sm md:text-base text-gray-700 mb-3 md:mb-4 leading-relaxed">{review.text}</p>
                 
-                <div className="border-t border-primary/10 pt-4">
-                  <p className="font-bold text-gray-900">{review.name}</p>
-                  <p className="text-sm text-primary/80">{review.specialty}</p>
+                <div className="border-t border-indigo-200 pt-3 md:pt-4">
+                  <p className="text-sm md:text-base font-bold text-gray-900">{review.name}</p>
+                  <p className="text-xs md:text-sm text-primary">{review.specialty}</p>
                 </div>
               </div>
             ))}
@@ -124,15 +124,15 @@ const BrandCourseReviews = () => {
 
           <button
             onClick={() => scroll('right')}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-shadow"
+            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white rounded-full p-3 shadow-lg hover:bg-indigo-50 transition-all items-center justify-center"
             aria-label="Следующий отзыв"
           >
             <Icon name="ChevronRight" size={24} className="text-primary" />
           </button>
         </div>
 
-        <div className="text-center mt-8">
-          <p className="text-sm text-gray-500">← Пролистайте, чтобы прочитать все истории →</p>
+        <div className="text-center mt-6 md:mt-8">
+          <p className="text-xs md:text-sm text-gray-500">← Пролистайте, чтобы прочитать все истории →</p>
         </div>
       </div>
     </section>
