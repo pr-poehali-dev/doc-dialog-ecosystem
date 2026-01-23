@@ -114,7 +114,7 @@ export default function SalonsFooter() {
                 className="flex items-center gap-2 px-4 py-2 bg-secondary/10 hover:bg-secondary/20 rounded-lg transition-colors"
               >
                 <Icon name="Bot" size={20} className="text-secondary" />
-                <span className="text-sm font-medium text-secondary">Бот</span>
+                <span className="text-sm font-medium text-secondary">Тех поддержка</span>
               </a>
             </div>
           </div>

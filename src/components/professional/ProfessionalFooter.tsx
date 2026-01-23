@@ -170,7 +170,7 @@ export default function ProfessionalFooter() {
                   className="flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
                 >
                   <Icon name="Bot" size={20} className="text-primary" />
-                  <span className="text-sm font-medium text-primary">Бот</span>
+                  <span className="text-sm font-medium text-primary">Тех поддержка</span>
                 </a>
               </div>
             </div>
