@@ -35,7 +35,7 @@ export default function EnergyCourseFooter() {
               size="lg"
               variant="outline"
               className="w-full sm:flex-1 text-base sm:text-lg md:text-xl px-8 sm:px-10 py-6 sm:py-7 md:py-8 border-2 border-white bg-white/5 backdrop-blur-xl text-white hover:bg-white/15 transition-all duration-300 hover:scale-105 font-semibold"
-              onClick={() => window.open('https://t.me/docdialog_bot', '_blank')}
+              onClick={() => window.open('https://t.me/SergeuVodopianov', '_blank')}
             >
               <Icon name="MessageCircle" size={22} className="mr-2" />
               Задать вопрос
