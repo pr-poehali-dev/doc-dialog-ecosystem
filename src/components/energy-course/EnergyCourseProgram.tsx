@@ -199,7 +199,7 @@ export default function EnergyCourseProgram() {
             <Button 
               size="lg"
               variant="outline"
-              className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-5 border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50 transition-all duration-300 hover:scale-105 font-semibold"
+              className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-5 border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all duration-300 hover:scale-105 font-semibold"
               onClick={() => window.open('https://t.me/SergeuVodopianov', '_blank')}
             >
               <Icon name="MessageCircle" size={20} className="mr-2" />
