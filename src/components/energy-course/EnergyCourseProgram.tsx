@@ -1,4 +1,5 @@
 import Icon from "@/components/ui/icon";
+import { Button } from "@/components/ui/button";
 
 export default function EnergyCourseProgram() {
   return (
@@ -193,8 +194,17 @@ export default function EnergyCourseProgram() {
             </div>
           </div>
 
-          <div className="mt-8 sm:mt-10 md:mt-12 text-center">
+          <div className="mt-8 sm:mt-10 md:mt-12 text-center space-y-5">
             <p className="text-gray-600 text-base sm:text-lg md:text-xl font-medium">Количество мест ограничено — до 12 человек</p>
+            <Button 
+              size="lg"
+              variant="outline"
+              className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-5 border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50 transition-all duration-300 hover:scale-105 font-semibold"
+              onClick={() => window.open('https://t.me/SergeuVodopianov', '_blank')}
+            >
+              <Icon name="MessageCircle" size={20} className="mr-2" />
+              Узнать какой формат подойдёт вам
+            </Button>
           </div>
         </div>
       </section>
