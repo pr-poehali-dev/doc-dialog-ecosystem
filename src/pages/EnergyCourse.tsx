@@ -10,9 +10,7 @@ export default function EnergyCourse() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50">
       <Navigation />
       {/* Hero Section */}
-      <section className="relative overflow-hidden text-white">
-        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('https://cdn.poehali.dev/files/c4a567cf-dd31-4be5-b8bd-ae29a34a75f3.jpg')" }}></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/80 via-purple-900/70 to-slate-900/80"></div>
+      <section className="relative overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 text-white">
         
         <div className="container mx-auto px-4 py-12 md:py-20 relative z-10">
           <div className="max-w-5xl mx-auto">
@@ -73,12 +71,13 @@ export default function EnergyCourse() {
                 </Button>
               </div>
 
-              {/* Image placeholder */}
-              <div className="w-full max-w-3xl mx-auto h-64 md:h-96 bg-gradient-to-br from-purple-500/20 to-indigo-500/20 rounded-2xl border-2 border-white/30 flex items-center justify-center backdrop-blur-sm">
-                <div className="text-center">
-                  <Icon name="Image" size={48} className="mx-auto mb-2 text-white/50" />
-                  <p className="text-white/70 text-sm">Место под фото курса</p>
-                </div>
+              {/* Course Image */}
+              <div className="w-full max-w-3xl mx-auto rounded-2xl overflow-hidden shadow-2xl border-2 border-white/30">
+                <img 
+                  src="https://cdn.poehali.dev/files/02f130bb-5051-42e9-9e85-9687d255c359.jpg" 
+                  alt="Энергия в руках" 
+                  className="w-full h-auto object-cover"
+                />
               </div>
             </div>
           </div>
