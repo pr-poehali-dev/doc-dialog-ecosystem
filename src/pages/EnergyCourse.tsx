@@ -72,12 +72,13 @@ export default function EnergyCourse() {
               </div>
 
               {/* Course Image */}
-              <div className="w-full max-w-3xl mx-auto rounded-2xl overflow-hidden shadow-2xl border-2 border-white/30">
+              <div className="w-full max-w-3xl mx-auto rounded-2xl overflow-hidden shadow-2xl border-2 border-white/30 relative">
                 <img 
                   src="https://cdn.poehali.dev/files/02f130bb-5051-42e9-9e85-9687d255c359.jpg" 
                   alt="Энергия в руках" 
                   className="w-full h-auto object-cover"
                 />
+                <div className="absolute inset-0 bg-black/20"></div>
               </div>
             </div>
           </div>
