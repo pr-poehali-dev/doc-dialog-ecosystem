@@ -231,7 +231,8 @@ export default function EnergyCourse() {
               'Перестаёте «отдавать себя» клиентам',
               'Умеете наполнять клиента через поле',
               'Осваиваете работу с энергетическим двойником',
-              'Понимаете безопасную дистанционную работу'
+              'Понимаете безопасную дистанционную работу',
+              'Выстраиваете экологичные границы с клиентами'
             ].map((item, index) => (
               <div key={index} className="flex items-start gap-3 p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow">
                 <Icon name="Star" size={20} className="text-yellow-500 mt-1 flex-shrink-0 fill-yellow-500" />
