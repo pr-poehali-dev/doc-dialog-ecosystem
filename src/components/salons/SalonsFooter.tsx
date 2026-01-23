@@ -97,7 +97,7 @@ export default function SalonsFooter() {
               <p className="mt-1">ИП Водопьянов С.Г. ИНН 165045847936</p>
               <p>ОГРНИП 321508100047334</p>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <a 
                 href="https://t.me/docdialog" 
                 target="_blank" 
@@ -106,6 +106,15 @@ export default function SalonsFooter() {
               >
                 <Icon name="Send" size={20} className="text-secondary" />
                 <span className="text-sm font-medium text-secondary">Telegram</span>
+              </a>
+              <a 
+                href="https://t.me/docdialog_bot" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="flex items-center gap-2 px-4 py-2 bg-secondary/10 hover:bg-secondary/20 rounded-lg transition-colors"
+              >
+                <Icon name="Bot" size={20} className="text-secondary" />
+                <span className="text-sm font-medium text-secondary">Бот</span>
               </a>
             </div>
           </div>
