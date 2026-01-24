@@ -119,6 +119,7 @@ const ToolsLanding = lazy(() => import("./pages/ToolsLanding"));
 const Contact = lazy(() => import("./pages/Contact"));
 const CoursesRedirect = lazy(() => import("./pages/CoursesRedirect"));
 const EnergyCourse = lazy(() => import("./pages/EnergyCourse"));
+const DiagnosticLanding = lazy(() => import("./pages/DiagnosticLanding"));
 
 const queryClient = new QueryClient();
 
@@ -246,6 +247,7 @@ const App = () => (
           <Route path="/tools" element={<ToolsLanding />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/energy-course" element={<EnergyCourse />} />
+          <Route path="/diagnostic" element={<DiagnosticLanding />} />
           <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
