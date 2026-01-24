@@ -58,7 +58,7 @@ const DiagnosticLanding = () => {
           </div>
 
           <Button size="lg" className="text-lg px-8 py-6">
-            Начать диагностику
+            Узнать бесплатно
             <Icon name="ArrowRight" className="ml-2" size={20} />
           </Button>
         </div>
@@ -255,7 +255,7 @@ const DiagnosticLanding = () => {
             Перейди в чат-бот и узнай, <strong>что реально мешает тебе расти — и как это исправить</strong>
           </p>
           <Button size="lg" className="text-lg px-8 py-6">
-            Перейти в чат-бот
+            Узнать бесплатно
             <Icon name="ArrowRight" className="ml-2" size={20} />
           </Button>
         </div>
