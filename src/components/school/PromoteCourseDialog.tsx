@@ -147,6 +147,10 @@ export default function PromoteCourseDialog({
 
       if (response.ok) {
         const data = await response.json();
+        
+        // Обновляем баланс в BalanceCard
+        window.dispatchEvent(new Event('balanceUpdated'));
+        
         toast({
           title: 'Успешно!',
           description: `Курс поднят в топ до ${new Date(data.promoted_until).toLocaleDateString('ru-RU')}`

@@ -29,6 +29,16 @@ export default function BalanceCard() {
 
   useEffect(() => {
     loadBalance();
+    
+    // Слушаем событие обновления баланса
+    const handleBalanceUpdate = () => {
+      loadBalance();
+    };
+    window.addEventListener('balanceUpdated', handleBalanceUpdate);
+    
+    return () => {
+      window.removeEventListener('balanceUpdated', handleBalanceUpdate);
+    };
   }, []);
 
   const loadBalance = async () => {
