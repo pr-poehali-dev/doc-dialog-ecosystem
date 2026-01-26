@@ -40,10 +40,10 @@ const AIDialogs = () => {
   const navigate = useNavigate();
 
   const dialogTypes = [
+    { id: 'burnout', label: 'Опрос. Узнай, где ты сейчас на профессиональном уровне', icon: 'ClipboardList', color: 'from-yellow-500/20 to-yellow-500/10' },
     { id: 'supervision', label: 'Супервизия', icon: 'Users', color: 'from-blue-500/10 to-blue-500/5' },
     { id: 'case_analysis', label: 'Разбор случая', icon: 'FileText', color: 'from-purple-500/10 to-purple-500/5' },
     { id: 'boundaries', label: 'Границы', icon: 'Shield', color: 'from-green-500/10 to-green-500/5' },
-    { id: 'burnout', label: 'Опрос. Узнай, где ты сейчас на профессиональном уровне', icon: 'ClipboardList', color: 'from-yellow-500/20 to-yellow-500/10' },
     { id: 'growth', label: 'Развитие', icon: 'TrendingUp', color: 'from-orange-500/10 to-orange-500/5' }
   ];
 
