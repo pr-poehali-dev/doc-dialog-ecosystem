@@ -66,24 +66,40 @@ def handler(event: dict, context) -> dict:
                     'isBase64Encoded': False
                 }
             else:
-                # Получаем баланс пользователя
+                # Получаем баланс пользователя (проверяем school_balance для школ)
                 cur.execute(f"""
-                    SELECT balance 
-                    FROM {schema}.users 
-                    WHERE id = '{user_id}'
+                    SELECT s.id as school_id, sb.balance as school_balance
+                    FROM {schema}.schools s
+                    LEFT JOIN {schema}.school_balance sb ON sb.school_id = s.id
+                    WHERE s.user_id = {user_id}
                 """)
                 
-                user = cur.fetchone()
+                school = cur.fetchone()
                 
-                if not user:
-                    cur.close()
-                    conn.close()
-                    return {
-                        'statusCode': 404,
-                        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                        'body': json.dumps({'error': 'Пользователь не найден'}),
-                        'isBase64Encoded': False
-                    }
+                if school and school['school_balance'] is not None:
+                    # Пользователь является школой, возвращаем school_balance
+                    balance = float(school['school_balance'])
+                else:
+                    # Обычный пользователь, берём из users
+                    cur.execute(f"""
+                        SELECT balance 
+                        FROM {schema}.users 
+                        WHERE id = '{user_id}'
+                    """)
+                    
+                    user = cur.fetchone()
+                    
+                    if not user:
+                        cur.close()
+                        conn.close()
+                        return {
+                            'statusCode': 404,
+                            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                            'body': json.dumps({'error': 'Пользователь не найден'}),
+                            'isBase64Encoded': False
+                        }
+                    
+                    balance = float(user['balance']) if user['balance'] else 0
                 
                 cur.close()
                 conn.close()
@@ -92,7 +108,7 @@ def handler(event: dict, context) -> dict:
                     'statusCode': 200,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
                     'body': json.dumps({
-                        'balance': float(user['balance']) if user['balance'] else 0
+                        'balance': balance
                     }),
                     'isBase64Encoded': False
                 }
