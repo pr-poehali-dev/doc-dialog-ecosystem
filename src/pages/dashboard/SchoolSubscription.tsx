@@ -66,6 +66,38 @@ export default function SchoolSubscription() {
     }
   };
 
+  const handleRenewSubscription = async (planId: number) => {
+    try {
+      const userId = getUserId();
+      if (!userId) return;
+
+      const response = await fetch('https://functions.poehali.dev/f81f82f7-d9c7-4858-87bc-6701c67f2187?action=renew_subscription', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-User-Id': userId
+        },
+        body: JSON.stringify({ plan_id: planId })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Обновляем баланс в BalanceCard
+        window.dispatchEvent(new Event('balanceUpdated'));
+        
+        toast.success(`Подписка продлена до ${new Date(data.expires_at).toLocaleDateString('ru-RU')}`);
+        loadData();
+      } else {
+        const error = await response.json();
+        toast.error(error.error || 'Не удалось продлить подписку');
+      }
+    } catch (error) {
+      console.error('Failed to renew subscription:', error);
+      toast.error('Произошла ошибка при продлении подписки');
+    }
+  };
+
   const handleChangePlan = async (planId: number) => {
     try {
       const userId = getUserId();
@@ -129,7 +161,7 @@ export default function SchoolSubscription() {
               <CardTitle>Текущая подписка</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                   <h3 className="text-xl font-semibold mb-2">{subscription.plan.name}</h3>
                   <div className="space-y-1 text-sm text-gray-600">
@@ -140,14 +172,26 @@ export default function SchoolSubscription() {
                     <p>⭐ Продвижений в ТОП: {subscription.plan.top_promotions_limit === null ? '∞' : subscription.plan.top_promotions_limit}</p>
                   </div>
                   {subscription.expires_at && (
-                    <p className="mt-2 text-sm text-gray-500">
+                    <p className="mt-2 text-sm font-medium text-orange-600">
                       Активна до: {new Date(subscription.expires_at).toLocaleDateString('ru-RU')}
                     </p>
                   )}
                 </div>
-                <Badge variant={subscription.is_active ? 'default' : 'secondary'}>
-                  {subscription.is_active ? 'Активна' : 'Неактивна'}
-                </Badge>
+                <div className="flex flex-col gap-2">
+                  <Badge variant={subscription.is_active ? 'default' : 'secondary'}>
+                    {subscription.is_active ? 'Активна' : 'Неактивна'}
+                  </Badge>
+                  {subscription.plan.price > 0 && subscription.is_active && (
+                    <Button 
+                      size="sm" 
+                      onClick={() => handleRenewSubscription(subscription.plan.id)}
+                      className="whitespace-nowrap"
+                    >
+                      <Icon name="RefreshCw" size={16} className="mr-2" />
+                      Продлить на 30 дней
+                    </Button>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>

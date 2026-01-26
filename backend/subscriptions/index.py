@@ -344,6 +344,140 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
+    # POST /subscriptions?action=renew_subscription - Продление текущей подписки на 30 дней
+    if method == 'POST' and action == 'renew_subscription':
+        if not user_id:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 401,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'User ID required'}),
+                'isBase64Encoded': False
+            }
+        
+        body = json.loads(event.get('body', '{}'))
+        plan_id = body.get('plan_id')
+        
+        if not plan_id:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'plan_id required'}),
+                'isBase64Encoded': False
+            }
+        
+        # Получаем school_id
+        cur.execute(f"SELECT id FROM {schema}.schools WHERE user_id = {user_id}")
+        school_data = cur.fetchone()
+        
+        if not school_data:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'School not found'}),
+                'isBase64Encoded': False
+            }
+        
+        school_id = school_data[0]
+        
+        # Получаем активную подписку
+        cur.execute(f"""
+            SELECT ss.id, ss.expires_at, sp.price, sp.name
+            FROM {schema}.school_subscriptions ss
+            JOIN {schema}.subscription_plans sp ON ss.plan_id = sp.id
+            WHERE ss.school_id = {school_id} AND ss.is_active = true AND ss.plan_id = {plan_id}
+            LIMIT 1
+        """)
+        current_sub = cur.fetchone()
+        
+        if not current_sub:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Active subscription not found'}),
+                'isBase64Encoded': False
+            }
+        
+        sub_id, expires_at, plan_price, plan_name = current_sub
+        plan_price = float(plan_price)
+        
+        # Бесплатные тарифы нельзя продлевать
+        if plan_price == 0:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Cannot renew free plan'}),
+                'isBase64Encoded': False
+            }
+        
+        # Проверяем баланс
+        cur.execute(f"SELECT COALESCE(balance, 0) FROM {schema}.school_balance WHERE school_id = {school_id}")
+        balance_data = cur.fetchone()
+        balance = float(balance_data[0]) if balance_data else 0
+        
+        if balance < plan_price:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({
+                    'error': 'Insufficient balance',
+                    'required': plan_price,
+                    'available': balance
+                }),
+                'isBase64Encoded': False
+            }
+        
+        # Продлеваем подписку на 30 дней от текущей даты окончания или от текущего момента
+        if expires_at and expires_at > datetime.now():
+            # Если подписка ещё активна - продлеваем от даты окончания
+            new_expires_at = expires_at + timedelta(days=30)
+        else:
+            # Если подписка истекла - продлеваем от текущего момента
+            new_expires_at = datetime.now() + timedelta(days=30)
+        
+        cur.execute(f"""
+            UPDATE {schema}.school_subscriptions 
+            SET expires_at = '{new_expires_at.isoformat()}'
+            WHERE id = {sub_id}
+        """)
+        
+        # Списываем с баланса
+        cur.execute(f"""
+            UPDATE {schema}.school_balance 
+            SET balance = balance - {plan_price}
+            WHERE school_id = {school_id}
+        """)
+        
+        # Записываем транзакцию
+        cur.execute(f"""
+            INSERT INTO {schema}.balance_transactions 
+            (school_id, masseur_id, amount, type, description, created_at)
+            VALUES ({school_id}, NULL, {plan_price}, 'withdrawal', 'Продление тарифа: {plan_name}', NOW())
+        """)
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({
+                'message': 'Subscription renewed successfully',
+                'expires_at': new_expires_at.isoformat()
+            }),
+            'isBase64Encoded': False
+        }
+    
     # GET /subscriptions?action=check_expired - Проверка истекших подписок (cron)
     if method == 'GET' and action == 'check_expired':
         # Находим все истекшие подписки
