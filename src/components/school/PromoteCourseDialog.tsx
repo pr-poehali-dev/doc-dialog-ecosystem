@@ -8,7 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { getUserId } from '@/utils/auth';
 
 const PROMOTIONS_API_URL = 'https://functions.poehali.dev/2ea3a11a-0b11-4f52-9c5e-29fe60c40675';
-const BALANCE_API_URL = 'https://functions.poehali.dev/8c82911e-481f-4a63-92ff-aae203e992cc';
+const USER_BALANCE_URL = 'https://functions.poehali.dev/619d5197-066f-4380-8bef-994c71c76fa0';
 
 interface Prices {
   own_category: { [key: number]: number };
@@ -59,17 +59,19 @@ export default function PromoteCourseDialog({
       const userId = getUserId();
       console.log('Loading data for user:', userId);
       
-      // Загружаем баланс и информацию о тарифе
+      // Загружаем баланс из school_balance
       try {
-        const token = localStorage.getItem('token');
-        if (token) {
-          const balanceRes = await fetch(`${BALANCE_API_URL}?action=get&token=${encodeURIComponent(token)}`);
-          
-          if (balanceRes.ok) {
-            const balanceData = await balanceRes.json();
-            setBalance(balanceData.current_balance || 0);
-            console.log('Balance loaded:', balanceData.current_balance);
+        const balanceRes = await fetch(USER_BALANCE_URL, {
+          method: 'GET',
+          headers: {
+            'X-User-Id': String(userId)
           }
+        });
+        
+        if (balanceRes.ok) {
+          const balanceData = await balanceRes.json();
+          setBalance(balanceData.balance || 0);
+          console.log('Balance loaded:', balanceData.balance);
         }
       } catch (balanceError) {
         console.log('Balance load failed, using 0:', balanceError);
