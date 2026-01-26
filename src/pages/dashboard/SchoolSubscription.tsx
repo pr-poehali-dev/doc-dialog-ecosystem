@@ -83,11 +83,13 @@ export default function SchoolSubscription() {
       if (response.ok) {
         const data = await response.json();
         
-        // Обновляем баланс в BalanceCard
-        window.dispatchEvent(new Event('balanceUpdated'));
-        
         toast.success(`Подписка продлена до ${new Date(data.expires_at).toLocaleDateString('ru-RU')}`);
         loadData();
+        
+        // Обновляем баланс в BalanceCard с небольшой задержкой
+        setTimeout(() => {
+          window.dispatchEvent(new Event('balanceUpdated'));
+        }, 100);
       } else {
         const error = await response.json();
         toast.error(error.error || 'Не удалось продлить подписку');
@@ -115,6 +117,11 @@ export default function SchoolSubscription() {
       if (response.ok) {
         toast.success('Подписка успешно изменена');
         loadData();
+        
+        // Обновляем баланс в BalanceCard с небольшой задержкой
+        setTimeout(() => {
+          window.dispatchEvent(new Event('balanceUpdated'));
+        }, 100);
       } else {
         const error = await response.json();
         toast.error(error.error || 'Не удалось изменить подписку');

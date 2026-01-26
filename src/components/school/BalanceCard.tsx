@@ -32,6 +32,7 @@ export default function BalanceCard() {
     
     // Слушаем событие обновления баланса
     const handleBalanceUpdate = () => {
+      console.log('Balance update event received');
       loadBalance();
     };
     window.addEventListener('balanceUpdated', handleBalanceUpdate);
@@ -46,6 +47,7 @@ export default function BalanceCard() {
       const userId = getUserId();
       if (!userId) return;
       
+      console.log('Loading balance for user:', userId);
       const response = await fetch(USER_BALANCE_URL, {
         method: 'GET',
         headers: {
@@ -55,6 +57,7 @@ export default function BalanceCard() {
 
       if (response.ok) {
         const data = await response.json();
+        console.log('Balance loaded:', data.balance);
         setBalance(data.balance || 0);
       }
     } catch (error) {
