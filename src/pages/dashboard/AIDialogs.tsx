@@ -32,12 +32,12 @@ interface DialogsData {
 const AI_DIALOG_URL = 'https://functions.poehali.dev/7c4b9e29-6778-42e7-9ac9-c30966d1765e';
 
 const AIDialogs = () => {
+  const { toast } = useToast();
+  const navigate = useNavigate();
   const [dialogsData, setDialogsData] = useState<DialogsData>({ dialogs: [], limit: 5, dialogs_used: 0, tools_used: 0, total_used: 0 });
   const [activeDialog, setActiveDialog] = useState<Dialog | null>(null);
   const [loading, setLoading] = useState(true);
   const [showLimitModal, setShowLimitModal] = useState(false);
-  const { toast } = useToast();
-  const navigate = useNavigate();
 
   const dialogTypes = [
     { id: 'burnout', label: 'Опрос. Узнай, где ты сейчас на профессиональном уровне', icon: 'ClipboardList', color: 'from-yellow-500/20 to-yellow-500/10' },
