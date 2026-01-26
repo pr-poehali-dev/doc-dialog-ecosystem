@@ -43,7 +43,7 @@ const AIDialogs = () => {
     { id: 'supervision', label: 'Супервизия', icon: 'Users', color: 'from-blue-500/10 to-blue-500/5' },
     { id: 'case_analysis', label: 'Разбор случая', icon: 'FileText', color: 'from-purple-500/10 to-purple-500/5' },
     { id: 'boundaries', label: 'Границы', icon: 'Shield', color: 'from-green-500/10 to-green-500/5' },
-    { id: 'burnout', label: 'Выгорание', icon: 'Heart', color: 'from-pink-500/10 to-pink-500/5' },
+    { id: 'burnout', label: 'Опрос. Узнай, где ты сейчас на профессиональном уровне', icon: 'ClipboardList', color: 'from-yellow-500/20 to-yellow-500/10' },
     { id: 'growth', label: 'Развитие', icon: 'TrendingUp', color: 'from-orange-500/10 to-orange-500/5' }
   ];
 
@@ -172,7 +172,7 @@ const AIDialogs = () => {
               {dialogTypes.map((type) => (
                 <Card 
                   key={type.id}
-                  className={`cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 bg-gradient-to-br ${type.color} border-2`}
+                  className={`cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 bg-gradient-to-br ${type.color} ${type.id === 'burnout' ? 'border-4 border-yellow-500 ring-4 ring-yellow-200/50 shadow-xl' : 'border-2'}`}
                   onClick={() => createDialog(type.id, type.label)}
                 >
                   <CardHeader>
@@ -184,7 +184,7 @@ const AIDialogs = () => {
                       {type.id === 'supervision' && 'Разбор сложных ситуаций с клиентами'}
                       {type.id === 'case_analysis' && 'Анализ клиентских случаев'}
                       {type.id === 'boundaries' && 'Работа с профессиональными границами'}
-                      {type.id === 'burnout' && 'Профилактика выгорания'}
+                      {type.id === 'burnout' && 'Пройди диагностику практики и получи персональные рекомендации'}
                       {type.id === 'growth' && 'Профессиональное развитие'}
                     </p>
                   </CardContent>
