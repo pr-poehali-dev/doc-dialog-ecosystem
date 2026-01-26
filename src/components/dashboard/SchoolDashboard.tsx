@@ -15,10 +15,17 @@ interface SubscriptionPlan {
   top_promotions_limit: number | null;
 }
 
+interface SubscriptionData {
+  plan: SubscriptionPlan;
+  valid_until: string | null;
+  is_active: boolean;
+}
+
 export default function SchoolDashboard() {
   const { unreadCount } = useUnreadMessages();
   const [canSendMessages, setCanSendMessages] = useState(false);
   const [subscriptionPlan, setSubscriptionPlan] = useState<SubscriptionPlan | null>(null);
+  const [validUntil, setValidUntil] = useState<string | null>(null);
   
   useEffect(() => {
     const loadSubscription = async () => {
@@ -35,6 +42,7 @@ export default function SchoolDashboard() {
           const plan = data.subscription?.plan;
           if (plan) {
             setSubscriptionPlan(plan);
+            setValidUntil(data.subscription?.valid_until || null);
             setCanSendMessages(plan.messages_limit_per_day !== 0);
           }
         }
@@ -166,6 +174,11 @@ export default function SchoolDashboard() {
                   <p className="text-xs md:text-sm text-gray-600">
                     {subscriptionPlan.price === 0 ? 'Бесплатный тариф' : `${subscriptionPlan.price.toLocaleString()} ₽/мес`}
                   </p>
+                  {validUntil && subscriptionPlan.price > 0 && (
+                    <p className="text-xs md:text-sm text-orange-600 font-medium mt-1">
+                      Действует до {new Date(validUntil).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    </p>
+                  )}
                 </div>
               </div>
               

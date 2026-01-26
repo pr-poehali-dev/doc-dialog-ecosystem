@@ -190,6 +190,10 @@ def handler(event: dict, context) -> dict:
                     }
                 }
         
+        # Добавляем valid_until в subscription
+        if subscription and subscription.get('expires_at'):
+            subscription['valid_until'] = subscription['expires_at']
+        
         cur.close()
         conn.close()
         return {
@@ -337,6 +341,73 @@ def handler(event: dict, context) -> dict:
             'statusCode': 200,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({'subscription_id': new_sub_id, 'message': 'Subscription activated successfully'}),
+            'isBase64Encoded': False
+        }
+    
+    # GET /subscriptions?action=check_expired - Проверка истекших подписок (cron)
+    if method == 'GET' and action == 'check_expired':
+        # Находим все истекшие подписки
+        cur.execute(f"""
+            SELECT ss.id, ss.school_id, sp.name
+            FROM {schema}.school_subscriptions ss
+            JOIN {schema}.subscription_plans sp ON ss.plan_id = sp.id
+            WHERE ss.is_active = true 
+              AND ss.expires_at IS NOT NULL 
+              AND ss.expires_at < NOW()
+        """)
+        
+        expired_subs = cur.fetchall()
+        expired_count = 0
+        
+        for sub_id, school_id, plan_name in expired_subs:
+            # Деактивируем истекшую подписку
+            cur.execute(f"""
+                UPDATE {schema}.school_subscriptions 
+                SET is_active = false 
+                WHERE id = {sub_id}
+            """)
+            
+            # Находим базовый тариф (price = 0)
+            cur.execute(f"SELECT id FROM {schema}.subscription_plans WHERE price = 0 LIMIT 1")
+            free_plan = cur.fetchone()
+            
+            if free_plan:
+                # Создаём базовую подписку
+                cur.execute(f"""
+                    INSERT INTO {schema}.school_subscriptions (school_id, plan_id, is_active)
+                    VALUES ({school_id}, {free_plan[0]}, true)
+                """)
+            
+            # Снимаем все курсы этой школы с топа
+            cur.execute(f"""
+                UPDATE {schema}.courses 
+                SET promoted_until = NULL, promotion_type = NULL
+                WHERE school_id = {school_id} AND promoted_until IS NOT NULL
+            """)
+            
+            cur.execute(f"""
+                UPDATE {schema}.masterminds 
+                SET promoted_until = NULL, promotion_type = NULL
+                WHERE school_id = {school_id} AND promoted_until IS NOT NULL
+            """)
+            
+            cur.execute(f"""
+                UPDATE {schema}.offline_training 
+                SET promoted_until = NULL, promotion_type = NULL
+                WHERE school_id = {school_id} AND promoted_until IS NOT NULL
+            """)
+            
+            expired_count += 1
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({
+                'expired_subscriptions': expired_count,
+                'message': f'Processed {expired_count} expired subscriptions'
+            }),
             'isBase64Encoded': False
         }
     
