@@ -27,6 +27,17 @@ const AISubscription = () => {
 
   useEffect(() => {
     loadBalance();
+    
+    // Слушаем событие обновления баланса
+    const handleBalanceUpdate = () => {
+      console.log('AI Subscription: Balance update event received');
+      loadBalance();
+    };
+    window.addEventListener('balanceUpdated', handleBalanceUpdate);
+    
+    return () => {
+      window.removeEventListener('balanceUpdated', handleBalanceUpdate);
+    };
   }, []);
 
   const getUserId = () => {
@@ -56,6 +67,7 @@ const AISubscription = () => {
       const userId = getUserId();
       if (!userId) return;
 
+      console.log('AI Subscription: Loading balance for user:', userId);
       const response = await fetch('https://functions.poehali.dev/619d5197-066f-4380-8bef-994c71c76fa0', {
         headers: {
           'X-User-Id': userId
@@ -64,6 +76,7 @@ const AISubscription = () => {
       
       if (response.ok) {
         const data = await response.json();
+        console.log('AI Subscription: Balance loaded:', data.balance);
         setBalance({
           balance: data.balance || 0,
           ai_operations_used: 0
