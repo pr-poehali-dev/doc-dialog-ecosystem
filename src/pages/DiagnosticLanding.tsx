@@ -92,11 +92,11 @@ const DiagnosticLanding = () => {
       {/* What You Can Evaluate */}
       <section className="py-12 sm:py-24 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-8 sm:mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          <div className="text-left sm:text-center mb-8 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4">
               Что именно ты сможешь оценить
             </h2>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-lg sm:text-xl text-muted-foreground">
               Комплексный анализ твоей практики
             </p>
           </div>
@@ -200,17 +200,17 @@ const DiagnosticLanding = () => {
       {/* Format Section */}
       <section className="py-12 sm:py-24 px-4 bg-gradient-to-b from-accent/10 to-background">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          <div className="text-left sm:text-center mb-8 sm:mb-12">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4">
               Формат — живой диалог
             </h2>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-lg sm:text-xl text-muted-foreground">
               Не сухая анкета, а интеллектуальная беседа
             </p>
           </div>
           
           <div className="bg-card/80 backdrop-blur-sm border-2 border-border rounded-2xl sm:rounded-3xl p-6 sm:p-10 shadow-2xl">
-            <p className="text-lg sm:text-xl mb-6 sm:mb-8 text-center">
+            <p className="text-lg sm:text-xl mb-6 sm:mb-8 text-left sm:text-center">
               Ты заходишь в <strong className="text-primary">чат-бот Док диалог</strong>, который:
             </p>
             <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
@@ -274,11 +274,11 @@ const DiagnosticLanding = () => {
       {/* Results Section */}
       <section className="py-12 sm:py-24 px-4">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          <div className="text-left sm:text-center mb-8 sm:mb-12">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4">
               Результат по итогу
             </h2>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-lg sm:text-xl text-muted-foreground">
               Конкретный план действий для роста
             </p>
           </div>
@@ -324,7 +324,7 @@ const DiagnosticLanding = () => {
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 blur-3xl" />
             <div className="relative bg-card/80 backdrop-blur-sm border-2 border-border rounded-2xl sm:rounded-3xl p-6 sm:p-12 shadow-2xl">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 text-left sm:text-center">
                 Готов увидеть свою практику объективно?
               </h2>
               <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8">
