@@ -15,7 +15,7 @@ const DiagnosticLanding = () => {
       <Navigation scrollToSection={scrollToSection} />
       
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4 overflow-hidden">
+      <section className="relative pt-20 sm:pt-32 pb-12 sm:pb-20 px-4 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/10 pointer-events-none" />
         
         <div className="max-w-7xl mx-auto">
@@ -26,15 +26,15 @@ const DiagnosticLanding = () => {
                 <span className="text-primary font-semibold">Бесплатная диагностика</span>
               </div>
               
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
                 Оцени свою практику как специалист — честно и по делу
               </h1>
               
-              <p className="text-xl md:text-2xl text-muted-foreground mb-6">
+              <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-4 sm:mb-6">
                 Ты умеешь работать руками. Но понимаешь ли ты <strong className="text-foreground">почему поток клиентов нестабилен</strong>?
               </p>
 
-              <div className="bg-card/80 backdrop-blur-sm border border-border rounded-2xl p-6 mb-8 shadow-lg">
+              <div className="bg-card/80 backdrop-blur-sm border border-border rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 shadow-lg">
                 <p className="text-lg mb-4 text-muted-foreground">
                   Диагностический диалог для массажистов и телесных специалистов:
                 </p>
@@ -66,7 +66,7 @@ const DiagnosticLanding = () => {
                 </ul>
               </div>
 
-              <Button size="lg" className="text-lg px-10 py-7 shadow-xl hover:shadow-2xl transition-all duration-300 group" asChild>
+              <Button size="lg" className="w-full sm:w-auto text-base sm:text-lg px-8 sm:px-10 py-6 sm:py-7 shadow-xl hover:shadow-2xl transition-all duration-300 group" asChild>
                 <a href="https://docdialog.su/register" target="_blank" rel="noopener noreferrer">
                   Узнать бесплатно
                   <Icon name="ArrowRight" className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
@@ -75,7 +75,7 @@ const DiagnosticLanding = () => {
             </div>
 
             {/* Right Image */}
-            <div className="relative">
+            <div className="relative hidden lg:block">
               <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-accent/20 rounded-3xl blur-2xl opacity-50" />
               <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-border">
                 <img 
@@ -90,9 +90,9 @@ const DiagnosticLanding = () => {
       </section>
 
       {/* What You Can Evaluate */}
-      <section className="py-24 px-4">
+      <section className="py-12 sm:py-24 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8 sm:mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               Что именно ты сможешь оценить
             </h2>
@@ -198,7 +198,7 @@ const DiagnosticLanding = () => {
       </section>
 
       {/* Format Section */}
-      <section className="py-24 px-4 bg-gradient-to-b from-accent/10 to-background">
+      <section className="py-12 sm:py-24 px-4 bg-gradient-to-b from-accent/10 to-background">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
@@ -209,11 +209,11 @@ const DiagnosticLanding = () => {
             </p>
           </div>
           
-          <div className="bg-card/80 backdrop-blur-sm border-2 border-border rounded-3xl p-10 shadow-2xl">
-            <p className="text-xl mb-8 text-center">
+          <div className="bg-card/80 backdrop-blur-sm border-2 border-border rounded-2xl sm:rounded-3xl p-6 sm:p-10 shadow-2xl">
+            <p className="text-lg sm:text-xl mb-6 sm:mb-8 text-center">
               Ты заходишь в <strong className="text-primary">чат-бот Док диалог</strong>, который:
             </p>
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
               <div className="flex items-start gap-4 p-4 rounded-xl bg-accent/20">
                 <div className="p-2 rounded-lg bg-primary/10">
                   <Icon name="MessageSquare" className="text-primary shrink-0" size={24} />
@@ -252,15 +252,15 @@ const DiagnosticLanding = () => {
               </div>
             </div>
 
-            <div className="mt-10 p-6 bg-primary/5 rounded-2xl border border-primary/20">
-              <p className="text-center text-lg">
+            <div className="mt-6 sm:mt-10 p-4 sm:p-6 bg-primary/5 rounded-2xl border border-primary/20">
+              <p className="text-center text-base sm:text-lg">
                 <Icon name="Clock" className="inline mr-2" size={20} />
                 <strong>10-15 минут</strong> — и ты получишь честный разбор своей текущей точки
               </p>
             </div>
 
             {/* Screenshot */}
-            <div className="mt-10 -mx-4 sm:mx-0">
+            <div className="mt-6 sm:mt-10 -mx-6 sm:-mx-4 md:mx-0">
               <img 
                 src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/bucket/95ce260d-c78a-4dea-8211-07b19f56d654.jpg" 
                 alt="Интерфейс выбора AI инструментов" 
@@ -272,7 +272,7 @@ const DiagnosticLanding = () => {
       </section>
 
       {/* Results Section */}
-      <section className="py-24 px-4">
+      <section className="py-12 sm:py-24 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
@@ -283,14 +283,14 @@ const DiagnosticLanding = () => {
             </p>
           </div>
 
-          <Card className="p-10 border-2 bg-gradient-to-br from-card via-card to-primary/5">
+          <Card className="p-6 sm:p-10 border-2 bg-gradient-to-br from-card via-card to-primary/5">
             <div className="space-y-6">
               <div className="flex items-start gap-4">
                 <div className="p-3 rounded-xl bg-primary/10 shrink-0">
                   <Icon name="FileText" className="text-primary" size={28} />
                 </div>
                 <div>
-                  <h4 className="text-xl font-bold mb-2">Персональный отчёт</h4>
+                  <h4 className="text-lg sm:text-xl font-bold mb-2">Персональный отчёт</h4>
                   <p className="text-muted-foreground">с конкретными выводами: что работает, что нет, куда двигаться</p>
                 </div>
               </div>
@@ -298,19 +298,19 @@ const DiagnosticLanding = () => {
               <div className="border-l-4 border-primary/30 pl-6 space-y-4">
                 <div className="flex items-start gap-3">
                   <Icon name="Compass" className="text-primary mt-1 shrink-0" size={24} />
-                  <span className="text-lg">понять свои сильные и слабые стороны</span>
+                  <span className="text-base sm:text-lg">понять свои сильные и слабые стороны</span>
                 </div>
                 <div className="flex items-start gap-3">
                   <Icon name="BookOpen" className="text-primary mt-1 shrink-0" size={24} />
-                  <span className="text-lg">закрыть профессиональные пробелы</span>
+                  <span className="text-base sm:text-lg">закрыть профессиональные пробелы</span>
                 </div>
                 <div className="flex items-start gap-3">
                   <Icon name="LineChart" className="text-primary mt-1 shrink-0" size={24} />
-                  <span className="text-lg">выстроить устойчивую частную практику</span>
+                  <span className="text-base sm:text-lg">выстроить устойчивую частную практику</span>
                 </div>
                 <div className="flex items-start gap-3">
                   <Icon name="Shield" className="text-primary mt-1 shrink-0" size={24} />
-                  <span className="text-lg">усилить доверие клиентов и ценность работы</span>
+                  <span className="text-base sm:text-lg">усилить доверие клиентов и ценность работы</span>
                 </div>
               </div>
             </div>
@@ -319,18 +319,18 @@ const DiagnosticLanding = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-4 bg-gradient-to-b from-accent/10 to-background">
+      <section className="py-12 sm:py-24 px-4 bg-gradient-to-b from-accent/10 to-background">
         <div className="max-w-4xl mx-auto text-center">
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 blur-3xl" />
-            <div className="relative bg-card/80 backdrop-blur-sm border-2 border-border rounded-3xl p-12 shadow-2xl">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            <div className="relative bg-card/80 backdrop-blur-sm border-2 border-border rounded-2xl sm:rounded-3xl p-6 sm:p-12 shadow-2xl">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6">
                 Готов увидеть свою практику объективно?
               </h2>
-              <p className="text-xl text-muted-foreground mb-8">
+              <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8">
                 Пройди диагностику бесплатно — узнай, <strong className="text-foreground">что реально мешает тебе расти</strong>
               </p>
-              <Button size="lg" className="text-xl px-12 py-8 shadow-xl hover:shadow-2xl transition-all duration-300 group" asChild>
+              <Button size="lg" className="w-full sm:w-auto text-lg sm:text-xl px-8 sm:px-12 py-6 sm:py-8 shadow-xl hover:shadow-2xl transition-all duration-300 group" asChild>
                 <a href="https://docdialog.su/register" target="_blank" rel="noopener noreferrer">
                   Начать диагностику
                   <Icon name="ArrowRight" className="ml-3 group-hover:translate-x-1 transition-transform" size={24} />
