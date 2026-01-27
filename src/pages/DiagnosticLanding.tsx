@@ -258,6 +258,15 @@ const DiagnosticLanding = () => {
                 <strong>10-15 минут</strong> — и ты получишь честный разбор своей текущей точки
               </p>
             </div>
+
+            {/* Screenshot */}
+            <div className="mt-10">
+              <img 
+                src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/bucket/95ce260d-c78a-4dea-8211-07b19f56d654.jpg" 
+                alt="Интерфейс выбора AI инструментов" 
+                className="w-full rounded-2xl shadow-2xl border border-border"
+              />
+            </div>
           </div>
         </div>
       </section>
