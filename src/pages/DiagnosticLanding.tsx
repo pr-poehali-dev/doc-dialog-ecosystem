@@ -260,11 +260,11 @@ const DiagnosticLanding = () => {
             </div>
 
             {/* Screenshot */}
-            <div className="mt-10">
+            <div className="mt-10 -mx-4 sm:mx-0">
               <img 
                 src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/bucket/95ce260d-c78a-4dea-8211-07b19f56d654.jpg" 
                 alt="Интерфейс выбора AI инструментов" 
-                className="w-full rounded-2xl shadow-2xl border border-border"
+                className="w-full rounded-none sm:rounded-2xl shadow-2xl border-y sm:border border-border object-cover"
               />
             </div>
           </div>
