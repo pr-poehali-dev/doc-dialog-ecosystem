@@ -267,25 +267,27 @@ def handler(event: dict, context) -> dict:
                     }
                 
                 # Списываем 15₽ с баланса ПЕРЕД отправкой сообщения
-                balance_response = requests.post(
-                    'https://functions.poehali.dev/619d5197-066f-4380-8bef-994c71c76fa0',
-                    json={'amount': 15, 'service_type': 'ai_dialog', 'description': 'AI-диалог'},
-                    headers={'Content-Type': 'application/json', 'X-User-Id': str(user_id)},
-                    timeout=10
-                )
-                
-                if balance_response.status_code != 200:
-                    error_data = balance_response.json()
-                    return {
-                        'statusCode': 403,
-                        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                        'body': json.dumps({
-                            'error': error_data.get('error', 'Недостаточно средств на балансе'),
-                            'balance': error_data.get('balance', 0),
-                            'required': 15
-                        }),
-                        'isBase64Encoded': False
-                    }
+                # НО! Для диалога типа 'burnout' (Опрос) списание не происходит - он бесплатный
+                if dialog_info['dialog_type'] != 'burnout':
+                    balance_response = requests.post(
+                        'https://functions.poehali.dev/619d5197-066f-4380-8bef-994c71c76fa0',
+                        json={'amount': 15, 'service_type': 'ai_dialog', 'description': 'AI-диалог'},
+                        headers={'Content-Type': 'application/json', 'X-User-Id': str(user_id)},
+                        timeout=10
+                    )
+                    
+                    if balance_response.status_code != 200:
+                        error_data = balance_response.json()
+                        return {
+                            'statusCode': 403,
+                            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                            'body': json.dumps({
+                                'error': error_data.get('error', 'Недостаточно средств на балансе'),
+                                'balance': error_data.get('balance', 0),
+                                'required': 15
+                            }),
+                            'isBase64Encoded': False
+                        }
                 
                 cursor.execute('''
                     INSERT INTO ai_dialog_messages (dialog_id, role, content)
