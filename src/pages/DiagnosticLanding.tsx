@@ -75,11 +75,11 @@ const DiagnosticLanding = () => {
             </div>
 
             {/* Right Image */}
-            <div className="relative hidden lg:block">
+            <div className="relative mt-8 lg:mt-0">
               <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-accent/20 rounded-3xl blur-2xl opacity-50" />
               <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-border">
                 <img 
-                  src="https://cdn.poehali.dev/files/2a67e1f5-96a0-40c7-ab90-52614d54d625.jpg" 
+                  src="https://cdn.poehali.dev/files/a9397d08-c415-4a8b-b1c8-2f17158e7f84.jpg" 
                   alt="Профессиональная диагностика"
                   className="w-full h-auto object-cover"
                 />
