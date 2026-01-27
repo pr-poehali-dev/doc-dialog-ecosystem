@@ -79,7 +79,7 @@ const DiagnosticLanding = () => {
               <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-accent/20 rounded-3xl blur-2xl opacity-50" />
               <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-border">
                 <img 
-                  src="https://cdn.poehali.dev/files/8adba24d-08c7-48d6-a38a-0b4872759167.jpg" 
+                  src="https://cdn.poehali.dev/files/2a67e1f5-96a0-40c7-ab90-52614d54d625.jpg" 
                   alt="Профессиональная диагностика"
                   className="w-full h-auto object-cover"
                 />
