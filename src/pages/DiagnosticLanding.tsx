@@ -57,9 +57,11 @@ const DiagnosticLanding = () => {
             </ul>
           </div>
 
-          <Button size="lg" className="text-lg px-8 py-6">
-            Узнать бесплатно
-            <Icon name="ArrowRight" className="ml-2" size={20} />
+          <Button size="lg" className="text-lg px-8 py-6" asChild>
+            <a href="https://docdialog.su/register" target="_blank" rel="noopener noreferrer">
+              Узнать бесплатно
+              <Icon name="ArrowRight" className="ml-2" size={20} />
+            </a>
           </Button>
         </div>
       </section>
@@ -254,9 +256,11 @@ const DiagnosticLanding = () => {
           <p className="text-xl text-muted-foreground mb-8">
             Перейди в чат-бот и узнай, <strong>что реально мешает тебе расти — и как это исправить</strong>
           </p>
-          <Button size="lg" className="text-lg px-8 py-6">
-            Узнать бесплатно
-            <Icon name="ArrowRight" className="ml-2" size={20} />
+          <Button size="lg" className="text-lg px-8 py-6" asChild>
+            <a href="https://docdialog.su/register" target="_blank" rel="noopener noreferrer">
+              Узнать бесплатно
+              <Icon name="ArrowRight" className="ml-2" size={20} />
+            </a>
           </Button>
         </div>
       </section>
