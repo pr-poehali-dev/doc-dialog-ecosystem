@@ -53,6 +53,13 @@ export default function CoursePage() {
     loadCourse();
   }, [id]);
 
+  // Обновляем заголовок страницы когда курс загружен
+  useEffect(() => {
+    if (course) {
+      document.title = `${course.title} — Док диалог`;
+    }
+  }, [course]);
+
   const loadCourse = async () => {
     try {
       setLoading(true);
