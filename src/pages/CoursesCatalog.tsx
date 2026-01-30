@@ -4,6 +4,7 @@ import Icon from '@/components/ui/icon';
 import CatalogFilters from './CoursesCatalog/CatalogFilters';
 import CatalogItemCard from './CoursesCatalog/CatalogItemCard';
 import SchoolsFooter from '@/components/schools/SchoolsFooter';
+import { apiCache } from '@/utils/cache';
 import { 
   CatalogItem, 
   Course, 
@@ -35,15 +36,21 @@ export default function CoursesCatalog() {
     try {
       setLoading(true);
       
-      const [coursesResponse, mastermindsResponse, offlineTrainingsResponse] = await Promise.all([
-        fetch(`${COURSE_API_URL}?status=approved`),
-        fetch(`${COURSE_API_URL}?action=masterminds&status=approved`),
-        fetch(`${COURSE_API_URL}?action=offline_trainings&status=approved`)
+      // Используем кеш для всех запросов
+      const [coursesData, mastermindsData, offlineTrainingsData] = await Promise.all([
+        apiCache.fetch<Course[]>('courses-approved', async () => {
+          const response = await fetch(`${COURSE_API_URL}?status=approved`);
+          return response.json();
+        }),
+        apiCache.fetch<Mastermind[]>('masterminds-approved', async () => {
+          const response = await fetch(`${COURSE_API_URL}?action=masterminds&status=approved`);
+          return response.json();
+        }),
+        apiCache.fetch<OfflineTraining[]>('trainings-approved', async () => {
+          const response = await fetch(`${COURSE_API_URL}?action=offline_trainings&status=approved`);
+          return response.json();
+        })
       ]);
-      
-      const coursesData: Course[] = await coursesResponse.json();
-      const mastermindsData: Mastermind[] = await mastermindsResponse.json();
-      const offlineTrainingsData: OfflineTraining[] = await offlineTrainingsResponse.json();
       
       const coursesWithCovers = await Promise.all(
         coursesData.map(async (course) => {

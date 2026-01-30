@@ -121,7 +121,16 @@ const CoursesRedirect = lazy(() => import("./pages/CoursesRedirect"));
 const EnergyCourse = lazy(() => import("./pages/EnergyCourse"));
 const DiagnosticLanding = lazy(() => import("./pages/DiagnosticLanding"));
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 минут
+      gcTime: 10 * 60 * 1000, // 10 минут
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>

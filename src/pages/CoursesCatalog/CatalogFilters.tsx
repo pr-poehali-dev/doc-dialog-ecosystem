@@ -1,6 +1,8 @@
+import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Icon from '@/components/ui/icon';
+import { debounce } from '@/utils/debounce';
 import { CATEGORIES } from './types';
 
 interface CatalogFiltersProps {
@@ -20,14 +22,27 @@ export default function CatalogFilters({
   selectedType,
   setSelectedType
 }: CatalogFiltersProps) {
+  const [localQuery, setLocalQuery] = useState(searchQuery);
+
+  // Дебаунс поиска на 300мс
+  const debouncedSearch = useCallback(
+    debounce((value: string) => setSearchQuery(value), 300),
+    [setSearchQuery]
+  );
+
+  const handleSearchChange = (value: string) => {
+    setLocalQuery(value);
+    debouncedSearch(value);
+  };
+
   return (
     <div className="mb-8 space-y-4">
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex-1">
           <Input
             placeholder="Поиск курсов..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={localQuery}
+            onChange={(e) => handleSearchChange(e.target.value)}
             className="w-full"
           />
         </div>

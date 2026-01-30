@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import ReviewsSection from '@/components/ReviewsSection';
 import RatingDisplay from '@/components/RatingDisplay';
+import { apiCache } from '@/utils/cache';
 
 interface CoAuthor {
   name: string;
@@ -63,11 +64,17 @@ export default function CoursePage() {
   const loadCourse = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${COURSE_API_URL}?id=${id}`);
-      if (response.ok) {
-        const data = await response.json();
-        setCourse(data);
-      }
+      // Кешируем данные курса на 10 минут
+      const data = await apiCache.fetch<CourseDetails>(
+        `course-${id}`,
+        async () => {
+          const response = await fetch(`${COURSE_API_URL}?id=${id}`);
+          if (!response.ok) throw new Error('Course not found');
+          return response.json();
+        },
+        10 * 60 * 1000 // 10 минут
+      );
+      setCourse(data);
     } catch (error) {
       console.error('Load error:', error);
     } finally {

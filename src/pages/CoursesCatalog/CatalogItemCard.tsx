@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ToastAction } from '@/components/ui/toast';
 import Icon from '@/components/ui/icon';
 import RatingDisplay from '@/components/RatingDisplay';
+import LazyImage from '@/components/LazyImage';
 import { CatalogItem } from './types';
 import { formatMoscowDate } from '@/utils/datetime';
 
@@ -144,13 +145,10 @@ export default function CatalogItemCard({ item }: CatalogItemCardProps) {
       )}
       <div className={`w-full h-56 overflow-hidden relative ${isPromoted ? 'ring-2 ring-amber-300' : ''}`}>
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 opacity-90"></div>
-        <img 
+        <LazyImage 
           src={item.image_url || 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800'} 
           alt={item.title}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-          onError={(e) => {
-            e.currentTarget.src = 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800';
-          }}
         />
         <div className="absolute top-4 right-4">
           <Badge className={getCourseTypeColor(item.course_type) + ' shadow-lg'}>
