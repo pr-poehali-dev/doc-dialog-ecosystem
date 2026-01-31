@@ -1,0 +1,43 @@
+{
+  "tests": [
+    {
+      "name": "OPTIONS request for CORS",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS"
+      }
+    },
+    {
+      "name": "GET without auth returns 401",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 401,
+      "expectedBody": {
+        "error": "Unauthorized"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "POST creates new order",
+      "method": "POST",
+      "path": "/",
+      "headers": {
+        "X-Authorization": "Bearer test-user-123"
+      },
+      "body": {
+        "name": "Тестовый специалист",
+        "email": "test@example.com",
+        "phone": "+7 (999) 123-45-67",
+        "specialization": "Классический массаж"
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "status": "created"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

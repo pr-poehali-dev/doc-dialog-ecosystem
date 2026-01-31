@@ -78,6 +78,7 @@ const MasseurProfessionalLanding = lazy(() => import("./pages/MasseurProfessiona
 const AIDialogs = lazy(() => import("./pages/dashboard/AIDialogs"));
 const AISubscription = lazy(() => import("./pages/dashboard/AISubscription"));
 const SchoolMarketingAI = lazy(() => import("./pages/dashboard/SchoolMarketingAI"));
+const SpecialistLandingOrderPage = lazy(() => import("./pages/dashboard/SpecialistLandingOrderPage"));
 const ImportSpecialists = lazy(() => import("./pages/admin/ImportSpecialists"));
 const ImportedSpecialists = lazy(() => import("./pages/admin/ImportedSpecialists"));
 const ImportSalons = lazy(() => import("./pages/admin/ImportSalons"));
@@ -232,6 +233,7 @@ const App = () => (
           <Route path="/dashboard/ai-dialogs" element={<AIDialogs />} />
           <Route path="/dashboard/ai-subscription" element={<AISubscription />} />
           <Route path="/dashboard/account-settings" element={<AccountSettings />} />
+          <Route path="/dashboard/specialist-landing-order" element={<SpecialistLandingOrderPage />} />
           <Route path="/school/marketing-ai" element={<SchoolMarketingAI />} />
           <Route path="/admin/import-specialists" element={<ImportSpecialists />} />
           <Route path="/admin/imported-specialists" element={<ImportedSpecialists />} />

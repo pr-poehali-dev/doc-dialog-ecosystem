@@ -94,6 +94,25 @@ export default function MasseurDashboard() {
         </Link>
       </div>
 
+      {/* 2.5. Создадим лендинг */}
+      <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 md:p-6 shadow-sm border-2 border-green-200 hover:border-green-300 transition-colors">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+            <Icon name="Sparkles" className="text-white" size={20} />
+          </div>
+          <h3 className="text-lg md:text-xl font-semibold">Создадим лендинг</h3>
+        </div>
+        <p className="text-sm md:text-base text-gray-700 mb-3 md:mb-4">Профессиональный лендинг для привлечения клиентов — 5 000 ₽</p>
+        <Link to="/dashboard/specialist-landing-order">
+          <Button 
+            className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold shadow-md hover:shadow-lg transition-all"
+          >
+            <Icon name="Rocket" size={16} className="mr-2" />
+            Заказать лендинг
+          </Button>
+        </Link>
+      </div>
+
       {/* 3. AI Диалоги */}
       <div className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-xl p-4 md:p-6 shadow-sm border-2 border-primary/30 hover:border-primary transition-colors">
         <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
