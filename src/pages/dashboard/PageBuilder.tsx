@@ -65,7 +65,7 @@ const defaultPageData = {
   colorTheme: 'gradient',
 };
 
-export default function PageBuilder() {
+function PageBuilder() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [pageData, setPageData] = useState(defaultPageData);
@@ -1445,3 +1445,7 @@ export default function PageBuilder() {
     </div>
   );
 }
+
+export default PageBuilder;
+
+export default PageBuilder;
