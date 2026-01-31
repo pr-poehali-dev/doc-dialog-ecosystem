@@ -1447,5 +1447,3 @@ function PageBuilder() {
 }
 
 export default PageBuilder;
-
-export default PageBuilder;
