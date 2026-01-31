@@ -122,6 +122,7 @@ const CoursesRedirect = lazy(() => import("./pages/CoursesRedirect"));
 const EnergyCourse = lazy(() => import("./pages/EnergyCourse"));
 const DiagnosticLanding = lazy(() => import("./pages/DiagnosticLanding"));
 const SpecialistLanding = lazy(() => import("./pages/SpecialistLanding"));
+const RegressionHypnosisLanding = lazy(() => import("./pages/RegressionHypnosisLanding"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -261,6 +262,7 @@ const App = () => (
           <Route path="/energy-course" element={<EnergyCourse />} />
           <Route path="/diagnostic" element={<DiagnosticLanding />} />
           <Route path="/specialist" element={<SpecialistLanding />} />
+          <Route path="/regression-hypnosis" element={<RegressionHypnosisLanding />} />
           <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
