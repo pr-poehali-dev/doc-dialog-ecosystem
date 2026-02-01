@@ -47,20 +47,20 @@ export default function SpecialistLanding() {
             <p className="text-lg md:text-2xl lg:text-3xl text-muted-foreground font-light max-w-3xl mx-auto px-4">
               Более 1000 человек ищут массажиста, которому можно доверить своё тело
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 text-sm md:text-base text-muted-foreground justify-center items-center max-w-2xl mx-auto pt-2 md:pt-4 px-4">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 text-sm md:text-base text-muted-foreground justify-center items-center sm:items-start max-w-2xl mx-auto pt-2 md:pt-4 px-4">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
                 <Icon name="Check" className="text-primary flex-shrink-0" size={20} />
-                <span>Без комиссии с ваших услуг</span>
+                <span className="text-left">Без комиссии с ваших услуг</span>
               </div>
-              <div className="hidden sm:block w-1 h-1 rounded-full bg-muted-foreground/30" />
-              <div className="flex items-center gap-2">
+              <div className="hidden sm:block w-1 h-1 rounded-full bg-muted-foreground/30 self-center" />
+              <div className="flex items-center gap-2 w-full sm:w-auto">
                 <Icon name="Check" className="text-primary flex-shrink-0" size={20} />
-                <span>Без медицинской лицензии</span>
+                <span className="text-left">Без медицинской лицензии</span>
               </div>
-              <div className="hidden sm:block w-1 h-1 rounded-full bg-muted-foreground/30" />
-              <div className="flex items-center gap-2">
+              <div className="hidden sm:block w-1 h-1 rounded-full bg-muted-foreground/30 self-center" />
+              <div className="flex items-center gap-2 w-full sm:w-auto">
                 <Icon name="Check" className="text-primary flex-shrink-0" size={20} />
-                <span>С возможностью продвигать себя везде</span>
+                <span className="text-left">С возможностью продвигать себя везде</span>
               </div>
             </div>
             <Link to="/register">
