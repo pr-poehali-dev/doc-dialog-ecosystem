@@ -45,7 +45,7 @@ export default function SpecialistLanding() {
         <div className="container relative mx-auto px-4 py-16 md:py-24 lg:py-32">
           <div className="max-w-5xl mx-auto text-center space-y-6 md:space-y-8">
             <div className="inline-block px-4 py-2 bg-primary/10 rounded-full text-xs md:text-sm font-medium mb-2 md:mb-4">
-              Платформа для профессионалов в сфере здоровья и тела
+              Платформа для специалистов по телу
             </div>
             <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight leading-[1.1]">
               В Док диалог вас уже ждут клиенты
