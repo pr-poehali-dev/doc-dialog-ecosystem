@@ -35,7 +35,13 @@ export default function SpecialistLanding() {
       <Navigation />
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-b from-primary/5 via-background to-background">
-        <div className="absolute inset-0 bg-grid-pattern opacity-5" />
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-10"
+          style={{
+            backgroundImage: 'url(https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/1b9669f6-bb6a-49df-b9d7-f89b5a315ddd.jpg)'
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
         <div className="container relative mx-auto px-4 py-16 md:py-24 lg:py-32">
           <div className="max-w-5xl mx-auto text-center space-y-6 md:space-y-8">
             <div className="inline-block px-4 py-2 bg-primary/10 rounded-full text-xs md:text-sm font-medium mb-2 md:mb-4">
