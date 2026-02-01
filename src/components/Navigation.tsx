@@ -169,9 +169,9 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
                   <Icon name="Menu" size={24} />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[280px] sm:w-[320px]">
-                <div className="flex flex-col gap-6 mt-8">
-                  <div className="flex flex-col gap-4">
+              <SheetContent side="right" className="w-[280px] sm:w-[320px] overflow-y-auto">
+                <div className="flex flex-col h-full py-4">
+                  <div className="flex flex-col gap-1 flex-1">
                     {isHomePage && scrollToSection ? (
                       <>
                         {homePageMenuItems.map((item, index) => (
@@ -180,7 +180,7 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
                               key={index}
                               to={item.path}
                               onClick={() => setIsOpen(false)}
-                              className="text-left py-3 px-4 text-base font-medium hover:bg-muted rounded-lg transition-colors block"
+                              className="text-left py-2.5 px-3 text-sm font-medium hover:bg-muted rounded-lg transition-colors block"
                             >
                               {item.label}
                             </Link>
@@ -188,7 +188,7 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
                             <button
                               key={index}
                               onClick={() => handleMenuClick(item.onClick!)}
-                              className="text-left py-3 px-4 text-base font-medium hover:bg-muted rounded-lg transition-colors"
+                              className="text-left py-2.5 px-3 text-sm font-medium hover:bg-muted rounded-lg transition-colors"
                             >
                               {item.label}
                             </button>
@@ -205,7 +205,7 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
                                 setIsOpen(false);
                                 setShowCatalogInfo(true);
                               }}
-                              className="text-left py-3 px-4 text-base font-medium text-gray-400 hover:bg-muted rounded-lg transition-colors"
+                              className="text-left py-2.5 px-3 text-sm font-medium text-gray-400 hover:bg-muted rounded-lg transition-colors"
                             >
                               {item.label}
                             </button>
@@ -214,7 +214,7 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
                               key={index}
                               to={item.path}
                               onClick={() => setIsOpen(false)}
-                              className="text-left py-3 px-4 text-base font-medium hover:bg-muted rounded-lg transition-colors"
+                              className="text-left py-2.5 px-3 text-sm font-medium hover:bg-muted rounded-lg transition-colors"
                             >
                               {item.label}
                             </Link>
@@ -223,12 +223,13 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
                       </>
                     )}
                   </div>
-                  <div className="border-t pt-6 flex flex-col gap-3">
+                  <div className="border-t pt-3 mt-3 flex flex-col gap-2">
                     {isImpersonating && (
                       <Button
                         variant="destructive"
                         onClick={() => handleMenuClick(handleReturnToAdmin)}
-                        className="w-full text-sm"
+                        className="w-full h-9 text-xs mb-1"
+                        size="sm"
                       >
                         ← Вернуться в админку
                       </Button>
@@ -236,14 +237,15 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
                     {isLoggedIn ? (
                       <>
                         {balance !== null && (
-                          <div className="px-4 py-2 bg-primary/10 rounded-lg">
-                            <div className="text-xs text-muted-foreground mb-0.5">Баланс</div>
-                            <div className="text-lg font-semibold text-primary">{balance} ₽</div>
+                          <div className="px-3 py-2 bg-primary/10 rounded-lg mb-1">
+                            <div className="text-xs text-muted-foreground">Баланс</div>
+                            <div className="text-base font-semibold text-primary">{balance} ₽</div>
                           </div>
                         )}
                         <Button
                           onClick={() => handleMenuClick(() => window.location.href = '/dashboard')}
-                          className="w-full"
+                          className="w-full h-9"
+                          size="sm"
                         >
                           Личный кабинет
                         </Button>
@@ -253,13 +255,15 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
                         <Button
                           variant="ghost"
                           onClick={() => handleMenuClick(() => window.location.href = '/login')}
-                          className="w-full justify-start"
+                          className="w-full justify-start h-9"
+                          size="sm"
                         >
                           Войти
                         </Button>
                         <Button
                           onClick={() => handleMenuClick(() => window.location.href = '/register')}
-                          className="w-full"
+                          className="w-full h-9"
+                          size="sm"
                         >
                           Регистрация
                         </Button>
