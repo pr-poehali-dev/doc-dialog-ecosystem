@@ -235,6 +235,12 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
                     )}
                     {isLoggedIn ? (
                       <>
+                        {balance !== null && (
+                          <div className="px-4 py-2 bg-primary/10 rounded-lg">
+                            <div className="text-xs text-muted-foreground mb-0.5">Баланс</div>
+                            <div className="text-lg font-semibold text-primary">{balance} ₽</div>
+                          </div>
+                        )}
                         <Button
                           onClick={() => handleMenuClick(() => window.location.href = '/dashboard')}
                           className="w-full"
@@ -279,6 +285,12 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
             )}
             {isLoggedIn ? (
               <>
+                {balance !== null && (
+                  <div className="px-3 py-1.5 bg-primary/10 rounded-lg mr-2">
+                    <div className="text-xs text-muted-foreground">Баланс</div>
+                    <div className="text-sm font-semibold text-primary">{balance} ₽</div>
+                  </div>
+                )}
                 <Link to="/dashboard">
                   <Button>Личный кабинет</Button>
                 </Link>
