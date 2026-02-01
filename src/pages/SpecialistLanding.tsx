@@ -2,6 +2,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
 import { useState } from 'react';
+import { Navigation } from '@/components/Navigation';
+import SchoolsFooter from '@/components/schools/SchoolsFooter';
 
 export default function SpecialistLanding() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -31,6 +33,7 @@ export default function SpecialistLanding() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Navigation />
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-b from-primary/5 via-background to-background">
         <div className="absolute inset-0 bg-grid-pattern opacity-5" />
@@ -330,6 +333,8 @@ export default function SpecialistLanding() {
           </div>
         </div>
       </section>
+
+      <SchoolsFooter />
     </div>
   );
 }
