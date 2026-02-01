@@ -4,13 +4,12 @@ import Icon from '@/components/ui/icon';
 import { useState } from 'react';
 import { Navigation } from '@/components/Navigation';
 import SchoolsFooter from '@/components/schools/SchoolsFooter';
+import { Link } from 'react-router-dom';
 
 export default function SpecialistLanding() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const scrollToCTA = () => {
-    document.getElementById('register-form')?.scrollIntoView({ behavior: 'smooth' });
-  };
+
 
   const faqs = [
     {
@@ -64,13 +63,14 @@ export default function SpecialistLanding() {
                 <span>С возможностью продвигать себя везде</span>
               </div>
             </div>
-            <Button 
-              size="lg" 
-              className="text-base md:text-lg px-6 md:px-10 py-5 md:py-7 h-auto mt-4 md:mt-8 w-full sm:w-auto" 
-              onClick={scrollToCTA}
-            >
-              👉 Заявить о себе как специалист
-            </Button>
+            <Link to="/register">
+              <Button 
+                size="lg" 
+                className="text-base md:text-lg px-6 md:px-10 py-5 md:py-7 h-auto mt-4 md:mt-8 w-full sm:w-auto" 
+              >
+                👉 Заявить о себе как специалист
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -300,12 +300,14 @@ export default function SpecialistLanding() {
               Присоединяйтесь к экосистеме профессионалов, которые уже работают с осознанными клиентами
             </p>
             <div className="space-y-4">
-              <Button 
-                size="lg" 
-                className="w-full sm:w-auto text-base md:text-lg px-8 md:px-12 py-5 md:py-7 h-auto text-primary-foreground"
-              >
-                🚀 Создать профиль специалиста
-              </Button>
+              <Link to="/register">
+                <Button 
+                  size="lg" 
+                  className="w-full sm:w-auto text-base md:text-lg px-8 md:px-12 py-5 md:py-7 h-auto text-primary-foreground"
+                >
+                  🚀 Создать профиль специалиста
+                </Button>
+              </Link>
               <p className="text-xs md:text-sm text-muted-foreground">
                 Это займёт всего 15-20 минут
               </p>
