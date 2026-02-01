@@ -315,7 +315,7 @@ export default function SpecialistLanding() {
                 </Button>
               </Link>
               <p className="text-xs md:text-sm text-muted-foreground">
-                Это займёт всего 15-20 минут
+                Это займет не более 2-х минут
               </p>
             </div>
           </Card>
