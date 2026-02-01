@@ -235,16 +235,6 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
                     )}
                     {isLoggedIn ? (
                       <>
-                        {balance !== null && (
-                          <Button
-                            variant="outline"
-                            onClick={() => handleMenuClick(() => window.location.href = '/dashboard/ai-subscription')}
-                            className="w-full gap-2"
-                          >
-                            <Icon name="Wallet" size={16} />
-                            Баланс: {balance.toFixed(2)} ₽
-                          </Button>
-                        )}
                         <Button
                           onClick={() => handleMenuClick(() => window.location.href = '/dashboard')}
                           className="w-full"
@@ -289,14 +279,6 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
             )}
             {isLoggedIn ? (
               <>
-                {balance !== null && (
-                  <Link to="/dashboard/ai-subscription">
-                    <Button variant="outline" size="sm" className="gap-2">
-                      <Icon name="Wallet" size={16} />
-                      {balance.toFixed(2)} ₽
-                    </Button>
-                  </Link>
-                )}
                 <Link to="/dashboard">
                   <Button>Личный кабинет</Button>
                 </Link>
