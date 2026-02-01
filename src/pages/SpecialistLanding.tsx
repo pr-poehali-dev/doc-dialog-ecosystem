@@ -48,7 +48,7 @@ export default function SpecialistLanding() {
               Платформа для специалистов по телу
             </div>
             <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight leading-[1.1]">
-              В Док диалог вас уже ждут клиенты
+              Клиенты уже ждут
             </h1>
             <p className="text-lg md:text-2xl lg:text-3xl text-muted-foreground font-light max-w-3xl mx-auto px-4">
               Более 1000 человек ищут массажиста, которому можно доверить своё тело
