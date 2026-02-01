@@ -36,8 +36,8 @@ export default function SchoolsHeader() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-4">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="max-w-7xl mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
             <img src="https://cdn.poehali.dev/files/Group 7 (6).png" alt="Док диалог" className="h-10" />
@@ -64,25 +64,26 @@ export default function SchoolsHeader() {
                   <Icon name="Menu" size={24} />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[280px] sm:w-[320px]">
-                <div className="flex flex-col gap-6 mt-8">
-                  <div className="flex flex-col gap-4">
+              <SheetContent side="right" className="w-[280px] sm:w-[320px] overflow-y-auto">
+                <div className="flex flex-col h-full py-4">
+                  <div className="flex flex-col gap-1 flex-1">
                     {(isLoggedIn ? loggedInMenuItems : otherPagesMenuItems).map((item, index) => (
                       <Link
                         key={index}
                         to={item.path}
                         onClick={() => setIsOpen(false)}
-                        className="text-left py-3 px-4 text-base font-medium hover:bg-muted rounded-lg transition-colors"
+                        className="text-left py-2.5 px-3 text-sm font-medium hover:bg-muted rounded-lg transition-colors"
                       >
                         {item.label}
                       </Link>
                     ))}
                   </div>
-                  <div className="border-t pt-6 flex flex-col gap-3">
+                  <div className="border-t pt-3 mt-3 flex flex-col gap-2">
                     {isLoggedIn ? (
                       <Button
                         onClick={() => handleMenuClick(() => window.location.href = '/dashboard')}
-                        className="w-full"
+                        className="w-full h-9"
+                        size="sm"
                       >
                         Личный кабинет
                       </Button>
@@ -91,13 +92,15 @@ export default function SchoolsHeader() {
                         <Button
                           variant="ghost"
                           onClick={() => handleMenuClick(() => window.location.href = '/login')}
-                          className="w-full justify-start"
+                          className="w-full justify-start h-9"
+                          size="sm"
                         >
                           Войти
                         </Button>
                         <Button
                           onClick={() => handleMenuClick(() => window.location.href = '/register')}
-                          className="w-full"
+                          className="w-full h-9"
+                          size="sm"
                         >
                           Регистрация
                         </Button>
