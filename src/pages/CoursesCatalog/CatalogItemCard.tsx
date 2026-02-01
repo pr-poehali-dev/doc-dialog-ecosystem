@@ -62,8 +62,13 @@ export default function CatalogItemCard({ item }: CatalogItemCardProps) {
       console.error('Failed to track view:', error);
     }
     
-    // Переходим на страницу курса внутри сайта
-    navigate(`/course/${item.id}`);
+    // Открываем лендинг школы, если есть external_url
+    if (item.external_url) {
+      window.open(item.external_url, '_blank');
+    } else {
+      // Если нет external_url, переходим на внутреннюю страницу курса
+      navigate(`/course/${item.id}`);
+    }
   };
 
   const handleRequestDiscount = async (e: React.MouseEvent) => {
