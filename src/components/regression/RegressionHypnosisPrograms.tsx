@@ -50,14 +50,14 @@ export default function RegressionHypnosisPrograms() {
                     </div>
                   ))}
                 </div>
-                <div className="flex flex-wrap gap-2 sm:gap-3 lg:gap-4 items-center pt-3 sm:pt-4 border-t">
+                <div className="flex flex-wrap gap-3 sm:gap-4 lg:gap-6 items-center pt-3 sm:pt-4 border-t text-muted-foreground">
                   <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
                     <Icon name="Calendar" size={18} />
                     <span className="font-medium">3 дня очно</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Icon name="Users" size={18} />
-                    <span className="font-medium">до 12 человек</span>
+                    <span className="font-medium">До 12 человек</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Icon name="MapPin" size={18} />
