@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
+import confetti from 'canvas-confetti';
 
 interface RegressionHypnosisFooterProps {
   openFaq: number | null;
@@ -9,6 +10,13 @@ interface RegressionHypnosisFooterProps {
 }
 
 export default function RegressionHypnosisFooter({ openFaq, setOpenFaq, faqs }: RegressionHypnosisFooterProps) {
+  const handleConfetti = () => {
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+  };
   return (
     <>
       {/* How It Works */}
@@ -126,10 +134,19 @@ export default function RegressionHypnosisFooter({ openFaq, setOpenFaq, faqs }: 
               Оставьте заявку, и мы свяжемся с вами для уточнения деталей и выбора программы
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-2">
-              <Button size="lg" className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 h-auto w-full sm:w-auto">
+              <Button 
+                size="lg" 
+                className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 h-auto w-full sm:w-auto"
+                onClick={handleConfetti}
+              >
                 Оставить заявку
               </Button>
-              <Button size="lg" variant="outline" className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 h-auto w-full sm:w-auto">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 h-auto w-full sm:w-auto"
+                onClick={handleConfetti}
+              >
                 Задать вопрос
               </Button>
             </div>
