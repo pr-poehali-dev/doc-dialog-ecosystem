@@ -248,8 +248,8 @@ export default function Forum() {
         </script>
       </Helmet>
       
-      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
-        <div className="container mx-auto px-3 sm:px-4 pt-6 sm:pt-12 pb-6 sm:pb-12">
+      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 pt-6 sm:pt-8">
+        <div className="container mx-auto px-3 sm:px-4 pb-6 sm:pb-12">
           <ForumHeader onShowRules={() => setShowRules(true)} />
 
           {!categoryId && (
