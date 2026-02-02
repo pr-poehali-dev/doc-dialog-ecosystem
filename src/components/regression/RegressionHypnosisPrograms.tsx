@@ -72,6 +72,11 @@ export default function RegressionHypnosisPrograms() {
                   <div className="text-2xl sm:text-3xl font-bold text-primary">
                     Стоимость 25 000 ₽
                   </div>
+                  <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900 p-3 rounded-lg">
+                    <p className="text-sm font-medium text-center">
+                      💬 Оплата только после личного общения
+                    </p>
+                  </div>
                   <div className="flex flex-col sm:flex-row gap-3">
                     <Button 
                       size="lg" 
@@ -144,6 +149,11 @@ export default function RegressionHypnosisPrograms() {
                   <div className="text-2xl sm:text-3xl font-bold text-primary">
                     Стоимость 49 900 ₽
                   </div>
+                  <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900 p-3 rounded-lg">
+                    <p className="text-sm font-medium text-center">
+                      💬 Оплата только после личного общения
+                    </p>
+                  </div>
                   <div className="flex flex-col sm:flex-row gap-3">
                     <Button 
                       size="lg" 
@@ -210,6 +220,11 @@ export default function RegressionHypnosisPrograms() {
                 <div className="pt-4 sm:pt-6 border-t space-y-4">
                   <div className="text-2xl sm:text-3xl font-bold text-primary">
                     Стоимость 55 000 ₽
+                  </div>
+                  <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900 p-3 rounded-lg">
+                    <p className="text-sm font-medium text-center">
+                      💬 Оплата только после личного общения
+                    </p>
                   </div>
                   <div className="flex flex-col sm:flex-row gap-3">
                     <Button 
