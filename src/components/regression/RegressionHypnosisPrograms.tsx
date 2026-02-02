@@ -208,19 +208,24 @@ export default function RegressionHypnosisPrograms() {
                   </p>
                 </div>
                 <div className="pt-4 sm:pt-6 border-t space-y-4">
-                  <div className="flex items-center gap-3 text-lg font-medium text-muted-foreground">
-                    <Icon name="Video" size={24} className="text-primary" />
-                    <span>Онлайн-сессия 50 минут</span>
+                  <div className="text-2xl sm:text-3xl font-bold text-primary">
+                    Стоимость 55 000 ₽
                   </div>
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="text-2xl sm:text-3xl font-bold text-primary">
-                      Стоимость 5 000 ₽
-                    </div>
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <Button 
-                      size="lg"
+                      size="lg" 
+                      className="flex-1"
                       onClick={handleBooking}
                     >
-                      Оплатить
+                      Забронировать место 10 000 ₽
+                    </Button>
+                    <Button 
+                      size="lg" 
+                      variant="outline"
+                      className="flex-1"
+                      onClick={handleBooking}
+                    >
+                      Оплатить полностью
                     </Button>
                   </div>
                 </div>
