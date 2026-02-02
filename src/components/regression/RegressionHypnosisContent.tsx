@@ -5,9 +5,9 @@ export default function RegressionHypnosisContent() {
   return (
     <>
       {/* Why Needed with Image */}
-      <section className="container mx-auto px-4 sm:px-6 py-12 sm:py-16 lg:py-24 xl:py-32">
+      <section className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 lg:py-16">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-10 lg:mb-12 text-center px-2">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 sm:mb-8 lg:mb-10 text-center px-2">
             Когда рационального анализа недостаточно
           </h2>
           <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 items-center">
@@ -50,10 +50,10 @@ export default function RegressionHypnosisContent() {
       </section>
 
       {/* What is with Image */}
-      <section className="bg-muted/20 py-12 sm:py-16 lg:py-24 xl:py-32">
+      <section className="bg-muted/20 py-8 sm:py-12 lg:py-16">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-10 lg:mb-12 text-center px-2">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 sm:mb-8 lg:mb-10 text-center px-2">
               Что мы называем регрессивным гипнозом
             </h2>
             <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 items-center">
@@ -109,9 +109,9 @@ export default function RegressionHypnosisContent() {
       </section>
 
       {/* Target Audience */}
-      <section className="container mx-auto px-4 sm:px-6 py-12 sm:py-16 lg:py-24 xl:py-32">
+      <section className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 lg:py-16">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-10 lg:mb-12 text-center px-2">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 sm:mb-8 lg:mb-10 text-center px-2">
             Кому подходит обучение
           </h2>
           <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
@@ -131,10 +131,10 @@ export default function RegressionHypnosisContent() {
       </section>
 
       {/* Results with Training Image */}
-      <section className="bg-muted/20 py-12 sm:py-16 lg:py-24 xl:py-32">
+      <section className="bg-muted/20 py-8 sm:py-12 lg:py-16">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-10 lg:mb-12 text-center px-2">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 sm:mb-8 lg:mb-10 text-center px-2">
               Чему вы научитесь
             </h2>
             <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 items-center">

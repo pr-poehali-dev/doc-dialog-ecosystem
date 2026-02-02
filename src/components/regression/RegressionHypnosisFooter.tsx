@@ -21,10 +21,10 @@ export default function RegressionHypnosisFooter({ openFaq, setOpenFaq, faqs }: 
   return (
     <>
       {/* How It Works */}
-      <section className="bg-muted/20 py-12 sm:py-16 lg:py-24 xl:py-32">
+      <section className="bg-muted/20 py-8 sm:py-12 lg:py-16">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="max-w-5xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-10 lg:mb-12 text-center px-2">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 sm:mb-8 lg:mb-10 text-center px-2">
               Как проходит обучение
             </h2>
             <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
@@ -91,10 +91,10 @@ export default function RegressionHypnosisFooter({ openFaq, setOpenFaq, faqs }: 
       </section>
 
       {/* FAQ */}
-      <section className="bg-muted/20 py-12 sm:py-16 lg:py-24 xl:py-32">
+      <section className="bg-muted/20 py-8 sm:py-12 lg:py-16">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-10 lg:mb-12 text-center px-2">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 sm:mb-8 lg:mb-10 text-center px-2">
               Частые вопросы
             </h2>
             <div className="space-y-3 sm:space-y-4">
@@ -125,7 +125,7 @@ export default function RegressionHypnosisFooter({ openFaq, setOpenFaq, faqs }: 
       </section>
 
       {/* CTA */}
-      <section className="container mx-auto px-4 sm:px-6 py-12 sm:py-16 lg:py-24 xl:py-32">
+      <section className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 lg:py-16">
         <div className="max-w-4xl mx-auto">
           <Card className="p-6 sm:p-8 md:p-12 lg:p-16 bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-primary/20 text-center">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 px-2">

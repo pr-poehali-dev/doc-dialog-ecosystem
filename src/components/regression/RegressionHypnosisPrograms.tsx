@@ -13,9 +13,9 @@ export default function RegressionHypnosisPrograms() {
     window.open('https://t.me/SergeuVodopianov', '_blank');
   };
   return (
-    <section id="cta-section" className="container mx-auto px-4 sm:px-6 py-12 sm:py-16 lg:py-24 xl:py-32">
+    <section id="cta-section" className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 lg:py-16">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-10 sm:mb-12 lg:mb-16">
+        <div className="text-center mb-6 sm:mb-8 lg:mb-10">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 px-2">
             Программы обучения
           </h2>
