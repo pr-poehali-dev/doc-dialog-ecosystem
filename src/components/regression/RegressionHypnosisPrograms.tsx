@@ -192,18 +192,21 @@ export default function RegressionHypnosisPrograms() {
                     🎯 Только для специалистов с опытом работы в регрессивном гипнозе
                   </p>
                 </div>
-                <div className="flex flex-wrap gap-4 items-center pt-4 border-t">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Icon name="Calendar" size={18} />
-                    <span className="font-medium">3 дня очно</span>
+                <div className="pt-4 sm:pt-6 border-t space-y-4">
+                  <div className="flex items-center gap-3 text-lg font-medium text-muted-foreground">
+                    <Icon name="Video" size={24} className="text-primary" />
+                    <span>Онлайн-сессия 50 минут</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Icon name="Users" size={18} />
-                    <span className="font-medium">до 12 человек</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Icon name="MapPin" size={18} />
-                    <span className="font-medium">Москва</span>
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="text-2xl sm:text-3xl font-bold text-primary">
+                      Стоимость 5 000 ₽
+                    </div>
+                    <Button 
+                      size="lg"
+                      onClick={handleBooking}
+                    >
+                      Оплатить
+                    </Button>
                   </div>
                 </div>
               </div>
