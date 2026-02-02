@@ -1,7 +1,17 @@
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
+import confetti from 'canvas-confetti';
 
 export default function RegressionHypnosisPrograms() {
+  const handleBooking = () => {
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+    window.open('https://t.me/SergeuVodopianov', '_blank');
+  };
   return (
     <section id="cta-section" className="container mx-auto px-4 sm:px-6 py-12 sm:py-16 lg:py-24 xl:py-32">
       <div className="max-w-6xl mx-auto">
@@ -50,18 +60,26 @@ export default function RegressionHypnosisPrograms() {
                     </div>
                   ))}
                 </div>
-                <div className="flex flex-wrap gap-3 sm:gap-4 lg:gap-6 items-center pt-3 sm:pt-4 border-t text-muted-foreground">
-                  <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
-                    <Icon name="Calendar" size={18} />
-                    <span className="font-medium">3 дня очно</span>
+                <div className="pt-4 sm:pt-6 border-t space-y-4">
+                  <div className="text-2xl sm:text-3xl font-bold text-primary">
+                    Стоимость 25 000 ₽
                   </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Icon name="Users" size={18} />
-                    <span className="font-medium">до 12 человек</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Icon name="MapPin" size={18} />
-                    <span className="font-medium">Москва</span>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Button 
+                      size="lg" 
+                      className="flex-1"
+                      onClick={handleBooking}
+                    >
+                      Забронировать место 10 000 ₽
+                    </Button>
+                    <Button 
+                      size="lg" 
+                      variant="outline"
+                      className="flex-1"
+                      onClick={handleBooking}
+                    >
+                      Оплатить полностью
+                    </Button>
                   </div>
                 </div>
               </div>
