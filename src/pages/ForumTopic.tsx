@@ -61,6 +61,13 @@ export default function ForumTopic() {
   const isLoggedIn = !!localStorage.getItem('token');
 
   useEffect(() => {
+    document.body.classList.add('no-padding');
+    return () => {
+      document.body.classList.remove('no-padding');
+    };
+  }, []);
+
+  useEffect(() => {
     if (!isLoggedIn) {
       setShowAuthDialog(true);
       setLoading(false);

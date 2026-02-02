@@ -59,6 +59,13 @@ export default function Forum() {
   const isLoggedIn = !!localStorage.getItem('token');
 
   useEffect(() => {
+    document.body.classList.add('no-padding');
+    return () => {
+      document.body.classList.remove('no-padding');
+    };
+  }, []);
+
+  useEffect(() => {
     setCurrentPage(1);
     loadForumData();
   }, [categoryId]);
