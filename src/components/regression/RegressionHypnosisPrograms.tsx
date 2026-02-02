@@ -299,7 +299,7 @@ export default function RegressionHypnosisPrograms() {
               <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
                 <div className="text-center sm:text-left">
                   <div className="text-2xl sm:text-3xl font-bold text-amber-600 dark:text-amber-500">
-                    от 3 000 ₽
+                    от 5 000 ₽
                   </div>
                   <p className="text-sm text-muted-foreground">за сессию</p>
                 </div>
