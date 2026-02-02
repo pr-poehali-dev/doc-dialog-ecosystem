@@ -5,34 +5,34 @@ export default function RegressionHypnosisContent() {
   return (
     <>
       {/* Why Needed with Image */}
-      <section className="container mx-auto px-4 py-20 lg:py-32">
+      <section className="container mx-auto px-4 sm:px-6 py-12 sm:py-16 lg:py-24 xl:py-32">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-12 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-10 lg:mb-12 text-center px-2">
             Когда рационального анализа недостаточно
           </h2>
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
+          <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 items-center">
             <div className="order-2 lg:order-1">
-              <Card className="p-8 lg:p-10 bg-gradient-to-br from-muted/30 to-muted/10 border-2 hover:shadow-xl transition-shadow">
-                <p className="text-lg mb-6">
+              <Card className="p-5 sm:p-6 md:p-8 lg:p-10 bg-gradient-to-br from-muted/30 to-muted/10 border-2 hover:shadow-xl transition-shadow">
+                <p className="text-base sm:text-lg mb-4 sm:mb-6">
                   В работе с людьми специалист регулярно сталкивается с ситуациями, когда:
                 </p>
-                <div className="space-y-4 mb-8">
+                <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
                   {[
                     'клиент всё понимает, но не меняется',
                     'инсайт есть, а симптом остаётся',
                     'тело реагирует быстрее, чем мышление',
                     'эмоция возникает без очевидной причины'
                   ].map((item, idx) => (
-                    <div key={idx} className="flex items-start gap-3">
-                      <Icon name="CircleDot" className="text-primary mt-1 flex-shrink-0" size={20} />
-                      <p className="text-base lg:text-lg">{item}</p>
+                    <div key={idx} className="flex items-start gap-2 sm:gap-3">
+                      <Icon name="CircleDot" className="text-primary mt-1 flex-shrink-0" size={18} />
+                      <p className="text-sm sm:text-base lg:text-lg">{item}</p>
                     </div>
                   ))}
                 </div>
-                <p className="text-lg mb-4">
+                <p className="text-base sm:text-lg mb-3 sm:mb-4">
                   Это связано с тем, что значимая часть опыта хранится <strong>в недекларируемой памяти</strong> — на уровне ощущений, образов и телесных реакций.
                 </p>
-                <p className="text-lg font-medium">
+                <p className="text-base sm:text-lg font-medium">
                   Регрессивный гипноз позволяет <strong>организованно и безопасно</strong> работать с этим уровнем.
                 </p>
               </Card>
@@ -41,7 +41,8 @@ export default function RegressionHypnosisContent() {
               <img 
                 src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/2a657a80-7508-44bf-88ad-109409602441.jpg"
                 alt="Professional therapy session"
-                className="rounded-2xl shadow-2xl w-full h-auto"
+                className="rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl w-full h-auto object-cover"
+                loading="lazy"
               />
             </div>
           </div>
@@ -49,23 +50,24 @@ export default function RegressionHypnosisContent() {
       </section>
 
       {/* What is with Image */}
-      <section className="bg-muted/20 py-20 lg:py-32">
-        <div className="container mx-auto px-4">
+      <section className="bg-muted/20 py-12 sm:py-16 lg:py-24 xl:py-32">
+        <div className="container mx-auto px-4 sm:px-6">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-12 text-center">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-10 lg:mb-12 text-center px-2">
               Что мы называем регрессивным гипнозом
             </h2>
-            <div className="grid lg:grid-cols-2 gap-8 items-center">
+            <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 items-center">
               <div>
                 <img 
                   src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/8c816ef4-e8b0-4c2e-bd02-2297da99fa7b.jpg"
                   alt="Mindfulness practice"
-                  className="rounded-2xl shadow-2xl w-full h-auto"
+                  className="rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl w-full h-auto object-cover"
+                  loading="lazy"
                 />
               </div>
               <div>
-                <Card className="p-8 lg:p-10 hover:shadow-xl transition-shadow">
-                  <p className="text-lg mb-6">
+                <Card className="p-5 sm:p-6 md:p-8 lg:p-10 hover:shadow-xl transition-shadow">
+                  <p className="text-base sm:text-lg mb-4 sm:mb-6">
                     Регрессивный гипноз — это метод работы с изменённым состоянием сознания, в котором внимание клиента направляется:
                   </p>
                   <div className="space-y-3 mb-8">
@@ -80,8 +82,8 @@ export default function RegressionHypnosisContent() {
                       </div>
                     ))}
                   </div>
-                  <p className="text-lg mb-4">С точки зрения науки, речь идёт о:</p>
-                  <div className="grid gap-3 mb-8">
+                  <p className="text-base sm:text-lg mb-3 sm:mb-4">С точки зрения науки, речь идёт о:</p>
+                  <div className="grid gap-2 sm:gap-3 mb-6 sm:mb-8">
                     {[
                       'фокусированной активации памяти',
                       'работе с ассоциативными сетями',
@@ -94,8 +96,8 @@ export default function RegressionHypnosisContent() {
                       </div>
                     ))}
                   </div>
-                  <div className="bg-primary/10 p-6 rounded-lg">
-                    <p className="text-lg font-semibold text-center">
+                  <div className="bg-primary/10 p-4 sm:p-6 rounded-lg">
+                    <p className="text-base sm:text-lg font-semibold text-center">
                       Мы не обучаем "вере" — мы обучаем методу.
                     </p>
                   </div>
@@ -107,20 +109,20 @@ export default function RegressionHypnosisContent() {
       </section>
 
       {/* Target Audience */}
-      <section className="container mx-auto px-4 py-20 lg:py-32">
+      <section className="container mx-auto px-4 sm:px-6 py-12 sm:py-16 lg:py-24 xl:py-32">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-12 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-10 lg:mb-12 text-center px-2">
             Кому подходит обучение
           </h2>
-          <div className="grid sm:grid-cols-2 gap-6">
+          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
             {[
               { title: 'Психологам и психотерапевтам', desc: 'для углубления работы с травматическим и ранним опытом' },
               { title: 'Коучам и консультантам', desc: 'для работы с ограничивающими стратегиями и бессознательными паттернами' },
               { title: 'Телесным специалистам', desc: 'для интеграции телесных реакций и психических процессов' },
               { title: 'Тем, кто осознанно выбирает профессию', desc: 'и готов обучаться очно, глубоко и ответственно' }
             ].map((item, idx) => (
-              <Card key={idx} className="p-8 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                <h3 className="text-xl font-bold mb-4">{item.title}</h3>
+              <Card key={idx} className="p-5 sm:p-6 md:p-8 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">{item.title}</h3>
                 <p className="text-base text-muted-foreground">{item.desc}</p>
               </Card>
             ))}
@@ -129,15 +131,15 @@ export default function RegressionHypnosisContent() {
       </section>
 
       {/* Results with Training Image */}
-      <section className="bg-muted/20 py-20 lg:py-32">
-        <div className="container mx-auto px-4">
+      <section className="bg-muted/20 py-12 sm:py-16 lg:py-24 xl:py-32">
+        <div className="container mx-auto px-4 sm:px-6">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-12 text-center">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-10 lg:mb-12 text-center px-2">
               Чему вы научитесь
             </h2>
-            <div className="grid lg:grid-cols-2 gap-8 items-center">
+            <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 items-center">
               <div className="order-2 lg:order-1">
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {[
                     { icon: 'Target', text: 'Проводить регрессивные сеансы с пониманием механизма' },
                     { icon: 'Shield', text: 'Работать с сопротивлением, возрастной и темпоральной ориентацией' },
@@ -145,12 +147,12 @@ export default function RegressionHypnosisContent() {
                     { icon: 'Users', text: 'Интегрировать метод в вашу практику (психотерапия, коучинг, телесная работа)' },
                     { icon: 'BookOpen', text: 'Работать в рамках этической и научно обоснованной модели' }
                   ].map((item, idx) => (
-                    <Card key={idx} className="p-6 hover:shadow-lg transition-all duration-300">
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <Icon name={item.icon} className="text-primary" size={24} />
+                    <Card key={idx} className="p-4 sm:p-5 md:p-6 hover:shadow-lg transition-all duration-300">
+                      <div className="flex items-start gap-3 sm:gap-4">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <Icon name={item.icon} className="text-primary" size={20} />
                         </div>
-                        <p className="text-lg pt-2">{item.text}</p>
+                        <p className="text-base sm:text-lg pt-1 sm:pt-2">{item.text}</p>
                       </div>
                     </Card>
                   ))}
@@ -160,7 +162,8 @@ export default function RegressionHypnosisContent() {
                 <img 
                   src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/7375949b-33b9-4231-befa-f2dae0274abc.jpg"
                   alt="Professional training"
-                  className="rounded-2xl shadow-2xl w-full h-auto"
+                  className="rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl w-full h-auto object-cover"
+                  loading="lazy"
                 />
               </div>
             </div>

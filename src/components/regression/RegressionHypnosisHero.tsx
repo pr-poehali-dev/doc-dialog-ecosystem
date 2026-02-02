@@ -7,7 +7,7 @@ interface RegressionHypnosisHeroProps {
 
 export default function RegressionHypnosisHero({ onCTAClick }: RegressionHypnosisHeroProps) {
   return (
-    <section className="relative overflow-hidden h-[85vh] min-h-[600px] flex items-center">
+    <section className="relative overflow-hidden min-h-[500px] sm:min-h-[600px] lg:h-[85vh] flex items-center pt-16">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <img 
@@ -19,40 +19,42 @@ export default function RegressionHypnosisHero({ onCTAClick }: RegressionHypnosi
       </div>
 
       {/* Hero Content */}
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-4xl mx-auto text-center space-y-6 md:space-y-8 text-white">
-          <div className="inline-block px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm font-medium border border-white/20">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
+        <div className="max-w-4xl mx-auto text-center space-y-4 sm:space-y-6 md:space-y-8 text-white py-8 sm:py-12">
+          <div className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-white/10 backdrop-blur-sm rounded-full text-xs sm:text-sm font-medium border border-white/20">
             Очное обучение в Москве · Группа до 12 человек
           </div>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1]">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] px-2">
             Регрессивный гипноз
           </h1>
-          <p className="text-xl md:text-2xl lg:text-3xl font-light">
+          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-light px-2">
             как прикладной инструмент психотерапии и коучинга
           </p>
-          <p className="text-base md:text-lg lg:text-xl max-w-3xl mx-auto px-4 text-white/90">
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl max-w-3xl mx-auto px-4 text-white/90">
             Очное профессиональное обучение работе с регрессивными состояниями памяти, опыта и перспектив развития личности
           </p>
-          <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 text-sm lg:text-base pt-4">
+          <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-3 lg:gap-4 text-xs sm:text-sm lg:text-base pt-2 sm:pt-4 px-2">
             {[
               'научный и прикладной подход',
               'офлайн-формат в Москве',
               'малая группа до 12 человек',
               'практика под супервизией'
             ].map((item, idx) => (
-              <div key={idx} className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/20">
-                <Icon name="Check" className="text-white flex-shrink-0" size={20} />
-                <span>{item}</span>
+              <div key={idx} className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border border-white/20">
+                <Icon name="Check" className="text-white flex-shrink-0" size={16} />
+                <span className="whitespace-nowrap">{item}</span>
               </div>
             ))}
           </div>
-          <Button 
-            size="lg" 
-            className="text-lg px-8 py-6 h-auto mt-8 w-full sm:w-auto bg-white text-black hover:bg-white/90" 
-            onClick={onCTAClick}
-          >
-            👉 Посмотреть программу и форматы участия
-          </Button>
+          <div className="px-4">
+            <Button 
+              size="lg" 
+              className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 h-auto mt-4 sm:mt-6 lg:mt-8 w-full sm:w-auto bg-white text-black hover:bg-white/90" 
+              onClick={onCTAClick}
+            >
+              👉 Посмотреть программу
+            </Button>
+          </div>
         </div>
       </div>
     </section>
