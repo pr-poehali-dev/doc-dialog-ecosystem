@@ -41,24 +41,32 @@ export default function RegressionHypnosisPrograms() {
                   <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <span className="text-xl sm:text-2xl font-bold text-primary">1</span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold">Базовый уровень</h3>
+                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold">Уровень 1: Базовый</h3>
                 </div>
-                <p className="text-muted-foreground text-base sm:text-lg mb-4 sm:mb-6">
-                  Введение в метод, базовая теория, первичные навыки ведения
+                <p className="text-muted-foreground text-base sm:text-lg mb-4 sm:mb-6 font-medium">
+                  Фокус: основы метода и безопасность
                 </p>
                 <div className="space-y-3 mb-6">
                   {[
-                    'Теория изменённых состояний сознания',
-                    'Индукции, углубления, выходы',
-                    'Работа с возрастной регрессией',
-                    'Техники безопасности',
-                    'Практика под супервизией (триады)'
+                    'Изменённые состояния сознания: нейрофизиология',
+                    'Гипноз и внимание',
+                    'Типы регрессивных процессов',
+                    'Структура сессии',
+                    'Контракт и запрос',
+                    'Этика и границы работы',
+                    'Противопоказания',
+                    'Практика в парах'
                   ].map((item, idx) => (
                     <div key={idx} className="flex items-start gap-2 sm:gap-3">
                       <Icon name="Check" className="text-primary mt-0.5 sm:mt-1 flex-shrink-0" size={16} />
                       <p className="text-sm sm:text-base">{item}</p>
                     </div>
                   ))}
+                </div>
+                <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 p-3 sm:p-4 rounded-lg mb-4 sm:mb-6">
+                  <p className="text-sm font-medium">
+                    ✅ Результат: Вы уверенно владеете базовым протоколом регрессивной работы
+                  </p>
                 </div>
                 <div className="pt-4 sm:pt-6 border-t space-y-4">
                   <div className="text-2xl sm:text-3xl font-bold text-primary">
@@ -102,18 +110,24 @@ export default function RegressionHypnosisPrograms() {
                   <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <span className="text-xl sm:text-2xl font-bold text-primary">2</span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold">Продвинутый уровень</h3>
+                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold">Уровень 2: Работа с глубинным опытом</h3>
                 </div>
-                <p className="text-muted-foreground text-base sm:text-lg mb-4 sm:mb-6">
-                  Расширение инструментария, сложные случаи, интеграция с другими методами
+                <p className="text-muted-foreground text-base sm:text-lg mb-3 sm:mb-4 font-medium">
+                  Фокус: символическая и метафорическая память
                 </p>
+                <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900 p-3 sm:p-4 rounded-lg mb-4 sm:mb-6">
+                  <p className="text-sm font-medium">
+                    ℹ️ Прошлые воплощения рассматриваются как форма работы с бессознательным, а не как догматическая концепция
+                  </p>
+                </div>
                 <div className="space-y-3 mb-6">
                   {[
-                    'Работа с травматическими воспоминаниями',
-                    'Перспективная регрессия (проектирование будущего)',
-                    'Техники самогипноза и якорения',
-                    'Работа с метафорами и символическими образами',
-                    'Интеграция с коучингом, телесной работой, психотерапией'
+                    'Архетипические образы и символы',
+                    'Сценарные структуры психики',
+                    'Повторяющиеся паттерны поведения',
+                    'Травматический и незавершённый опыт',
+                    'Перепроживание и интеграция',
+                    'Практика сопровождения'
                   ].map((item, idx) => (
                     <div key={idx} className="flex items-start gap-3">
                       <Icon name="Check" className="text-primary mt-1 flex-shrink-0" size={20} />
@@ -121,9 +135,9 @@ export default function RegressionHypnosisPrograms() {
                     </div>
                   ))}
                 </div>
-                <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900 p-3 sm:p-4 rounded-lg mb-4 sm:mb-6">
+                <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 p-3 sm:p-4 rounded-lg mb-4 sm:mb-6">
                   <p className="text-sm font-medium">
-                    ⚠️ Требуется прохождение базового уровня или эквивалентный опыт
+                    ✅ Результат: Вы умеете работать с глубинными сценариями личности
                   </p>
                 </div>
                 <div className="pt-4 sm:pt-6 border-t space-y-4">
@@ -168,18 +182,19 @@ export default function RegressionHypnosisPrograms() {
                   <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <span className="text-xl sm:text-2xl font-bold text-primary">3</span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold">Супервизия и мастерство</h3>
+                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold">Уровень 3: Прогрессия</h3>
                 </div>
-                <p className="text-muted-foreground text-base sm:text-lg mb-4 sm:mb-6">
-                  Разбор реальных кейсов, сложные ситуации, профессиональная поддержка
+                <p className="text-muted-foreground text-base sm:text-lg mb-4 sm:mb-6 font-medium">
+                  Фокус: работа с перспективами и выбором
                 </p>
                 <div className="space-y-3 mb-6">
                   {[
-                    'Разбор записей ваших сеансов',
-                    'Работа со "сложными" клиентами',
-                    'Тупики, сопротивления, этические дилеммы',
-                    'Персональные вопросы и точки роста',
-                    'Групповая и индивидуальная супервизия'
+                    'Прогрессия как метод работы с мотивацией',
+                    'Вероятностные модели будущего',
+                    'Работа с целями и ценностями',
+                    'Отличие прогрессии от фантазирования',
+                    'Этика и ограничения метода',
+                    'Практика'
                   ].map((item, idx) => (
                     <div key={idx} className="flex items-start gap-3">
                       <Icon name="Check" className="text-primary mt-1 flex-shrink-0" size={20} />
@@ -187,9 +202,9 @@ export default function RegressionHypnosisPrograms() {
                     </div>
                   ))}
                 </div>
-                <div className="bg-primary/10 p-3 sm:p-4 rounded-lg mb-4 sm:mb-6">
+                <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 p-3 sm:p-4 rounded-lg mb-4 sm:mb-6">
                   <p className="text-sm font-medium">
-                    🎯 Только для специалистов с опытом работы в регрессивном гипнозе
+                    ✅ Результат: Вы используете прогрессию как инструмент осознанного выбора и изменений
                   </p>
                 </div>
                 <div className="pt-4 sm:pt-6 border-t space-y-4">
@@ -209,6 +224,87 @@ export default function RegressionHypnosisPrograms() {
                     </Button>
                   </div>
                 </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* Supervision - Separate Block */}
+          <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300 border-2 border-amber-500/30 bg-gradient-to-br from-amber-50/50 to-orange-50/50 dark:from-amber-950/20 dark:to-orange-950/20">
+            <div className="p-6 sm:p-8 md:p-10">
+              <div className="text-center mb-6 sm:mb-8">
+                <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-amber-100 dark:bg-amber-900/30 mb-4">
+                  <Icon name="Users" size={32} className="text-amber-600 dark:text-amber-500" />
+                </div>
+                <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">Супервизия</h3>
+                <p className="text-muted-foreground text-base sm:text-lg font-medium">
+                  Профессиональная поддержка и разбор практики
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-lg flex items-center gap-2">
+                    <Icon name="Target" size={20} className="text-amber-600" />
+                    Групповая супервизия
+                  </h4>
+                  <ul className="space-y-2 text-sm sm:text-base text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <Icon name="Check" size={16} className="text-amber-600 mt-1 flex-shrink-0" />
+                      <span>Разбор реальных кейсов участников</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Icon name="Check" size={16} className="text-amber-600 mt-1 flex-shrink-0" />
+                      <span>Работа со сложными ситуациями</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Icon name="Check" size={16} className="text-amber-600 mt-1 flex-shrink-0" />
+                      <span>Обмен опытом в профессиональном сообществе</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-lg flex items-center gap-2">
+                    <Icon name="User" size={20} className="text-amber-600" />
+                    Индивидуальная супервизия
+                  </h4>
+                  <ul className="space-y-2 text-sm sm:text-base text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <Icon name="Check" size={16} className="text-amber-600 mt-1 flex-shrink-0" />
+                      <span>Персональный разбор ваших сеансов</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Icon name="Check" size={16} className="text-amber-600 mt-1 flex-shrink-0" />
+                      <span>Этические дилеммы и границы</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Icon name="Check" size={16} className="text-amber-600 mt-1 flex-shrink-0" />
+                      <span>Точки профессионального роста</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="bg-amber-100 dark:bg-amber-900/30 p-4 sm:p-5 rounded-lg mb-6">
+                <p className="text-sm font-medium text-center">
+                  🎯 Для специалистов, практикующих регрессивный гипноз
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+                <div className="text-center sm:text-left">
+                  <div className="text-2xl sm:text-3xl font-bold text-amber-600 dark:text-amber-500">
+                    от 3 000 ₽
+                  </div>
+                  <p className="text-sm text-muted-foreground">за сессию</p>
+                </div>
+                <Button 
+                  size="lg"
+                  className="bg-amber-600 hover:bg-amber-700 text-white"
+                  onClick={handleBooking}
+                >
+                  Записаться на супервизию
+                </Button>
               </div>
             </div>
           </Card>
