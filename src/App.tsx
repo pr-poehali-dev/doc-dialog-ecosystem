@@ -111,6 +111,7 @@ const ForumTopic = lazy(() => import("./pages/ForumTopic").catch((error) => {
   return import("./pages/ForumTopic");
 }));
 const VerifyEmail = lazy(() => import("./pages/VerifyEmail"));
+const RegistrationSuccess = lazy(() => import("./pages/RegistrationSuccess"));
 const EducationPlatform = lazy(() => import("./pages/EducationPlatform"));
 const PartnerProgram = lazy(() => import("./pages/PartnerProgram"));
 const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
@@ -158,6 +159,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/registration-success" element={<RegistrationSuccess />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/register/masseur" element={<RegisterMasseur />} />
           <Route path="/register/school" element={<RegisterSchool />} />

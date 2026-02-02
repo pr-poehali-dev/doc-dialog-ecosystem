@@ -32,14 +32,14 @@ export default function VerifyEmail() {
 
       if (response.ok) {
         setStatus('success');
-        setMessage(data.message || 'Email успешно подтвержден! Теперь вы можете войти в систему.');
+        setMessage(data.message || 'Email успешно подтвержден!');
         
         if (data.token) {
           localStorage.setItem('token', data.token);
           localStorage.setItem('userRole', data.role);
           setTimeout(() => {
-            window.location.href = 'https://doc-dialog-ecosystem.poehali.dev';
-          }, 2000);
+            navigate('/registration-success');
+          }, 1500);
         }
       } else {
         setStatus('error');
