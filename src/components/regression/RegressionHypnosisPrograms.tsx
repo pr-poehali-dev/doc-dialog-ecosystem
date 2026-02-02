@@ -53,7 +53,7 @@ export default function RegressionHypnosisPrograms() {
                 <div className="flex flex-wrap gap-2 sm:gap-3 lg:gap-4 items-center pt-3 sm:pt-4 border-t">
                   <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
                     <Icon name="Calendar" size={18} />
-                    <span className="font-medium">5 дней очно</span>
+                    <span className="font-medium">3 дня очно</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Icon name="Users" size={18} />
