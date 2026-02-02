@@ -173,7 +173,7 @@ export default function RegressionHypnosisPrograms() {
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Icon name="Users" size={18} />
-                    <span className="font-medium">до 8 человек</span>
+                    <span className="font-medium">до 12 человек</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Icon name="MapPin" size={18} />
