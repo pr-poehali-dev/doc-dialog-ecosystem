@@ -126,18 +126,26 @@ export default function RegressionHypnosisPrograms() {
                     ⚠️ Требуется прохождение базового уровня или эквивалентный опыт
                   </p>
                 </div>
-                <div className="flex flex-wrap gap-4 items-center pt-4 border-t">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Icon name="Calendar" size={18} />
-                    <span className="font-medium">5 дней очно</span>
+                <div className="pt-4 sm:pt-6 border-t space-y-4">
+                  <div className="text-2xl sm:text-3xl font-bold text-primary">
+                    Стоимость 49 900 ₽
                   </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Icon name="Users" size={18} />
-                    <span className="font-medium">до 12 человек</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Icon name="MapPin" size={18} />
-                    <span className="font-medium">Москва</span>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Button 
+                      size="lg" 
+                      className="flex-1"
+                      onClick={handleBooking}
+                    >
+                      Забронировать место 10 000 ₽
+                    </Button>
+                    <Button 
+                      size="lg" 
+                      variant="outline"
+                      className="flex-1"
+                      onClick={handleBooking}
+                    >
+                      Оплатить полностью
+                    </Button>
                   </div>
                 </div>
               </div>
