@@ -16,6 +16,7 @@ export default function RegressionHypnosisFooter({ openFaq, setOpenFaq, faqs }: 
       spread: 70,
       origin: { y: 0.6 }
     });
+    window.open('https://t.me/SergeuVodopianov', '_blank');
   };
   return (
     <>
