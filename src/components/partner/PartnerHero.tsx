@@ -3,7 +3,7 @@ import Icon from "@/components/ui/icon";
 
 export default function PartnerHero() {
   return (
-    <section className="relative bg-gradient-to-br from-primary/5 via-background to-primary/5 overflow-hidden pt-20">
+    <section className="relative bg-gradient-to-br from-primary/5 via-background to-primary/5 overflow-hidden">
       <div className="absolute inset-0 bg-grid-slate-900/[0.04] bg-[size:20px_20px]" />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center pb-16 sm:pb-24">
