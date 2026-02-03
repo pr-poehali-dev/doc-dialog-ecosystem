@@ -1901,6 +1901,10 @@ def handler(event: dict, context) -> dict:
         school_id = school_row[0] if not body.get('school_id') else body.get('school_id')
         title = body.get('title')
         description = body.get('description', '')
+        category = body.get('category', 'technique')
+        course_type = body.get('course_type', 'offline')
+        has_certificate = body.get('has_certificate', False)
+        duration_hours = body.get('duration_hours')
         event_date = body.get('event_date')
         location = body.get('location')
         max_participants = body.get('max_participants')
@@ -1991,7 +1995,8 @@ def handler(event: dict, context) -> dict:
         
         cur.execute(f"""
             INSERT INTO {schema}.offline_training (
-                user_id, school_id, school_name, title, description, event_date, location, max_participants,
+                user_id, school_id, school_name, title, description, category, course_type, has_certificate, duration_hours,
+                event_date, location, max_participants,
                 price, currency, external_url, original_price, discount_price,
                 author_name, author_photo, image_url, hero_title, hero_subtitle, about_training,
                 what_you_get, training_program, instructor, co_instructors, benefits,
@@ -1999,6 +2004,7 @@ def handler(event: dict, context) -> dict:
             )
             VALUES (
                 {user_id}, {school_id}, '{school_name.replace("'", "''")}', '{title.replace("'", "''")}', '{description.replace("'", "''")}',
+                '{category}', '{course_type}', {has_certificate}, {duration_hours if duration_hours else 'NULL'},
                 '{event_date}', {f"'{location}'" if location else 'NULL'},
                 {max_participants if max_participants else 'NULL'},
                 {price if price else 'NULL'}, '{currency}', '{external_url}',
@@ -2098,6 +2104,10 @@ def handler(event: dict, context) -> dict:
         
         title = body.get('title')
         description = body.get('description', '')
+        category = body.get('category', 'technique')
+        course_type = body.get('course_type', 'offline')
+        has_certificate = body.get('has_certificate', False)
+        duration_hours = body.get('duration_hours')
         event_date = body.get('event_date')
         location = body.get('location')
         max_participants = body.get('max_participants')
@@ -2136,6 +2146,10 @@ def handler(event: dict, context) -> dict:
             UPDATE {schema}.offline_training
             SET title = '{title.replace("'", "''")}',
                 description = '{description.replace("'", "''")}',
+                category = '{category}',
+                course_type = '{course_type}',
+                has_certificate = {has_certificate},
+                duration_hours = {duration_hours if duration_hours else 'NULL'},
                 event_date = '{event_date}',
                 location = {f"'{location}'" if location else 'NULL'},
                 max_participants = {max_participants if max_participants else 'NULL'},
