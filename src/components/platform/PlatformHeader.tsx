@@ -33,14 +33,14 @@ export default function PlatformHeader() {
           </a>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-4 lg:gap-6">
             {menuItems.map((item, index) => (
               <a
                 key={index}
                 href={item.path}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm font-medium hover:text-primary transition-colors"
+                className="text-sm font-medium hover:text-primary transition-colors whitespace-nowrap"
               >
                 {item.label}
               </a>
