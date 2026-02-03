@@ -81,6 +81,7 @@ export default function RegressionHypnosisPrograms() {
             reverseLayout={true}
             onOpenProgram={openProgram}
             onBooking={handleBooking}
+            fullPaymentUrl="https://school.brossok.ru/buy/65"
           />
 
           {/* Level 3 - Progression */}
