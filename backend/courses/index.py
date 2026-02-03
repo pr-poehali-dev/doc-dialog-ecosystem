@@ -1827,7 +1827,8 @@ def handler(event: dict, context) -> dict:
                    ot.location, ot.max_participants, ot.current_participants, ot.price, ot.currency, 
                    ot.image_url, ot.external_url, ot.status, ot.original_price, ot.discount_price, 
                    ot.view_count, ot.created_at, ot.slug, ot.moderation_comment, ot.cover_url,
-                   COALESCE(sp.promo_requests_allowed, false) as promo_requests_allowed
+                   COALESCE(sp.promo_requests_allowed, false) as promo_requests_allowed,
+                   ot.category, ot.course_type, ot.has_certificate, ot.duration_hours
             FROM {schema}.offline_training ot
             LEFT JOIN {schema}.schools s ON ot.school_id = s.id
             LEFT JOIN {schema}.school_subscriptions ss ON s.id = ss.school_id AND ss.is_active = true
@@ -1857,7 +1858,11 @@ def handler(event: dict, context) -> dict:
             'slug': t[18],
             'moderation_comment': t[19],
             'cover_url': t[20],
-            'promo_requests_allowed': t[21]
+            'promo_requests_allowed': t[21],
+            'category': t[22],
+            'course_type': t[23],
+            'has_certificate': t[24],
+            'duration_hours': t[25]
         } for t in trainings]
         
         cur.close()
