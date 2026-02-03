@@ -38,7 +38,7 @@ export default function ProgramLevelCard({
   return (
     <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300">
       <div className="grid lg:grid-cols-5 gap-0">
-        <div className={`lg:col-span-2 ${reverseLayout ? 'order-2 lg:order-1' : ''}`}>
+        <div className={`lg:col-span-2 ${reverseLayout ? 'order-2 lg:order-2' : ''}`}>
           <img 
             src={imageUrl}
             alt={imageAlt}
@@ -46,7 +46,7 @@ export default function ProgramLevelCard({
             loading="lazy"
           />
         </div>
-        <div className={`lg:col-span-3 p-5 sm:p-6 md:p-8 lg:p-10 ${reverseLayout ? 'order-1 lg:order-2' : ''}`}>
+        <div className={`lg:col-span-3 p-5 sm:p-6 md:p-8 lg:p-10 ${reverseLayout ? 'order-1 lg:order-1' : ''}`}>
           <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
               <span className="text-xl sm:text-2xl font-bold text-primary">{level}</span>
