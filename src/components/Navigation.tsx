@@ -117,7 +117,17 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
             {isHomePage && scrollToSection ? (
               <>
                 {homePageMenuItems.map((item, index) => (
-                  item.path ? (
+                  item.external ? (
+                    <a
+                      key={index}
+                      href={item.external}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-medium hover:text-primary transition-colors"
+                    >
+                      {item.label}
+                    </a>
+                  ) : item.path ? (
                     <Link
                       key={index}
                       to={item.path}
