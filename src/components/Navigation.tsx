@@ -86,21 +86,13 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
     { label: "Блог", external: "https://school.brossok.ru/blog" },
   ];
 
-  const loggedInMenuItems = [
+  const mainMenuItems = [
     { label: "Главная", path: "/" },
     { label: "Специалисты", path: "/masseurs" },
     { label: "Вакансии", path: "/vacancies" },
     { label: "Курсы", path: "/courses" },
     { label: "Форум", path: "/forum" },
     { label: "Центры", path: "/salons", disabled: true },
-    { label: "Блог", external: "https://school.brossok.ru/blog" },
-  ];
-
-  const otherPagesMenuItems = [
-    { label: "Главная", path: "/" },
-    { label: "Образование", path: "/courses" },
-    { label: "Инструменты", path: "/dashboard" },
-    { label: "Сообщество", path: "/masseurs" },
     { label: "Блог", external: "https://school.brossok.ru/blog" },
   ];
 
@@ -148,7 +140,7 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
               </>
             ) : (
               <>
-                {(isLoggedIn ? loggedInMenuItems : otherPagesMenuItems).map((item, index) => (
+                {mainMenuItems.map((item, index) => (
                   item.disabled ? (
                     <button
                       key={index}
@@ -228,7 +220,7 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
                       </>
                     ) : (
                       <>
-                        {(isLoggedIn ? loggedInMenuItems : otherPagesMenuItems).map((item, index) => (
+                        {mainMenuItems.map((item, index) => (
                           item.disabled ? (
                             <button
                               key={index}
@@ -247,7 +239,7 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
                               target="_blank"
                               rel="noopener noreferrer"
                               onClick={() => setIsOpen(false)}
-                              className="text-left py-2.5 px-3 text-sm font-medium hover:bg-muted rounded-lg transition-colors"
+                              className="text-left py-2.5 px-3 text-sm font-medium hover:bg-muted rounded-lg transition-colors block"
                             >
                               {item.label}
                             </a>
