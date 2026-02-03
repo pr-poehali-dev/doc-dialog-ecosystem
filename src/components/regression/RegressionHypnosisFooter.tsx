@@ -172,7 +172,7 @@ export default function RegressionHypnosisFooter({ openFaq, setOpenFaq, faqs }: 
             </div>
             <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t">
               <p className="text-xs sm:text-sm text-muted-foreground px-2">
-                📧 info@docdialog.su · 📱 +7 (999) 123-45-67 · 📍 Москва, ЦАО
+                📱 +7 (902) 900-74-74 · 📍 Москва, Волков пер., д. 4
               </p>
             </div>
           </Card>
