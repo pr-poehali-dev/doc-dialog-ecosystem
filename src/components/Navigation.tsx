@@ -9,13 +9,8 @@ import {
 } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
-interface NavigationProps {
-  scrollToSection?: (id: string) => void;
-}
-
-export const Navigation = ({ scrollToSection }: NavigationProps) => {
+export const Navigation = () => {
   const location = useLocation();
-  const isHomePage = location.pathname === '/';
   const isLoggedIn = !!localStorage.getItem('token');
   const [isOpen, setIsOpen] = useState(false);
   const [showCatalogInfo, setShowCatalogInfo] = useState(false);
@@ -77,15 +72,6 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
     setIsOpen(false);
   };
 
-  const homePageMenuItems = [
-    { label: "Образование", onClick: () => scrollToSection?.('education') },
-    { label: "Инструменты", onClick: () => scrollToSection?.('tools') },
-    { label: "Сообщество", onClick: () => scrollToSection?.('community') },
-    { label: "Форум", path: "/forum" },
-    { label: "Вакансии", onClick: () => scrollToSection?.('jobs') },
-    { label: "Блог", external: "https://school.brossok.ru/blog" },
-  ];
-
   const mainMenuItems = [
     { label: "Главная", path: "/" },
     { label: "Специалисты", path: "/masseurs" },
@@ -106,71 +92,35 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
-            {isHomePage && scrollToSection ? (
-              <>
-                {homePageMenuItems.map((item, index) => (
-                  item.external ? (
-                    <a
-                      key={index}
-                      href={item.external}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm font-medium hover:text-primary transition-colors"
-                    >
-                      {item.label}
-                    </a>
-                  ) : item.path ? (
-                    <Link
-                      key={index}
-                      to={item.path}
-                      className="text-sm font-medium hover:text-primary transition-colors"
-                    >
-                      {item.label}
-                    </Link>
-                  ) : (
-                    <button
-                      key={index}
-                      onClick={item.onClick}
-                      className="text-sm font-medium hover:text-primary transition-colors"
-                    >
-                      {item.label}
-                    </button>
-                  )
-                ))}
-              </>
-            ) : (
-              <>
-                {mainMenuItems.map((item, index) => (
-                  item.disabled ? (
-                    <button
-                      key={index}
-                      onClick={() => setShowCatalogInfo(true)}
-                      className="text-sm font-medium text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                      {item.label}
-                    </button>
-                  ) : item.external ? (
-                    <a
-                      key={index}
-                      href={item.external}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm font-medium hover:text-primary transition-colors"
-                    >
-                      {item.label}
-                    </a>
-                  ) : (
-                    <Link
-                      key={index}
-                      to={item.path}
-                      className="text-sm font-medium hover:text-primary transition-colors"
-                    >
-                      {item.label}
-                    </Link>
-                  )
-                ))}
-              </>
-            )}
+            {mainMenuItems.map((item, index) => (
+              item.disabled ? (
+                <button
+                  key={index}
+                  onClick={() => setShowCatalogInfo(true)}
+                  className="text-sm font-medium text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {item.label}
+                </button>
+              ) : item.external ? (
+                <a
+                  key={index}
+                  href={item.external}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-medium hover:text-primary transition-colors"
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <Link
+                  key={index}
+                  to={item.path}
+                  className="text-sm font-medium hover:text-primary transition-colors"
+                >
+                  {item.label}
+                </Link>
+              )
+            ))}
           </div>
 
           {/* Mobile Menu */}
@@ -184,78 +134,40 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
               <SheetContent side="right" className="w-[280px] sm:w-[320px] overflow-y-auto">
                 <div className="flex flex-col h-full py-4">
                   <div className="flex flex-col gap-1 flex-1">
-                    {isHomePage && scrollToSection ? (
-                      <>
-                        {homePageMenuItems.map((item, index) => (
-                          item.external ? (
-                            <a
-                              key={index}
-                              href={item.external}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={() => setIsOpen(false)}
-                              className="text-left py-2.5 px-3 text-sm font-medium hover:bg-muted rounded-lg transition-colors block"
-                            >
-                              {item.label}
-                            </a>
-                          ) : item.path ? (
-                            <Link
-                              key={index}
-                              to={item.path}
-                              onClick={() => setIsOpen(false)}
-                              className="text-left py-2.5 px-3 text-sm font-medium hover:bg-muted rounded-lg transition-colors block"
-                            >
-                              {item.label}
-                            </Link>
-                          ) : (
-                            <button
-                              key={index}
-                              onClick={() => handleMenuClick(item.onClick!)}
-                              className="text-left py-2.5 px-3 text-sm font-medium hover:bg-muted rounded-lg transition-colors"
-                            >
-                              {item.label}
-                            </button>
-                          )
-                        ))}
-                      </>
-                    ) : (
-                      <>
-                        {mainMenuItems.map((item, index) => (
-                          item.disabled ? (
-                            <button
-                              key={index}
-                              onClick={() => {
-                                setIsOpen(false);
-                                setShowCatalogInfo(true);
-                              }}
-                              className="text-left py-2.5 px-3 text-sm font-medium text-gray-400 hover:bg-muted rounded-lg transition-colors"
-                            >
-                              {item.label}
-                            </button>
-                          ) : item.external ? (
-                            <a
-                              key={index}
-                              href={item.external}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={() => setIsOpen(false)}
-                              className="text-left py-2.5 px-3 text-sm font-medium hover:bg-muted rounded-lg transition-colors block"
-                            >
-                              {item.label}
-                            </a>
-                          ) : (
-                            <Link
-                              key={index}
-                              to={item.path}
-                              onClick={() => setIsOpen(false)}
-                              className="text-left py-2.5 px-3 text-sm font-medium hover:bg-muted rounded-lg transition-colors"
-                            >
-                              {item.label}
-                            </Link>
-                          )
-                        ))}
-                      </>
-                    )}
+                    {mainMenuItems.map((item, index) => (
+                      item.disabled ? (
+                        <button
+                          key={index}
+                          onClick={() => {
+                            setIsOpen(false);
+                            setShowCatalogInfo(true);
+                          }}
+                          className="text-left py-2.5 px-3 text-sm font-medium text-gray-400 hover:bg-muted rounded-lg transition-colors"
+                        >
+                          {item.label}
+                        </button>
+                      ) : item.external ? (
+                        <a
+                          key={index}
+                          href={item.external}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setIsOpen(false)}
+                          className="text-left py-2.5 px-3 text-sm font-medium hover:bg-muted rounded-lg transition-colors block"
+                        >
+                          {item.label}
+                        </a>
+                      ) : (
+                        <Link
+                          key={index}
+                          to={item.path}
+                          onClick={() => setIsOpen(false)}
+                          className="text-left py-2.5 px-3 text-sm font-medium hover:bg-muted rounded-lg transition-colors"
+                        >
+                          {item.label}
+                        </Link>
+                      )
+                    ))}
                   </div>
                   <div className="border-t pt-3 mt-3 flex flex-col gap-2">
                     {isImpersonating && (
