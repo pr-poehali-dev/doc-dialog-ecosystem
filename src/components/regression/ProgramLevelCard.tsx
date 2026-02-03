@@ -15,6 +15,8 @@ interface ProgramLevelCardProps {
   reverseLayout?: boolean;
   onOpenProgram: (level: 1 | 2 | 3) => void;
   onBooking: () => void;
+  bookingUrl?: string;
+  fullPaymentUrl?: string;
 }
 
 export default function ProgramLevelCard({
@@ -29,7 +31,9 @@ export default function ProgramLevelCard({
   infoMessage,
   reverseLayout = false,
   onOpenProgram,
-  onBooking
+  onBooking,
+  bookingUrl,
+  fullPaymentUrl
 }: ProgramLevelCardProps) {
   return (
     <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300">
@@ -95,7 +99,13 @@ export default function ProgramLevelCard({
                 <Button 
                   size="lg" 
                   className="flex-1"
-                  onClick={onBooking}
+                  onClick={() => {
+                    if (bookingUrl) {
+                      window.open(bookingUrl, '_blank');
+                    } else {
+                      onBooking();
+                    }
+                  }}
                 >
                   Забронировать место 10 000 ₽
                 </Button>
@@ -103,7 +113,13 @@ export default function ProgramLevelCard({
                   size="lg" 
                   variant="outline"
                   className="flex-1"
-                  onClick={onBooking}
+                  onClick={() => {
+                    if (fullPaymentUrl) {
+                      window.open(fullPaymentUrl, '_blank');
+                    } else {
+                      onBooking();
+                    }
+                  }}
                 >
                   Оплатить полностью
                 </Button>
