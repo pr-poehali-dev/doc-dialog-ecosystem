@@ -13,7 +13,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
-interface Dialog {
+interface AIDialog {
   id: number;
   title: string;
   dialog_type: string;
@@ -22,7 +22,7 @@ interface Dialog {
 }
 
 interface DialogsData {
-  dialogs: Dialog[];
+  dialogs: AIDialog[];
   limit: number;
   dialogs_used: number;
   tools_used: number;
@@ -35,7 +35,7 @@ const AIDialogs = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [dialogsData, setDialogsData] = useState<DialogsData>({ dialogs: [], limit: 5, dialogs_used: 0, tools_used: 0, total_used: 0 });
-  const [activeDialog, setActiveDialog] = useState<Dialog | null>(null);
+  const [activeDialog, setActiveDialog] = useState<AIDialog | null>(null);
   const [loading, setLoading] = useState(true);
   const [showLimitModal, setShowLimitModal] = useState(false);
 
