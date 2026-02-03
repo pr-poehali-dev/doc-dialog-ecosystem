@@ -10,7 +10,7 @@ export default function ToolsHero({ onScrollToTools }: ToolsHeroProps) {
   const navigate = useNavigate();
 
   return (
-    <section className="relative overflow-hidden">
+    <section className="relative overflow-hidden pt-16">
       <div className="absolute inset-0">
         <img 
           src="https://cdn.poehali.dev/files/3b1b03fe-2310-4289-ab50-fcf2d3334a04.jpg" 
