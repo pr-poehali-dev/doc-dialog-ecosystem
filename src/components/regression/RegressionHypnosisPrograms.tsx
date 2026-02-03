@@ -103,6 +103,7 @@ export default function RegressionHypnosisPrograms() {
             price="Стоимость 55 000 ₽"
             onOpenProgram={openProgram}
             onBooking={handleBooking}
+            fullPaymentUrl="https://school.brossok.ru/buy/65"
           />
 
           {/* Supervision */}
