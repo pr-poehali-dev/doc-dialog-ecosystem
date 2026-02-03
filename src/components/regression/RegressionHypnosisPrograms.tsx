@@ -6,6 +6,12 @@ import { useState } from 'react';
 
 export default function RegressionHypnosisPrograms() {
   const [showProgram, setShowProgram] = useState(false);
+  const [selectedLevel, setSelectedLevel] = useState<1 | 2 | 3>(1);
+  
+  const openProgram = (level: 1 | 2 | 3) => {
+    setSelectedLevel(level);
+    setShowProgram(true);
+  };
   
   const handleBooking = () => {
     confetti({
@@ -25,19 +31,6 @@ export default function RegressionHypnosisPrograms() {
           <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto px-2">
             Три уровня профессионального мастерства — от базовых навыков до супервизии
           </p>
-          
-          {/* Program Button */}
-          <div className="mt-6">
-            <Button 
-              size="lg" 
-              variant="outline"
-              onClick={() => setShowProgram(true)}
-              className="text-base sm:text-lg px-6 sm:px-8"
-            >
-              <Icon name="BookOpen" className="mr-2" size={20} />
-              Программа курса
-            </Button>
-          </div>
         </div>
 
         <div className="space-y-6 sm:space-y-8">
@@ -93,22 +86,33 @@ export default function RegressionHypnosisPrograms() {
                       💬 Оплата только после личного общения
                     </p>
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <Button 
-                      size="lg" 
-                      className="flex-1"
-                      onClick={handleBooking}
-                    >
-                      Забронировать место 10 000 ₽
-                    </Button>
+                  <div className="space-y-3">
                     <Button 
                       size="lg" 
                       variant="outline"
-                      className="flex-1"
-                      onClick={handleBooking}
+                      className="w-full"
+                      onClick={() => openProgram(1)}
                     >
-                      Оплатить полностью
+                      <Icon name="BookOpen" className="mr-2" size={20} />
+                      Программа курса
                     </Button>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <Button 
+                        size="lg" 
+                        className="flex-1"
+                        onClick={handleBooking}
+                      >
+                        Забронировать место 10 000 ₽
+                      </Button>
+                      <Button 
+                        size="lg" 
+                        variant="outline"
+                        className="flex-1"
+                        onClick={handleBooking}
+                      >
+                        Оплатить полностью
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -170,22 +174,33 @@ export default function RegressionHypnosisPrograms() {
                       💬 Оплата только после личного общения
                     </p>
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <Button 
-                      size="lg" 
-                      className="flex-1"
-                      onClick={handleBooking}
-                    >
-                      Забронировать место 10 000 ₽
-                    </Button>
+                  <div className="space-y-3">
                     <Button 
                       size="lg" 
                       variant="outline"
-                      className="flex-1"
-                      onClick={handleBooking}
+                      className="w-full"
+                      onClick={() => openProgram(2)}
                     >
-                      Оплатить полностью
+                      <Icon name="BookOpen" className="mr-2" size={20} />
+                      Программа курса
                     </Button>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <Button 
+                        size="lg" 
+                        className="flex-1"
+                        onClick={handleBooking}
+                      >
+                        Забронировать место 10 000 ₽
+                      </Button>
+                      <Button 
+                        size="lg" 
+                        variant="outline"
+                        className="flex-1"
+                        onClick={handleBooking}
+                      >
+                        Оплатить полностью
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -242,22 +257,33 @@ export default function RegressionHypnosisPrograms() {
                       💬 Оплата только после личного общения
                     </p>
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <Button 
-                      size="lg" 
-                      className="flex-1"
-                      onClick={handleBooking}
-                    >
-                      Забронировать место 10 000 ₽
-                    </Button>
+                  <div className="space-y-3">
                     <Button 
                       size="lg" 
                       variant="outline"
-                      className="flex-1"
-                      onClick={handleBooking}
+                      className="w-full"
+                      onClick={() => openProgram(3)}
                     >
-                      Оплатить полностью
+                      <Icon name="BookOpen" className="mr-2" size={20} />
+                      Программа курса
                     </Button>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <Button 
+                        size="lg" 
+                        className="flex-1"
+                        onClick={handleBooking}
+                      >
+                        Забронировать место 10 000 ₽
+                      </Button>
+                      <Button 
+                        size="lg" 
+                        variant="outline"
+                        className="flex-1"
+                        onClick={handleBooking}
+                      >
+                        Оплатить полностью
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -359,7 +385,9 @@ export default function RegressionHypnosisPrograms() {
           >
             {/* Header */}
             <div className="sticky top-0 bg-background border-b px-6 py-4 flex items-center justify-between">
-              <h3 className="text-2xl sm:text-3xl font-bold">Программа базового курса</h3>
+              <h3 className="text-2xl sm:text-3xl font-bold">
+                Программа курса — Уровень {selectedLevel}
+              </h3>
               <button 
                 onClick={() => setShowProgram(false)}
                 className="p-2 hover:bg-muted rounded-full transition-colors"
@@ -370,10 +398,12 @@ export default function RegressionHypnosisPrograms() {
 
             {/* Content */}
             <div className="p-6 sm:p-8 space-y-8">
-              <div className="text-center pb-6 border-b">
-                <h2 className="text-3xl font-bold mb-2">БАЗОВЫЙ КУРС</h2>
-                <p className="text-xl text-muted-foreground">«Регрессивный гипноз. Основы и практика»</p>
-              </div>
+              {selectedLevel === 1 && (
+                <>
+                  <div className="text-center pb-6 border-b">
+                    <h2 className="text-3xl font-bold mb-2">БАЗОВЫЙ КУРС</h2>
+                    <p className="text-xl text-muted-foreground">«Регрессивный гипноз. Основы и практика»</p>
+                  </div>
 
               {/* Module 1 */}
               <div className="space-y-4">
@@ -648,6 +678,24 @@ export default function RegressionHypnosisPrograms() {
                   <li>• Понимание своей готовности</li>
                 </ul>
               </div>
+                </>
+              )}
+
+              {selectedLevel === 2 && (
+                <div className="text-center py-12">
+                  <Icon name="BookOpen" size={64} className="mx-auto text-muted-foreground mb-4" />
+                  <h3 className="text-2xl font-bold mb-2">Программа 2-го уровня</h3>
+                  <p className="text-muted-foreground">Детальная программа в разработке</p>
+                </div>
+              )}
+
+              {selectedLevel === 3 && (
+                <div className="text-center py-12">
+                  <Icon name="BookOpen" size={64} className="mx-auto text-muted-foreground mb-4" />
+                  <h3 className="text-2xl font-bold mb-2">Программа 3-го уровня</h3>
+                  <p className="text-muted-foreground">Детальная программа в разработке</p>
+                </div>
+              )}
             </div>
 
             {/* Footer */}
