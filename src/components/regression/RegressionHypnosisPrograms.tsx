@@ -704,7 +704,7 @@ export default function RegressionHypnosisPrograms() {
                 Закрыть
               </Button>
               <Button onClick={() => { setShowProgram(false); handleBooking(); }}>
-                Записаться на курс
+                Записаться на консультацию
               </Button>
             </div>
           </div>
