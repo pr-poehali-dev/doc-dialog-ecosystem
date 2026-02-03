@@ -60,30 +60,49 @@ export default function RegressionHypnosisFooter({ openFaq, setOpenFaq, faqs }: 
 
       {/* Author/Trainer */}
       <section className="container mx-auto px-4 sm:px-6 py-12 sm:py-16 lg:py-24 xl:py-32">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-10 lg:mb-12 text-center px-2">
             Ведущий
           </h2>
           <Card className="p-5 sm:p-6 md:p-8 lg:p-12 hover:shadow-xl transition-shadow">
-            <div className="space-y-4 sm:space-y-6">
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold">Опытный специалист с научным подходом</h3>
-              <div className="space-y-3 sm:space-y-4">
-                {[
-                  'Практика регрессивного гипноза более 12 лет',
-                  'Обучение и супервизия специалистов с 2015 года',
-                  'Автор методических материалов и программ',
-                  'Работа в рамках доказательного подхода'
-                ].map((item, idx) => (
-                  <div key={idx} className="flex items-start gap-2 sm:gap-3">
-                    <Icon name="Award" className="text-primary mt-0.5 sm:mt-1 flex-shrink-0" size={18} />
-                    <p className="text-sm sm:text-base md:text-lg">{item}</p>
-                  </div>
-                ))}
+            <div className="grid md:grid-cols-[300px,1fr] gap-6 sm:gap-8 items-center">
+              {/* Photo */}
+              <div className="mx-auto md:mx-0">
+                <img 
+                  src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/bucket/65c03abd-b0ea-4f7a-b633-99c86793f68e.jpg" 
+                  alt="Сергей Водопьянов"
+                  className="w-full max-w-[280px] md:max-w-none rounded-lg shadow-lg"
+                />
               </div>
-              <div className="bg-muted p-4 sm:p-5 md:p-6 rounded-lg mt-4 sm:mt-6">
-                <p className="text-sm sm:text-base md:text-lg italic">
-                  "Я обучаю тому, что работает. Без мистики, без обещаний чудес — только практика, метод и понимание механизма."
-                </p>
+              
+              {/* Content */}
+              <div className="space-y-4 sm:space-y-6">
+                <div>
+                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2">Сергей Водопьянов</h3>
+                  <p className="text-base sm:text-lg text-muted-foreground">Автор проекта «Док диалог»</p>
+                </div>
+                
+                <div className="space-y-3 sm:space-y-4">
+                  {[
+                    'Остеопат с 17-летним опытом',
+                    'Регрессолог с 2011 года',
+                    'Гипнотерапевт',
+                    'Международный бизнес-коуч',
+                    'Обучение и супервизия специалистов с 2015 года',
+                    'Автор методических материалов и программ'
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex items-start gap-2 sm:gap-3">
+                      <Icon name="Award" className="text-primary mt-0.5 sm:mt-1 flex-shrink-0" size={18} />
+                      <p className="text-sm sm:text-base md:text-lg">{item}</p>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="bg-muted p-4 sm:p-5 md:p-6 rounded-lg mt-4 sm:mt-6">
+                  <p className="text-sm sm:text-base md:text-lg italic">
+                    "Я обучаю тому, что работает. Без мистики, без обещаний чудес — только практика, метод и понимание механизма."
+                  </p>
+                </div>
               </div>
             </div>
           </Card>
