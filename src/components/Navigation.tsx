@@ -83,7 +83,7 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
     { label: "Сообщество", onClick: () => scrollToSection?.('community') },
     { label: "Форум", path: "/forum" },
     { label: "Вакансии", onClick: () => scrollToSection?.('jobs') },
-    { label: "О платформе", onClick: () => scrollToSection?.('about') },
+    { label: "Блог", external: "https://school.brossok.ru/blog" },
   ];
 
   const loggedInMenuItems = [
@@ -93,7 +93,7 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
     { label: "Курсы", path: "/courses" },
     { label: "Форум", path: "/forum" },
     { label: "Центры", path: "/salons", disabled: true },
-    { label: "О платформе", path: "/about" },
+    { label: "Блог", external: "https://school.brossok.ru/blog" },
   ];
 
   const otherPagesMenuItems = [
@@ -101,7 +101,7 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
     { label: "Образование", path: "/courses" },
     { label: "Инструменты", path: "/dashboard" },
     { label: "Сообщество", path: "/masseurs" },
-    { label: "О платформе", path: "/about" },
+    { label: "Блог", external: "https://school.brossok.ru/blog" },
   ];
 
   return (
@@ -147,6 +147,16 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
                     >
                       {item.label}
                     </button>
+                  ) : item.external ? (
+                    <a
+                      key={index}
+                      href={item.external}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-medium hover:text-primary transition-colors"
+                    >
+                      {item.label}
+                    </a>
                   ) : (
                     <Link
                       key={index}
@@ -175,7 +185,18 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
                     {isHomePage && scrollToSection ? (
                       <>
                         {homePageMenuItems.map((item, index) => (
-                          item.path ? (
+                          item.external ? (
+                            <a
+                              key={index}
+                              href={item.external}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() => setIsOpen(false)}
+                              className="text-left py-2.5 px-3 text-sm font-medium hover:bg-muted rounded-lg transition-colors block"
+                            >
+                              {item.label}
+                            </a>
+                          ) : item.path ? (
                             <Link
                               key={index}
                               to={item.path}
@@ -209,6 +230,17 @@ export const Navigation = ({ scrollToSection }: NavigationProps) => {
                             >
                               {item.label}
                             </button>
+                          ) : item.external ? (
+                            <a
+                              key={index}
+                              href={item.external}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() => setIsOpen(false)}
+                              className="text-left py-2.5 px-3 text-sm font-medium hover:bg-muted rounded-lg transition-colors"
+                            >
+                              {item.label}
+                            </a>
                           ) : (
                             <Link
                               key={index}
