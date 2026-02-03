@@ -105,7 +105,7 @@ export default function RegressionHypnosisPrograms() {
             onOpenProgram={openProgram}
             onBooking={handleBooking}
             bookingUrl="https://school.brossok.ru/buy/64"
-            fullPaymentUrl="https://school.brossok.ru/buy/65"
+            fullPaymentUrl="https://school.brossok.ru/buy/67"
           />
 
           {/* Supervision */}
