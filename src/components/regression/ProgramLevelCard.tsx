@@ -85,6 +85,13 @@ export default function ProgramLevelCard({
                 💬 Оплата только после личного общения
               </p>
             </div>
+            <div className="bg-muted/50 p-3 rounded-lg">
+              <p className="text-sm text-muted-foreground text-center">
+                {level === 1 && 'Оплата за 1 уровень'}
+                {level === 2 && 'Оплата за 1 и 2 уровни'}
+                {level === 3 && 'Оплата за 1, 2 и 3 уровни'}
+              </p>
+            </div>
             <div className="space-y-3">
               <Button 
                 size="lg" 
