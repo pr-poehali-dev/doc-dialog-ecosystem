@@ -39,7 +39,7 @@ export default function DashboardTabs({ activeTab, onTabChange, pendingPromoRequ
         <Icon name="Tag" size={18} className="inline sm:mr-2" />
         <span className="hidden sm:inline">Запросы скидок</span>
         {pendingPromoRequestsCount > 0 && (
-          <span className="ml-1 sm:ml-2 inline-flex items-center justify-center px-1.5 sm:px-2 py-0.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full">
+          <span className="absolute -top-1 -right-1 sm:relative sm:top-0 sm:right-0 sm:ml-2 inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full animate-pulse">
             {pendingPromoRequestsCount}
           </span>
         )}
