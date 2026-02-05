@@ -118,8 +118,8 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
-        # Получаем email школы
-        cur.execute(f"SELECT email, school_name FROM {schema}.users WHERE id = {school_id} AND role = 'school'")
+        # Получаем email создателя курса (школы или массажиста)
+        cur.execute(f"SELECT email, school_name FROM {schema}.users WHERE id = {school_id}")
         school_data = cur.fetchone()
         
         if not school_data:
@@ -128,7 +128,7 @@ def handler(event: dict, context) -> dict:
             return {
                 'statusCode': 404,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Школа не найдена'}),
+                'body': json.dumps({'error': 'Создатель курса не найден'}),
                 'isBase64Encoded': False
             }
         
