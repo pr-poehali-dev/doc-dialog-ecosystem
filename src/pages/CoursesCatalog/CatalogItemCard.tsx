@@ -9,7 +9,7 @@ import Icon from '@/components/ui/icon';
 import RatingDisplay from '@/components/RatingDisplay';
 import LazyImage from '@/components/LazyImage';
 import { CatalogItem } from './types';
-import { formatMoscowDate } from '@/utils/datetime';
+import { formatMoscowDateTime } from '@/utils/datetime';
 
 interface CatalogItemCardProps {
   item: CatalogItem;
@@ -190,7 +190,7 @@ export default function CatalogItemCard({ item }: CatalogItemCardProps) {
             <div className="flex items-center gap-1.5 bg-purple-50 dark:bg-purple-950 px-2 py-1.5 rounded-lg">
               <Icon name="Calendar" size={14} className="text-purple-600 dark:text-purple-400 flex-shrink-0" />
               <span className="text-purple-700 dark:text-purple-300 truncate">
-                {formatMoscowDate(item.event_date, 'ru-RU')}
+                {formatMoscowDateTime(item.event_date, 'ru-RU', { day: 'numeric', month: 'numeric', year: '2-digit', hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
           ) : item.duration_hours ? (
