@@ -15,6 +15,7 @@ export default function PlatformHeader() {
     { label: "Все курсы", path: "/courses" },
     { label: "Инструменты", path: "/tools" },
     { label: "Партнерская программа", path: "/partner-program" },
+    { label: "Блог", path: "https://school.brossok.ru/blog" },
     { label: "Обо мне", path: "https://osteopatplus.ru/" },
     { label: "Написать нам", path: "/contact" },
   ];
