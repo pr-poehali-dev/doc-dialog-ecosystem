@@ -171,8 +171,28 @@ export function useDashboardState(toast: any) {
     setShowAddForm(false);
   };
 
+  const loadPromoRequestsCount = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      
+      const response = await fetch('https://functions.poehali.dev/0e44bf6d-cb4d-404e-832f-02070e6e8b13?action=school_requests', {
+        headers: { 'X-Authorization': `Bearer ${token}` }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        const pendingCount = data.filter((r: any) => r.status === 'pending').length;
+        setPendingPromoRequestsCount(pendingCount);
+      }
+    } catch (error) {
+      console.error('Failed to load promo requests count:', error);
+    }
+  };
+
   useEffect(() => {
     loadUserSchool();
+    loadPromoRequestsCount();
     
     // Обработка URL параметра для переключения вкладки
     const params = new URLSearchParams(location.search);
