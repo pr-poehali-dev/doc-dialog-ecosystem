@@ -193,14 +193,14 @@ export default function CatalogItemCard({ item }: CatalogItemCardProps) {
                 {formatMoscowDate(item.event_date, 'ru-RU')}
               </span>
             </div>
-          ) : (
+          ) : item.duration_hours ? (
             <div className="flex items-center gap-1.5 bg-green-50 dark:bg-green-950 px-2 py-1.5 rounded-lg">
               <Icon name="Clock" size={14} className="text-green-600 dark:text-green-400 flex-shrink-0" />
               <span className="text-green-700 dark:text-green-300 truncate">
-                {item.duration_hours ? `${item.duration_hours} ч` : '3 месяца'}
+                {item.duration_hours} ч
               </span>
             </div>
-          )}
+          ) : null}
         </div>
         
         {(item.itemType === 'mastermind' || item.itemType === 'offline_training') && item.location && (
