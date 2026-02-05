@@ -142,6 +142,11 @@ export default function CoursesCatalog() {
             console.error('Failed to load reviews for item:', item.id, error);
           }
           
+          // Специальный рейтинг для Мастермайнда в Москве
+          if (item.id === 51 && item.itemType === 'mastermind') {
+            return { ...item, rating: 5.0, review_count: 141 };
+          }
+          
           // Генерируем стабильные случайные значения на основе ID курса
           const stableRating = 4.5 + generateStableRandom(item.id, 1) * 0.5; // от 4.5 до 5.0
           const stableReviewCount = Math.floor(50 + generateStableRandom(item.id, 2) * 200); // от 50 до 250
