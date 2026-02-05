@@ -54,19 +54,27 @@ export default function PromoRequestsTab({ onRequestsCountChange }: PromoRequest
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
+      console.log('[PromoRequests] Loading requests with token:', token?.substring(0, 20));
       const response = await fetch(`${PROMO_API_URL}?action=school_requests`, {
         headers: {
           'X-Authorization': `Bearer ${token}`
         }
       });
 
+      console.log('[PromoRequests] Response status:', response.status);
       if (response.ok) {
         const data = await response.json();
+        console.log('[PromoRequests] Loaded requests:', data.length, data);
         setRequests(data);
         const pendingCount = data.filter((r: PromoRequest) => r.status === 'pending').length;
         onRequestsCountChange?.(pendingCount);
+      } else {
+        const error = await response.text();
+        console.error('[PromoRequests] Error response:', error);
+        toast({ title: 'Ошибка', description: `Код ${response.status}`, variant: 'destructive' });
       }
     } catch (error) {
+      console.error('[PromoRequests] Exception:', error);
       toast({ title: 'Ошибка', description: 'Не удалось загрузить запросы', variant: 'destructive' });
     } finally {
       setLoading(false);
