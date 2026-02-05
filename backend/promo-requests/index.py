@@ -118,6 +118,17 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
+        # Проверка: массажист не может запрашивать скидку на свои собственные курсы
+        if user_id == school_id:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Вы не можете запросить скидку на свой собственный курс'}),
+                'isBase64Encoded': False
+            }
+        
         # Получаем email создателя курса (школы или массажиста)
         cur.execute(f"SELECT email, school_name FROM {schema}.users WHERE id = {school_id}")
         school_data = cur.fetchone()
@@ -230,6 +241,7 @@ def handler(event: dict, context) -> dict:
     # GET /promo-requests?action=school_requests - Создатель курса получает запросы к своим курсам
     if method == 'GET' and action == 'school_requests':
         # Запросы могут получать все пользователи, которые создали курсы (школы и массажисты)
+        print(f"[DEBUG] Getting promo requests for user_id={user_id}, role={user_role}")
         cur.execute(f"""
             SELECT id, masseur_id, masseur_email, masseur_name, course_id, course_title, entity_type, 
                    status, promo_code, purchase_url, discount_percentage, created_at, responded_at
@@ -237,6 +249,9 @@ def handler(event: dict, context) -> dict:
             WHERE school_id = {user_id}
             ORDER BY created_at DESC
         """)
+        
+        requests = cur.fetchall()
+        print(f"[DEBUG] Found {len(requests)} promo requests for school_id={user_id}")
         
         requests = cur.fetchall()
         result = [{
