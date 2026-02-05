@@ -118,19 +118,8 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
-        # Проверка: массажист не может запрашивать скидку на свои собственные курсы
-        if user_id == school_id:
-            cur.close()
-            conn.close()
-            return {
-                'statusCode': 400,
-                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Вы не можете запросить скидку на свой собственный курс'}),
-                'isBase64Encoded': False
-            }
-        
-        # Получаем email создателя курса (школы или массажиста)
-        cur.execute(f"SELECT email, school_name FROM {schema}.users WHERE id = {school_id}")
+        # Получаем данные школы и проверяем владельца
+        cur.execute(f"SELECT s.user_id, u.email, u.school_name FROM {schema}.schools s JOIN {schema}.users u ON s.user_id = u.id WHERE s.id = {school_id}")
         school_data = cur.fetchone()
         
         if not school_data:
@@ -139,11 +128,22 @@ def handler(event: dict, context) -> dict:
             return {
                 'statusCode': 404,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Создатель курса не найден'}),
+                'body': json.dumps({'error': 'Школа не найдена'}),
                 'isBase64Encoded': False
             }
         
-        school_email, school_name = school_data
+        school_user_id, school_email, school_name = school_data
+        
+        # Проверка: массажист не может запрашивать скидку на курсы своей школы
+        if user_id == school_user_id:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Вы не можете запросить скидку на курсы своей школы'}),
+                'isBase64Encoded': False
+            }
         
         # Используем email как имя массажиста
         masseur_name = user_email.split('@')[0] if user_email else 'Массажист'
@@ -168,11 +168,11 @@ def handler(event: dict, context) -> dict:
                 'isBase64Encoded': False
             }
         
-        # Создаём запрос
+        # Создаём запрос (school_id в таблице = user_id владельца школы)
         cur.execute(f"""
             INSERT INTO {schema}.promo_requests 
             (masseur_id, masseur_email, masseur_name, school_id, school_email, course_id, course_title, entity_type, status)
-            VALUES ({user_id}, '{user_email}', '{masseur_name.replace("'", "''")}', {school_id}, '{school_email}', {course_id}, '{course_title.replace("'", "''")}', '{entity_type}', 'pending')
+            VALUES ({user_id}, '{user_email}', '{masseur_name.replace("'", "''")}', {school_user_id}, '{school_email}', {course_id}, '{course_title.replace("'", "''")}', '{entity_type}', 'pending')
             RETURNING id, created_at
         """)
         
