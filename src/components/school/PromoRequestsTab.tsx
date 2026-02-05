@@ -225,7 +225,7 @@ export default function PromoRequestsTab({ onRequestsCountChange }: PromoRequest
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground">
                         <Icon name="User" size={14} className="inline mr-1" />
-                        {request.masseur_name} ({request.masseur_email})
+                        Массажист запросил скидку
                       </p>
                       <p className="text-sm text-muted-foreground">
                         <Icon name="Calendar" size={14} className="inline mr-1" />
