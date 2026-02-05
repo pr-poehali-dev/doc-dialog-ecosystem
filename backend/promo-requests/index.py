@@ -253,7 +253,6 @@ def handler(event: dict, context) -> dict:
         requests = cur.fetchall()
         print(f"[DEBUG] Found {len(requests)} promo requests for school_id={user_id}")
         
-        requests = cur.fetchall()
         result = [{
             'id': r[0],
             'masseur_id': r[1],
