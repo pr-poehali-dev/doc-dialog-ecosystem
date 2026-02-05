@@ -227,18 +227,9 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
-    # GET /promo-requests?action=school_requests - Школа получает запросы к ней
+    # GET /promo-requests?action=school_requests - Создатель курса получает запросы к своим курсам
     if method == 'GET' and action == 'school_requests':
-        if user_role != 'school':
-            cur.close()
-            conn.close()
-            return {
-                'statusCode': 403,
-                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Только для школ'}),
-                'isBase64Encoded': False
-            }
-        
+        # Запросы могут получать все пользователи, которые создали курсы (школы и массажисты)
         cur.execute(f"""
             SELECT id, masseur_id, masseur_email, masseur_name, course_id, course_title, entity_type, 
                    status, promo_code, purchase_url, discount_percentage, created_at, responded_at
@@ -273,42 +264,35 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
-    # PUT /promo-requests - Школа отвечает на запрос
+    # PUT /promo-requests - Создатель курса отвечает на запрос
     if method == 'PUT':
-        if user_role != 'school':
-            cur.close()
-            conn.close()
-            return {
-                'statusCode': 403,
-                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Только школы могут отвечать на запросы'}),
-                'isBase64Encoded': False
-            }
+        # Любой пользователь (школа или массажист), создавший курс, может отвечать на запросы
         
-        # Проверяем, доступны ли запросы скидок для школы
-        cur.execute(f"""
-            SELECT sp.promo_requests_allowed
-            FROM {schema}.school_subscriptions ss
-            JOIN {schema}.subscription_plans sp ON ss.plan_id = sp.id
-            WHERE ss.school_id = (SELECT id FROM {schema}.schools WHERE user_id = {user_id})
-            AND ss.is_active = true
-            LIMIT 1
-        """)
-        
-        plan_data = cur.fetchone()
-        if not plan_data or not plan_data[0]:
-            cur.close()
-            conn.close()
-            return {
-                'statusCode': 403,
-                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({
-                    'error': 'Запросы скидок недоступны на вашем тарифе',
-                    'upgrade_needed': True,
-                    'feature': 'promo_requests'
-                }),
-                'isBase64Encoded': False
-            }
+        # Проверяем, доступны ли запросы скидок для школ (если пользователь - школа)
+        if user_role == 'school':
+            cur.execute(f"""
+                SELECT sp.promo_requests_allowed
+                FROM {schema}.school_subscriptions ss
+                JOIN {schema}.subscription_plans sp ON ss.plan_id = sp.id
+                WHERE ss.school_id = (SELECT id FROM {schema}.schools WHERE user_id = {user_id})
+                AND ss.is_active = true
+                LIMIT 1
+            """)
+            
+            plan_data = cur.fetchone()
+            if not plan_data or not plan_data[0]:
+                cur.close()
+                conn.close()
+                return {
+                    'statusCode': 403,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({
+                        'error': 'Запросы скидок недоступны на вашем тарифе',
+                        'upgrade_needed': True,
+                        'feature': 'promo_requests'
+                    }),
+                    'isBase64Encoded': False
+                }
         
         body = json.loads(event.get('body', '{}'))
         request_id = body.get('request_id')
