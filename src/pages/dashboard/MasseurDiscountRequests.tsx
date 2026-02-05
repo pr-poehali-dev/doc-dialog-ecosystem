@@ -160,7 +160,7 @@ export default function MasseurDiscountRequests() {
                   <Icon name="Percent" size={48} className="mx-auto mb-4 opacity-50" />
                   <p className="text-lg mb-2">Пока нет запросов</p>
                   <p className="text-sm mb-4">Найдите интересный курс и запросите скидку</p>
-                  <Button onClick={() => navigate('/courses-catalog')}>
+                  <Button onClick={() => navigate('/catalog')}>
                     <Icon name="Search" size={16} className="mr-2" />
                     Перейти в каталог курсов
                   </Button>
