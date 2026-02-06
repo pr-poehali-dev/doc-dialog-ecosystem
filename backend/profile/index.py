@@ -153,6 +153,19 @@ def handler(event: dict, context) -> dict:
                 specs_str = '{' + ','.join([f'"{spec}"' for spec in specializations]) + '}'
                 certs_str = '{' + ','.join([f'"{cert}"' for cert in certificates]) + '}'
                 
+                first_name = ''
+                last_name = ''
+                if full_name:
+                    name_parts = full_name.strip().split(' ', 1)
+                    first_name = name_parts[0]
+                    last_name = name_parts[1] if len(name_parts) > 1 else ''
+                
+                cur.execute(f"""
+                    UPDATE {schema}.users
+                    SET first_name = '{first_name}', last_name = '{last_name}', phone = '{phone}'
+                    WHERE id = {user_id}
+                """)
+                
                 cur.execute(f"""
                     UPDATE {schema}.masseur_profiles
                     SET 
@@ -175,6 +188,19 @@ def handler(event: dict, context) -> dict:
                 languages_str = '{' + ','.join([f'"{lang}"' for lang in languages]) + '}'
                 specs_str = '{' + ','.join([f'"{spec}"' for spec in specializations]) + '}'
                 certs_str = '{' + ','.join([f'"{cert}"' for cert in certificates]) + '}'
+                
+                first_name = ''
+                last_name = ''
+                if full_name:
+                    name_parts = full_name.strip().split(' ', 1)
+                    first_name = name_parts[0]
+                    last_name = name_parts[1] if len(name_parts) > 1 else ''
+                
+                cur.execute(f"""
+                    UPDATE {schema}.users
+                    SET first_name = '{first_name}', last_name = '{last_name}', phone = '{phone}'
+                    WHERE id = {user_id}
+                """)
                 
                 cur.execute(f"""
                     INSERT INTO {schema}.masseur_profiles 

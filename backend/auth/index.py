@@ -131,9 +131,18 @@ def register_user(data: dict) -> dict:
         verification_token = secrets.token_urlsafe(32)
         verification_expires = datetime.now() + timedelta(hours=24)
         
+        full_name = profile_data.get('full_name', '') or profile_data.get('name', '')
+        phone = profile_data.get('phone', '')
+        first_name = ''
+        last_name = ''
+        if full_name:
+            name_parts = full_name.strip().split(' ', 1)
+            first_name = name_parts[0]
+            last_name = name_parts[1] if len(name_parts) > 1 else ''
+        
         cursor.execute(
-            "INSERT INTO users (email, password_hash, role, email_verified, verification_token, verification_token_expires, balance) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id",
-            (email, password_hash, role, False, verification_token, verification_expires, 150)
+            "INSERT INTO users (email, password_hash, role, email_verified, verification_token, verification_token_expires, balance, first_name, last_name, phone) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id",
+            (email, password_hash, role, False, verification_token, verification_expires, 150, first_name, last_name, phone)
         )
         user_id = cursor.fetchone()['id']
         
