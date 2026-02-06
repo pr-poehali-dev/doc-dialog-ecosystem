@@ -21,6 +21,9 @@ interface User {
   is_admin: boolean;
   is_moderator: boolean;
   created_at: string;
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
 }
 
 interface ModerationItem {

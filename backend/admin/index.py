@@ -99,7 +99,7 @@ def handler(event: dict, context) -> dict:
     # GET /admin/users - List all users
     if method == 'GET' and action == 'users':
         cur.execute(f"""
-            SELECT id, email, role, is_admin, is_moderator, created_at
+            SELECT id, email, role, is_admin, is_moderator, created_at, first_name, last_name, phone
             FROM {schema}.users
             ORDER BY created_at DESC
         """)
@@ -111,7 +111,10 @@ def handler(event: dict, context) -> dict:
             'role': u[2],
             'is_admin': u[3],
             'is_moderator': u[4],
-            'created_at': u[5].isoformat() if u[5] else None
+            'created_at': u[5].isoformat() if u[5] else None,
+            'first_name': u[6],
+            'last_name': u[7],
+            'phone': u[8]
         } for u in users]
         
         cur.close()

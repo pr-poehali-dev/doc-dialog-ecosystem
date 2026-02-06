@@ -11,6 +11,9 @@ interface User {
   is_admin: boolean;
   is_moderator: boolean;
   created_at: string;
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
 }
 
 interface AdminUsersTabProps {
@@ -112,8 +115,26 @@ export default function AdminUsersTab({ users, loading, onUpdateUserRole, onDele
           <Card key={user.id}>
             <CardHeader>
               <div className="flex items-start justify-between">
-                <div>
-                  <CardTitle>{user.email}</CardTitle>
+                <div className="space-y-2">
+                  <CardTitle className="text-lg">
+                    {user.first_name || user.last_name ? (
+                      <span>{user.first_name} {user.last_name}</span>
+                    ) : (
+                      <span className="text-muted-foreground">Имя не указано</span>
+                    )}
+                  </CardTitle>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Icon name="Mail" size={14} className="text-muted-foreground" />
+                      <span>{user.email}</span>
+                    </div>
+                    {user.phone && (
+                      <div className="flex items-center gap-2">
+                        <Icon name="Phone" size={14} className="text-muted-foreground" />
+                        <span>{user.phone}</span>
+                      </div>
+                    )}
+                  </div>
                   <CardDescription>
                     Роль: {user.role} • Зарегистрирован: {new Date(user.created_at).toLocaleDateString('ru-RU')}
                   </CardDescription>
