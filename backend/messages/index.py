@@ -485,17 +485,7 @@ def send_message(user_id: int, body: dict) -> dict:
                 'isBase64Encoded': False
             }
         
-        # Сообщение прошло проверку - сохраняем
-        query = """
-            INSERT INTO t_p46047379_doc_dialog_ecosystem.messages (sender_id, receiver_id, message_text, created_at, is_read)
-            VALUES (%s, %s, %s, NOW(), FALSE)
-            RETURNING id, sender_id, receiver_id, message_text, created_at, is_read
-        """
-        
-        cursor.execute(query, (user_id, receiver_id, message_text))
-        message = cursor.fetchone()
-        
-        # Получаем данные для email-уведомления ДО коммита
+        # Получаем данные для email-уведомления ДО вставки сообщения
         cursor.execute("""
             SELECT u.email, u.first_name, u.last_name,
                    COALESCE(mp.full_name, cp.full_name, s.school_name, sl.name) as display_name
@@ -519,6 +509,16 @@ def send_message(user_id: int, body: dict) -> dict:
             WHERE u.id = %s
         """, (user_id,))
         sender_data = cursor.fetchone()
+        
+        # Сообщение прошло проверку - сохраняем
+        query = """
+            INSERT INTO t_p46047379_doc_dialog_ecosystem.messages (sender_id, receiver_id, message_text, created_at, is_read)
+            VALUES (%s, %s, %s, NOW(), FALSE)
+            RETURNING id, sender_id, receiver_id, message_text, created_at, is_read
+        """
+        
+        cursor.execute(query, (user_id, receiver_id, message_text))
+        message = cursor.fetchone()
         
         conn.commit()
         
