@@ -69,8 +69,8 @@ def handler(event: dict, context) -> dict:
             ACL='public-read'
         )
         
-        # Формируем CDN URL
-        cdn_url = f"https://cdn.poehali.dev/projects/{os.environ['AWS_ACCESS_KEY_ID']}/files/{unique_filename}"
+        # Формируем CDN URL (bucket name is 'files', not part of the path)
+        cdn_url = f"https://cdn.poehali.dev/projects/{os.environ['AWS_ACCESS_KEY_ID']}/bucket/{unique_filename}"
         
         return {
             'statusCode': 200,

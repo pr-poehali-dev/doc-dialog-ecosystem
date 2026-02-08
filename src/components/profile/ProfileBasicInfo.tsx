@@ -136,13 +136,16 @@ export default function ProfileBasicInfo({ profileData, setProfileData }: Profil
 
           if (response.ok) {
             const data = await response.json();
+            console.log('Uploaded photo URL:', data.url);
             setProfileData({ ...profileData, photo: data.url });
             toast({
               title: 'Успешно',
               description: 'Фото загружено и сжато'
             });
           } else {
-            throw new Error('Upload failed');
+            const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+            console.error('Upload failed:', errorData);
+            throw new Error(errorData.error || 'Upload failed');
           }
         } catch (error) {
           console.error('Upload error:', error);
