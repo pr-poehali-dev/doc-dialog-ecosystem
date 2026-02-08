@@ -55,7 +55,11 @@ const TrustBadges = lazy(() => import("./pages/dashboard/TrustBadges"));
 const ClientEducation = lazy(() => import("./pages/dashboard/ClientEducation"));
 const Community = lazy(() => import("./pages/dashboard/Community"));
 const Messages = lazy(() => import("./pages/dashboard/Messages"));
-const AdminMessages = lazy(() => import("./pages/dashboard/AdminMessages"));
+const AdminMessages = lazy(() => import("./pages/dashboard/AdminMessages").catch((error) => {
+  console.error('Failed to load AdminMessages, retrying...', error);
+  window.location.reload();
+  return import("./pages/dashboard/AdminMessages");
+}));
 const PromoCodes = lazy(() => import("./pages/dashboard/PromoCodes"));
 const Verification = lazy(() => import("./pages/dashboard/Verification"));
 const MyReviews = lazy(() => import("./pages/dashboard/MyReviews"));
