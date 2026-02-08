@@ -70,7 +70,7 @@ def handler(event: dict, context) -> dict:
                     experience_years, specializations, about,
                     avatar_url, education, languages, 
                     certificates, portfolio_images, rating, reviews_count,
-                    verification_badges, is_premium, is_visible
+                    verification_badges, is_premium, is_visible, service_descriptions
                 FROM {schema}.masseur_profiles
                 WHERE user_id = {user_id}
             """)
@@ -134,6 +134,7 @@ def handler(event: dict, context) -> dict:
             specializations = body.get('specializations', [])
             certificates = body.get('certificates', [])
             avatar_url = body.get('avatar_url', '')
+            service_descriptions = body.get('service_descriptions', {})
             
             if not full_name or not phone or not city:
                 return {
@@ -166,6 +167,8 @@ def handler(event: dict, context) -> dict:
                     WHERE id = {user_id}
                 """)
                 
+                service_desc_json = json.dumps(service_descriptions).replace("'", "''")
+                
                 cur.execute(f"""
                     UPDATE {schema}.masseur_profiles
                     SET 
@@ -180,7 +183,8 @@ def handler(event: dict, context) -> dict:
                         avatar_url = '{avatar_url}',
                         languages = '{languages_str}',
                         specializations = '{specs_str}',
-                        certificates = '{certs_str}'
+                        certificates = '{certs_str}',
+                        service_descriptions = '{service_desc_json}'::jsonb
                     WHERE user_id = {user_id}
                     RETURNING id
                 """)
@@ -202,11 +206,13 @@ def handler(event: dict, context) -> dict:
                     WHERE id = {user_id}
                 """)
                 
+                service_desc_json = json.dumps(service_descriptions).replace("'", "''")
+                
                 cur.execute(f"""
                     INSERT INTO {schema}.masseur_profiles 
-                    (user_id, full_name, phone, telegram, city, address, experience_years, about, education, avatar_url, languages, specializations, certificates)
+                    (user_id, full_name, phone, telegram, city, address, experience_years, about, education, avatar_url, languages, specializations, certificates, service_descriptions)
                     VALUES ({user_id}, '{full_name}', '{phone}', '{telegram}', '{city}', '{address}', {experience_years}, '{about}', '{education}', '{avatar_url}',
-                            '{languages_str}', '{specs_str}', '{certs_str}')
+                            '{languages_str}', '{specs_str}', '{certs_str}', '{service_desc_json}'::jsonb)
                     RETURNING id
                 """)
             

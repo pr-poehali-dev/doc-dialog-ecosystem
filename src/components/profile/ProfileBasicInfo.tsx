@@ -1,7 +1,11 @@
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import Icon from '@/components/ui/icon';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProfileData {
   fullName: string;
@@ -25,6 +29,152 @@ interface ProfileBasicInfoProps {
 }
 
 export default function ProfileBasicInfo({ profileData, setProfileData }: ProfileBasicInfoProps) {
+  const { toast } = useToast();
+  const [uploading, setUploading] = useState(false);
+
+  const compressImage = async (file: File): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          // Максимальные размеры
+          const MAX_WIDTH = 800;
+          const MAX_HEIGHT = 800;
+          
+          let width = img.width;
+          let height = img.height;
+          
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                resolve(new File([blob], file.name, {
+                  type: 'image/jpeg',
+                  lastModified: Date.now()
+                }));
+              } else {
+                reject(new Error('Ошибка сжатия'));
+              }
+            },
+            'image/jpeg',
+            0.85 // Качество 85%
+          );
+        };
+      };
+      reader.onerror = reject;
+    });
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Проверка типа файла
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: 'Ошибка',
+        description: 'Пожалуйста, выберите изображение',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    // Проверка размера (макс 10MB перед сжатием)
+    if (file.size > 10 * 1024 * 1024) {
+      toast({
+        title: 'Ошибка',
+        description: 'Размер файла не должен превышать 10MB',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    setUploading(true);
+    try {
+      // Сжимаем изображение
+      const compressedFile = await compressImage(file);
+      
+      // Конвертируем в base64
+      const reader = new FileReader();
+      reader.readAsDataURL(compressedFile);
+      reader.onload = async () => {
+        try {
+          const base64Image = reader.result as string;
+          
+          // Загружаем на сервер
+          const response = await fetch('https://functions.poehali.dev/9d51dd9c-c74a-4527-b00b-2a1e1ef5878b', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              image: base64Image,
+              fileName: file.name
+            })
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            setProfileData({ ...profileData, photo: data.url });
+            toast({
+              title: 'Успешно',
+              description: 'Фото загружено и сжато'
+            });
+          } else {
+            throw new Error('Upload failed');
+          }
+        } catch (error) {
+          console.error('Upload error:', error);
+          toast({
+            title: 'Ошибка',
+            description: 'Не удалось загрузить фото. Попробуйте позже.',
+            variant: 'destructive'
+          });
+        } finally {
+          setUploading(false);
+        }
+      };
+      
+      reader.onerror = () => {
+        toast({
+          title: 'Ошибка',
+          description: 'Не удалось прочитать файл',
+          variant: 'destructive'
+        });
+        setUploading(false);
+      };
+    } catch (error) {
+      console.error('Compression error:', error);
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось обработать изображение',
+        variant: 'destructive'
+      });
+      setUploading(false);
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -42,15 +192,45 @@ export default function ProfileBasicInfo({ profileData, setProfileData }: Profil
                 <span>{profileData.fullName.charAt(0) || 'М'}</span>
               )}
             </div>
-            <div className="flex-1">
+            <div className="flex-1 space-y-2">
+              <div className="flex gap-2">
+                <input
+                  type="file"
+                  id="photo-upload"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => document.getElementById('photo-upload')?.click()}
+                  disabled={uploading}
+                  className="flex-1"
+                >
+                  {uploading ? (
+                    <>
+                      <Icon name="Loader2" size={16} className="mr-2 animate-spin" />
+                      Загрузка...
+                    </>
+                  ) : (
+                    <>
+                      <Icon name="Upload" size={16} className="mr-2" />
+                      Загрузить фото
+                    </>
+                  )}
+                </Button>
+              </div>
               <Input
                 type="url"
-                placeholder="Ссылка на фото (https://...)"
+                placeholder="Или вставьте ссылку (https://...)"
                 value={profileData.photo}
                 onChange={(e) => setProfileData({ ...profileData, photo: e.target.value })}
+                className="text-sm"
               />
-              <p className="text-xs text-muted-foreground mt-1">
-                Загрузите фото в облако и вставьте прямую ссылку
+              <p className="text-xs text-muted-foreground">
+                Фото автоматически сжимается для быстрой загрузки
               </p>
             </div>
           </div>

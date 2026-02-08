@@ -60,7 +60,7 @@ export default function PublicProfile() {
           telegram: data.telegram || '',
           whatsapp: '',
           photo: data.avatar_url || '',
-          serviceDescriptions: {},
+          serviceDescriptions: data.service_descriptions || {},
         });
         setIsVisible(data.is_visible !== false);
       }
@@ -193,7 +193,8 @@ export default function PublicProfile() {
           specializations: profileData.workFormats,
           languages: ['Русский'],
           certificates: [],
-          avatar_url: profileData.photo
+          avatar_url: profileData.photo,
+          service_descriptions: profileData.serviceDescriptions
         })
       });
       
