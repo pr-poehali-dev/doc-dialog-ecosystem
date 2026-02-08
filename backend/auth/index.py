@@ -541,9 +541,14 @@ def request_password_reset(data: dict) -> dict:
             if profile and profile.get('full_name'):
                 name = profile['full_name']
         
-        reset_link = f"https://doc-dialog.ru/reset-password?token={reset_token}"
+        reset_link = f"https://docdialog.su/forgot-password"
         
-        send_password_reset_email(email, name, reset_code, reset_link)
+        print(f"[DEBUG] Sending password reset email to {email}, code={reset_code}")
+        email_sent = send_password_reset_email(email, name, reset_code, reset_link)
+        print(f"[DEBUG] Email sent result: {email_sent}")
+        
+        if not email_sent:
+            print(f"[WARNING] Failed to send password reset email to {email}")
         
         return {
             'statusCode': 200,
