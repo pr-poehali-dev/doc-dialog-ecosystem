@@ -51,7 +51,8 @@ def handler(event: dict, context) -> dict:
                 COALESCE(mp.is_premium, false) as is_premium,
                 mp.premium_until,
                 mp.promoted_until,
-                mp.created_at
+                mp.created_at,
+                CASE WHEN u.email LIKE '%@imported.local' THEN true ELSE false END as is_imported
             FROM t_p46047379_doc_dialog_ecosystem.masseur_profiles mp
             INNER JOIN t_p46047379_doc_dialog_ecosystem.users u ON mp.user_id = u.id
             WHERE mp.user_id NOT IN (1, 2)
@@ -100,7 +101,8 @@ def handler(event: dict, context) -> dict:
                 'verification_badges': badges,
                 'is_premium': row[13] or False,
                 'premium_until': row[14].isoformat() if row[14] else None,
-                'promoted_until': row[15].isoformat() if row[15] else None
+                'promoted_until': row[15].isoformat() if row[15] else None,
+                'is_imported': row[17] if len(row) > 17 else False
             })
         
         return {

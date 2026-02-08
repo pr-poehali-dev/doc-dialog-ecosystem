@@ -23,6 +23,7 @@ interface Masseur {
   is_premium?: boolean;
   promoted_until?: string | null;
   is_promoted?: boolean;
+  is_imported?: boolean;
 }
 
 const MasseursDirectory = () => {
@@ -64,6 +65,20 @@ const MasseursDirectory = () => {
       (searchQuery === "" || m.full_name.toLowerCase().includes(searchQuery.toLowerCase()) || m.city.toLowerCase().includes(searchQuery.toLowerCase()))
     )
     .sort((a, b) => {
+      // Promoted всегда первые
+      const aPromoted = a.promoted_until ? new Date(a.promoted_until) > new Date() : false;
+      const bPromoted = b.promoted_until ? new Date(b.promoted_until) > new Date() : false;
+      if (aPromoted !== bPromoted) return aPromoted ? -1 : 1;
+      
+      // Premium выше обычных
+      if (a.is_premium !== b.is_premium) return a.is_premium ? -1 : 1;
+      
+      // Зарегистрированные выше импортированных
+      const aImported = a.is_imported || false;
+      const bImported = b.is_imported || false;
+      if (aImported !== bImported) return aImported ? 1 : -1;
+      
+      // Затем по выбранной сортировке
       if (sortBy === "rating") return b.rating - a.rating;
       return b.experience_years - a.experience_years;
     });
