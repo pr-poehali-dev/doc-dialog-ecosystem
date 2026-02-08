@@ -227,7 +227,7 @@ def generate_email_html(template: str, data: dict, subject: str) -> str:
             </p>
         </div>
         <div style="text-align: center; margin: 30px 0;">
-            <a href="https://doc-dialog-ecosystem.poehali.dev/messages" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+            <a href="https://docdialog.su/messages" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
                 Открыть чат
             </a>
         </div>
