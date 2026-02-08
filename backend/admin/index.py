@@ -278,15 +278,19 @@ def handler(event: dict, context) -> dict:
         safe_delete(f"DELETE FROM {schema}.favorites WHERE user_id = {user_id}")
         
         # Delete messages
-        safe_delete(f"DELETE FROM {schema}.messages WHERE sender_id = {user_id} OR recipient_id = {user_id}")
+        safe_delete(f"DELETE FROM {schema}.messages WHERE sender_id = {user_id} OR receiver_id = {user_id}")
         
         # Delete reviews (both written and received)
         safe_delete(f"DELETE FROM {schema}.reviews WHERE user_id = {user_id} OR masseur_id = {user_id}")
         safe_delete(f"DELETE FROM {schema}.course_reviews WHERE user_id = {user_id}")
         safe_delete(f"DELETE FROM {schema}.school_reviews WHERE user_id = {user_id}")
         
+        # Delete balance transactions
+        safe_delete(f"DELETE FROM {schema}.coin_transactions WHERE user_id = {user_id}")
+        safe_delete(f"DELETE FROM {schema}.user_balance_transactions WHERE user_id = {user_id}")
+        
         # Delete masseur-specific data
-        safe_delete(f"DELETE FROM {schema}.masseur_verifications WHERE masseur_id = {user_id}")
+        safe_delete(f"DELETE FROM {schema}.masseur_verifications WHERE user_id = {user_id}")
         safe_delete(f"DELETE FROM {schema}.masseur_profiles WHERE user_id = {user_id}")
         
         # Delete school-specific data (first get school_id)
