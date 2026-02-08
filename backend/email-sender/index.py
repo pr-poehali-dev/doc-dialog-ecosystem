@@ -209,6 +209,33 @@ def generate_email_html(template: str, data: dict, subject: str) -> str:
         </p>
         """
     
+    elif template == 'chat-notification':
+        receiver_name = data.get('receiver_name', 'Пользователь')
+        sender_name = data.get('sender_name', 'Пользователь')
+        message_preview = data.get('message_preview', '')
+        content = f"""
+        <h2 style="color: #333; margin-top: 0;">💬 Новое сообщение в чате</h2>
+        <p style="color: #666; font-size: 16px; line-height: 1.6;">
+            Здравствуйте, {receiver_name}!
+        </p>
+        <p style="color: #666; font-size: 16px; line-height: 1.6;">
+            Вам пришло новое сообщение от <strong>{sender_name}</strong>:
+        </p>
+        <div style="background: #f5f5f5; padding: 20px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #667eea;">
+            <p style="color: #333; font-size: 14px; line-height: 1.6; margin: 0;">
+                {message_preview}
+            </p>
+        </div>
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="https://doc-dialog-ecosystem.poehali.dev/dashboard" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 40px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                Открыть чат
+            </a>
+        </div>
+        <p style="color: #999; font-size: 14px;">
+            Чтобы ответить, войдите в личный кабинет и откройте раздел "Сообщения"
+        </p>
+        """
+    
     elif template == 'notification':
         title = data.get('title', 'Уведомление')
         message = data.get('message', '')

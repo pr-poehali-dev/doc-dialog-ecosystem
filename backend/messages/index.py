@@ -497,6 +497,13 @@ def send_message(user_id: int, body: dict) -> dict:
         
         message = cursor.fetchone()
         
+        # Отправляем email-уведомление получателю
+        try:
+            send_email_notification(cursor, user_id, receiver_id, message_text)
+        except Exception as e:
+            print(f"WARNING: Failed to send email notification: {str(e)}")
+            # Не прерываем выполнение, если email не отправился
+        
         return success_response({
             'message': {
                 'id': message['id'],
@@ -972,3 +979,74 @@ def get_content_violations() -> dict:
     finally:
         cursor.close()
         conn.close()
+
+
+def send_email_notification(cursor, sender_id: int, receiver_id: int, message_text: str) -> None:
+    '''Отправка email-уведомления о новом сообщении'''
+    import urllib.request
+    
+    try:
+        # Получаем email и имя получателя
+        cursor.execute("""
+            SELECT u.email, u.first_name, u.last_name
+            FROM t_p46047379_doc_dialog_ecosystem.users u
+            WHERE u.id = %s
+        """, (receiver_id,))
+        
+        receiver = cursor.fetchone()
+        if not receiver or not receiver['email']:
+            print(f"Email not found for user {receiver_id}")
+            return
+        
+        receiver_email = receiver['email']
+        receiver_name = f"{receiver['first_name'] or ''} {receiver['last_name'] or ''}".strip() or 'Пользователь'
+        
+        # Получаем имя отправителя
+        cursor.execute("""
+            SELECT u.first_name, u.last_name,
+                   COALESCE(mp.full_name, cp.full_name, s.school_name, sl.name) as display_name
+            FROM t_p46047379_doc_dialog_ecosystem.users u
+            LEFT JOIN t_p46047379_doc_dialog_ecosystem.masseur_profiles mp ON u.id = mp.user_id
+            LEFT JOIN t_p46047379_doc_dialog_ecosystem.client_profiles cp ON u.id = cp.user_id
+            LEFT JOIN t_p46047379_doc_dialog_ecosystem.schools s ON u.id = s.user_id
+            LEFT JOIN t_p46047379_doc_dialog_ecosystem.salons sl ON u.id = sl.user_id
+            WHERE u.id = %s
+        """, (sender_id,))
+        
+        sender = cursor.fetchone()
+        sender_name = sender['display_name'] if sender and sender['display_name'] else 'Пользователь'
+        
+        # Обрезаем сообщение если оно длинное
+        message_preview = message_text[:100] + '...' if len(message_text) > 100 else message_text
+        
+        # Отправляем email через email-sender функцию
+        email_data = {
+            'to': receiver_email,
+            'subject': 'Новое сообщение в чате — Док диалог',
+            'template': 'chat-notification',
+            'data': {
+                'receiver_name': receiver_name,
+                'sender_name': sender_name,
+                'message_preview': message_preview
+            }
+        }
+        
+        # Вызываем функцию email-sender
+        email_sender_url = 'https://functions.poehali.dev/d6c1d69a-e0f4-4db2-9ee5-60d4acb5a2e3'
+        
+        req = urllib.request.Request(
+            email_sender_url,
+            data=json.dumps(email_data).encode('utf-8'),
+            headers={'Content-Type': 'application/json'},
+            method='POST'
+        )
+        
+        with urllib.request.urlopen(req, timeout=5) as response:
+            if response.status == 200:
+                print(f"Email notification sent to {receiver_email}")
+            else:
+                print(f"Failed to send email notification: status {response.status}")
+                
+    except Exception as e:
+        print(f"Error sending email notification: {str(e)}")
+        # Не прерываем выполнение
