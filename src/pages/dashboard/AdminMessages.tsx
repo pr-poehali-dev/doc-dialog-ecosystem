@@ -118,55 +118,73 @@ export default function AdminMessages() {
     try {
       const token = localStorage.getItem('token');
       
-      const [clients, masseurs, schools, salons] = await Promise.all([
-        fetch('https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436', {
+      // Загружаем массажистов
+      const masseursResponse = await fetch('https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const masseursData = masseursResponse.ok ? await masseursResponse.json() : { masseurs: [] };
+      const masseurs = masseursData.masseurs || masseursData || [];
+
+      // Загружаем школы (если есть)
+      let schools: unknown[] = [];
+      try {
+        const schoolsResponse = await fetch('https://functions.poehali.dev/a81dd7cd-c267-4f44-85f5-0da8353dc741?action=get-schools', {
           headers: { 'Authorization': `Bearer ${token}` }
-        }).then(r => r.ok ? r.json() : []).catch(() => []),
-        
-        fetch('https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436', {
+        });
+        if (schoolsResponse.ok) {
+          const schoolsData = await schoolsResponse.json();
+          schools = schoolsData.schools || schoolsData || [];
+        }
+      } catch (e) {
+        console.log('Schools not loaded:', e);
+      }
+
+      // Загружаем салоны (если есть)
+      let salons: unknown[] = [];
+      try {
+        const salonsResponse = await fetch('https://functions.poehali.dev/3beac6d8-19b3-4f7f-b7c1-63e60e8afc66?action=get-salons', {
           headers: { 'Authorization': `Bearer ${token}` }
-        }).then(r => r.ok ? r.json() : []).catch(() => []),
-        
-        fetch('https://functions.poehali.dev/a81dd7cd-c267-4f44-85f5-0da8353dc741?action=get-schools', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }).then(r => r.ok ? r.json() : []).catch(() => []),
-        
-        fetch('https://functions.poehali.dev/3beac6d8-19b3-4f7f-b7c1-63e60e8afc66?action=get-salons', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }).then(r => r.ok ? r.json() : []).catch(() => [])
-      ]);
+        });
+        if (salonsResponse.ok) {
+          const salonsData = await salonsResponse.json();
+          salons = salonsData.salons || salonsData || [];
+        }
+      } catch (e) {
+        console.log('Salons not loaded:', e);
+      }
 
       const users: User[] = [
-        ...masseurs.map((m: any) => ({
-          id: m.id,
-          user_id: m.user_id,
-          name: m.full_name,
-          email: m.email || 'Нет email',
+        ...masseurs.map((m: Record<string, unknown>) => ({
+          id: m.id as number,
+          user_id: m.user_id as number,
+          name: m.full_name as string,
+          email: (m.email as string) || 'Нет email',
           role: 'masseur',
-          avatar_url: m.avatar_url,
-          phone: m.phone,
-          city: m.city
+          avatar_url: m.avatar_url as string | undefined,
+          phone: m.phone as string | undefined,
+          city: m.city as string | undefined
         })),
-        ...schools.map((s: any) => ({
-          id: s.id,
-          user_id: s.user_id,
-          name: s.school_name,
-          email: s.contact_email || 'Нет email',
+        ...schools.map((s: Record<string, unknown>) => ({
+          id: s.id as number,
+          user_id: s.user_id as number,
+          name: s.school_name as string,
+          email: (s.contact_email as string) || 'Нет email',
           role: 'school',
-          avatar_url: s.logo_url,
-          phone: s.contact_phone
+          avatar_url: s.logo_url as string,
+          phone: s.contact_phone as string
         })),
-        ...salons.map((s: any) => ({
-          id: s.id,
-          user_id: s.user_id,
-          name: s.name,
-          email: s.contact_email || 'Нет email',
+        ...salons.map((s: Record<string, unknown>) => ({
+          id: s.id as number,
+          user_id: s.user_id as number,
+          name: s.name as string,
+          email: (s.contact_email as string) || 'Нет email',
           role: 'salon',
-          phone: s.contact_phone,
-          city: s.city
+          phone: s.contact_phone as string,
+          city: s.city as string
         }))
       ];
 
+      console.log('Loaded users:', users.length);
       setAllUsers(users);
       setFilteredUsers(users);
     } catch (error) {
