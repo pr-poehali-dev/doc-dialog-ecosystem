@@ -59,7 +59,7 @@ def handler(event: dict, context) -> dict:
             ORDER BY 
                 CASE WHEN mp.promoted_until > NOW() THEN 0 ELSE 1 END,
                 mp.is_premium DESC NULLS LAST,
-                CASE WHEN u.email LIKE '%@imported.local' THEN 1 ELSE 0 END,
+                CASE WHEN u.email NOT LIKE '%@imported.local' THEN 0 ELSE 1 END,
                 COALESCE(mp.published_at, mp.created_at) DESC NULLS LAST,
                 mp.rating DESC NULLS LAST
         """)
