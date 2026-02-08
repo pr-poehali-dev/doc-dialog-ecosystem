@@ -195,44 +195,35 @@ export default function ProfileBasicInfo({ profileData, setProfileData }: Profil
                 <span>{profileData.fullName.charAt(0) || 'М'}</span>
               )}
             </div>
-            <div className="flex-1 space-y-2">
-              <div className="flex gap-2">
-                <input
-                  type="file"
-                  id="photo-upload"
-                  accept="image/*"
-                  onChange={handleFileUpload}
-                  className="hidden"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => document.getElementById('photo-upload')?.click()}
-                  disabled={uploading}
-                  className="flex-1"
-                >
-                  {uploading ? (
-                    <>
-                      <Icon name="Loader2" size={16} className="mr-2 animate-spin" />
-                      Загрузка...
-                    </>
-                  ) : (
-                    <>
-                      <Icon name="Upload" size={16} className="mr-2" />
-                      Загрузить фото
-                    </>
-                  )}
-                </Button>
-              </div>
-              <Input
-                type="url"
-                placeholder="Или вставьте ссылку (https://...)"
-                value={profileData.photo}
-                onChange={(e) => setProfileData({ ...profileData, photo: e.target.value })}
-                className="text-sm"
+            <div className="flex-1">
+              <input
+                type="file"
+                id="photo-upload"
+                accept="image/*"
+                onChange={handleFileUpload}
+                className="hidden"
               />
-              <p className="text-xs text-muted-foreground">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => document.getElementById('photo-upload')?.click()}
+                disabled={uploading}
+                className="w-full"
+              >
+                {uploading ? (
+                  <>
+                    <Icon name="Loader2" size={16} className="mr-2 animate-spin" />
+                    Загрузка...
+                  </>
+                ) : (
+                  <>
+                    <Icon name="Upload" size={16} className="mr-2" />
+                    Загрузить фото
+                  </>
+                )}
+              </Button>
+              <p className="text-xs text-muted-foreground mt-2">
                 Фото автоматически сжимается для быстрой загрузки
               </p>
             </div>
