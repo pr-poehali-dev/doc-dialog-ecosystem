@@ -485,31 +485,6 @@ def send_message(user_id: int, body: dict) -> dict:
                 'isBase64Encoded': False
             }
         
-        # Получаем данные для email-уведомления ДО вставки сообщения
-        cursor.execute("""
-            SELECT u.email, u.first_name, u.last_name,
-                   COALESCE(mp.full_name, cp.full_name, s.school_name, sl.name) as display_name
-            FROM t_p46047379_doc_dialog_ecosystem.users u
-            LEFT JOIN t_p46047379_doc_dialog_ecosystem.masseur_profiles mp ON u.id = mp.user_id
-            LEFT JOIN t_p46047379_doc_dialog_ecosystem.client_profiles cp ON u.id = cp.user_id
-            LEFT JOIN t_p46047379_doc_dialog_ecosystem.schools s ON u.id = s.user_id
-            LEFT JOIN t_p46047379_doc_dialog_ecosystem.salons sl ON u.id = sl.user_id
-            WHERE u.id = %s
-        """, (receiver_id,))
-        receiver_data = cursor.fetchone()
-        
-        cursor.execute("""
-            SELECT u.first_name, u.last_name,
-                   COALESCE(mp.full_name, cp.full_name, s.school_name, sl.name) as display_name
-            FROM t_p46047379_doc_dialog_ecosystem.users u
-            LEFT JOIN t_p46047379_doc_dialog_ecosystem.masseur_profiles mp ON u.id = mp.user_id
-            LEFT JOIN t_p46047379_doc_dialog_ecosystem.client_profiles cp ON u.id = cp.user_id
-            LEFT JOIN t_p46047379_doc_dialog_ecosystem.schools s ON u.id = s.user_id
-            LEFT JOIN t_p46047379_doc_dialog_ecosystem.salons sl ON u.id = sl.user_id
-            WHERE u.id = %s
-        """, (user_id,))
-        sender_data = cursor.fetchone()
-        
         # Сообщение прошло проверку - сохраняем
         query = """
             INSERT INTO t_p46047379_doc_dialog_ecosystem.messages (sender_id, receiver_id, message_text, created_at, is_read)
@@ -522,23 +497,31 @@ def send_message(user_id: int, body: dict) -> dict:
         
         conn.commit()
         
-        # Отправляем email-уведомление получателю после коммита
+        # Отправляем email-уведомление получателю после коммита (в отдельном соединении)
         try:
-            if receiver_data and receiver_data['email']:
-                receiver_email = receiver_data['email']
-                receiver_name = f"{receiver_data['first_name'] or ''} {receiver_data['last_name'] or ''}".strip()
-                if not receiver_name and receiver_data['display_name']:
-                    receiver_name = receiver_data['display_name']
-                if not receiver_name:
-                    receiver_name = 'Пользователь'
-                
-                sender_name = 'Пользователь'
-                if sender_data:
-                    if sender_data['display_name']:
-                        sender_name = sender_data['display_name']
-                    else:
-                        sender_name = f"{sender_data['first_name'] or ''} {sender_data['last_name'] or ''}".strip() or 'Пользователь'
-                
+            # Создаем новое соединение для получения данных после коммита
+            email_conn = psycopg2.connect(os.environ['DATABASE_URL'])
+            email_cursor = email_conn.cursor(cursor_factory=RealDictCursor)
+            
+            # Получаем данные получателя
+            email_cursor.execute("""
+                SELECT email, first_name, last_name FROM t_p46047379_doc_dialog_ecosystem.users WHERE id = %s
+            """, (receiver_id,))
+            receiver_user = email_cursor.fetchone()
+            
+            # Получаем данные отправителя
+            email_cursor.execute("""
+                SELECT first_name, last_name FROM t_p46047379_doc_dialog_ecosystem.users WHERE id = %s
+            """, (user_id,))
+            sender_user = email_cursor.fetchone()
+            
+            email_cursor.close()
+            email_conn.close()
+            
+            if receiver_user and receiver_user['email']:
+                receiver_email = receiver_user['email']
+                receiver_name = f"{receiver_user['first_name'] or ''} {receiver_user['last_name'] or ''}".strip() or 'Пользователь'
+                sender_name = f"{sender_user['first_name'] or ''} {sender_user['last_name'] or ''}".strip() if sender_user else 'Пользователь'
                 message_preview = message_text[:100] + '...' if len(message_text) > 100 else message_text
                 
                 send_email_notification_async(receiver_email, receiver_name, sender_name, message_preview)
