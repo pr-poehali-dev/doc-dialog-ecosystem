@@ -14,6 +14,7 @@ interface User {
   first_name?: string;
   last_name?: string;
   phone?: string;
+  email_verified?: boolean;
 }
 
 interface AdminUsersTabProps {
@@ -21,9 +22,10 @@ interface AdminUsersTabProps {
   loading: boolean;
   onUpdateUserRole: (userId: number, isAdmin: boolean, isModerator: boolean) => void;
   onDeleteUser: (userId: number, userEmail: string) => void;
+  onVerifyEmail?: (userEmail: string) => Promise<void>;
 }
 
-export default function AdminUsersTab({ users, loading, onUpdateUserRole, onDeleteUser }: AdminUsersTabProps) {
+export default function AdminUsersTab({ users, loading, onUpdateUserRole, onDeleteUser, onVerifyEmail }: AdminUsersTabProps) {
   const navigate = useNavigate();
 
   const handleLoginAsUser = (user: User) => {
@@ -141,6 +143,8 @@ export default function AdminUsersTab({ users, loading, onUpdateUserRole, onDele
                   <div className="flex gap-2 mt-2">
                     {user.is_admin && <Badge>Администратор</Badge>}
                     {user.is_moderator && <Badge variant="secondary">Модератор</Badge>}
+                    {user.email_verified === false && <Badge variant="destructive">Email не подтвержден</Badge>}
+                    {user.email_verified === true && <Badge variant="outline" className="text-green-600 border-green-600">Email подтвержден</Badge>}
                   </div>
                 </div>
               </div>
@@ -155,6 +159,16 @@ export default function AdminUsersTab({ users, loading, onUpdateUserRole, onDele
                   <Icon name="LogIn" size={16} className="mr-2" />
                   Войти в кабинет
                 </Button>
+                {user.email_verified === false && onVerifyEmail && (
+                  <Button
+                    size="sm"
+                    variant="default"
+                    onClick={() => onVerifyEmail(user.email)}
+                  >
+                    <Icon name="CheckCircle" size={16} className="mr-2" />
+                    Подтвердить email
+                  </Button>
+                )}
                 <Button
                   size="sm"
                   variant={user.is_admin ? "default" : "outline"}

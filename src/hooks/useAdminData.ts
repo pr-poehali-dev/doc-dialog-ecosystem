@@ -24,6 +24,7 @@ interface User {
   first_name?: string;
   last_name?: string;
   phone?: string;
+  email_verified?: boolean;
 }
 
 interface ModerationItem {

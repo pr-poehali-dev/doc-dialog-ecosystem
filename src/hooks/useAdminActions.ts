@@ -97,9 +97,40 @@ export function useAdminActions(loadUsers: () => Promise<void>, loadModerationIt
     }
   };
 
+  const verifyEmail = async (userEmail: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('https://functions.poehali.dev/d9ed333b-313d-40b6-8ca2-016db5854f7c?action=verify_email', {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email: userEmail })
+      });
+      
+      if (response.ok) {
+        toast({
+          title: "Успешно",
+          description: `Email пользователя ${userEmail} подтвержден`
+        });
+        loadUsers();
+      } else {
+        throw new Error('Failed to verify');
+      }
+    } catch (error) {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось подтвердить email",
+        variant: "destructive"
+      });
+    }
+  };
+
   return {
     updateUserRole,
     deleteUser,
-    moderateItem
+    moderateItem,
+    verifyEmail
   };
 }

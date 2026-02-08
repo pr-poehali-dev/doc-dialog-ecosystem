@@ -42,7 +42,8 @@ export default function AdminPanel() {
   const {
     updateUserRole,
     deleteUser,
-    moderateItem
+    moderateItem,
+    verifyEmail
   } = useAdminActions(loadUsers, loadModerationItems);
 
   return (
@@ -76,6 +77,7 @@ export default function AdminPanel() {
               loading={loading} 
               onUpdateUserRole={updateUserRole}
               onDeleteUser={deleteUser}
+              onVerifyEmail={verifyEmail}
             />
           )}
 

@@ -99,7 +99,7 @@ def handler(event: dict, context) -> dict:
     # GET /admin/users - List all users
     if method == 'GET' and action == 'users':
         cur.execute(f"""
-            SELECT id, email, role, is_admin, is_moderator, created_at, first_name, last_name, phone
+            SELECT id, email, role, is_admin, is_moderator, created_at, first_name, last_name, phone, email_verified
             FROM {schema}.users
             ORDER BY created_at DESC
         """)
@@ -114,7 +114,8 @@ def handler(event: dict, context) -> dict:
             'created_at': u[5].isoformat() if u[5] else None,
             'first_name': u[6],
             'last_name': u[7],
-            'phone': u[8]
+            'phone': u[8],
+            'email_verified': u[9]
         } for u in users]
         
         cur.close()
@@ -201,6 +202,64 @@ def handler(event: dict, context) -> dict:
             'email': updated_user[1],
             'is_admin': updated_user[2],
             'is_moderator': updated_user[3]
+        }
+        
+        cur.close()
+        conn.close()
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps(result),
+            'isBase64Encoded': False
+        }
+    
+    # PUT /admin?action=verify_email - Verify user email (admin only)
+    if method == 'PUT' and action == 'verify_email':
+        if not is_admin:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 403,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Only admin can verify emails'}),
+                'isBase64Encoded': False
+            }
+        
+        body = json.loads(event.get('body', '{}'))
+        user_email = body.get('email')
+        
+        if not user_email:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 400,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'email is required'}),
+                'isBase64Encoded': False
+            }
+        
+        cur.execute(f"""
+            UPDATE {schema}.users
+            SET email_verified = TRUE, verification_token = NULL, verification_token_expires = NULL
+            WHERE email = '{user_email}'
+            RETURNING id, email, email_verified
+        """)
+        updated_user = cur.fetchone()
+        
+        if not updated_user:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'User not found'}),
+                'isBase64Encoded': False
+            }
+        
+        result = {
+            'id': updated_user[0],
+            'email': updated_user[1],
+            'email_verified': updated_user[2]
         }
         
         cur.close()
