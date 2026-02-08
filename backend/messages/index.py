@@ -493,13 +493,55 @@ def send_message(user_id: int, body: dict) -> dict:
         """
         
         cursor.execute(query, (user_id, receiver_id, message_text))
-        conn.commit()
-        
         message = cursor.fetchone()
         
-        # Отправляем email-уведомление получателю
+        # Получаем данные для email-уведомления ДО коммита
+        cursor.execute("""
+            SELECT u.email, u.first_name, u.last_name,
+                   COALESCE(mp.full_name, cp.full_name, s.school_name, sl.name) as display_name
+            FROM t_p46047379_doc_dialog_ecosystem.users u
+            LEFT JOIN t_p46047379_doc_dialog_ecosystem.masseur_profiles mp ON u.id = mp.user_id
+            LEFT JOIN t_p46047379_doc_dialog_ecosystem.client_profiles cp ON u.id = cp.user_id
+            LEFT JOIN t_p46047379_doc_dialog_ecosystem.schools s ON u.id = s.user_id
+            LEFT JOIN t_p46047379_doc_dialog_ecosystem.salons sl ON u.id = sl.user_id
+            WHERE u.id = %s
+        """, (receiver_id,))
+        receiver_data = cursor.fetchone()
+        
+        cursor.execute("""
+            SELECT u.first_name, u.last_name,
+                   COALESCE(mp.full_name, cp.full_name, s.school_name, sl.name) as display_name
+            FROM t_p46047379_doc_dialog_ecosystem.users u
+            LEFT JOIN t_p46047379_doc_dialog_ecosystem.masseur_profiles mp ON u.id = mp.user_id
+            LEFT JOIN t_p46047379_doc_dialog_ecosystem.client_profiles cp ON u.id = cp.user_id
+            LEFT JOIN t_p46047379_doc_dialog_ecosystem.schools s ON u.id = s.user_id
+            LEFT JOIN t_p46047379_doc_dialog_ecosystem.salons sl ON u.id = sl.user_id
+            WHERE u.id = %s
+        """, (user_id,))
+        sender_data = cursor.fetchone()
+        
+        conn.commit()
+        
+        # Отправляем email-уведомление получателю после коммита
         try:
-            send_email_notification(cursor, user_id, receiver_id, message_text)
+            if receiver_data and receiver_data['email']:
+                receiver_email = receiver_data['email']
+                receiver_name = f"{receiver_data['first_name'] or ''} {receiver_data['last_name'] or ''}".strip()
+                if not receiver_name and receiver_data['display_name']:
+                    receiver_name = receiver_data['display_name']
+                if not receiver_name:
+                    receiver_name = 'Пользователь'
+                
+                sender_name = 'Пользователь'
+                if sender_data:
+                    if sender_data['display_name']:
+                        sender_name = sender_data['display_name']
+                    else:
+                        sender_name = f"{sender_data['first_name'] or ''} {sender_data['last_name'] or ''}".strip() or 'Пользователь'
+                
+                message_preview = message_text[:100] + '...' if len(message_text) > 100 else message_text
+                
+                send_email_notification_async(receiver_email, receiver_name, sender_name, message_preview)
         except Exception as e:
             print(f"WARNING: Failed to send email notification: {str(e)}")
             # Не прерываем выполнение, если email не отправился
@@ -981,44 +1023,11 @@ def get_content_violations() -> dict:
         conn.close()
 
 
-def send_email_notification(cursor, sender_id: int, receiver_id: int, message_text: str) -> None:
-    '''Отправка email-уведомления о новом сообщении'''
+def send_email_notification_async(receiver_email: str, receiver_name: str, sender_name: str, message_preview: str) -> None:
+    '''Отправка email-уведомления о новом сообщении (асинхронно)'''
     import urllib.request
     
     try:
-        # Получаем email и имя получателя
-        cursor.execute("""
-            SELECT u.email, u.first_name, u.last_name
-            FROM t_p46047379_doc_dialog_ecosystem.users u
-            WHERE u.id = %s
-        """, (receiver_id,))
-        
-        receiver = cursor.fetchone()
-        if not receiver or not receiver['email']:
-            print(f"Email not found for user {receiver_id}")
-            return
-        
-        receiver_email = receiver['email']
-        receiver_name = f"{receiver['first_name'] or ''} {receiver['last_name'] or ''}".strip() or 'Пользователь'
-        
-        # Получаем имя отправителя
-        cursor.execute("""
-            SELECT u.first_name, u.last_name,
-                   COALESCE(mp.full_name, cp.full_name, s.school_name, sl.name) as display_name
-            FROM t_p46047379_doc_dialog_ecosystem.users u
-            LEFT JOIN t_p46047379_doc_dialog_ecosystem.masseur_profiles mp ON u.id = mp.user_id
-            LEFT JOIN t_p46047379_doc_dialog_ecosystem.client_profiles cp ON u.id = cp.user_id
-            LEFT JOIN t_p46047379_doc_dialog_ecosystem.schools s ON u.id = s.user_id
-            LEFT JOIN t_p46047379_doc_dialog_ecosystem.salons sl ON u.id = sl.user_id
-            WHERE u.id = %s
-        """, (sender_id,))
-        
-        sender = cursor.fetchone()
-        sender_name = sender['display_name'] if sender and sender['display_name'] else 'Пользователь'
-        
-        # Обрезаем сообщение если оно длинное
-        message_preview = message_text[:100] + '...' if len(message_text) > 100 else message_text
-        
         # Отправляем email через email-sender функцию
         email_data = {
             'to': receiver_email,
@@ -1032,7 +1041,7 @@ def send_email_notification(cursor, sender_id: int, receiver_id: int, message_te
         }
         
         # Вызываем функцию email-sender
-        email_sender_url = 'https://functions.poehali.dev/d6c1d69a-e0f4-4db2-9ee5-60d4acb5a2e3'
+        email_sender_url = 'https://functions.poehali.dev/21920113-c479-4edd-9a41-cf0b8a08f47c'
         
         req = urllib.request.Request(
             email_sender_url,
