@@ -118,14 +118,30 @@ export default function AdminMessages() {
     try {
       const token = localStorage.getItem('token');
       
-      // Загружаем массажистов
+      // Загружаем всех пользователей из базы через admin API
+      const allUsersResponse = await fetch('https://functions.poehali.dev/d9ed333b-313d-40b6-8ca2-016db5854f7c?action=users', {
+        headers: { 'X-Authorization': `Bearer ${token}` }
+      });
+      
+      if (!allUsersResponse.ok) {
+        throw new Error('Failed to load users from admin API');
+      }
+      
+      const allUsersData = await allUsersResponse.json();
+      
+      // Загружаем массажистов для получения дополнительной информации (аватары, города)
       const masseursResponse = await fetch('https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const masseursData = masseursResponse.ok ? await masseursResponse.json() : { masseurs: [] };
       const masseurs = masseursData.masseurs || masseursData || [];
+      
+      // Создаем карту массажистов для быстрого поиска
+      const masseursMap = new Map(
+        masseurs.map((m: Record<string, unknown>) => [m.user_id as number, m])
+      );
 
-      // Загружаем школы (если есть)
+      // Загружаем школы для дополнительной информации
       let schools: unknown[] = [];
       try {
         const schoolsResponse = await fetch('https://functions.poehali.dev/a81dd7cd-c267-4f44-85f5-0da8353dc741?action=get-schools', {
@@ -138,8 +154,12 @@ export default function AdminMessages() {
       } catch (e) {
         console.log('Schools not loaded:', e);
       }
+      
+      const schoolsMap = new Map(
+        schools.map((s: Record<string, unknown>) => [s.user_id as number, s])
+      );
 
-      // Загружаем салоны (если есть)
+      // Загружаем салоны для дополнительной информации
       let salons: unknown[] = [];
       try {
         const salonsResponse = await fetch('https://functions.poehali.dev/3beac6d8-19b3-4f7f-b7c1-63e60e8afc66?action=get-salons', {
@@ -152,37 +172,53 @@ export default function AdminMessages() {
       } catch (e) {
         console.log('Salons not loaded:', e);
       }
+      
+      const salonsMap = new Map(
+        salons.map((s: Record<string, unknown>) => [s.user_id as number, s])
+      );
 
-      const users: User[] = [
-        ...masseurs.map((m: Record<string, unknown>) => ({
-          id: m.id as number,
-          user_id: m.user_id as number,
-          name: m.full_name as string,
-          email: (m.email as string) || 'Нет email',
-          role: 'masseur',
-          avatar_url: m.avatar_url as string | undefined,
-          phone: m.phone as string | undefined,
-          city: m.city as string | undefined
-        })),
-        ...schools.map((s: Record<string, unknown>) => ({
-          id: s.id as number,
-          user_id: s.user_id as number,
-          name: s.school_name as string,
-          email: (s.contact_email as string) || 'Нет email',
-          role: 'school',
-          avatar_url: s.logo_url as string,
-          phone: s.contact_phone as string
-        })),
-        ...salons.map((s: Record<string, unknown>) => ({
-          id: s.id as number,
-          user_id: s.user_id as number,
-          name: s.name as string,
-          email: (s.contact_email as string) || 'Нет email',
-          role: 'salon',
-          phone: s.contact_phone as string,
-          city: s.city as string
-        }))
-      ];
+      // Объединяем данные всех пользователей с дополнительной информацией
+      const users: User[] = allUsersData
+        .filter((u: Record<string, unknown>) => u.id !== 1 && u.id !== 2) // Исключаем тестовых пользователей
+        .map((u: Record<string, unknown>) => {
+          const userId = u.id as number;
+          const role = u.role as string;
+          
+          // Ищем дополнительные данные в зависимости от роли
+          const masseurData = masseursMap.get(userId);
+          const schoolData = schoolsMap.get(userId);
+          const salonData = salonsMap.get(userId);
+          
+          let name = `${u.first_name || ''} ${u.last_name || ''}`.trim();
+          let avatar_url = undefined;
+          let city = undefined;
+          
+          if (role === 'masseur' && masseurData) {
+            name = (masseurData.full_name as string) || name || 'Массажист';
+            avatar_url = masseurData.avatar_url as string | undefined;
+            city = masseurData.city as string | undefined;
+          } else if (role === 'school' && schoolData) {
+            name = (schoolData.school_name as string) || name || 'Школа';
+            avatar_url = schoolData.logo_url as string | undefined;
+          } else if (role === 'salon' && salonData) {
+            name = (salonData.name as string) || name || 'Салон';
+            avatar_url = salonData.logo_url as string | undefined;
+            city = salonData.city as string | undefined;
+          } else if (!name) {
+            name = u.email as string || 'Пользователь';
+          }
+          
+          return {
+            id: userId,
+            user_id: userId,
+            name,
+            email: u.email as string,
+            role,
+            avatar_url,
+            phone: u.phone as string | undefined,
+            city
+          };
+        });
 
       console.log('Loaded users:', users.length);
       setAllUsers(users);
