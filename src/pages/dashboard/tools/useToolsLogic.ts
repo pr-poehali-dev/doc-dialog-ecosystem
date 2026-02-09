@@ -299,6 +299,15 @@ export function useToolsLogic() {
 
       const data = await apiResponse.json();
 
+      if (apiResponse.status === 403 && data.error) {
+        toast({
+          title: 'Недостаточно средств',
+          description: `${data.error}. Пополните баланс на странице тарифов.`,
+          variant: 'destructive'
+        });
+        return;
+      }
+
       if (apiResponse.status === 429 && data.limit_reached) {
         setShowLimitModal(true);
         return;
@@ -308,7 +317,7 @@ export function useToolsLogic() {
         throw new Error(data.error || 'Ошибка анализа');
       }
 
-      const cleanResponse = (data.response || data.analysis || '')
+      const cleanResponse = (data.result || data.response || data.analysis || '')
         .replace(/\*\*/g, '')
         .trim();
       
