@@ -7,7 +7,7 @@ const ProblemSections = () => {
       {/* Problem Section */}
       <section className="py-16 md:py-24 bg-white">
       <div className="container mx-auto px-4">
-      <div className="max-w-5xl mx-auto mb-20">
+      <div className="max-w-5xl mx-auto">
         <Card className="p-8 md:p-12 lg:p-16 bg-gradient-to-br from-slate-50 to-blue-50 border-2 border-slate-200 shadow-xl rounded-2xl">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 text-center text-slate-900">
             Знакомая ситуация?
@@ -75,7 +75,7 @@ const ProblemSections = () => {
       {/* Real Problem Section */}
       <section className="py-16 md:py-24 bg-gradient-to-b from-red-50 to-orange-50">
       <div className="container mx-auto px-4">
-      <div className="max-w-5xl mx-auto mb-20">
+      <div className="max-w-5xl mx-auto">
         <Card className="p-8 md:p-12 lg:p-16 bg-white border-2 border-red-200 shadow-2xl rounded-2xl">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 text-center text-slate-900">
             В чём реальная сложность для массажиста

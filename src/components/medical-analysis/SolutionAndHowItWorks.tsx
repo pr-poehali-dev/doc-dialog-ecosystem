@@ -7,7 +7,7 @@ const SolutionAndHowItWorks = () => {
       {/* Solution Section */}
       <section id="solution" className="py-16 md:py-24 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
         <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto mb-20">
+          <div className="max-w-5xl mx-auto">
             <Card className="p-8 md:p-12 lg:p-16 bg-white border-2 border-green-200 shadow-2xl rounded-2xl overflow-hidden">
               <div className="grid lg:grid-cols-2 gap-12 items-center">
                 <div>
@@ -47,7 +47,7 @@ const SolutionAndHowItWorks = () => {
       {/* How It Works Section */}
       <section className="py-16 md:py-24 bg-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto mb-20">
+          <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-center text-slate-900">
               Как работает инструмент
             </h2>
@@ -101,7 +101,7 @@ const SolutionAndHowItWorks = () => {
       {/* What's Included Section */}
       <section className="py-16 md:py-24 bg-gradient-to-b from-slate-50 to-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto mb-20">
+          <div className="max-w-5xl mx-auto">
             <Card className="p-8 md:p-12 lg:p-16 bg-white border-2 border-slate-200 shadow-2xl rounded-2xl">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-12 text-center text-slate-900">
                 Что входит в расшифровку

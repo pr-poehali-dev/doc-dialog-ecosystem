@@ -144,7 +144,7 @@ const BenefitsAndForm = () => {
       {/* Benefits Section */}
       <section className="py-16 md:py-24 bg-gradient-to-b from-blue-50 via-purple-50 to-pink-50">
         <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto mb-20">
+          <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-center text-slate-900">
               Какая польза для массажиста
             </h2>
@@ -199,7 +199,7 @@ const BenefitsAndForm = () => {
       {/* Demo Form Section */}
       <section id="demo-form" className="py-16 md:py-24 bg-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto mb-20">
+          <div className="max-w-4xl mx-auto">
             <Card className="p-8 md:p-12 lg:p-16 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 border-2 border-purple-200 shadow-2xl rounded-2xl">
               <div className="text-center mb-12">
                 <div className="inline-block px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full text-sm font-bold mb-6 shadow-lg">
@@ -340,7 +340,7 @@ const BenefitsAndForm = () => {
       {/* Important Note Section */}
       <section className="py-16 md:py-24 bg-gradient-to-br from-yellow-50 to-orange-50">
         <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto mb-20">
+          <div className="max-w-5xl mx-auto">
             <Card className="p-8 md:p-12 lg:p-16 bg-white border-2 border-yellow-300 shadow-2xl rounded-2xl">
               <div className="flex flex-col md:flex-row items-start gap-6">
                 <div className="flex-shrink-0">
