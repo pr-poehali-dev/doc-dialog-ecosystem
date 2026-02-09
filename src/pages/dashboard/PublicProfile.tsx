@@ -240,6 +240,28 @@ export default function PublicProfile() {
   };
 
   const toggleVisibility = async () => {
+    // Проверка всех обязательных полей перед публикацией
+    if (!isVisible) {
+      const missingFields = [];
+      if (!profileData.fullName) missingFields.push('Полное имя');
+      if (!profileData.city) missingFields.push('Город');
+      if (!profileData.address) missingFields.push('Адрес');
+      if (!profileData.specialization) missingFields.push('Специализация');
+      if (!profileData.education) missingFields.push('Образование');
+      if (!profileData.about) missingFields.push('О себе');
+      if (!profileData.photo) missingFields.push('Фото профиля');
+      if (profileData.workFormats.length === 0) missingFields.push('Форматы работ (хотя бы 1)');
+
+      if (missingFields.length > 0) {
+        toast({
+          title: 'Заполните все обязательные поля',
+          description: `Не заполнено: ${missingFields.join(', ')}`,
+          variant: 'destructive'
+        });
+        return;
+      }
+    }
+
     try {
       const token = localStorage.getItem('token');
       const response = await fetch('https://functions.poehali.dev/bf27da5d-a5ee-4dc7-b5bb-fcc474598d37', {

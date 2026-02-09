@@ -136,11 +136,12 @@ def handler(event: dict, context) -> dict:
             avatar_url = body.get('avatar_url', '')
             service_descriptions = body.get('service_descriptions', {})
             
-            if not full_name or not phone or not city:
+            # Проверка всех обязательных полей
+            if not full_name or not phone or not city or not address or not education or not about or not avatar_url or len(specializations) == 0:
                 return {
                     'statusCode': 400,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                    'body': json.dumps({'error': 'Заполните обязательные поля'}),
+                    'body': json.dumps({'error': 'Заполните все обязательные поля: имя, телефон, город, адрес, образование, о себе, фото и минимум 1 формат работы'}),
                     'isBase64Encoded': False
                 }
             

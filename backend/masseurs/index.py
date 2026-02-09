@@ -33,6 +33,7 @@ def handler(event: dict, context) -> dict:
     
     try:
         # Получить всех массажистов с их бейджами и premium статусом (исключаем тестовых и скрытых)
+        # ВАЖНО: показываем только тех, кто заполнил ВСЕ обязательные поля
         cur.execute("""
             SELECT 
                 mp.id,
@@ -57,6 +58,13 @@ def handler(event: dict, context) -> dict:
             INNER JOIN t_p46047379_doc_dialog_ecosystem.users u ON mp.user_id = u.id
             WHERE mp.user_id NOT IN (1, 2)
                 AND COALESCE(mp.is_visible, true) = true
+                AND mp.full_name IS NOT NULL AND mp.full_name != ''
+                AND mp.city IS NOT NULL AND mp.city != ''
+                AND mp.address IS NOT NULL AND mp.address != ''
+                AND mp.education IS NOT NULL AND mp.education != ''
+                AND mp.about IS NOT NULL AND mp.about != ''
+                AND mp.avatar_url IS NOT NULL AND mp.avatar_url != ''
+                AND mp.specializations IS NOT NULL AND array_length(mp.specializations, 1) > 0
             ORDER BY 
                 CASE WHEN mp.promoted_until > NOW() THEN 0 ELSE 1 END,
                 mp.is_premium DESC NULLS LAST,
