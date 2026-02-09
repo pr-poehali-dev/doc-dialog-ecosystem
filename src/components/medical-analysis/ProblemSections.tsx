@@ -5,13 +5,22 @@ const ProblemSections = () => {
   return (
     <>
       {/* Problem Section */}
-      <div className="max-w-4xl mx-auto mb-20">
-        <Card className="p-8 md:p-12 bg-white border-2">
-          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
+      <section className="py-16 md:py-24 bg-white">
+      <div className="container mx-auto px-4">
+      <div className="max-w-5xl mx-auto mb-20">
+        <Card className="p-8 md:p-12 lg:p-16 bg-gradient-to-br from-slate-50 to-blue-50 border-2 border-slate-200 shadow-xl rounded-2xl">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 text-center text-slate-900">
             Знакомая ситуация?
           </h2>
           <p className="text-lg mb-6">К вам приходит клиент и говорит:</p>
-          <blockquote className="border-l-4 border-blue-500 pl-6 py-4 mb-8 bg-blue-50 rounded-r-lg">
+          <div className="relative mb-12">
+            <img 
+              src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/a0373892-a890-4c6b-a442-9da6d18d2715.jpg" 
+              alt="Клиент с медицинским заключением" 
+              className="w-full h-64 md:h-80 object-cover rounded-xl shadow-lg mb-6"
+            />
+          </div>
+          <blockquote className="border-l-4 border-blue-500 pl-6 py-4 mb-8 bg-blue-100/50 rounded-r-xl shadow-sm">
             <p className="text-xl italic">«Вот заключение врача, посмотрите, пожалуйста…»</p>
           </blockquote>
           <p className="text-lg mb-6">Вы открываете фото или файл — и видите:</p>
@@ -60,11 +69,15 @@ const ProblemSections = () => {
           </div>
         </Card>
       </div>
+      </div>
+      </section>
 
       {/* Real Problem Section */}
-      <div className="max-w-4xl mx-auto mb-20">
-        <Card className="p-8 md:p-12 bg-gradient-to-br from-red-50 to-orange-50 border-2">
-          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
+      <section className="py-16 md:py-24 bg-gradient-to-b from-red-50 to-orange-50">
+      <div className="container mx-auto px-4">
+      <div className="max-w-5xl mx-auto mb-20">
+        <Card className="p-8 md:p-12 lg:p-16 bg-white border-2 border-red-200 shadow-2xl rounded-2xl">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 text-center text-slate-900">
             В чём реальная сложность для массажиста
           </h2>
           <p className="text-lg mb-6">Проблема не в том, что у вас «не хватает знаний».</p>
@@ -105,6 +118,8 @@ const ProblemSections = () => {
           <p className="text-lg font-semibold">И всё это — <strong>лишний стресс</strong>, которого можно избежать.</p>
         </Card>
       </div>
+      </div>
+      </section>
     </>
   );
 };
