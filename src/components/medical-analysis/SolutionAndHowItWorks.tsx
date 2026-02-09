@@ -30,8 +30,8 @@ const SolutionAndHowItWorks = () => {
                 </div>
                 <div className="relative">
                   <img 
-                    src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/839995df-7dec-48aa-bc36-b0cf33febe02.jpg" 
-                    alt="Процесс массажа" 
+                    src="https://cdn.poehali.dev/projects/3e596a93-af99-49a5-ab3f-15835165eb7b/files/50428aab-3296-4aca-9cbb-e5d0ae1b6af2.jpg" 
+                    alt="Доктор анализирует медицинское заключение" 
                     className="w-full h-auto rounded-xl shadow-2xl"
                   />
                   <div className="absolute -bottom-4 -right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-xl font-bold hidden md:block">
