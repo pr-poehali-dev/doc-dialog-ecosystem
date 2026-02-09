@@ -165,14 +165,24 @@ export default function PublicProfile() {
   const handleSave = async () => {
     // Проверка обязательных полей
     const missingFields = [];
-    if (!profileData.fullName) missingFields.push('Полное имя');
-    if (!profileData.city) missingFields.push('Город');
-    if (!profileData.address) missingFields.push('Адрес');
-    if (!profileData.specialization) missingFields.push('Специализация');
-    if (!profileData.education) missingFields.push('Образование');
-    if (!profileData.about) missingFields.push('О себе');
-    if (!profileData.photo) missingFields.push('Фото профиля');
-    if (profileData.workFormats.length === 0) missingFields.push('Форматы работ (хотя бы 1)');
+    if (!profileData.fullName?.trim()) missingFields.push('Полное имя');
+    if (!profileData.city?.trim()) missingFields.push('Город');
+    if (!profileData.address?.trim()) missingFields.push('Адрес');
+    if (!profileData.education?.trim()) missingFields.push('Образование');
+    if (!profileData.about?.trim()) missingFields.push('О себе');
+    if (!profileData.photo?.trim()) missingFields.push('Фото профиля');
+    if (!profileData.workFormats || profileData.workFormats.length === 0) missingFields.push('Форматы работ (хотя бы 1)');
+
+    console.log('Validation check:', {
+      fullName: profileData.fullName,
+      city: profileData.city,
+      address: profileData.address,
+      education: profileData.education,
+      about: profileData.about,
+      photo: profileData.photo,
+      workFormats: profileData.workFormats,
+      missingFields
+    });
 
     if (missingFields.length > 0) {
       toast({
