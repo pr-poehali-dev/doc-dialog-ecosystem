@@ -370,54 +370,69 @@ function PageBuilder() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Navigation />
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center gap-4 mb-6">
-            <Button variant="ghost" onClick={() => navigate('/dashboard')}>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => navigate('/dashboard')}
+              className="self-start"
+            >
               <Icon name="ArrowLeft" size={20} />
             </Button>
             <div className="flex-1">
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 Конструктор премиум-лендинга
               </h1>
-              <p className="text-muted-foreground">Создайте страницу, которая привлекает клиентов</p>
+              <p className="text-sm sm:text-base text-muted-foreground">Создайте страницу, которая привлекает клиентов</p>
             </div>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => {
-                localStorage.setItem('pageBuilderData', JSON.stringify(pageData));
-                window.open('/dashboard/page-preview', '_blank');
-              }}>
-                <Icon name="Eye" size={18} className="mr-2" />
-                Предпросмотр
+            <div className="flex gap-2 flex-wrap">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                  localStorage.setItem('pageBuilderData', JSON.stringify(pageData));
+                  window.open('/dashboard/page-preview', '_blank');
+                }}
+                className="flex-1 sm:flex-initial"
+              >
+                <Icon name="Eye" size={16} className="sm:mr-2" />
+                <span className="hidden sm:inline">Предпросмотр</span>
               </Button>
               {isPublished && (
-                <Button variant="secondary" onClick={copyPageLink}>
-                  <Icon name="Copy" size={18} className="mr-2" />
-                  Ссылка
+                <Button 
+                  variant="secondary" 
+                  size="sm"
+                  onClick={copyPageLink}
+                  className="flex-1 sm:flex-initial"
+                >
+                  <Icon name="Copy" size={16} className="sm:mr-2" />
+                  <span className="hidden sm:inline">Ссылка</span>
                 </Button>
               )}
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-6">
+          <div className="grid lg:grid-cols-3 gap-4 sm:gap-6">
+            <div className="lg:col-span-2 space-y-4 sm:space-y-6">
               {/* Hero Section */}
               <Card className="border-2 border-blue-100 shadow-lg">
-                <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center">
-                      <Icon name="Sparkles" className="text-white" size={20} />
+                <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 sm:p-6">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center flex-shrink-0">
+                      <Icon name="Sparkles" className="text-white" size={16} />
                     </div>
-                    <div>
-                      <CardTitle>Главный экран</CardTitle>
-                      <CardDescription>Первое впечатление решает всё</CardDescription>
+                    <div className="min-w-0">
+                      <CardTitle className="text-base sm:text-lg">Главный экран</CardTitle>
+                      <CardDescription className="text-xs sm:text-sm">Первое впечатление решает всё</CardDescription>
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-4 pt-6">
+                <CardContent className="space-y-4 pt-4 sm:pt-6 p-4 sm:p-6">
                   <div className="space-y-2">
-                    <Label className="text-base font-semibold">Фоновое фото Hero-блока</Label>
-                    <p className="text-xs text-muted-foreground mb-3">
+                    <Label className="text-sm sm:text-base font-semibold">Фоновое фото Hero-блока</Label>
+                    <p className="text-xs text-muted-foreground mb-2 sm:mb-3">
                       Загрузите атмосферное фото массажного кабинета или spa-зоны
                     </p>
                     {pageData.heroImage ? (
@@ -425,22 +440,22 @@ function PageBuilder() {
                         <img 
                           src={pageData.heroImage} 
                           alt="Hero" 
-                          className="w-full h-48 object-cover rounded-lg"
+                          className="w-full h-40 sm:h-48 object-cover rounded-lg"
                         />
                         <Button
                           size="sm"
                           variant="destructive"
-                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-2 right-2 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                           onClick={() => setPageData({ ...pageData, heroImage: '' })}
                         >
-                          <Icon name="Trash2" size={16} />
+                          <Icon name="Trash2" size={14} />
                         </Button>
                       </div>
                     ) : (
-                      <label className="flex flex-col items-center justify-center h-48 border-2 border-dashed border-blue-300 rounded-lg cursor-pointer hover:border-blue-500 transition-colors bg-blue-50/50">
-                        <Icon name="Upload" size={32} className="text-blue-400 mb-2" />
-                        <span className="text-sm text-blue-600 font-medium">Загрузить фото</span>
-                        <span className="text-xs text-muted-foreground mt-1">JPG, PNG до 5MB</span>
+                      <label className="flex flex-col items-center justify-center h-32 sm:h-48 border-2 border-dashed border-blue-300 rounded-lg cursor-pointer hover:border-blue-500 transition-colors bg-blue-50/50 active:bg-blue-100/50">
+                        <Icon name="Upload" size={24} className="text-blue-400 mb-2" />
+                        <span className="text-xs sm:text-sm text-blue-600 font-medium px-2 text-center">Загрузить фото</span>
+                        <span className="text-[10px] sm:text-xs text-muted-foreground mt-1">JPG, PNG до 5MB</span>
                         <input
                           type="file"
                           accept="image/*"
@@ -453,31 +468,31 @@ function PageBuilder() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-base font-semibold">Ваше фото (профиль)</Label>
+                    <Label className="text-sm sm:text-base font-semibold">Ваше фото (профиль)</Label>
                     {pageData.profilePhoto ? (
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-3 sm:gap-4">
                         <img 
                           src={pageData.profilePhoto} 
                           alt="Profile" 
-                          className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
+                          className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-white shadow-lg flex-shrink-0"
                         />
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => setPageData({ ...pageData, profilePhoto: '' })}
                         >
-                          <Icon name="Trash2" size={16} className="mr-2" />
-                          Удалить
+                          <Icon name="Trash2" size={14} className="mr-1 sm:mr-2" />
+                          <span className="text-xs sm:text-sm">Удалить</span>
                         </Button>
                       </div>
                     ) : (
-                      <label className="flex items-center gap-4 p-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
-                        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center">
-                          <Icon name="User" size={32} className="text-white" />
+                      <label className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-colors active:bg-blue-50/50">
+                        <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center flex-shrink-0">
+                          <Icon name="User" size={24} className="text-white" />
                         </div>
-                        <div>
-                          <span className="text-sm font-medium text-blue-600">Загрузить фото</span>
-                          <p className="text-xs text-muted-foreground">Профессиональное фото специалиста</p>
+                        <div className="min-w-0">
+                          <span className="text-xs sm:text-sm font-medium text-blue-600 block">Загрузить фото</span>
+                          <p className="text-[10px] sm:text-xs text-muted-foreground">Профессиональное фото специалиста</p>
                         </div>
                         <input
                           type="file"
@@ -491,16 +506,16 @@ function PageBuilder() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-base font-semibold">Заголовок</Label>
+                    <Label className="text-sm sm:text-base font-semibold">Заголовок</Label>
                     <Input
                       placeholder="Массаж, который возвращает энергию"
                       value={pageData.heroTitle}
                       onChange={(e) => setPageData({ ...pageData, heroTitle: e.target.value })}
-                      className="text-lg"
+                      className="text-sm sm:text-base"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-base font-semibold">Подзаголовок</Label>
+                    <Label className="text-sm sm:text-base font-semibold">Подзаголовок</Label>
                     <Input
                       placeholder="Индивидуальный подход к каждому клиенту"
                       value={pageData.heroSubtitle}
@@ -1213,17 +1228,17 @@ function PageBuilder() {
             </div>
 
             {/* Right Sidebar */}
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {/* Templates */}
               <Card className="border-2 border-purple-100 bg-gradient-to-br from-purple-50 to-pink-50">
-                <CardHeader>
+                <CardHeader className="p-4 sm:p-6">
                   <div className="flex items-center gap-2">
-                    <Icon name="Wand2" size={20} className="text-purple-500" />
-                    <CardTitle>Готовые шаблоны</CardTitle>
+                    <Icon name="Wand2" size={18} className="text-purple-500" />
+                    <CardTitle className="text-base sm:text-lg">Готовые шаблоны</CardTitle>
                   </div>
-                  <CardDescription>Применить профессиональный дизайн</CardDescription>
+                  <CardDescription className="text-xs sm:text-sm">Применить профессиональный дизайн</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-3">
+                <CardContent className="space-y-3 p-4 sm:p-6">
                   <div className="relative">
                     <Button
                       variant="outline"
@@ -1289,14 +1304,14 @@ function PageBuilder() {
 
               {/* Publish */}
               <Card className="border-2 border-green-100 bg-gradient-to-br from-green-50 to-emerald-50">
-                <CardHeader>
+                <CardHeader className="p-4 sm:p-6">
                   <div className="flex items-center gap-2">
-                    <Icon name="Rocket" size={20} className="text-green-600" />
-                    <CardTitle>Публикация</CardTitle>
+                    <Icon name="Rocket" size={18} className="text-green-600" />
+                    <CardTitle className="text-base sm:text-lg">Публикация</CardTitle>
                   </div>
-                  <CardDescription>Сделайте лендинг доступным</CardDescription>
+                  <CardDescription className="text-xs sm:text-sm">Сделайте лендинг доступным</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-3">
+                <CardContent className="space-y-3 p-4 sm:p-6">
                   {isPublished && (
                     <div className="p-3 bg-green-100 border border-green-200 rounded-lg">
                       <div className="flex items-center gap-2 mb-2">
@@ -1308,17 +1323,19 @@ function PageBuilder() {
                   )}
                   <Button
                     onClick={handlePublish}
-                    className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                    size="sm"
+                    className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-sm"
                   >
-                    <Icon name="Rocket" size={18} className="mr-2" />
+                    <Icon name="Rocket" size={16} className="mr-2" />
                     {isPublished ? 'Обновить публикацию' : 'Опубликовать'}
                   </Button>
                   <Button
                     onClick={handleSave}
                     variant="outline"
-                    className="w-full"
+                    size="sm"
+                    className="w-full text-sm"
                   >
-                    <Icon name="Save" size={18} className="mr-2" />
+                    <Icon name="Save" size={16} className="mr-2" />
                     Сохранить черновик
                   </Button>
                 </CardContent>
@@ -1326,13 +1343,13 @@ function PageBuilder() {
 
               {/* Tips */}
               <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-amber-100">
-                <CardHeader>
+                <CardHeader className="p-4 sm:p-6">
                   <div className="flex items-center gap-2">
-                    <Icon name="Lightbulb" size={20} className="text-amber-600" />
-                    <CardTitle className="text-base">Советы</CardTitle>
+                    <Icon name="Lightbulb" size={18} className="text-amber-600" />
+                    <CardTitle className="text-sm sm:text-base">Советы</CardTitle>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-3">
+                <CardContent className="space-y-3 p-4 sm:p-6">
                   <div className="flex items-start gap-2">
                     <Icon name="Check" size={14} className="text-amber-600 mt-0.5" />
                     <p className="text-xs text-gray-700">Используйте качественные фото</p>
