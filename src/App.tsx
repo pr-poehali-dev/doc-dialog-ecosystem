@@ -89,6 +89,7 @@ const ImportSalons = lazy(() => import("./pages/admin/ImportSalons"));
 const ImportVacancies = lazy(() => import("./pages/admin/ImportVacancies"));
 const PaymentHistory = lazy(() => import("./pages/admin/PaymentHistory"));
 const MedicalReportLanding = lazy(() => import("./pages/MedicalReportLanding"));
+const MedicalAnalysisLanding = lazy(() => import("./pages/MedicalAnalysisLanding"));
 const VacanciesCatalog = lazy(() => import("./pages/VacanciesCatalog"));
 const VacanciesImport = lazy(() => import("./pages/VacanciesImport"));
 const Premium = lazy(() => import("./pages/Premium"));
@@ -265,6 +266,7 @@ const App = () => (
           <Route path="/payment/success" element={<PaymentSuccess />} />
           <Route path="/payment/failed" element={<PaymentFailed />} />
           <Route path="/tools" element={<ToolsLanding />} />
+          <Route path="/medical-analysis" element={<MedicalAnalysisLanding />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/energy-course" element={<EnergyCourse />} />
           <Route path="/diagnostic" element={<DiagnosticLanding />} />
