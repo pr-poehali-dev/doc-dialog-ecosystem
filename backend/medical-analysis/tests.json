@@ -1,10 +1,10 @@
 {
   "tests": [
     {
-      "name": "Test analyze medical text",
+      "name": "Test demo mode analyze",
       "method": "POST",
       "headers": {
-        "X-User-Id": "223"
+        "X-User-Id": "demo"
       },
       "body": {
         "action": "analyze_tool",
@@ -13,7 +13,7 @@
       },
       "expectedStatus": 200,
       "expectedBody": {
-        "response": "string"
+        "result": "string"
       },
       "bodyMatcher": "partial"
     },

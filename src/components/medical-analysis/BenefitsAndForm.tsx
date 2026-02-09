@@ -1,15 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 const BenefitsAndForm = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [file, setFile] = useState<File | null>(null);
   const [question, setQuestion] = useState('');
   const [analyzing, setAnalyzing] = useState(false);
+  const [result, setResult] = useState<string | null>(null);
+  const [showResult, setShowResult] = useState(false);
+  const [demoUsed, setDemoUsed] = useState(false);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+
+  useEffect(() => {
+    const used = localStorage.getItem('demo_medical_analysis_used');
+    setDemoUsed(used === 'true');
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -27,14 +45,86 @@ const BenefitsAndForm = () => {
       return;
     }
 
+    // Проверка: если демо уже использовано и пользователь не авторизован
+    const token = localStorage.getItem('token');
+    if (demoUsed && !token) {
+      setShowAuthPrompt(true);
+      return;
+    }
+
     setAnalyzing(true);
-    setTimeout(() => {
+
+    try {
+      // Конвертируем файл в base64
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = async () => {
+        try {
+          const base64 = reader.result as string;
+          
+          // Вызываем API
+          const response = await fetch('https://functions.poehali.dev/f392e088-3274-4326-8906-2c23f7045160', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-User-Id': token ? localStorage.getItem('user') || 'demo' : 'demo'
+            },
+            body: JSON.stringify({
+              action: 'analyze_tool',
+              tool: 'medical_conclusion',
+              text: question,
+              image: base64,
+              fileName: file.name
+            })
+          });
+
+          const data = await response.json();
+
+          if (response.ok && data.result) {
+            setResult(data.result);
+            setShowResult(true);
+            
+            // Отмечаем, что демо использовано (только для неавторизованных)
+            if (!token) {
+              localStorage.setItem('demo_medical_analysis_used', 'true');
+              setDemoUsed(true);
+            }
+
+            toast({
+              title: 'Анализ завершён',
+              description: 'Результат готов к просмотру',
+            });
+          } else {
+            throw new Error(data.error || 'Ошибка анализа');
+          }
+        } catch (error) {
+          console.error('Analysis error:', error);
+          toast({
+            title: 'Ошибка',
+            description: error instanceof Error ? error.message : 'Не удалось выполнить анализ',
+            variant: 'destructive',
+          });
+        } finally {
+          setAnalyzing(false);
+        }
+      };
+
+      reader.onerror = () => {
+        setAnalyzing(false);
+        toast({
+          title: 'Ошибка',
+          description: 'Не удалось прочитать файл',
+          variant: 'destructive',
+        });
+      };
+    } catch (error) {
       setAnalyzing(false);
       toast({
-        title: 'Анализ завершён',
-        description: 'Результат готов к просмотру',
+        title: 'Ошибка',
+        description: 'Не удалось выполнить анализ',
+        variant: 'destructive',
       });
-    }, 3000);
+    }
   };
 
   return (
@@ -277,6 +367,96 @@ const BenefitsAndForm = () => {
           </div>
         </div>
       </section>
+
+      {/* Result Dialog */}
+      <Dialog open={showResult} onOpenChange={setShowResult}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">Результат анализа</DialogTitle>
+            <DialogDescription>
+              Расшифровка медицинского заключения
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-6">
+            <div className="prose prose-slate max-w-none">
+              <div className="whitespace-pre-wrap text-slate-700 leading-relaxed">
+                {result}
+              </div>
+            </div>
+            {demoUsed && !localStorage.getItem('token') && (
+              <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border-2 border-blue-200">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0">
+                    <Icon name="Info" size={28} className="text-blue-600" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-bold text-slate-900 mb-2">
+                      Хотите продолжить использовать инструмент?
+                    </h4>
+                    <p className="text-slate-700 mb-4">
+                      Зарегистрируйтесь и получите доступ ко всем функциям без ограничений
+                    </p>
+                    <Button
+                      onClick={() => navigate('/register')}
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                    >
+                      <Icon name="UserPlus" className="mr-2" size={20} />
+                      Зарегистрироваться
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Auth Prompt Dialog */}
+      <Dialog open={showAuthPrompt} onOpenChange={setShowAuthPrompt}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">Требуется регистрация</DialogTitle>
+            <DialogDescription>
+              Демо-версия уже использована
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-6 space-y-6">
+            <div className="p-6 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl border-2 border-blue-200">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="flex-shrink-0">
+                  <Icon name="Lock" size={32} className="text-blue-600" />
+                </div>
+                <div>
+                  <h4 className="text-lg font-bold text-slate-900">
+                    Вы уже использовали бесплатную демо-версию
+                  </h4>
+                </div>
+              </div>
+              <p className="text-slate-700 mb-4">
+                Зарегистрируйтесь, чтобы продолжить использовать инструмент «Расшифровка заключения» без ограничений
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <Button
+                onClick={() => navigate('/register')}
+                className="w-full py-6 text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              >
+                <Icon name="UserPlus" className="mr-2" size={24} />
+                Зарегистрироваться
+              </Button>
+              <Button
+                onClick={() => navigate('/login')}
+                variant="outline"
+                className="w-full py-6 text-lg font-bold"
+              >
+                <Icon name="LogIn" className="mr-2" size={24} />
+                Уже есть аккаунт? Войти
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

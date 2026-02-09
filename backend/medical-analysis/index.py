@@ -25,6 +25,7 @@ def handler(event: dict, context) -> dict:
     headers = event.get('headers', {})
     user_id = headers.get('X-User-Id', '') or headers.get('x-user-id', '')
     
+    # Разрешаем демо-режим (user_id = 'demo')
     if not user_id:
         return {
             'statusCode': 401,
@@ -78,26 +79,30 @@ def handler(event: dict, context) -> dict:
 def analyze_with_tool(user_id: str, body: dict, headers: dict) -> dict:
     """Анализ с помощью AI-инструмента: сначала списание с баланса, потом анализ"""
     
-    # Списываем 15₽ с баланса ДО анализа
-    balance_response = requests.post(
-        'https://functions.poehali.dev/619d5197-066f-4380-8bef-994c71c76fa0',
-        json={'amount': 15, 'service_type': 'medical_analysis', 'description': 'Медицинский AI-анализ'},
-        headers={'Content-Type': 'application/json', 'X-User-Id': user_id},
-        timeout=10
-    )
+    # Демо-режим: пропускаем списание с баланса
+    is_demo = user_id == 'demo'
     
-    if balance_response.status_code != 200:
-        error_data = balance_response.json()
-        return {
-            'statusCode': 403,
-            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({
-                'error': error_data.get('error', 'Недостаточно средств на балансе'),
-                'balance': error_data.get('balance', 0),
-                'required': 15
-            }),
-            'isBase64Encoded': False
-        }
+    if not is_demo:
+        # Списываем 15₽ с баланса ДО анализа (только для зарегистрированных)
+        balance_response = requests.post(
+            'https://functions.poehali.dev/619d5197-066f-4380-8bef-994c71c76fa0',
+            json={'amount': 15, 'service_type': 'medical_analysis', 'description': 'Медицинский AI-анализ'},
+            headers={'Content-Type': 'application/json', 'X-User-Id': user_id},
+            timeout=10
+        )
+        
+        if balance_response.status_code != 200:
+            error_data = balance_response.json()
+            return {
+                'statusCode': 403,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({
+                    'error': error_data.get('error', 'Недостаточно средств на балансе'),
+                    'balance': error_data.get('balance', 0),
+                    'required': 15
+                }),
+                'isBase64Encoded': False
+            }
     
     # Баланс списан успешно, выполняем анализ
     text = body.get('text', '')
@@ -192,7 +197,7 @@ def analyze_with_tool(user_id: str, body: dict, headers: dict) -> dict:
     return {
         'statusCode': 200,
         'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-        'body': json.dumps({'response': clean_response}),
+        'body': json.dumps({'result': clean_response}),
         'isBase64Encoded': False
     }
 
