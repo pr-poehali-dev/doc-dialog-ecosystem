@@ -5,7 +5,7 @@ const SolutionAndHowItWorks = () => {
   return (
     <>
       {/* Solution Section */}
-      <section className="py-16 md:py-24 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
+      <section id="solution" className="py-16 md:py-24 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto mb-20">
             <Card className="p-8 md:p-12 lg:p-16 bg-white border-2 border-green-200 shadow-2xl rounded-2xl overflow-hidden">

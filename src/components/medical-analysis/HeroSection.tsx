@@ -27,7 +27,10 @@ const HeroSection = () => {
               >
                 Попробовать бесплатно
               </button>
-              <button className="px-8 py-4 bg-white text-slate-700 rounded-xl font-semibold text-lg shadow-md hover:shadow-lg border-2 border-slate-200 hover:border-slate-300 transition-all">
+              <button 
+                onClick={() => document.getElementById('solution')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+                className="px-8 py-4 bg-white text-slate-700 rounded-xl font-semibold text-lg shadow-md hover:shadow-lg border-2 border-slate-200 hover:border-slate-300 transition-all"
+              >
                 Узнать больше
               </button>
             </div>
