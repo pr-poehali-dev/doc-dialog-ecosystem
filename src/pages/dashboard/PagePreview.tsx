@@ -102,6 +102,48 @@ export default function PagePreview() {
     loadData();
   }, []);
 
+  useEffect(() => {
+    if (pageData && userProfile) {
+      const fullName = `${userProfile.lastName || ''} ${userProfile.firstName || ''}`.trim();
+      const serviceNames = pageData.services.map(s => s.name).join(', ');
+      
+      const title = fullName 
+        ? `Страница массажиста ${fullName}` 
+        : 'Страница массажиста';
+      
+      const description = serviceNames 
+        ? `Профессиональный массаж: ${serviceNames}. ${pageData.heroSubtitle || ''}`.slice(0, 160)
+        : pageData.heroSubtitle || 'Профессиональные массажные услуги';
+      
+      const keywords = [
+        'массаж',
+        fullName,
+        ...pageData.services.map(s => s.name.toLowerCase()),
+        'массажист',
+        'оздоровительный массаж',
+        'релаксация'
+      ].filter(Boolean).join(', ');
+
+      document.title = title;
+      
+      let metaDescription = document.querySelector('meta[name="description"]');
+      if (!metaDescription) {
+        metaDescription = document.createElement('meta');
+        metaDescription.setAttribute('name', 'description');
+        document.head.appendChild(metaDescription);
+      }
+      metaDescription.setAttribute('content', description);
+      
+      let metaKeywords = document.querySelector('meta[name="keywords"]');
+      if (!metaKeywords) {
+        metaKeywords = document.createElement('meta');
+        metaKeywords.setAttribute('name', 'keywords');
+        document.head.appendChild(metaKeywords);
+      }
+      metaKeywords.setAttribute('content', keywords);
+    }
+  }, [pageData, userProfile]);
+
   if (!pageData) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
