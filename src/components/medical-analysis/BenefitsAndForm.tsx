@@ -185,7 +185,7 @@ const BenefitsAndForm = () => {
       </section>
 
       {/* Demo Form Section */}
-      <section className="py-16 md:py-24 bg-white">
+      <section id="demo-form" className="py-16 md:py-24 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto mb-20">
             <Card className="p-8 md:p-12 lg:p-16 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 border-2 border-purple-200 shadow-2xl rounded-2xl">
@@ -356,6 +356,7 @@ const BenefitsAndForm = () => {
             </p>
             <Button 
               size="lg" 
+              onClick={() => document.getElementById('demo-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
               className="px-12 py-8 text-xl font-bold bg-white text-purple-600 hover:bg-slate-100 shadow-2xl hover:shadow-3xl transform hover:-translate-y-1 transition-all rounded-xl"
             >
               <Icon name="Sparkles" className="mr-3" size={28} />
