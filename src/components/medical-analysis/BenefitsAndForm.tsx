@@ -239,18 +239,6 @@ const BenefitsAndForm = () => {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-xl font-bold mb-4 text-slate-900">
-                    Ваш вопрос
-                  </label>
-                  <Textarea
-                    value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
-                    placeholder="Например: Что означает 'грыжа L5-S1'? Можно ли делать массаж спины?"
-                    className="min-h-[140px] text-lg border-2 border-slate-200 focus:border-purple-500 rounded-xl p-4"
-                  />
-                </div>
-
                 <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-lg border border-slate-200">
                   <Checkbox
                     id="terms"
