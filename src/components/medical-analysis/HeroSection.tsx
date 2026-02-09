@@ -21,7 +21,10 @@ const HeroSection = () => {
               Поймите запрос клиента спокойно, понятно и безопасно — без догадок и медицинских рисков.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all">
+              <button 
+                onClick={() => document.getElementById('demo-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+                className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
+              >
                 Попробовать бесплатно
               </button>
               <button className="px-8 py-4 bg-white text-slate-700 rounded-xl font-semibold text-lg shadow-md hover:shadow-lg border-2 border-slate-200 hover:border-slate-300 transition-all">
