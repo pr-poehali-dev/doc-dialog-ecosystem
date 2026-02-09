@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -23,6 +25,7 @@ const BenefitsAndForm = () => {
   const [showResult, setShowResult] = useState(false);
   const [demoUsed, setDemoUsed] = useState(false);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   useEffect(() => {
     const used = localStorage.getItem('demo_medical_analysis_used');
@@ -40,6 +43,15 @@ const BenefitsAndForm = () => {
       toast({
         title: 'Ошибка',
         description: 'Загрузите заключение и укажите вопрос',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (!agreedToTerms) {
+      toast({
+        title: 'Необходимо согласие',
+        description: 'Для продолжения необходимо согласиться с условиями обработки данных',
         variant: 'destructive',
       });
       return;
@@ -239,6 +251,25 @@ const BenefitsAndForm = () => {
                   />
                 </div>
 
+                <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                  <Checkbox
+                    id="terms"
+                    checked={agreedToTerms}
+                    onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
+                    className="mt-1"
+                  />
+                  <Label htmlFor="terms" className="text-sm text-slate-700 leading-relaxed cursor-pointer">
+                    Согласен с условиями{' '}
+                    <a href="/privacy" target="_blank" className="text-blue-600 hover:underline">
+                      обработки персональных данных
+                    </a>{' '}
+                    и{' '}
+                    <a href="/terms" target="_blank" className="text-blue-600 hover:underline">
+                      договора оферты
+                    </a>
+                  </Label>
+                </div>
+
                 <Button
                   onClick={handleAnalyze}
                   disabled={analyzing}
@@ -253,7 +284,7 @@ const BenefitsAndForm = () => {
                   ) : (
                     <>
                       <Icon name="Sparkles" className="mr-3" size={28} />
-                      Получить расшифровку бесплатно
+                      Анализировать
                     </>
                   )}
                 </Button>
