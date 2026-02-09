@@ -39,10 +39,10 @@ const BenefitsAndForm = () => {
   };
 
   const handleAnalyze = async () => {
-    if (!file || !question.trim()) {
+    if (!file) {
       toast({
         title: 'Ошибка',
-        description: 'Загрузите заключение и укажите вопрос',
+        description: 'Загрузите заключение',
         variant: 'destructive',
       });
       return;
@@ -84,7 +84,7 @@ const BenefitsAndForm = () => {
             body: JSON.stringify({
               action: 'analyze_tool',
               tool: 'medical_conclusion',
-              text: question,
+              text: 'Расшифруй это медицинское заключение',
               image: base64,
               fileName: file.name
             })
