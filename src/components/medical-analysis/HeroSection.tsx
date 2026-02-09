@@ -66,7 +66,7 @@ const HeroSection = () => {
                 </div>
                 <div>
                   <p className="font-bold text-slate-800">Быстро</p>
-                  <p className="text-sm text-slate-600">За 2 минуты</p>
+                  <p className="text-sm text-slate-600">За 1 минуту</p>
                 </div>
               </div>
             </div>
