@@ -192,7 +192,7 @@ export default function MasseurDashboard() {
           <h3 className="text-lg md:text-xl font-semibold">Вакансии в салонах</h3>
         </div>
         <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Найти работу в проверенных салонах</p>
-        <Link to="/salons">
+        <Link to="/vacancies">
           <Button className="w-full">Смотреть вакансии</Button>
         </Link>
       </div>
