@@ -39,8 +39,11 @@ export default function ProfileWorkFormats({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Форматы работы и услуги</CardTitle>
-        <CardDescription>Выберите услуги и отредактируйте описания</CardDescription>
+        <CardTitle className="flex items-center gap-2">
+          Форматы работы и услуги
+          <span className="text-red-500 font-bold">*</span>
+        </CardTitle>
+        <CardDescription>Выберите хотя бы одну услугу и отредактируйте описание</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex flex-wrap gap-2">

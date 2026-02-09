@@ -186,7 +186,10 @@ export default function ProfileBasicInfo({ profileData, setProfileData }: Profil
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label>Фото профиля</Label>
+          <Label className="flex items-center gap-2">
+            Фото профиля
+            <span className="text-red-500 font-bold">*</span>
+          </Label>
           <div className="flex items-center gap-4">
             <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-white text-3xl overflow-hidden">
               {profileData.photo ? (
@@ -232,7 +235,10 @@ export default function ProfileBasicInfo({ profileData, setProfileData }: Profil
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label>Полное имя</Label>
+            <Label className="flex items-center gap-2">
+              Полное имя
+              <span className="text-red-500 font-bold">*</span>
+            </Label>
             <Input
               placeholder="Иван Иванов"
               value={profileData.fullName}
@@ -240,7 +246,10 @@ export default function ProfileBasicInfo({ profileData, setProfileData }: Profil
             />
           </div>
           <div className="space-y-2">
-            <Label>Город</Label>
+            <Label className="flex items-center gap-2">
+              Город
+              <span className="text-red-500 font-bold">*</span>
+            </Label>
             <Input
               placeholder="Москва"
               value={profileData.city}
@@ -250,7 +259,10 @@ export default function ProfileBasicInfo({ profileData, setProfileData }: Profil
         </div>
 
         <div className="space-y-2">
-          <Label>Адрес приёма</Label>
+          <Label className="flex items-center gap-2">
+            Адрес приёма
+            <span className="text-red-500 font-bold">*</span>
+          </Label>
           <Input
             placeholder="ул. Пушкина, д. 10, офис 5"
             value={profileData.address}
@@ -262,7 +274,10 @@ export default function ProfileBasicInfo({ profileData, setProfileData }: Profil
         </div>
 
         <div className="space-y-2">
-          <Label>Специализация</Label>
+          <Label className="flex items-center gap-2">
+            Специализация
+            <span className="text-red-500 font-bold">*</span>
+          </Label>
           <Input
             placeholder="Классический массаж, релаксация"
             value={profileData.specialization}
@@ -273,27 +288,35 @@ export default function ProfileBasicInfo({ profileData, setProfileData }: Profil
           </p>
         </div>
 
-        <div className="space-y-2">
-          <Label>Опыт работы</Label>
-          <Input
-            placeholder="5 лет"
-            value={profileData.experience}
-            onChange={(e) => setProfileData({ ...profileData, experience: e.target.value })}
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label>Опыт работы (лет)</Label>
+            <Input
+              placeholder="5"
+              value={profileData.experience}
+              onChange={(e) => setProfileData({ ...profileData, experience: e.target.value })}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              Образование
+              <span className="text-red-500 font-bold">*</span>
+            </Label>
+            <Input
+              placeholder="Медицинское училище, университет"
+              value={profileData.education}
+              onChange={(e) => setProfileData({ ...profileData, education: e.target.value })}
+            />
+          </div>
         </div>
 
-        <div className="space-y-2">
-          <Label>Образование</Label>
-          <Textarea
-            placeholder="Укажите пройденные курсы и образование"
-            value={profileData.education}
-            onChange={(e) => setProfileData({ ...profileData, education: e.target.value })}
-            rows={3}
-          />
-        </div>
+
 
         <div className="space-y-2">
-          <Label>О себе</Label>
+          <Label className="flex items-center gap-2">
+            О себе
+            <span className="text-red-500 font-bold">*</span>
+          </Label>
           <Textarea
             placeholder="Расскажите о своём подходе к работе"
             value={profileData.about}
