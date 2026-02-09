@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { Navigation } from "@/components/Navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Icon from "@/components/ui/icon";
@@ -94,13 +95,26 @@ const MasseurProfile = () => {
     }
   }, [id, searchParams]);
 
+  const generateSEOData = () => {
+    if (!masseur) return null;
+
+    const services = masseur.specializations?.slice(0, 3).join(', ') || 'массаж';
+    const title = `Массажист ${masseur.full_name} | ${masseur.city}`;
+    const description = `Лучший массажист в ${masseur.city}. ${masseur.about?.slice(0, 100) || services}. Опыт ${masseur.experience_years} лет. Рейтинг ${masseur.rating} ⭐ (${masseur.reviews_count} отзывов)`;
+    const keywords = `найти массажиста, записаться на массаж в ${masseur.city}, ${services}, массажист ${masseur.city}, ${masseur.full_name}`;
+
+    return { title, description, keywords };
+  };
+
+  const seoData = generateSEOData();
+
   const loadMasseurProfile = async () => {
     try {
       const response = await fetch('https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436');
       if (response.ok) {
         const data = await response.json();
         const masseurs = data.masseurs || data;
-        const foundMasseur = masseurs.find((m: any) => m.id === parseInt(id || '0'));
+        const foundMasseur = masseurs.find((m: Masseur) => m.id === parseInt(id || '0'));
         
         if (foundMasseur) {
           setMasseur(foundMasseur);
@@ -215,6 +229,21 @@ const MasseurProfile = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
+      {seoData && (
+        <Helmet>
+          <title>{seoData.title}</title>
+          <meta name="description" content={seoData.description} />
+          <meta name="keywords" content={seoData.keywords} />
+          <meta property="og:title" content={seoData.title} />
+          <meta property="og:description" content={seoData.description} />
+          <meta property="og:type" content="profile" />
+          {masseur.avatar_url && <meta property="og:image" content={masseur.avatar_url} />}
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content={seoData.title} />
+          <meta name="twitter:description" content={seoData.description} />
+          <link rel="canonical" href={`https://masseurs.pro/masseur/${masseur.id}`} />
+        </Helmet>
+      )}
       <Navigation />
       
       <div className="container mx-auto px-4 py-12">
