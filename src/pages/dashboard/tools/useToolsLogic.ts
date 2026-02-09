@@ -129,9 +129,11 @@ export function useToolsLogic() {
         throw new Error(data.error || 'Ошибка анализа');
       }
 
-      const cleanResponse = (data.response || data.analysis || '')
+      console.log('Backend response data:', data);
+      const cleanResponse = (data.result || data.response || data.analysis || '')
         .replace(/\*\*/g, '')
         .trim();
+      console.log('Clean response:', cleanResponse);
       
       setResponse(cleanResponse);
       await loadUsageData();
