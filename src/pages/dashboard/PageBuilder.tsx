@@ -486,8 +486,12 @@ function PageBuilder() {
   };
 
   const applyTemplate = (templateType: 'premium' | 'minimal' | 'luxury') => {
-    // Проверяем, платный ли шаблон и оплачен ли он
-    if ((templateType === 'premium' || templateType === 'luxury') && pageData.template === 'minimal') {
+    // Проверяем, нужна ли покупка подписки
+    const needsPurchase = 
+      (templateType === 'premium' && (!subscription?.has_subscription || subscription?.template_type !== 'premium')) ||
+      (templateType === 'luxury' && (!subscription?.has_subscription || subscription?.template_type !== 'luxury'));
+    
+    if (needsPurchase) {
       setSelectedTemplate(templateType);
       setIsPremiumDialogOpen(true);
       return;
