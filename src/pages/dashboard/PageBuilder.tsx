@@ -1231,7 +1231,7 @@ function PageBuilder() {
                 </CardHeader>
                   <CardContent className="space-y-4">
                     {pageData.blog && pageData.blog.length > 0 && (
-                      <div className="space-y-3 mb-4">
+                      <div className="mb-4 max-h-[400px] overflow-y-auto space-y-3 pr-2" style={{ scrollbarWidth: 'thin' }}>
                         {pageData.blog.map((post, index) => (
                               <div key={index} className="p-3 bg-indigo-50 rounded-lg border border-indigo-100">
                                 <div className="flex items-start justify-between mb-2">
