@@ -73,6 +73,8 @@ export default function SpecialistLandingPublic() {
   const [selectedPost, setSelectedPost] = useState<{ title: string; content: string; image: string; date: string } | null>(null);
   const [isPostDialogOpen, setIsPostDialogOpen] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
 
   useEffect(() => {
     const loadLandingData = async () => {
@@ -110,49 +112,44 @@ export default function SpecialistLandingPublic() {
     loadLandingData();
   }, [userId]);
 
-  // Auto-scroll for blog posts
+  // Update scroll button visibility
+  const updateScrollButtons = () => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    
+    setCanScrollLeft(container.scrollLeft > 0);
+    setCanScrollRight(
+      container.scrollLeft < container.scrollWidth - container.clientWidth - 10
+    );
+  };
+
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container || !pageData?.blog || pageData.blog.length === 0) return;
 
-    let scrollInterval: NodeJS.Timeout;
-    let isUserInteracting = false;
-
-    const startAutoScroll = () => {
-      scrollInterval = setInterval(() => {
-        if (!isUserInteracting && container) {
-          container.scrollLeft += 1;
-          if (container.scrollLeft >= container.scrollWidth - container.clientWidth) {
-            container.scrollLeft = 0;
-          }
-        }
-      }, 30);
-    };
-
-    const handleUserInteraction = () => {
-      isUserInteracting = true;
-      clearInterval(scrollInterval);
-      setTimeout(() => {
-        isUserInteracting = false;
-        startAutoScroll();
-      }, 3000);
-    };
-
-    container.addEventListener('mousedown', handleUserInteraction);
-    container.addEventListener('touchstart', handleUserInteraction);
-    container.addEventListener('wheel', handleUserInteraction);
-
-    startAutoScroll();
+    updateScrollButtons();
+    container.addEventListener('scroll', updateScrollButtons);
+    window.addEventListener('resize', updateScrollButtons);
 
     return () => {
-      clearInterval(scrollInterval);
-      if (container) {
-        container.removeEventListener('mousedown', handleUserInteraction);
-        container.removeEventListener('touchstart', handleUserInteraction);
-        container.removeEventListener('wheel', handleUserInteraction);
-      }
+      container.removeEventListener('scroll', updateScrollButtons);
+      window.removeEventListener('resize', updateScrollButtons);
     };
   }, [pageData?.blog]);
+
+  const scrollLeft = () => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.scrollBy({ left: -400, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.scrollBy({ left: 400, behavior: 'smooth' });
+    }
+  };
 
   if (loading) {
     return (
@@ -275,22 +272,33 @@ export default function SpecialistLandingPublic() {
       {pageData.blog && pageData.blog.length > 0 && (pageData.template === 'premium' || pageData.template === 'luxury') && (
         <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-white to-gray-50">
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between mb-6 sm:mb-8">
-              <div>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">Блог и новости</h2>
-                <p className="text-sm sm:text-base text-gray-600">
-                  Полезные материалы и советы от специалиста
-                </p>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <Icon name="ArrowLeft" size={18} className="opacity-50" />
-                <span className="hidden sm:inline">Листайте</span>
-                <Icon name="ArrowRight" size={18} className="opacity-50" />
-              </div>
+            <div className="mb-6 sm:mb-8">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">Блог и новости</h2>
+              <p className="text-sm sm:text-base text-gray-600">
+                Полезные материалы и советы от специалиста
+              </p>
             </div>
             
             {/* Горизонтальная прокрутка */}
             <div className="relative">
+              {canScrollLeft && (
+                <button
+                  onClick={scrollLeft}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded-full p-3 transition-all"
+                  aria-label="Прокрутить влево"
+                >
+                  <Icon name="ChevronLeft" size={24} className="text-gray-700" />
+                </button>
+              )}
+              {canScrollRight && (
+                <button
+                  onClick={scrollRight}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded-full p-3 transition-all"
+                  aria-label="Прокрутить вправо"
+                >
+                  <Icon name="ChevronRight" size={24} className="text-gray-700" />
+                </button>
+              )}
               <div 
                 ref={scrollContainerRef}
                 className="flex gap-4 sm:gap-6 overflow-x-auto pb-4 scroll-smooth"
