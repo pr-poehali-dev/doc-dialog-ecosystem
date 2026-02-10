@@ -93,6 +93,26 @@ function PageBuilder() {
     
     loadPageData();
   }, []);
+
+  useEffect(() => {
+    const saveTimer = setTimeout(async () => {
+      try {
+        const token = localStorage.getItem('token');
+        await fetch('https://functions.poehali.dev/ea735e68-a4b3-4d19-bb7a-4f720bd82568', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(pageData)
+        });
+      } catch (e) {
+        console.error('Autosave failed', e);
+      }
+    }, 2000);
+
+    return () => clearTimeout(saveTimer);
+  }, [pageData]);
   const [uploadingHero, setUploadingHero] = useState(false);
   const [uploadingProfile, setUploadingProfile] = useState(false);
   const [uploadingGallery, setUploadingGallery] = useState(false);
