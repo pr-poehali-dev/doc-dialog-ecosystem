@@ -1205,13 +1205,9 @@ function PageBuilder() {
                     {pageData.blog && pageData.blog.length > 0 && (
                       <div className="space-y-3 mb-4">
                         {[...pageData.blog]
-                          .sort((a, b) => {
-                            const dateA = new Date(a.date.split('.').reverse().join('-'));
-                            const dateB = new Date(b.date.split('.').reverse().join('-'));
-                            return dateB.getTime() - dateA.getTime();
-                          })
+                          .reverse()
                           .map((post, index) => {
-                            const originalIndex = pageData.blog.findIndex(p => p === post);
+                            const originalIndex = pageData.blog.length - 1 - index;
                             return (
                               <div key={originalIndex} className="p-3 bg-indigo-50 rounded-lg border border-indigo-100">
                                 {index === 0 && (

@@ -46,11 +46,16 @@ export default function LandingPremiumSections({
               Полезные материалы и советы от специалиста
             </p>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              {blog.map((post: any, index: number) => (
+              {[...blog].reverse().map((post: BlogPost, index: number) => (
                 <div 
                   key={index} 
-                  className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow border border-gray-100"
+                  className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow border border-gray-100 relative"
                 >
+                  {index === 0 && (
+                    <Badge className="absolute top-4 right-4 z-10 bg-gradient-to-r from-blue-500 to-indigo-500">
+                      Новое
+                    </Badge>
+                  )}
                   {post.image && (
                     <img 
                       src={post.image} 
@@ -90,7 +95,7 @@ export default function LandingPremiumSections({
               Выгодные скидки и подарочные сертификаты
             </p>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              {offers.map((offer: any, index: number) => (
+              {offers.map((offer: Offer, index: number) => (
                 <div 
                   key={index} 
                   className="bg-white rounded-2xl overflow-hidden shadow-lg border-2 border-rose-100"
