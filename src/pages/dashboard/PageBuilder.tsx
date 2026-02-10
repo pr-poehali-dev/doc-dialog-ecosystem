@@ -92,7 +92,7 @@ function PageBuilder() {
           }
         }
         
-        // Load landing data
+        // Load landing data from server
         const response = await fetch('https://functions.poehali.dev/ea735e68-a4b3-4d19-bb7a-4f720bd82568', {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -103,9 +103,24 @@ function PageBuilder() {
           const data = await response.json();
           setPageData(data);
           setIsPublished(true);
+          // Сохраняем локально как резервную копию
+          localStorage.setItem('pageBuilderBackup', JSON.stringify(data));
+        } else {
+          // Если не удалось загрузить с сервера, пробуем восстановить из локального хранилища
+          const backup = localStorage.getItem('pageBuilderBackup');
+          if (backup) {
+            console.log('[LOAD] Восстановление из локального хранилища');
+            setPageData(JSON.parse(backup));
+          }
         }
       } catch (e) {
         console.error('Failed to load landing data', e);
+        // При ошибке сети - восстанавливаем из резервной копии
+        const backup = localStorage.getItem('pageBuilderBackup');
+        if (backup) {
+          console.log('[LOAD] Восстановление из резервной копии после ошибки');
+          setPageData(JSON.parse(backup));
+        }
       } finally {
         setIsLoaded(true);
       }
@@ -117,12 +132,18 @@ function PageBuilder() {
   useEffect(() => {
     if (!isLoaded) return;
     
+    // КРИТИЧНО: Сразу сохраняем локально при любом изменении
+    localStorage.setItem('pageBuilderBackup', JSON.stringify(pageData));
+    
     const saveTimer = setTimeout(async () => {
       try {
         const token = localStorage.getItem('token');
         console.log('[AUTOSAVE] Starting autosave...', {
           hasToken: !!token,
-          dataSize: JSON.stringify(pageData).length
+          dataSize: JSON.stringify(pageData).length,
+          certificates: pageData.certificates?.length || 0,
+          blog: pageData.blog?.length || 0,
+          gallery: pageData.gallery?.length || 0
         });
         
         const response = await fetch('https://functions.poehali.dev/ea735e68-a4b3-4d19-bb7a-4f720bd82568', {
@@ -148,9 +169,19 @@ function PageBuilder() {
         } else {
           const error = await response.text();
           console.error('[AUTOSAVE] Failed:', error);
+          toast({
+            title: "Ошибка сохранения",
+            description: "Данные сохранены локально, повторим попытку",
+            variant: "destructive"
+          });
         }
       } catch (e) {
         console.error('[AUTOSAVE] ❌ Error:', e);
+        toast({
+          title: "Нет связи с сервером",
+          description: "Данные сохранены локально и будут отправлены позже",
+          variant: "destructive"
+        });
       }
     }, 2000);
 
