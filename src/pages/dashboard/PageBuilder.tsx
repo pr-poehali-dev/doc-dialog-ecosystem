@@ -245,6 +245,25 @@ function PageBuilder() {
   const handlePublish = async () => {
     try {
       const token = localStorage.getItem('token');
+      
+      // Проверяем наличие ИНН в профиле
+      const profileResponse = await fetch('https://functions.poehali.dev/bf27da5d-a5ee-4dc7-b5bb-fcc474598d37', {
+        headers: { 'X-Authorization': `Bearer ${token}` }
+      });
+      
+      if (profileResponse.ok) {
+        const profile = await profileResponse.json();
+        if (!profile.inn || profile.inn.length < 10) {
+          toast({
+            title: "Заполните ИНН",
+            description: "Для публикации лендинга необходимо указать ИНН в профиле специалиста",
+            variant: "destructive"
+          });
+          setTimeout(() => navigate('/dashboard/public-profile'), 1000);
+          return;
+        }
+      }
+      
       const response = await fetch('https://functions.poehali.dev/ea735e68-a4b3-4d19-bb7a-4f720bd82568', {
         method: 'POST',
         headers: {

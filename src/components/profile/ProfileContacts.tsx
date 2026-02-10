@@ -15,6 +15,7 @@ interface ProfileData {
   telegram: string;
   whatsapp: string;
   max_messenger: string;
+  inn: string;
   photo: string;
   serviceDescriptions: Record<string, string>;
 }
@@ -65,6 +66,24 @@ export default function ProfileContacts({ profileData, setProfileData }: Profile
           />
           <p className="text-xs text-muted-foreground">
             Будет отображаться на лендинге как кнопка MAX
+          </p>
+        </div>
+        <div className="space-y-2">
+          <Label className="flex items-center gap-2">
+            ИНН
+            <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            placeholder="123456789012"
+            value={profileData.inn}
+            onChange={(e) => {
+              const value = e.target.value.replace(/\D/g, '').slice(0, 12);
+              setProfileData({ ...profileData, inn: value });
+            }}
+            maxLength={12}
+          />
+          <p className="text-xs text-amber-600 font-medium">
+            ⚠️ Обязательно для публикации лендинга. Без ИНН опубликовать лендинг нельзя.
           </p>
         </div>
       </CardContent>

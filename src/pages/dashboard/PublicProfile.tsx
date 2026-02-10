@@ -30,6 +30,7 @@ export default function PublicProfile() {
     telegram: '',
     whatsapp: '',
     max_messenger: '',
+    inn: '',
     photo: '',
     serviceDescriptions: {} as Record<string, string>,
   });
@@ -61,6 +62,7 @@ export default function PublicProfile() {
           telegram: data.telegram || '',
           whatsapp: '',
           max_messenger: data.max_messenger || '',
+          inn: data.inn || '',
           photo: data.avatar_url || '',
           serviceDescriptions: data.service_descriptions || {},
         });
@@ -209,6 +211,7 @@ export default function PublicProfile() {
           phone: profileData.phone,
           telegram: profileData.telegram,
           max_messenger: profileData.max_messenger,
+          inn: profileData.inn,
           city: profileData.city,
           address: profileData.address,
           experience_years: parseInt(profileData.experience) || 0,
