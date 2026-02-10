@@ -27,41 +27,44 @@ export default function LandingHero({
   userProfile,
 }: LandingHeroProps) {
   return (
-    <section className="relative min-h-[400px] sm:min-h-[500px] md:min-h-[600px] flex items-center justify-center">
+    <section className="relative min-h-[500px] sm:min-h-[600px] md:min-h-[700px] flex items-center justify-center overflow-hidden">
       {heroImage ? (
         <>
           <div 
-            className="absolute inset-0 bg-cover bg-center"
+            className="absolute inset-0 bg-cover bg-center scale-105"
             style={{ backgroundImage: `url(${heroImage})` }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/50"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
         </>
       ) : (
         <div className={`absolute inset-0 bg-gradient-to-br ${gradientClass}`}></div>
       )}
       
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 py-8 sm:py-12 text-center text-white">
+      <div className="relative z-10 w-full max-w-5xl mx-auto px-6 py-12 sm:py-16 text-center">
         {profilePhoto && (
-          <img 
-            src={profilePhoto} 
-            alt="Специалист" 
-            className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full mx-auto mb-4 sm:mb-6 border-4 border-white shadow-2xl object-cover"
-          />
+          <div className="relative inline-block mb-8">
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-400/30 to-rose-400/30 rounded-full blur-2xl scale-110"></div>
+            <img 
+              src={profilePhoto} 
+              alt="Специалист" 
+              className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-44 md:h-44 rounded-full border-4 border-white/20 shadow-2xl object-cover backdrop-blur"
+            />
+          </div>
         )}
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 drop-shadow-lg px-2">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-white drop-shadow-2xl leading-tight tracking-tight">
           {heroTitle}
         </h1>
-        <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/95 mb-6 sm:mb-8 max-w-3xl mx-auto drop-shadow px-4">
+        <p className="text-lg sm:text-xl md:text-2xl text-white/95 mb-10 max-w-3xl mx-auto drop-shadow-lg leading-relaxed font-light">
           {heroSubtitle}
         </p>
         <Button 
           size="lg" 
-          className="bg-white text-gray-900 hover:bg-gray-100 shadow-xl w-full sm:w-auto"
+          className="bg-white text-gray-900 hover:bg-white/90 shadow-2xl px-8 py-6 text-lg font-semibold rounded-full transition-all hover:scale-105"
           asChild
           disabled={!userProfile?.phone}
         >
           <a href={userProfile?.phone ? `tel:${userProfile.phone}` : '#'}>
-            <Icon name="Phone" size={20} className="mr-2" />
+            <Icon name="Phone" size={22} className="mr-2" />
             Записаться на сеанс
           </a>
         </Button>

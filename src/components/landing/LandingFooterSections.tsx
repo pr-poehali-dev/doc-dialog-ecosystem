@@ -15,14 +15,29 @@ interface Review {
   date: string;
 }
 
+interface UserProfile {
+  full_name?: string;
+  phone?: string;
+  telegram?: string;
+  max_messenger?: string;
+  inn?: string;
+}
+
+interface BlogPost {
+  title: string;
+  content: string;
+  image: string;
+  date: string;
+}
+
 interface LandingFooterSectionsProps {
   reviews: Review[];
   showPhone: boolean;
   showTelegram: boolean;
   showMaxMessenger?: boolean;
-  userProfile: any;
+  userProfile: UserProfile | null;
   gradientClass: string;
-  selectedPost: any;
+  selectedPost: BlogPost | null;
   isPostDialogOpen: boolean;
   onClosePostDialog: () => void;
 }
@@ -42,36 +57,36 @@ export default function LandingFooterSections({
     <>
       {/* Reviews Section */}
       {reviews && reviews.length > 0 && (
-        <section className="py-12 sm:py-16 md:py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4">Отзывы клиентов</h2>
-            <p className="text-center text-sm sm:text-base text-gray-600 mb-8 sm:mb-12 max-w-2xl mx-auto px-4">
+        <section className="py-20 sm:py-24 md:py-28 bg-gradient-to-b from-amber-50/30 via-orange-50/20 to-white">
+          <div className="container mx-auto px-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Отзывы клиентов</h2>
+            <p className="text-center text-lg text-gray-600 mb-12 max-w-2xl mx-auto font-light">
               Реальные истории людей, которым я помог
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-6xl mx-auto">
-              {reviews.map((review: any, index: number) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto">
+              {reviews.map((review: Review, index: number) => (
                 <div 
                   key={index} 
-                  className="p-4 sm:p-6 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-100 shadow-sm hover:shadow-md transition-shadow"
+                  className="group p-6 rounded-3xl bg-white border border-amber-200/50 shadow-lg hover:shadow-2xl transition-all duration-300"
                 >
-                  <div className="flex items-center justify-between mb-3 sm:mb-4">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold text-lg">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">
                       {review.name.charAt(0)}
                     </div>
-                    <div className="flex gap-0.5">
+                    <div className="flex gap-1">
                       {[...Array(5)].map((_, i) => (
                         <Icon
                           key={i}
                           name="Star"
-                          size={16}
+                          size={18}
                           className={i < review.rating ? 'text-amber-500 fill-amber-500' : 'text-gray-300'}
                         />
                       ))}
                     </div>
                   </div>
-                  <p className="font-semibold text-gray-900 mb-2">{review.name}</p>
-                  <p className="text-gray-700 text-sm leading-relaxed mb-3">{review.text}</p>
-                  <p className="text-xs text-gray-500">{review.date}</p>
+                  <p className="font-semibold text-gray-900 mb-3 text-lg">{review.name}</p>
+                  <p className="text-gray-700 leading-relaxed mb-4">{review.text}</p>
+                  <p className="text-sm text-gray-500">{review.date}</p>
                 </div>
               ))}
             </div>
@@ -81,64 +96,76 @@ export default function LandingFooterSections({
 
       {/* Contact Section */}
       {(showPhone || showTelegram || showMaxMessenger) && (
-        <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-gray-50 to-white">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <div className="text-center mb-8 sm:mb-12">
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">Свяжитесь со мной</h2>
-                <p className="text-base sm:text-lg md:text-xl text-gray-600 px-4">
+        <section className="py-20 sm:py-24 md:py-28 bg-gradient-to-b from-white via-gray-50/50 to-white">
+          <div className="container mx-auto px-6">
+            <div className="max-w-5xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Свяжитесь со мной</h2>
+                <p className="text-lg sm:text-xl text-gray-600 font-light">
                   Выберите удобный способ связи и запишитесь на сеанс
                 </p>
               </div>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-4xl mx-auto">
                 {showPhone && (
-                  <div className="p-4 sm:p-6 rounded-2xl bg-white border-2 border-gray-100 shadow-sm text-center">
-                    <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r ${gradientClass} flex items-center justify-center mx-auto mb-3 sm:mb-4`}>
-                      <Icon name="Phone" size={24} className="text-white sm:w-7 sm:h-7" />
+                  <div className="group p-8 rounded-3xl bg-white border border-gray-200/80 shadow-lg hover:shadow-2xl transition-all duration-300 text-center">
+                    <div className="relative inline-block mb-6">
+                      <div className={`absolute inset-0 bg-gradient-to-br ${gradientClass} rounded-full blur-xl opacity-30 group-hover:opacity-50 transition-opacity`}></div>
+                      <div className={`relative w-20 h-20 rounded-full bg-gradient-to-br ${gradientClass} flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform`}>
+                        <Icon name="Phone" size={32} className="text-white" />
+                      </div>
                     </div>
-                    <p className="font-semibold text-base sm:text-lg mb-4 sm:mb-6 text-gray-900">Телефон</p>
+                    <p className="font-bold text-xl mb-6 text-gray-900">Телефон</p>
                     <Button 
                       asChild
-                      className={`w-full bg-gradient-to-r ${gradientClass} hover:opacity-90`}
+                      size="lg"
+                      className={`w-full bg-gradient-to-r ${gradientClass} hover:opacity-90 shadow-lg text-base font-semibold rounded-full`}
                       disabled={!userProfile?.phone}
                     >
                       <a href={userProfile?.phone ? `tel:${userProfile.phone}` : '#'}>
-                        <Icon name="Phone" size={18} className="mr-2" />
+                        <Icon name="Phone" size={20} className="mr-2" />
                         Позвонить
                       </a>
                     </Button>
                   </div>
                 )}
                 {showTelegram && userProfile?.telegram && (
-                  <div className="p-4 sm:p-6 rounded-2xl bg-white border-2 border-gray-100 shadow-sm text-center">
-                    <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r ${gradientClass} flex items-center justify-center mx-auto mb-3 sm:mb-4`}>
-                      <Icon name="Send" size={24} className="text-white sm:w-7 sm:h-7" />
+                  <div className="group p-8 rounded-3xl bg-white border border-gray-200/80 shadow-lg hover:shadow-2xl transition-all duration-300 text-center">
+                    <div className="relative inline-block mb-6">
+                      <div className={`absolute inset-0 bg-gradient-to-br ${gradientClass} rounded-full blur-xl opacity-30 group-hover:opacity-50 transition-opacity`}></div>
+                      <div className={`relative w-20 h-20 rounded-full bg-gradient-to-br ${gradientClass} flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform`}>
+                        <Icon name="Send" size={32} className="text-white" />
+                      </div>
                     </div>
-                    <p className="font-semibold text-base sm:text-lg mb-4 sm:mb-6 text-gray-900">Telegram</p>
+                    <p className="font-bold text-xl mb-6 text-gray-900">Telegram</p>
                     <Button 
                       asChild
-                      className={`w-full bg-gradient-to-r ${gradientClass} hover:opacity-90`}
+                      size="lg"
+                      className={`w-full bg-gradient-to-r ${gradientClass} hover:opacity-90 shadow-lg text-base font-semibold rounded-full`}
                     >
                       <a 
                         href={`https://t.me/${userProfile.telegram.replace('@', '')}`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <Icon name="Send" size={18} className="mr-2" />
+                        <Icon name="Send" size={20} className="mr-2" />
                         Написать
                       </a>
                     </Button>
                   </div>
                 )}
                 {showMaxMessenger && (
-                  <div className="p-4 sm:p-6 rounded-2xl bg-white border-2 border-gray-100 shadow-sm text-center">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                      <Icon name="MessageSquare" size={24} className="text-white sm:w-7 sm:h-7" />
+                  <div className="group p-8 rounded-3xl bg-white border border-gray-200/80 shadow-lg hover:shadow-2xl transition-all duration-300 text-center">
+                    <div className="relative inline-block mb-6">
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full blur-xl opacity-30 group-hover:opacity-50 transition-opacity"></div>
+                      <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                        <Icon name="MessageSquare" size={32} className="text-white" />
+                      </div>
                     </div>
-                    <p className="font-semibold text-base sm:text-lg mb-4 sm:mb-6 text-gray-900">MAX</p>
+                    <p className="font-bold text-xl mb-6 text-gray-900">MAX</p>
                     <Button 
                       asChild
-                      className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:opacity-90"
+                      size="lg"
+                      className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:opacity-90 shadow-lg text-base font-semibold rounded-full"
                       disabled={!userProfile?.max_messenger}
                     >
                       <a 
@@ -146,7 +173,7 @@ export default function LandingFooterSections({
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <Icon name="MessageSquare" size={18} className="mr-2" />
+                        <Icon name="MessageSquare" size={20} className="mr-2" />
                         Написать
                       </a>
                     </Button>
@@ -159,7 +186,7 @@ export default function LandingFooterSections({
       )}
 
       {/* Footer */}
-      <footer className="bg-gradient-to-br from-gray-900 to-gray-800 text-white py-8 sm:py-12">
+      <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-12 sm:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="border-t border-gray-700 pt-6 space-y-6">
             {/* Specialist Info */}

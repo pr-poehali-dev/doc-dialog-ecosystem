@@ -67,11 +67,11 @@ export default function LandingContentSections({
     <>
       {/* About Section */}
       {aboutText && (
-        <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-white to-gray-50">
-          <div className="container mx-auto px-4">
+        <section className="py-20 sm:py-24 md:py-28 bg-gradient-to-b from-white via-gray-50/50 to-white">
+          <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">{aboutTitle}</h2>
-              <p className="text-base sm:text-lg text-gray-700 leading-relaxed whitespace-pre-line">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">{aboutTitle}</h2>
+              <p className="text-lg sm:text-xl text-gray-600 leading-relaxed whitespace-pre-line font-light">
                 {aboutText}
               </p>
             </div>
@@ -81,17 +81,17 @@ export default function LandingContentSections({
 
       {/* Gallery Section */}
       {gallery && gallery.length > 0 && (
-        <section className="py-12 sm:py-16 md:py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 max-w-6xl mx-auto">
+        <section className="py-20 sm:py-24 md:py-28 bg-white">
+          <div className="container mx-auto px-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto">
               {gallery.map((img, index) => (
-                <div key={index} className="relative group overflow-hidden rounded-xl aspect-square">
+                <div key={index} className="relative group overflow-hidden rounded-2xl aspect-square shadow-lg hover:shadow-2xl transition-all">
                   <img 
                     src={img} 
                     alt={`Фото ${index + 1}`}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
               ))}
             </div>
@@ -101,18 +101,18 @@ export default function LandingContentSections({
 
       {/* Certificates Section */}
       {certificates && certificates.length > 0 && (
-        <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-gray-50 to-white">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12">Сертификаты и дипломы</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 max-w-6xl mx-auto">
+        <section className="py-20 sm:py-24 md:py-28 bg-gradient-to-b from-amber-50/30 via-orange-50/20 to-white">
+          <div className="container mx-auto px-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-12 bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Сертификаты и дипломы</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto">
               {certificates.map((cert, index) => (
-                <div key={index} className="relative group overflow-hidden rounded-xl border-2 border-amber-100 aspect-[3/4]">
+                <div key={index} className="relative group overflow-hidden rounded-2xl border border-amber-200/50 aspect-[3/4] shadow-lg hover:shadow-2xl transition-all bg-white">
                   <img 
                     src={cert} 
                     alt={`Сертификат ${index + 1}`}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-amber-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
               ))}
             </div>
@@ -122,38 +122,41 @@ export default function LandingContentSections({
 
       {/* Services Section */}
       {services && services.length > 0 && (
-        <section className="py-12 sm:py-16 md:py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12">Мои услуги</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-6xl mx-auto">
+        <section className="py-20 sm:py-24 md:py-28 bg-white">
+          <div className="container mx-auto px-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-12 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Мои услуги</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto">
               {services.map((service, index) => (
                 <div 
                   key={index} 
-                  className="rounded-2xl border-2 border-gray-100 hover:border-blue-200 hover:shadow-xl transition-all bg-white overflow-hidden"
+                  className="group rounded-3xl border border-gray-200/80 hover:border-gray-300 hover:shadow-2xl transition-all duration-300 bg-white overflow-hidden"
                 >
                   {service.image && (
-                    <img 
-                      src={service.image} 
-                      alt={service.name} 
-                      className="w-full h-48 object-cover"
-                    />
+                    <div className="relative overflow-hidden">
+                      <img 
+                        src={service.image} 
+                        alt={service.name} 
+                        className="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </div>
                   )}
-                  <div className="p-4 sm:p-6">
-                    <div className="flex items-start justify-between mb-3 sm:mb-4">
-                      <h3 className="text-lg sm:text-xl font-bold flex-1 text-gray-900">{service.name}</h3>
+                  <div className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <h3 className="text-xl font-bold flex-1 text-gray-900">{service.name}</h3>
                       {service.price && (
-                        <Badge className={`bg-gradient-to-r ${gradientClass} text-white border-0`}>
+                        <Badge className={`bg-gradient-to-r ${gradientClass} text-white border-0 px-3 py-1 text-sm font-semibold shadow-lg`}>
                           {service.price} ₽
                         </Badge>
                       )}
                     </div>
                     {service.description && (
-                      <p className="text-gray-600 text-sm mb-3 leading-relaxed">{service.description}</p>
+                      <p className="text-gray-600 text-base mb-4 leading-relaxed">{service.description}</p>
                     )}
                     {service.duration && (
-                      <div className="flex items-center text-gray-500 text-sm">
-                        <Icon name="Clock" size={16} className="mr-2" />
-                        {service.duration}
+                      <div className="flex items-center text-gray-500">
+                        <Icon name="Clock" size={18} className="mr-2" />
+                        <span className="text-sm font-medium">{service.duration}</span>
                       </div>
                     )}
                   </div>
@@ -166,33 +169,36 @@ export default function LandingContentSections({
 
       {/* Offers Section - Super Premium only */}
       {offers && offers.length > 0 && template === 'luxury' && (
-        <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-white to-rose-50">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4">Специальные предложения</h2>
-            <p className="text-center text-sm sm:text-base text-gray-600 mb-8 sm:mb-12 max-w-2xl mx-auto px-4">
+        <section className="py-20 sm:py-24 md:py-28 bg-gradient-to-b from-rose-50/30 via-pink-50/20 to-white">
+          <div className="container mx-auto px-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">Специальные предложения</h2>
+            <p className="text-center text-lg text-gray-600 mb-12 max-w-2xl mx-auto font-light">
               Выгодные скидки и подарочные сертификаты
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto">
               {offers.map((offer, index) => (
                 <div 
                   key={index} 
-                  className="bg-white rounded-2xl overflow-hidden shadow-lg border-2 border-rose-100"
+                  className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-rose-200/50"
                 >
                   {offer.image && (
-                    <img 
-                      src={offer.image} 
-                      alt={offer.title} 
-                      className="w-full h-48 object-cover"
-                    />
+                    <div className="relative overflow-hidden">
+                      <img 
+                        src={offer.image} 
+                        alt={offer.title} 
+                        className="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-rose-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </div>
                   )}
                   <div className="p-6">
-                    <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-start justify-between mb-4">
                       <h3 className="text-xl font-bold text-gray-900 flex-1">{offer.title}</h3>
-                      <Badge className="bg-gradient-to-r from-rose-500 to-pink-500 text-white">
+                      <Badge className="bg-gradient-to-r from-rose-500 to-pink-500 text-white px-3 py-1 text-sm font-semibold shadow-lg">
                         {offer.discount}
                       </Badge>
                     </div>
-                    <p className="text-gray-600 text-sm mb-6 leading-relaxed">{offer.description}</p>
+                    <p className="text-gray-600 text-base mb-6 leading-relaxed">{offer.description}</p>
                     
                     {/* Order Form */}
                     <div className="space-y-3 pt-4 border-t">
@@ -262,17 +268,20 @@ export default function LandingContentSections({
 
       {/* Process Section */}
       {processSteps && processSteps.length > 0 && (
-        <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-gray-50 to-white">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12">{processTitle}</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 max-w-6xl mx-auto">
+        <section className="py-20 sm:py-24 md:py-28 bg-gradient-to-b from-gray-50/50 via-white to-gray-50/30">
+          <div className="container mx-auto px-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-12 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">{processTitle}</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 max-w-7xl mx-auto">
               {processSteps.map((step, index) => (
-                <div key={index} className="text-center">
-                  <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${gradientClass} flex items-center justify-center mx-auto mb-4 shadow-lg`}>
-                    <Icon name={step.icon} size={28} className="text-white" fallback="Circle" />
+                <div key={index} className="text-center group">
+                  <div className="relative inline-block mb-6">
+                    <div className={`absolute inset-0 bg-gradient-to-br ${gradientClass} rounded-full blur-xl opacity-30 group-hover:opacity-50 transition-opacity`}></div>
+                    <div className={`relative w-20 h-20 rounded-full bg-gradient-to-br ${gradientClass} flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform`}>
+                      <Icon name={step.icon} size={32} className="text-white" fallback="Circle" />
+                    </div>
                   </div>
-                  <h3 className="text-lg font-bold mb-2 text-gray-900">{step.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{step.description}</p>
+                  <h3 className="text-xl font-bold mb-3 text-gray-900">{step.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{step.description}</p>
                 </div>
               ))}
             </div>
@@ -282,38 +291,41 @@ export default function LandingContentSections({
 
       {/* Blog Section - Premium/Luxury only */}
       {blog && blog.length > 0 && (template === 'premium' || template === 'luxury') && (
-        <section className="py-12 sm:py-16 md:py-20 bg-white overflow-hidden">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4">Блог и новости</h2>
-            <p className="text-center text-sm sm:text-base text-gray-600 mb-8 sm:mb-12 max-w-2xl mx-auto px-4">
+        <section className="py-20 sm:py-24 md:py-28 bg-white overflow-hidden">
+          <div className="container mx-auto px-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Блог и новости</h2>
+            <p className="text-center text-lg text-gray-600 mb-12 max-w-2xl mx-auto font-light">
               Полезные материалы и советы от специалиста
             </p>
-            <div className="flex gap-4 sm:gap-6 overflow-x-auto pb-4 px-4 -mx-4 snap-x snap-mandatory scrollbar-hide">
+            <div className="flex gap-6 overflow-x-auto pb-6 px-6 -mx-6 snap-x snap-mandatory scrollbar-hide">
               {blog.map((post, index) => (
                 <div 
                   key={index} 
-                  className="flex-shrink-0 w-[280px] sm:w-[320px] bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow border border-gray-100 snap-start"
+                  className="flex-shrink-0 w-[320px] sm:w-[360px] group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200/80 snap-start"
                 >
                   {post.image && (
-                    <img 
-                      src={post.image} 
-                      alt={post.title} 
-                      className="w-full h-48 object-cover"
-                    />
+                    <div className="relative overflow-hidden">
+                      <img 
+                        src={post.image} 
+                        alt={post.title} 
+                        className="w-full h-52 object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </div>
                   )}
-                  <div className="p-4 sm:p-6">
-                    <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-gray-900">{post.title}</h3>
-                    <p className="text-gray-600 text-sm mb-3 sm:mb-4 leading-relaxed line-clamp-3">{post.content}</p>
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold mb-3 text-gray-900">{post.title}</h3>
+                    <p className="text-gray-600 mb-4 leading-relaxed line-clamp-3">{post.content}</p>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-500">{post.date}</span>
+                      <span className="text-sm text-gray-500">{post.date}</span>
                       <Button 
                         size="sm" 
                         variant="ghost" 
-                        className="text-blue-600 hover:text-blue-700"
+                        className={`text-transparent bg-gradient-to-r ${gradientClass} bg-clip-text hover:opacity-80 font-semibold`}
                         onClick={() => onPostClick(post)}
                       >
                         Читать далее
-                        <Icon name="ArrowRight" size={14} className="ml-1" />
+                        <Icon name="ArrowRight" size={16} className="ml-1" />
                       </Button>
                     </div>
                   </div>
