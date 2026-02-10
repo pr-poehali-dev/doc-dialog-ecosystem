@@ -1292,22 +1292,27 @@ function PageBuilder() {
                         type="button"
                         size="sm"
                         className="w-full"
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
                           if (newBlogPost.title && newBlogPost.content) {
+                            console.log('[ADD POST] Adding new post:', newBlogPost.title);
+                            const updatedBlog = [
+                              {
+                                ...newBlogPost,
+                                date: new Date().toLocaleDateString('ru-RU')
+                              },
+                              ...pageData.blog
+                            ];
+                            console.log('[ADD POST] Updated blog array:', updatedBlog.length, 'posts');
                             setPageData({
                               ...pageData,
-                              blog: [
-                                {
-                                  ...newBlogPost,
-                                  date: new Date().toLocaleDateString('ru-RU')
-                                },
-                                ...pageData.blog
-                              ]
+                              blog: updatedBlog
                             });
                             setNewBlogPost({ title: '', content: '', image: '' });
                             toast({
                               title: 'Пост добавлен',
-                              description: 'Пост будет сохранен автоматически',
+                              description: `Теперь ${updatedBlog.length} постов. Сохранение через 2 сек...`,
                             });
                           }
                         }}
