@@ -554,7 +554,10 @@ function PageBuilder() {
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={() => setIsPreviewOpen(true)}
+                onClick={() => {
+                  localStorage.setItem('pageBuilderData', JSON.stringify(pageData));
+                  setIsPreviewOpen(true);
+                }}
                 className="flex-1 sm:flex-initial"
               >
                 <Icon name="Eye" size={16} className="sm:mr-2" />
@@ -1667,7 +1670,7 @@ function PageBuilder() {
           </DialogHeader>
           <div className="h-[80vh] overflow-auto">
             <iframe
-              src={landingUrl}
+              src="/dashboard/page-preview"
               className="w-full h-full border-0"
               title="Предпросмотр лендинга"
             />
