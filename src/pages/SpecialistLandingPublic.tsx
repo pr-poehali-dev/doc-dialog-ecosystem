@@ -82,7 +82,7 @@ export default function SpecialistLandingPublic() {
         }
 
         // Load landing data from backend
-        const response = await fetch(`https://functions.poehali.dev/ea735e68-a4b3-4d19-bb7a-4f720bd82568?user_id=${userId}`);
+        const response = await fetch(`https://functions.poehali.dev/ea735e68-a4b3-4d19-bb7a-4f720bd82568?userId=${userId}`);
         
         if (response.ok) {
           const data = await response.json();
