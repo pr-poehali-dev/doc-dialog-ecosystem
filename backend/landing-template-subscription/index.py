@@ -6,7 +6,11 @@ from psycopg2.extras import RealDictCursor
 from datetime import datetime, timedelta
 
 def handler(event: dict, context) -> dict:
-    '''API для управления подписками на платные шаблоны лендингов'''
+    '''API для управления ежемесячными подписками на платные шаблоны лендингов
+    
+    Premium: 300₽/мес - Блог/Новости
+    Super Premium: 500₽/мес - Блог + Скидки/Сертификаты + Отзывы + Фото к услугам
+    '''
     
     method = event.get('httpMethod', 'GET')
     
@@ -95,7 +99,8 @@ def handler(event: dict, context) -> dict:
                     'isBase64Encoded': False
                 }
             
-            expires_at = datetime.now() + timedelta(days=90)
+            # Подписка на 1 месяц (30 дней)
+            expires_at = datetime.now() + timedelta(days=30)
             
             cursor.execute(f"""
                 UPDATE t_p46047379_doc_dialog_ecosystem.landing_template_subscriptions

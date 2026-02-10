@@ -75,6 +75,23 @@ function PageBuilder() {
   const [landingUrl, setLandingUrl] = useState('');
 
   useEffect(() => {
+    const checkSubscription = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('https://functions.poehali.dev/aa8340a4-6315-4ab9-a4f9-8043f792f3ee', {
+          headers: { 'X-Authorization': `Bearer ${token}` }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          return data; // Возвращаем данные о подписке
+        }
+      } catch (e) {
+        console.error('Failed to check subscription:', e);
+      }
+      return null;
+    };
+    
     const loadPageData = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -114,6 +131,21 @@ function PageBuilder() {
         
         if (response.ok) {
           const data = await response.json();
+          
+          // Проверяем подписку
+          const subData = await checkSubscription();
+          setSubscription(subData);
+          
+          // Если подписка истекла, автоматически переводим на minimal
+          if (subData && !subData.has_subscription && data.template !== 'minimal') {
+            data.template = 'minimal';
+            toast({
+              title: "Подписка истекла",
+              description: "Контент (блог, отзывы, сертификаты) сохранен. Продлите подписку для восстановления.",
+              variant: "destructive"
+            });
+          }
+          
           setPageData(data);
           setIsPublished(true);
           // Сохраняем локально как резервную копию
@@ -213,6 +245,12 @@ function PageBuilder() {
   const [isPremiumDialogOpen, setIsPremiumDialogOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [subscription, setSubscription] = useState<{
+    has_subscription: boolean;
+    template_type?: string;
+    expires_at?: string;
+    days_left?: number;
+  } | null>(null);
 
   const handleImageUpload = async (file: File, type: 'hero' | 'profile' | 'gallery' | 'certificate' | 'service', serviceIndex?: number) => {
     if (!file) return;
@@ -467,7 +505,7 @@ function PageBuilder() {
   };
 
   const handlePurchaseTemplate = async () => {
-    const templatePrice = selectedTemplate === 'premium' ? 2990 : 4990;
+    const templatePrice = selectedTemplate === 'premium' ? 300 : 500;
     const templateName = selectedTemplate === 'premium' ? 'Premium' : 'Супер Premium';
     
     try {
@@ -483,8 +521,8 @@ function PageBuilder() {
         return;
       }
       
-      // Списываем с баланса
-      const response = await fetch('https://functions.poehali.dev/619d5197-066f-4380-8bef-994c71c76fa0', {
+      // Списываем с баланса и создаем подписку
+      const balanceResponse = await fetch('https://functions.poehali.dev/619d5197-066f-4380-8bef-994c71c76fa0', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -492,23 +530,40 @@ function PageBuilder() {
         },
         body: JSON.stringify({
           amount: templatePrice,
-          service_type: 'landing_template',
-          description: `Покупка шаблона "${templateName}"`
+          service_type: 'landing_template_subscription',
+          description: `Подписка "${templateName}" на 1 месяц`
         })
       });
       
-      const data = await response.json();
+      const balanceData = await balanceResponse.json();
       
-      if (!response.ok) {
+      if (!balanceResponse.ok) {
         toast({
           title: "Недостаточно средств",
-          description: `На вашем балансе ${data.balance?.toFixed(2) || 0} ₽, а требуется ${templatePrice} ₽. Пополните баланс.`,
+          description: `На вашем балансе ${balanceData.balance?.toFixed(2) || 0} ₽, а требуется ${templatePrice} ₽. Пополните баланс.`,
           variant: "destructive",
         });
         setIsPremiumDialogOpen(false);
         setTimeout(() => navigate('/dashboard/ai-subscription'), 500);
         return;
       }
+      
+      // Создаем подписку
+      const subResponse = await fetch('https://functions.poehali.dev/aa8340a4-6315-4ab9-a4f9-8043f792f3ee', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          template_type: selectedTemplate,
+          amount: templatePrice
+        })
+      });
+      
+      const response = subResponse;
+      
+      const data = await response.json();
       
       // Успешная покупка
       setPageData({
@@ -517,9 +572,17 @@ function PageBuilder() {
       });
       setIsPremiumDialogOpen(false);
       applyTemplate(selectedTemplate as 'premium' | 'luxury');
+      // Обновляем информацию о подписке
+      setSubscription({
+        has_subscription: true,
+        template_type: selectedTemplate,
+        expires_at: data.expires_at,
+        days_left: 30
+      });
+      
       toast({
-        title: "Шаблон приобретен!",
-        description: `Списано ${templatePrice} ₽. Остаток: ${data.balance.toFixed(2)} ₽`,
+        title: "Подписка активирована!",
+        description: `${templateName} активен на 30 дней. Списано ${templatePrice} ₽. Остаток: ${balanceData.balance.toFixed(2)} ₽`,
       });
     } catch (error) {
       toast({
@@ -1431,7 +1494,10 @@ function PageBuilder() {
                           )}
                         </div>
                         <p className="text-xs text-muted-foreground mb-1">+ Блог/Новости</p>
-                        <p className="text-xs font-bold text-blue-600">2990 ₽</p>
+                        <p className="text-xs font-bold text-blue-600">300 ₽/мес</p>
+                        {subscription?.has_subscription && subscription.template_type === 'premium' && (
+                          <p className="text-[10px] text-green-600 mt-1">Осталось {subscription.days_left} дн.</p>
+                        )}
                       </div>
                       <Icon name="ChevronRight" size={20} className="text-gray-400" />
                     </Button>
@@ -1471,7 +1537,10 @@ function PageBuilder() {
                           )}
                         </div>
                         <p className="text-xs text-muted-foreground mb-1">+ Блог + Скидки/Сертификаты + Фото к услугам</p>
-                        <p className="text-xs font-bold text-purple-600">4990 ₽</p>
+                        <p className="text-xs font-bold text-purple-600">500 ₽/мес</p>
+                        {subscription?.has_subscription && subscription.template_type === 'luxury' && (
+                          <p className="text-[10px] text-green-600 mt-1">Осталось {subscription.days_left} дн.</p>
+                        )}
                       </div>
                       <Icon name="ChevronRight" size={20} className="text-gray-400" />
                     </Button>
@@ -1627,16 +1696,17 @@ function PageBuilder() {
 
             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
               <div>
-                <p className="text-sm text-gray-600">Единоразовый платеж</p>
+                <p className="text-sm text-gray-600">Ежемесячная подписка</p>
                 <p className="text-2xl font-bold">
-                  {selectedTemplate === 'premium' ? '2 990' : '4 990'} ₽
+                  {selectedTemplate === 'premium' ? '300' : '500'} ₽
                 </p>
+                <p className="text-xs text-gray-500 mt-1">Автопродление каждый месяц</p>
               </div>
-              <Badge className="bg-green-500">Навсегда</Badge>
+              <Badge className="bg-blue-500">30 дней</Badge>
             </div>
 
             <p className="text-xs text-gray-500">
-              После покупки шаблон остается у вас навсегда. Никаких подписок.
+              Подписка активна 30 дней. Контент (блог, отзывы, сертификаты) сохраняется в базе и восстанавливается при продлении.
             </p>
           </div>
 
