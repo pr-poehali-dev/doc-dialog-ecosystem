@@ -149,7 +149,7 @@ export default function SpecialistLandingPublic() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen m-0 p-0">
       <LandingHero
         heroTitle={pageData.heroTitle}
         heroSubtitle={pageData.heroSubtitle}
