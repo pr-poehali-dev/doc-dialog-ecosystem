@@ -106,11 +106,11 @@ export default function LandingContentSections({
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-12 bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Сертификаты и дипломы</h2>
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6 max-w-6xl mx-auto">
               {certificates.map((cert, index) => (
-                <div key={index} className="relative group overflow-hidden rounded-2xl border border-amber-200/50 w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] aspect-[3/4] shadow-lg hover:shadow-2xl transition-all bg-white">
+                <div key={index} className="relative group overflow-hidden rounded-2xl border border-amber-200/50 w-[calc(50%-0.5rem)] sm:w-[calc(50%-0.75rem)] lg:w-[calc(50%-0.75rem)] aspect-[4/3] shadow-lg hover:shadow-2xl transition-all bg-white">
                   <img 
                     src={cert} 
                     alt={`Сертификат ${index + 1}`}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 p-2"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-amber-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
