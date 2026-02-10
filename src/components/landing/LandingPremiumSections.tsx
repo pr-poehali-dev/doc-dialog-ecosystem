@@ -99,7 +99,7 @@ export default function LandingPremiumSections({
                   display: none;
                 }
               `}</style>
-              {[...blog].reverse().map((post: BlogPost, index: number) => (
+              {blog.map((post: BlogPost, index: number) => (
                 <div 
                   key={index} 
                   className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow border border-gray-100 flex-shrink-0 w-[350px]"

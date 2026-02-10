@@ -1204,12 +1204,8 @@ function PageBuilder() {
                   <CardContent className="space-y-4">
                     {pageData.blog && pageData.blog.length > 0 && (
                       <div className="space-y-3 mb-4">
-                        {[...pageData.blog]
-                          .reverse()
-                          .map((post, index) => {
-                            const originalIndex = pageData.blog.length - 1 - index;
-                            return (
-                              <div key={originalIndex} className="p-3 bg-indigo-50 rounded-lg border border-indigo-100">
+                        {pageData.blog.map((post, index) => (
+                              <div key={index} className="p-3 bg-indigo-50 rounded-lg border border-indigo-100">
                                 <div className="flex items-start justify-between mb-2">
                                   <p className="font-semibold text-sm">{post.title}</p>
                                   <Button
@@ -1218,7 +1214,7 @@ function PageBuilder() {
                                     onClick={() => {
                                       setPageData({
                                         ...pageData,
-                                        blog: pageData.blog.filter((_, i) => i !== originalIndex)
+                                        blog: pageData.blog.filter((_, i) => i !== index)
                                       });
                                     }}
                                   >
@@ -1231,9 +1227,7 @@ function PageBuilder() {
                                 <p className="text-xs text-gray-600 line-clamp-2">{post.content}</p>
                                 <p className="text-[10px] text-gray-500 mt-1">{post.date}</p>
                               </div>
-                            );
-                          })
-                        }
+                        ))}
                       </div>
                     )}
 
@@ -1302,17 +1296,17 @@ function PageBuilder() {
                             setPageData({
                               ...pageData,
                               blog: [
-                                ...pageData.blog,
                                 {
                                   ...newBlogPost,
                                   date: new Date().toLocaleDateString('ru-RU')
-                                }
+                                },
+                                ...pageData.blog
                               ]
                             });
                             setNewBlogPost({ title: '', content: '', image: '' });
                             toast({
                               title: 'Пост добавлен',
-                              description: 'Пост появится на лендинге',
+                              description: 'Пост будет сохранен автоматически',
                             });
                           }
                         }}

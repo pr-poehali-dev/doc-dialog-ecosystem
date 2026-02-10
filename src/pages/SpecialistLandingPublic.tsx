@@ -301,9 +301,7 @@ export default function SpecialistLandingPublic() {
                     display: none;
                   }
                 `}</style>
-                {[...pageData.blog]
-                  .reverse()
-                  .map((post: { title: string; content: string; image: string; date: string }, index: number) => (
+                {pageData.blog.map((post: { title: string; content: string; image: string; date: string }, index: number) => (
                   <div 
                     key={index} 
                     className="flex-none w-[280px] sm:w-[320px] md:w-[360px]"

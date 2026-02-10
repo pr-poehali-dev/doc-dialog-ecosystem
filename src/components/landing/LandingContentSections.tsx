@@ -248,7 +248,7 @@ export default function LandingContentSections({
               Полезные материалы и советы от специалиста
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-6xl mx-auto">
-              {[...blog].reverse().map((post, index) => (
+              {blog.map((post, index) => (
                 <div 
                   key={index} 
                   className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow border border-gray-100"
