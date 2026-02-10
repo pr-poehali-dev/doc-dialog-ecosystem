@@ -282,17 +282,17 @@ export default function LandingContentSections({
 
       {/* Blog Section - Premium/Luxury only */}
       {blog && blog.length > 0 && (template === 'premium' || template === 'luxury') && (
-        <section className="py-12 sm:py-16 md:py-20 bg-white">
+        <section className="py-12 sm:py-16 md:py-20 bg-white overflow-hidden">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4">Блог и новости</h2>
             <p className="text-center text-sm sm:text-base text-gray-600 mb-8 sm:mb-12 max-w-2xl mx-auto px-4">
               Полезные материалы и советы от специалиста
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-6xl mx-auto">
+            <div className="flex gap-4 sm:gap-6 overflow-x-auto pb-4 px-4 -mx-4 snap-x snap-mandatory scrollbar-hide">
               {blog.map((post, index) => (
                 <div 
                   key={index} 
-                  className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow border border-gray-100"
+                  className="flex-shrink-0 w-[280px] sm:w-[320px] bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow border border-gray-100 snap-start"
                 >
                   {post.image && (
                     <img 
