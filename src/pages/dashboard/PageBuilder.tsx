@@ -148,24 +148,11 @@ function PageBuilder() {
           
           setPageData(data);
           setIsPublished(true);
-          // Сохраняем локально как резервную копию
-          localStorage.setItem('pageBuilderBackup', JSON.stringify(data));
         } else {
-          // Если не удалось загрузить с сервера, пробуем восстановить из локального хранилища
-          const backup = localStorage.getItem('pageBuilderBackup');
-          if (backup) {
-            console.log('[LOAD] Восстановление из локального хранилища');
-            setPageData(JSON.parse(backup));
-          }
+          console.log('[LOAD] Landing not found on server');
         }
       } catch (e) {
         console.error('Failed to load landing data', e);
-        // При ошибке сети - восстанавливаем из резервной копии
-        const backup = localStorage.getItem('pageBuilderBackup');
-        if (backup) {
-          console.log('[LOAD] Восстановление из резервной копии после ошибки');
-          setPageData(JSON.parse(backup));
-        }
       } finally {
         setIsLoaded(true);
       }
@@ -176,9 +163,6 @@ function PageBuilder() {
 
   useEffect(() => {
     if (!isLoaded) return;
-    
-    // КРИТИЧНО: Сразу сохраняем локально при любом изменении
-    localStorage.setItem('pageBuilderBackup', JSON.stringify(pageData));
     
     const saveTimer = setTimeout(async () => {
       try {
@@ -224,7 +208,7 @@ function PageBuilder() {
         console.error('[AUTOSAVE] ❌ Error:', e);
         toast({
           title: "Нет связи с сервером",
-          description: "Данные сохранены локально и будут отправлены позже",
+          description: "Повторим попытку через 2 секунды",
           variant: "destructive"
         });
       }
