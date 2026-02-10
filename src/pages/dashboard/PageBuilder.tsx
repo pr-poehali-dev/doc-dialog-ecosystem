@@ -79,7 +79,20 @@ function PageBuilder() {
       try {
         const token = localStorage.getItem('token');
         
-        // Load profile to get user ID
+        // Сразу формируем landingUrl из токена
+        if (token) {
+          try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            const userId = payload.user_id || payload.userId || payload.sub;
+            if (userId) {
+              setLandingUrl(`https://docdialog.su/specialist-landing/${userId}`);
+            }
+          } catch (e) {
+            console.error('Failed to parse token for userId', e);
+          }
+        }
+        
+        // Load profile to get user ID (резервный способ)
         const profileResponse = await fetch('https://functions.poehali.dev/bf27da5d-a5ee-4dc7-b5bb-fcc474598d37', {
           headers: { 'X-Authorization': `Bearer ${token}` }
         });
@@ -199,6 +212,7 @@ function PageBuilder() {
   const [newOffer, setNewOffer] = useState({ title: '', description: '', discount: '', image: '' });
   const [isPremiumDialogOpen, setIsPremiumDialogOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState('');
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   const handleImageUpload = async (file: File, type: 'hero' | 'profile' | 'gallery' | 'certificate' | 'service', serviceIndex?: number) => {
     if (!file) return;
@@ -339,20 +353,49 @@ function PageBuilder() {
     }
   };
 
-  const copyPageLink = () => {
+  const copyPageLink = async () => {
     if (!landingUrl) {
       toast({
         title: "Ошибка",
-        description: "Ссылка на лендинг не готова",
+        description: "Ссылка на лендинг не готова. Опубликуйте страницу сначала.",
         variant: "destructive"
       });
       return;
     }
-    navigator.clipboard.writeText(landingUrl);
-    toast({
-      title: "Ссылка скопирована",
-      description: "Поделитесь с клиентами",
-    });
+    
+    try {
+      // Пробуем современный Clipboard API
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(landingUrl);
+      } else {
+        // Fallback для старых браузеров или не-https контекста
+        const textarea = document.createElement('textarea');
+        textarea.value = landingUrl;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        
+        try {
+          document.execCommand('copy');
+        } finally {
+          document.body.removeChild(textarea);
+        }
+      }
+      
+      toast({
+        title: "Ссылка скопирована",
+        description: landingUrl,
+      });
+    } catch (error) {
+      console.error('Copy failed:', error);
+      toast({
+        title: "Не удалось скопировать",
+        description: "Скопируйте вручную: " + landingUrl,
+        variant: "destructive"
+      });
+    }
   };
 
   const addService = () => {
@@ -511,16 +554,13 @@ function PageBuilder() {
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={() => {
-                  localStorage.setItem('pageBuilderData', JSON.stringify(pageData));
-                  window.open('/dashboard/page-preview', '_blank');
-                }}
+                onClick={() => setIsPreviewOpen(true)}
                 className="flex-1 sm:flex-initial"
               >
                 <Icon name="Eye" size={16} className="sm:mr-2" />
                 <span className="hidden sm:inline">Предпросмотр</span>
               </Button>
-              {isPublished && (
+              {landingUrl && (
                 <Button 
                   variant="secondary" 
                   size="sm"
@@ -1613,6 +1653,25 @@ function PageBuilder() {
               Купить
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Preview Dialog */}
+      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+        <DialogContent className="max-w-[95vw] max-h-[95vh] p-0">
+          <DialogHeader className="p-4 border-b">
+            <DialogTitle className="flex items-center gap-2">
+              <Icon name="Eye" size={20} />
+              Предпросмотр лендинга
+            </DialogTitle>
+          </DialogHeader>
+          <div className="h-[80vh] overflow-auto">
+            <iframe
+              src={landingUrl}
+              className="w-full h-full border-0"
+              title="Предпросмотр лендинга"
+            />
+          </div>
         </DialogContent>
       </Dialog>
     </div>
