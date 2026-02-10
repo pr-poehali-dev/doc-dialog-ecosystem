@@ -236,6 +236,42 @@ function PageBuilder() {
     days_left?: number;
   } | null>(null);
 
+  const compressImage = (file: File, maxWidth: number, maxHeight: number, quality: number): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxWidth || height > maxHeight) {
+            const ratio = Math.min(maxWidth / width, maxHeight / height);
+            width *= ratio;
+            height *= ratio;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            reject(new Error('Failed to get canvas context'));
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          const compressed = canvas.toDataURL('image/jpeg', quality);
+          resolve(compressed);
+        };
+        img.onerror = reject;
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleImageUpload = async (file: File, type: 'hero' | 'profile' | 'gallery' | 'certificate' | 'service', serviceIndex?: number) => {
     if (!file) return;
 
@@ -247,30 +283,40 @@ function PageBuilder() {
     setLoading(true);
     
     try {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64 = reader.result as string;
-        
-        if (type === 'hero') {
-          setPageData({ ...pageData, heroImage: base64 });
-        } else if (type === 'profile') {
-          setPageData({ ...pageData, profilePhoto: base64 });
-        } else if (type === 'gallery') {
-          setPageData({ ...pageData, gallery: [...pageData.gallery, base64] });
-        } else if (type === 'certificate') {
-          setPageData({ ...pageData, certificates: [...pageData.certificates, base64] });
-        } else if (type === 'service' && serviceIndex !== undefined) {
-          const updatedServices = [...pageData.services];
-          updatedServices[serviceIndex] = { ...updatedServices[serviceIndex], image: base64 };
-          setPageData({ ...pageData, services: updatedServices });
-        }
-        
-        toast({
-          title: "Фото загружено",
-          description: "Изображение успешно добавлено",
-        });
-      };
-      reader.readAsDataURL(file);
+      let compressed: string;
+      
+      if (type === 'hero') {
+        compressed = await compressImage(file, 1920, 1080, 0.85);
+      } else if (type === 'profile') {
+        compressed = await compressImage(file, 800, 800, 0.85);
+      } else if (type === 'gallery') {
+        compressed = await compressImage(file, 1200, 1200, 0.80);
+      } else if (type === 'certificate') {
+        compressed = await compressImage(file, 1200, 1600, 0.85);
+      } else if (type === 'service') {
+        compressed = await compressImage(file, 1000, 800, 0.80);
+      } else {
+        compressed = await compressImage(file, 1200, 1200, 0.80);
+      }
+      
+      if (type === 'hero') {
+        setPageData({ ...pageData, heroImage: compressed });
+      } else if (type === 'profile') {
+        setPageData({ ...pageData, profilePhoto: compressed });
+      } else if (type === 'gallery') {
+        setPageData({ ...pageData, gallery: [...pageData.gallery, compressed] });
+      } else if (type === 'certificate') {
+        setPageData({ ...pageData, certificates: [...pageData.certificates, compressed] });
+      } else if (type === 'service' && serviceIndex !== undefined) {
+        const updatedServices = [...pageData.services];
+        updatedServices[serviceIndex] = { ...updatedServices[serviceIndex], image: compressed };
+        setPageData({ ...pageData, services: updatedServices });
+      }
+      
+      toast({
+        title: "Фото загружено",
+        description: "Изображение оптимизировано и добавлено",
+      });
     } catch (error) {
       toast({
         title: "Ошибка",
@@ -1258,14 +1304,15 @@ function PageBuilder() {
                               type="file"
                               accept="image/*"
                               className="hidden"
-                              onChange={(e) => {
+                              onChange={async (e) => {
                                 const file = e.target.files?.[0];
                                 if (file) {
-                                  const reader = new FileReader();
-                                  reader.onloadend = () => {
-                                    setNewBlogPost({ ...newBlogPost, image: reader.result as string });
-                                  };
-                                  reader.readAsDataURL(file);
+                                  try {
+                                    const compressed = await compressImage(file, 1200, 800, 0.80);
+                                    setNewBlogPost({ ...newBlogPost, image: compressed });
+                                  } catch (error) {
+                                    console.error('Failed to compress image:', error);
+                                  }
                                 }
                               }}
                             />
@@ -1414,14 +1461,15 @@ function PageBuilder() {
                               type="file"
                               accept="image/*"
                               className="hidden"
-                              onChange={(e) => {
+                              onChange={async (e) => {
                                 const file = e.target.files?.[0];
                                 if (file) {
-                                  const reader = new FileReader();
-                                  reader.onloadend = () => {
-                                    setNewOffer({ ...newOffer, image: reader.result as string });
-                                  };
-                                  reader.readAsDataURL(file);
+                                  try {
+                                    const compressed = await compressImage(file, 1200, 800, 0.80);
+                                    setNewOffer({ ...newOffer, image: compressed });
+                                  } catch (error) {
+                                    console.error('Failed to compress image:', error);
+                                  }
                                 }
                               }}
                             />
