@@ -173,7 +173,7 @@ export default function PagePreview() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="bg-white">
       <LandingHero
         heroTitle={pageData.heroTitle}
         heroSubtitle={pageData.heroSubtitle}
