@@ -46,12 +46,12 @@ export default function LandingPremiumSections({
     const startAutoScroll = () => {
       scrollInterval = setInterval(() => {
         if (!isUserInteracting && container) {
-          container.scrollLeft += 1;
-          if (container.scrollLeft >= container.scrollWidth - container.clientWidth) {
+          container.scrollLeft += 2;
+          if (container.scrollLeft >= container.scrollWidth - container.clientWidth - 50) {
             container.scrollLeft = 0;
           }
         }
-      }, 30);
+      }, 20);
     };
 
     const handleUserInteraction = () => {
@@ -91,8 +91,8 @@ export default function LandingPremiumSections({
             </p>
             <div 
               ref={scrollContainerRef}
-              className="flex gap-6 overflow-x-auto scroll-smooth px-4 max-w-7xl mx-auto"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              className="flex gap-6 overflow-x-auto scroll-smooth px-4 max-w-7xl mx-auto pb-2"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', paddingRight: '100px' }}
             >
               <style>{`
                 div::-webkit-scrollbar {
