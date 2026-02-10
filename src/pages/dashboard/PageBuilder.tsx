@@ -73,12 +73,6 @@ function PageBuilder() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
   const [landingUrl, setLandingUrl] = useState('');
-  const [templateSubscription, setTemplateSubscription] = useState<{
-    has_subscription: boolean;
-    template_type?: string;
-    expires_at?: string;
-    days_left?: number;
-  } | null>(null);
 
   useEffect(() => {
     const loadPageData = async () => {
@@ -107,37 +101,8 @@ function PageBuilder() {
         
         if (response.ok) {
           const data = await response.json();
-          console.log('[LOAD] Loaded landing data:', {
-            gallery: data.gallery?.length || 0,
-            certificates: data.certificates?.length || 0,
-            blog: data.blog?.length || 0,
-            offers: data.offers?.length || 0,
-            reviews: data.reviews?.length || 0,
-            rawData: data
-          });
-          
-          // Check template subscription
-          const subResponse = await fetch('https://functions.poehali.dev/aa8340a4-6315-4ab9-a4f9-8043f792f3ee', {
-            headers: { 'X-Authorization': `Bearer ${token}` }
-          });
-          
-          if (subResponse.ok) {
-            const subData = await subResponse.json();
-            setTemplateSubscription(subData);
-            
-            // Auto-revert to minimal if subscription expired
-            if (!subData.has_subscription && (data.template === 'premium' || data.template === 'luxury')) {
-              data.template = 'minimal';
-            }
-          }
-          
           setPageData(data);
           setIsPublished(true);
-        } else if (response.status === 404) {
-          // Landing not found - keep default data
-          console.log('[LOAD] Landing not found, using defaults');
-        } else {
-          console.error('[LOAD] Failed to load:', response.status, response.statusText);
         }
       } catch (e) {
         console.error('Failed to load landing data', e);
@@ -453,8 +418,8 @@ function PageBuilder() {
         },
         body: JSON.stringify({
           amount: templatePrice,
-          service_type: 'landing_template_subscription',
-          description: `Подписка на шаблон "${templateName}" на 3 месяца`
+          service_type: 'landing_template',
+          description: `Покупка шаблона "${templateName}"`
         })
       });
       
@@ -471,41 +436,17 @@ function PageBuilder() {
         return;
       }
       
-      // Создаем подписку на 3 месяца
-      const subResponse = await fetch('https://functions.poehali.dev/aa8340a4-6315-4ab9-a4f9-8043f792f3ee', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          template_type: selectedTemplate,
-          amount: templatePrice
-        })
+      // Успешная покупка
+      setPageData({
+        ...pageData,
+        template: selectedTemplate,
       });
-      
-      if (subResponse.ok) {
-        const subData = await subResponse.json();
-        setTemplateSubscription({
-          has_subscription: true,
-          template_type: selectedTemplate,
-          expires_at: subData.expires_at,
-          days_left: 90
-        });
-        
-        setPageData({
-          ...pageData,
-          template: selectedTemplate,
-        });
-        setIsPremiumDialogOpen(false);
-        applyTemplate(selectedTemplate as 'premium' | 'luxury');
-        
-        const expiresDate = new Date(subData.expires_at).toLocaleDateString('ru-RU');
-        toast({
-          title: "Подписка оформлена!",
-          description: `Шаблон "${templateName}" активен до ${expiresDate}. Списано ${templatePrice} ₽`,
-        });
-      }
+      setIsPremiumDialogOpen(false);
+      applyTemplate(selectedTemplate as 'premium' | 'luxury');
+      toast({
+        title: "Шаблон приобретен!",
+        description: `Списано ${templatePrice} ₽. Остаток: ${data.balance.toFixed(2)} ₽`,
+      });
     } catch (error) {
       toast({
         title: "Ошибка",
@@ -1397,10 +1338,7 @@ function PageBuilder() {
                     <Icon name="Wand2" size={18} className="text-purple-500" />
                     <CardTitle className="text-base sm:text-lg">Готовые шаблоны</CardTitle>
                   </div>
-                  <CardDescription className="text-xs sm:text-sm">
-                    {templateSubscription?.has_subscription 
-                      ? `Подписка активна до ${new Date(templateSubscription.expires_at!).toLocaleDateString('ru-RU')} (${templateSubscription.days_left} дней)`
-                      : 'Подписка на 3 месяца'}
+                  <CardDescription className="text-xs sm:text-sm">Применить профессиональный дизайн
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3 p-4 sm:p-6">
@@ -1419,7 +1357,7 @@ function PageBuilder() {
                           )}
                         </div>
                         <p className="text-xs text-muted-foreground mb-1">+ Блог/Новости</p>
-                        <p className="text-xs font-bold text-blue-600">2990 ₽ / 3 месяца</p>
+                        <p className="text-xs font-bold text-blue-600">2990 ₽</p>
                       </div>
                       <Icon name="ChevronRight" size={20} className="text-gray-400" />
                     </Button>
@@ -1459,7 +1397,7 @@ function PageBuilder() {
                           )}
                         </div>
                         <p className="text-xs text-muted-foreground mb-1">+ Блог + Скидки/Сертификаты + Фото к услугам</p>
-                        <p className="text-xs font-bold text-purple-600">4990 ₽ / 3 месяца</p>
+                        <p className="text-xs font-bold text-purple-600">4990 ₽</p>
                       </div>
                       <Icon name="ChevronRight" size={20} className="text-gray-400" />
                     </Button>
