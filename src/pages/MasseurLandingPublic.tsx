@@ -53,12 +53,27 @@ interface PageData {
   colorTheme: string;
 }
 
+interface BlogPost {
+  title: string;
+  content: string;
+  image: string;
+  date: string;
+}
+
+interface UserProfile {
+  full_name?: string;
+  phone?: string;
+  telegram?: string;
+  max_messenger?: string;
+  inn?: string;
+}
+
 export default function MasseurLandingPublic() {
   const { userId } = useParams<{ userId: string }>();
   const [pageData, setPageData] = useState<PageData | null>(null);
-  const [selectedPost, setSelectedPost] = useState<any>(null);
+  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const [isPostDialogOpen, setIsPostDialogOpen] = useState(false);
-  const [userProfile, setUserProfile] = useState<any>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -191,7 +206,7 @@ export default function MasseurLandingPublic() {
 
   const gradientClass = themeColors[pageData.colorTheme as keyof typeof themeColors] || themeColors.gradient;
 
-  const handlePostClick = (post: any) => {
+  const handlePostClick = (post: BlogPost) => {
     setSelectedPost(post);
     setIsPostDialogOpen(true);
   };
@@ -236,6 +251,7 @@ export default function MasseurLandingPublic() {
         selectedPost={selectedPost}
         isPostDialogOpen={isPostDialogOpen}
         onClosePostDialog={handleClosePostDialog}
+        template={pageData.template}
       />
     </div>
   );

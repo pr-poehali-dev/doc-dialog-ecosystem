@@ -220,6 +220,7 @@ export default function PagePreview() {
         selectedPost={selectedPost}
         isPostDialogOpen={isPostDialogOpen}
         onClosePostDialog={handleClosePostDialog}
+        template={pageData.template}
       />
     </div>
   );

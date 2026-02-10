@@ -368,6 +368,7 @@ export default function SpecialistLandingPublic() {
         selectedPost={selectedPost}
         isPostDialogOpen={isPostDialogOpen}
         onClosePostDialog={() => setIsPostDialogOpen(false)}
+        template={pageData.template}
       />
     </div>
   );

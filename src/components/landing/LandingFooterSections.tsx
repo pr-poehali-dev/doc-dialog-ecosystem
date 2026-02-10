@@ -40,6 +40,7 @@ interface LandingFooterSectionsProps {
   selectedPost: BlogPost | null;
   isPostDialogOpen: boolean;
   onClosePostDialog: () => void;
+  template: string;
 }
 
 export default function LandingFooterSections({
@@ -52,11 +53,12 @@ export default function LandingFooterSections({
   selectedPost,
   isPostDialogOpen,
   onClosePostDialog,
+  template,
 }: LandingFooterSectionsProps) {
   return (
     <>
-      {/* Reviews Section */}
-      {reviews && reviews.length > 0 && (
+      {/* Reviews Section - Super Premium only */}
+      {reviews && reviews.length > 0 && template === 'luxury' && (
         <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-amber-50/30 via-orange-50/20 to-white">
           <div className="container mx-auto px-6">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Отзывы клиентов</h2>
