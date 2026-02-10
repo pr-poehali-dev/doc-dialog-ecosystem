@@ -1366,23 +1366,19 @@ function PageBuilder() {
                       <p className="text-xs text-green-700">Ваш лендинг доступен клиентам</p>
                     </div>
                   )}
-                  <Button
-                    onClick={handlePublish}
-                    size="sm"
-                    className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-sm"
-                  >
-                    <Icon name="Rocket" size={16} className="mr-2" />
-                    {isPublished ? 'Обновить публикацию' : 'Опубликовать'}
-                  </Button>
-                  <Button
-                    onClick={handleSave}
-                    variant="outline"
-                    size="sm"
-                    className="w-full text-sm"
-                  >
-                    <Icon name="Save" size={16} className="mr-2" />
-                    Сохранить черновик
-                  </Button>
+                  <div className="space-y-2">
+                    <p className="text-xs text-muted-foreground text-center">
+                      Изменения автоматически сохраняются
+                    </p>
+                    <Button
+                      onClick={handlePublish}
+                      size="sm"
+                      className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-sm"
+                    >
+                      <Icon name="Rocket" size={16} className="mr-2" />
+                      {isPublished ? 'Обновить публикацию' : 'Опубликовать'}
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
 
