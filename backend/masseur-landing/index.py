@@ -18,7 +18,8 @@ def handler(event: dict, context) -> dict:
                 'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
                 'Access-Control-Allow-Headers': 'Content-Type, X-Authorization'
             },
-            'body': ''
+            'body': '',
+            'isBase64Encoded': False
         }
     
     token = event.get('headers', {}).get('X-Authorization', '').replace('Bearer ', '')
@@ -27,7 +28,8 @@ def handler(event: dict, context) -> dict:
         return {
             'statusCode': 401,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'error': 'Unauthorized'})
+            'body': json.dumps({'error': 'Unauthorized'}),
+            'isBase64Encoded': False
         }
     
     conn = psycopg2.connect(os.environ['DATABASE_URL'])
@@ -41,7 +43,8 @@ def handler(event: dict, context) -> dict:
             return {
                 'statusCode': 401,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Invalid token'})
+                'body': json.dumps({'error': 'Invalid token'}),
+                'isBase64Encoded': False
             }
         
         user_id = user['user_id']
@@ -80,13 +83,15 @@ def handler(event: dict, context) -> dict:
                         'showPhone': landing['show_phone'],
                         'showTelegram': landing['show_telegram'],
                         'colorTheme': landing['color_theme']
-                    })
+                    }),
+                    'isBase64Encoded': False
                 }
             else:
                 return {
                     'statusCode': 404,
                     'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                    'body': json.dumps({'error': 'Landing not found'})
+                    'body': json.dumps({'error': 'Landing not found'}),
+                    'isBase64Encoded': False
                 }
         
         elif method in ['POST', 'PUT']:
@@ -141,13 +146,15 @@ def handler(event: dict, context) -> dict:
             return {
                 'statusCode': 200,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'success': True})
+                'body': json.dumps({'success': True}),
+                'isBase64Encoded': False
             }
         
         return {
             'statusCode': 405,
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'error': 'Method not allowed'})
+            'body': json.dumps({'error': 'Method not allowed'}),
+            'isBase64Encoded': False
         }
     
     finally:
