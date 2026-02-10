@@ -277,51 +277,35 @@ export default function SpecialistLandingPublic() {
       {pageData.blog && pageData.blog.length > 0 && (pageData.template === 'premium' || pageData.template === 'luxury') && (
         <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-white to-gray-50">
           <div className="container mx-auto px-4">
-            <div className="mb-6 sm:mb-8">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">Блог и новости</h2>
-              <p className="text-sm sm:text-base text-gray-600">
-                Полезные материалы и советы от специалиста
-              </p>
+            <div className="flex items-center justify-between mb-6 sm:mb-8">
+              <div>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">Блог и новости</h2>
+                <p className="text-sm sm:text-base text-gray-600">
+                  Полезные материалы и советы от специалиста
+                </p>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <Icon name="ArrowLeft" size={18} className="opacity-50" />
+                <span className="hidden sm:inline">Листайте</span>
+                <Icon name="ArrowRight" size={18} className="opacity-50" />
+              </div>
             </div>
             
-            {/* Горизонтальная прокрутка */}
             <div className="relative">
-              {canScrollLeft && (
-                <button
-                  onClick={scrollLeft}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded-full p-3 transition-all"
-                  aria-label="Прокрутить влево"
-                >
-                  <Icon name="ChevronLeft" size={24} className="text-gray-700" />
-                </button>
-              )}
-              {canScrollRight && (
-                <button
-                  onClick={scrollRight}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded-full p-3 transition-all"
-                  aria-label="Прокрутить вправо"
-                >
-                  <Icon name="ChevronRight" size={24} className="text-gray-700" />
-                </button>
-              )}
               <div 
                 ref={scrollContainerRef}
-                className="flex gap-6 overflow-x-scroll pb-4 scroll-smooth"
-                style={{ 
-                  scrollbarWidth: 'none', 
-                  msOverflowStyle: 'none',
-                  WebkitOverflowScrolling: 'touch'
-                }}
+                className="flex gap-4 sm:gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
               >
-                <style>{`
-                  div::-webkit-scrollbar {
-                    display: none;
-                  }
-                `}</style>
-                {pageData.blog.map((post: { title: string; content: string; image: string; date: string }, index: number) => (
+                {[...pageData.blog]
+                  .sort((a, b) => {
+                    const dateA = new Date(a.date.split('.').reverse().join('-'));
+                    const dateB = new Date(b.date.split('.').reverse().join('-'));
+                    return dateB.getTime() - dateA.getTime();
+                  })
+                  .map((post: { title: string; content: string; image: string; date: string }, index: number) => (
                   <div 
                     key={index} 
-                    className="flex-none w-[350px]"
+                    className="flex-none w-[280px] sm:w-[320px] md:w-[360px] snap-start"
                   >
                     <div className="bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] border border-gray-100 h-full">
                       {post.image && (
@@ -332,6 +316,11 @@ export default function SpecialistLandingPublic() {
                         />
                       )}
                       <div className="p-4 sm:p-6">
+                        {index === 0 && (
+                          <span className="inline-block px-2 py-1 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xs font-semibold rounded-full mb-2">
+                            Новое
+                          </span>
+                        )}
                         <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-gray-900 line-clamp-2">{post.title}</h3>
                         <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4 leading-relaxed line-clamp-3">{post.content}</p>
                         <div className="flex items-center justify-between">
