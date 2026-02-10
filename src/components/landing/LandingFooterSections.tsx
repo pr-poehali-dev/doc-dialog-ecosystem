@@ -195,7 +195,7 @@ export default function LandingFooterSections({
               </a>
               <span className="hidden sm:inline text-gray-600">•</span>
               <a 
-                href="https://docdialog.su/offer" 
+                href="https://docdialog.su/terms" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="hover:text-gray-200 transition-colors underline"
