@@ -132,7 +132,7 @@ export default function LandingContentSections({
               {processSteps.map((step, index) => (
                 <div key={index} className="text-center">
                   <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${gradientClass} flex items-center justify-center mx-auto mb-4 shadow-lg`}>
-                    <Icon name={step.icon as any} size={28} className="text-white" />
+                    <Icon name={step.icon} size={28} className="text-white" fallback="Circle" />
                   </div>
                   <h3 className="text-lg font-bold mb-2 text-gray-900">{step.title}</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">{step.description}</p>
@@ -248,7 +248,7 @@ export default function LandingContentSections({
               Полезные материалы и советы от специалиста
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-6xl mx-auto">
-              {blog.map((post, index) => (
+              {[...blog].reverse().map((post, index) => (
                 <div 
                   key={index} 
                   className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow border border-gray-100"

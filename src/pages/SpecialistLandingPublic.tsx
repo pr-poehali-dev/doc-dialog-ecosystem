@@ -248,12 +248,7 @@ export default function SpecialistLandingPublic() {
             <div className="relative">
               <div className="flex gap-4 sm:gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
                 {[...pageData.blog]
-                  .sort((a, b) => {
-                    // Сортировка от новых к старым
-                    const dateA = new Date(a.date.split('.').reverse().join('-'));
-                    const dateB = new Date(b.date.split('.').reverse().join('-'));
-                    return dateB.getTime() - dateA.getTime();
-                  })
+                  .reverse()
                   .map((post: { title: string; content: string; image: string; date: string }, index: number) => (
                   <div 
                     key={index} 
@@ -268,11 +263,6 @@ export default function SpecialistLandingPublic() {
                         />
                       )}
                       <div className="p-4 sm:p-6">
-                        {index === 0 && (
-                          <span className="inline-block px-2 py-1 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xs font-semibold rounded-full mb-2">
-                            Новое
-                          </span>
-                        )}
                         <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-gray-900 line-clamp-2">{post.title}</h3>
                         <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4 leading-relaxed line-clamp-3">{post.content}</p>
                         <div className="flex items-center justify-between">
