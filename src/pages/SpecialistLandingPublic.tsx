@@ -269,8 +269,11 @@ export default function SpecialistLandingPublic() {
         processSteps={pageData.processSteps}
         gallery={pageData.gallery}
         certificates={pageData.certificates}
+        offers={pageData.offers}
+        blog={[]}
         gradientClass={gradientClass}
         template={pageData.template}
+        onPostClick={handleOpenPost}
       />
 
       {/* Блог перед футером - горизонтальная прокрутка */}
@@ -349,7 +352,7 @@ export default function SpecialistLandingPublic() {
 
       <LandingPremiumSections
         blog={[]}
-        offers={pageData.offers}
+        offers={[]}
         gradientClass={gradientClass}
         template={pageData.template}
         onOpenPost={handleOpenPost}
