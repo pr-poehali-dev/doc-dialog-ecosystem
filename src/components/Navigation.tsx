@@ -21,6 +21,11 @@ export const Navigation = () => {
   const originalAdminEmail = userStr ? JSON.parse(userStr).original_admin_email : null;
 
   useEffect(() => {
+    document.body.classList.add('has-nav');
+    return () => document.body.classList.remove('has-nav');
+  }, []);
+
+  useEffect(() => {
     const loadBalance = async () => {
       if (!isLoggedIn) return;
       
