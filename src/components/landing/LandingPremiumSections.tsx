@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -34,6 +34,50 @@ export default function LandingPremiumSections({
   onPostClick,
 }: LandingPremiumSectionsProps) {
   const [orderForm, setOrderForm] = useState<{ [key: number]: { name: string; email: string; phone: string; agreed: boolean } }>({});
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container || blog.length === 0) return;
+
+    let scrollInterval: NodeJS.Timeout;
+    let isUserInteracting = false;
+
+    const startAutoScroll = () => {
+      scrollInterval = setInterval(() => {
+        if (!isUserInteracting && container) {
+          container.scrollLeft += 1;
+          if (container.scrollLeft >= container.scrollWidth - container.clientWidth) {
+            container.scrollLeft = 0;
+          }
+        }
+      }, 30);
+    };
+
+    const handleUserInteraction = () => {
+      isUserInteracting = true;
+      clearInterval(scrollInterval);
+      setTimeout(() => {
+        isUserInteracting = false;
+        startAutoScroll();
+      }, 3000);
+    };
+
+    container.addEventListener('mousedown', handleUserInteraction);
+    container.addEventListener('touchstart', handleUserInteraction);
+    container.addEventListener('wheel', handleUserInteraction);
+
+    startAutoScroll();
+
+    return () => {
+      clearInterval(scrollInterval);
+      if (container) {
+        container.removeEventListener('mousedown', handleUserInteraction);
+        container.removeEventListener('touchstart', handleUserInteraction);
+        container.removeEventListener('wheel', handleUserInteraction);
+      }
+    };
+  }, [blog.length]);
 
   return (
     <>
@@ -45,17 +89,21 @@ export default function LandingPremiumSections({
             <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
               Полезные материалы и советы от специалиста
             </p>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <div 
+              ref={scrollContainerRef}
+              className="flex gap-6 overflow-x-auto scroll-smooth px-4 max-w-7xl mx-auto"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              <style>{`
+                div::-webkit-scrollbar {
+                  display: none;
+                }
+              `}</style>
               {[...blog].reverse().map((post: BlogPost, index: number) => (
                 <div 
                   key={index} 
-                  className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow border border-gray-100 relative"
+                  className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow border border-gray-100 flex-shrink-0 w-[350px]"
                 >
-                  {index === 0 && (
-                    <Badge className="absolute top-4 right-4 z-10 bg-gradient-to-r from-blue-500 to-indigo-500">
-                      Новое
-                    </Badge>
-                  )}
                   {post.image && (
                     <img 
                       src={post.image} 
