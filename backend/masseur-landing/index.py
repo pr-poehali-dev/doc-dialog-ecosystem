@@ -1,12 +1,11 @@
 import json
 import os
+import jwt
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
 def handler(event: dict, context) -> dict:
     '''API для сохранения и загрузки лендинга массажиста'''
-    
-    print(f"[DEBUG] Method: {event.get('httpMethod')}, Headers: {event.get('headers')}")
     
     method = event.get('httpMethod', 'GET')
     
@@ -32,23 +31,29 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
+    try:
+        jwt_secret = os.environ['JWT_SECRET']
+        payload = jwt.decode(token, jwt_secret, algorithms=['HS256'])
+        user_id = payload['user_id']
+    except jwt.ExpiredSignatureError:
+        return {
+            'statusCode': 401,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Token expired'}),
+            'isBase64Encoded': False
+        }
+    except jwt.InvalidTokenError:
+        return {
+            'statusCode': 401,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Invalid token'}),
+            'isBase64Encoded': False
+        }
+    
     conn = psycopg2.connect(os.environ['DATABASE_URL'])
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     
     try:
-        cursor.execute("SELECT user_id FROM t_p46047379_doc_dialog_ecosystem.users WHERE auth_token = %s", (token,))
-        user = cursor.fetchone()
-        
-        if not user:
-            return {
-                'statusCode': 401,
-                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Invalid token'}),
-                'isBase64Encoded': False
-            }
-        
-        user_id = user['user_id']
-        
         if method == 'GET':
             cursor.execute("""
                 SELECT * FROM t_p46047379_doc_dialog_ecosystem.masseur_landing_pages
