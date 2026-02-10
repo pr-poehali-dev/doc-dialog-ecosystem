@@ -1,13 +1,21 @@
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
 
+interface UserProfile {
+  full_name?: string;
+  phone?: string;
+  telegram?: string;
+  max_messenger?: string;
+  inn?: string;
+}
+
 interface LandingHeroProps {
   heroTitle: string;
   heroSubtitle: string;
   heroImage: string;
   profilePhoto: string;
   gradientClass: string;
-  userProfile?: any;
+  userProfile?: UserProfile | null;
 }
 
 export default function LandingHero({
@@ -19,7 +27,7 @@ export default function LandingHero({
   userProfile,
 }: LandingHeroProps) {
   return (
-    <section className="relative min-h-[400px] sm:min-h-[500px] md:min-h-[600px] flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[400px] sm:min-h-[500px] md:min-h-[600px] flex items-center justify-center">
       {heroImage ? (
         <>
           <div 
@@ -32,7 +40,7 @@ export default function LandingHero({
         <div className={`absolute inset-0 bg-gradient-to-br ${gradientClass}`}></div>
       )}
       
-      <div className="relative z-10 container mx-auto px-4 py-8 sm:py-12 text-center text-white">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 py-8 sm:py-12 text-center text-white">
         {profilePhoto && (
           <img 
             src={profilePhoto} 

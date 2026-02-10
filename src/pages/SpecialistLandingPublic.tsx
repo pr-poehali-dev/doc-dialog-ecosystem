@@ -89,7 +89,7 @@ export default function SpecialistLandingPublic() {
           setPageData(data);
 
           // Load user profile
-          const profileResponse = await fetch(`https://functions.poehali.dev/bf27da5d-a5ee-4dc7-b5bb-fcc474598d37?public=true&user_id=${userId}`);
+          const profileResponse = await fetch(`https://functions.poehali.dev/bf27da5d-a5ee-4dc7-b5bb-fcc474598d37?userId=${userId}`);
           if (profileResponse.ok) {
             const profile = await profileResponse.json();
             setUserProfile(profile);
@@ -149,13 +149,14 @@ export default function SpecialistLandingPublic() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-indigo-50">
+    <div className="min-h-screen">
       <LandingHero
         heroTitle={pageData.heroTitle}
         heroSubtitle={pageData.heroSubtitle}
         heroImage={pageData.heroImage}
         profilePhoto={pageData.profilePhoto}
         gradientClass={gradientClass}
+        userProfile={userProfile}
       />
 
       <LandingContentSections
