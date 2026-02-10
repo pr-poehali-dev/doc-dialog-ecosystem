@@ -959,17 +959,24 @@ function PageBuilder() {
                         </Button>
                       </div>
                     ))}
-                    <label className="flex flex-col items-center justify-center h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors">
-                      <Icon name="Plus" size={24} className="text-gray-400 mb-1" />
-                      <span className="text-xs text-gray-500">Добавить фото</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => e.target.files && handleImageUpload(e.target.files[0], 'gallery')}
-                        disabled={uploadingGallery}
-                      />
-                    </label>
+                    {pageData.gallery.length < 3 ? (
+                      <label className="flex flex-col items-center justify-center h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition-colors">
+                        <Icon name="Plus" size={24} className="text-gray-400 mb-1" />
+                        <span className="text-xs text-gray-500">Добавить фото</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => e.target.files && handleImageUpload(e.target.files[0], 'gallery')}
+                          disabled={uploadingGallery}
+                        />
+                      </label>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center h-32 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
+                        <Icon name="Lock" size={20} className="text-gray-400 mb-1" />
+                        <span className="text-xs text-gray-500 text-center px-2">Максимум 3 фото</span>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -1004,17 +1011,24 @@ function PageBuilder() {
                         </Button>
                       </div>
                     ))}
-                    <label className="flex flex-col items-center justify-center h-40 border-2 border-dashed border-amber-300 rounded-lg cursor-pointer hover:border-amber-500 transition-colors bg-amber-50/50">
-                      <Icon name="Upload" size={24} className="text-amber-400 mb-1" />
-                      <span className="text-xs text-amber-600">Загрузить сертификат</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => e.target.files && handleImageUpload(e.target.files[0], 'certificate')}
-                        disabled={uploadingCert}
-                      />
-                    </label>
+                    {pageData.certificates.length < 6 ? (
+                      <label className="flex flex-col items-center justify-center h-40 border-2 border-dashed border-amber-300 rounded-lg cursor-pointer hover:border-amber-500 transition-colors bg-amber-50/50">
+                        <Icon name="Upload" size={24} className="text-amber-400 mb-1" />
+                        <span className="text-xs text-amber-600">Загрузить сертификат</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => e.target.files && handleImageUpload(e.target.files[0], 'certificate')}
+                          disabled={uploadingCert}
+                        />
+                      </label>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center h-40 border-2 border-dashed border-amber-300 rounded-lg bg-amber-50/50">
+                        <Icon name="Lock" size={20} className="text-amber-400 mb-1" />
+                        <span className="text-xs text-amber-600 text-center px-2">Максимум 6 сертификатов</span>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -1143,6 +1157,14 @@ function PageBuilder() {
                       size="sm"
                       className="w-full"
                       onClick={() => {
+                        if (pageData.reviews.length >= 3) {
+                          toast({
+                            title: 'Лимит достигнут',
+                            description: 'Максимум 3 отзыва в Super Premium',
+                            variant: 'destructive'
+                          });
+                          return;
+                        }
                         if (newReview.name && newReview.text) {
                           setPageData({
                             ...pageData,
@@ -1161,10 +1183,10 @@ function PageBuilder() {
                           });
                         }
                       }}
-                      disabled={!newReview.name || !newReview.text}
+                      disabled={!newReview.name || !newReview.text || pageData.reviews.length >= 3}
                     >
                       <Icon name="Plus" size={16} className="mr-2" />
-                      Добавить отзыв
+                      Добавить отзыв {pageData.reviews.length >= 3 && '(макс. 3)'}
                     </Button>
                   </div>
                 </CardContent>
@@ -1482,6 +1504,14 @@ function PageBuilder() {
                         size="sm"
                         className="w-full"
                         onClick={() => {
+                          if (pageData.offers.length >= 3) {
+                            toast({
+                              title: 'Лимит достигнут',
+                              description: 'Максимум 3 акции в Super Premium',
+                              variant: 'destructive'
+                            });
+                            return;
+                          }
                           if (newOffer.title && newOffer.discount && newOffer.description) {
                             setPageData({
                               ...pageData,
@@ -1497,10 +1527,10 @@ function PageBuilder() {
                             });
                           }
                         }}
-                        disabled={!newOffer.title || !newOffer.discount || !newOffer.description}
+                        disabled={!newOffer.title || !newOffer.discount || !newOffer.description || pageData.offers.length >= 3}
                       >
                         <Icon name="Plus" size={16} className="mr-2" />
-                        Добавить предложение
+                        Добавить предложение {pageData.offers.length >= 3 && '(макс. 3)'}
                       </Button>
                     </div>
                   </CardContent>
