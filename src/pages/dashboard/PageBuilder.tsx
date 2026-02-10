@@ -108,7 +108,7 @@ function PageBuilder() {
         // Load landing data from server
         const response = await fetch('https://functions.poehali.dev/ea735e68-a4b3-4d19-bb7a-4f720bd82568', {
           headers: {
-            'Authorization': `Bearer ${token}`
+            'X-Authorization': `Bearer ${token}`
           }
         });
         
@@ -162,7 +162,7 @@ function PageBuilder() {
         const response = await fetch('https://functions.poehali.dev/ea735e68-a4b3-4d19-bb7a-4f720bd82568', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${token}`,
+            'X-Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(pageData)
@@ -280,7 +280,7 @@ function PageBuilder() {
       const response = await fetch('https://functions.poehali.dev/ea735e68-a4b3-4d19-bb7a-4f720bd82568', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'X-Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(pageData)
@@ -329,7 +329,7 @@ function PageBuilder() {
       const response = await fetch('https://functions.poehali.dev/ea735e68-a4b3-4d19-bb7a-4f720bd82568', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'X-Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(pageData)
