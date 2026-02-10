@@ -6,6 +6,8 @@ from psycopg2.extras import RealDictCursor
 def handler(event: dict, context) -> dict:
     '''API для сохранения и загрузки лендинга массажиста'''
     
+    print(f"[DEBUG] Method: {event.get('httpMethod')}, Headers: {event.get('headers')}")
+    
     method = event.get('httpMethod', 'GET')
     
     if method == 'OPTIONS':
@@ -89,6 +91,7 @@ def handler(event: dict, context) -> dict:
         
         elif method in ['POST', 'PUT']:
             data = json.loads(event.get('body', '{}'))
+            print(f"[DEBUG] Saving data for user {user_id}: {data}")
             
             cursor.execute("SELECT id FROM t_p46047379_doc_dialog_ecosystem.masseur_landing_pages WHERE user_id = %s", (user_id,))
             existing = cursor.fetchone()
