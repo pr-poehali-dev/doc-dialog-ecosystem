@@ -1289,6 +1289,7 @@ function PageBuilder() {
                         )}
                       </div>
                       <Button
+                        type="button"
                         size="sm"
                         className="w-full"
                         onClick={() => {
