@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import Icon from '@/components/ui/icon';
 import LandingHero from '@/components/landing/LandingHero';
 import LandingContentSections from '@/components/landing/LandingContentSections';
@@ -148,8 +149,62 @@ export default function SpecialistLandingPublic() {
     setIsPostDialogOpen(true);
   };
 
+  const generateKeywords = () => {
+    if (!pageData || !userProfile) return '';
+    
+    const keywords = new Set<string>();
+    
+    if (userProfile.full_name) {
+      keywords.add(userProfile.full_name);
+    }
+    
+    const text = `${pageData.heroTitle} ${pageData.heroSubtitle} ${pageData.aboutText}`;
+    const words = text.toLowerCase().split(/\s+/);
+    
+    const relevantWords = words.filter(word => 
+      word.length > 4 && 
+      !['этого', 'этому', 'более', 'также', 'через', 'очень', 'такие', 'может'].includes(word)
+    );
+    
+    relevantWords.slice(0, 8).forEach(word => keywords.add(word));
+    
+    pageData.services.forEach(service => {
+      if (service.name) keywords.add(service.name.toLowerCase());
+    });
+    
+    return Array.from(keywords).join(', ');
+  };
+
+  const getPageTitle = () => {
+    if (!userProfile?.full_name || !pageData?.heroTitle) return 'Специалист';
+    return `${userProfile.full_name} - ${pageData.heroTitle}`;
+  };
+
+  const getPageDescription = () => {
+    if (!pageData) return '';
+    return `${pageData.heroTitle}. ${pageData.heroSubtitle}`.slice(0, 160);
+  };
+
   return (
     <div className="min-h-screen m-0 p-0">
+      <Helmet>
+        <title>{getPageTitle()}</title>
+        <meta name="description" content={getPageDescription()} />
+        <meta name="keywords" content={generateKeywords()} />
+        <meta property="og:title" content={getPageTitle()} />
+        <meta property="og:description" content={getPageDescription()} />
+        <meta property="og:type" content="profile" />
+        <meta property="og:url" content={`https://docdialog.su/specialist-landing/${userId}`} />
+        {pageData?.heroImage && (
+          <meta property="og:image" content={pageData.heroImage} />
+        )}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={getPageTitle()} />
+        <meta name="twitter:description" content={getPageDescription()} />
+        {pageData?.heroImage && (
+          <meta name="twitter:image" content={pageData.heroImage} />
+        )}
+      </Helmet>
       <LandingHero
         heroTitle={pageData.heroTitle}
         heroSubtitle={pageData.heroSubtitle}
