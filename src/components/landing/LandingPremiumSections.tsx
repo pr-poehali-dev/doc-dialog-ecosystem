@@ -35,49 +35,46 @@ export default function LandingPremiumSections({
 }: LandingPremiumSectionsProps) {
   const [orderForm, setOrderForm] = useState<{ [key: number]: { name: string; email: string; phone: string; agreed: boolean } }>({});
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const updateScrollButtons = () => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    
+    setCanScrollLeft(container.scrollLeft > 0);
+    setCanScrollRight(
+      container.scrollLeft < container.scrollWidth - container.clientWidth - 10
+    );
+  };
 
   useEffect(() => {
     const container = scrollContainerRef.current;
-    if (!container || blog.length === 0) return;
+    if (!container) return;
 
-    let scrollInterval: NodeJS.Timeout;
-    let isUserInteracting = false;
-
-    const startAutoScroll = () => {
-      scrollInterval = setInterval(() => {
-        if (!isUserInteracting && container) {
-          container.scrollLeft += 2;
-          if (container.scrollLeft >= container.scrollWidth - container.clientWidth - 50) {
-            container.scrollLeft = 0;
-          }
-        }
-      }, 20);
-    };
-
-    const handleUserInteraction = () => {
-      isUserInteracting = true;
-      clearInterval(scrollInterval);
-      setTimeout(() => {
-        isUserInteracting = false;
-        startAutoScroll();
-      }, 3000);
-    };
-
-    container.addEventListener('mousedown', handleUserInteraction);
-    container.addEventListener('touchstart', handleUserInteraction);
-    container.addEventListener('wheel', handleUserInteraction);
-
-    startAutoScroll();
+    updateScrollButtons();
+    container.addEventListener('scroll', updateScrollButtons);
+    window.addEventListener('resize', updateScrollButtons);
 
     return () => {
-      clearInterval(scrollInterval);
-      if (container) {
-        container.removeEventListener('mousedown', handleUserInteraction);
-        container.removeEventListener('touchstart', handleUserInteraction);
-        container.removeEventListener('wheel', handleUserInteraction);
-      }
+      container.removeEventListener('scroll', updateScrollButtons);
+      window.removeEventListener('resize', updateScrollButtons);
     };
   }, [blog.length]);
+
+  const scrollLeft = () => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.scrollBy({ left: -400, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.scrollBy({ left: 400, behavior: 'smooth' });
+    }
+  };
 
   return (
     <>
@@ -89,11 +86,30 @@ export default function LandingPremiumSections({
             <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
               Полезные материалы и советы от специалиста
             </p>
-            <div 
-              ref={scrollContainerRef}
-              className="flex gap-6 overflow-x-auto scroll-smooth px-4 max-w-7xl mx-auto pb-2"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', paddingRight: '100px' }}
-            >
+            <div className="relative max-w-7xl mx-auto">
+              {canScrollLeft && (
+                <button
+                  onClick={scrollLeft}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded-full p-3 transition-all"
+                  aria-label="Прокрутить влево"
+                >
+                  <Icon name="ChevronLeft" size={24} className="text-gray-700" />
+                </button>
+              )}
+              {canScrollRight && (
+                <button
+                  onClick={scrollRight}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded-full p-3 transition-all"
+                  aria-label="Прокрутить вправо"
+                >
+                  <Icon name="ChevronRight" size={24} className="text-gray-700" />
+                </button>
+              )}
+              <div 
+                ref={scrollContainerRef}
+                className="flex gap-6 overflow-x-auto scroll-smooth px-4 pb-2"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
               <style>{`
                 div::-webkit-scrollbar {
                   display: none;
@@ -129,6 +145,7 @@ export default function LandingPremiumSections({
                   </div>
                 </div>
               ))}
+              </div>
             </div>
           </div>
         </section>
