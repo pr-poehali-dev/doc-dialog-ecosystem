@@ -102,6 +102,7 @@ function PageBuilder() {
         if (response.ok) {
           const data = await response.json();
           setPageData(data);
+          setIsPublished(true);
         }
       } catch (e) {
         console.error('Failed to load landing data', e);
