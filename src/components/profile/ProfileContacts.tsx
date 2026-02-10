@@ -14,6 +14,7 @@ interface ProfileData {
   phone: string;
   telegram: string;
   whatsapp: string;
+  max_messenger: string;
   photo: string;
   serviceDescriptions: Record<string, string>;
 }
@@ -54,6 +55,17 @@ export default function ProfileContacts({ profileData, setProfileData }: Profile
             value={profileData.whatsapp}
             onChange={(e) => setProfileData({ ...profileData, whatsapp: e.target.value })}
           />
+        </div>
+        <div className="space-y-2">
+          <Label>MAX мессенджер</Label>
+          <Input
+            placeholder="+7 (999) 123-45-67"
+            value={profileData.max_messenger}
+            onChange={(e) => setProfileData({ ...profileData, max_messenger: e.target.value })}
+          />
+          <p className="text-xs text-muted-foreground">
+            Будет отображаться на лендинге как кнопка MAX
+          </p>
         </div>
       </CardContent>
     </Card>
