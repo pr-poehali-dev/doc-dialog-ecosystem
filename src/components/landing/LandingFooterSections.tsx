@@ -57,7 +57,7 @@ export default function LandingFooterSections({
     <>
       {/* Reviews Section */}
       {reviews && reviews.length > 0 && (
-        <section className="py-20 sm:py-24 md:py-28 bg-gradient-to-b from-amber-50/30 via-orange-50/20 to-white">
+        <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-amber-50/30 via-orange-50/20 to-white">
           <div className="container mx-auto px-6">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Отзывы клиентов</h2>
             <p className="text-center text-lg text-gray-600 mb-12 max-w-2xl mx-auto font-light">
@@ -96,7 +96,7 @@ export default function LandingFooterSections({
 
       {/* Contact Section */}
       {(showPhone || showTelegram || showMaxMessenger) && (
-        <section className="py-20 sm:py-24 md:py-28 bg-gradient-to-b from-white via-gray-50/50 to-white">
+        <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-white via-gray-50/50 to-white">
           <div className="container mx-auto px-6">
             <div className="max-w-5xl mx-auto">
               <div className="text-center mb-12">

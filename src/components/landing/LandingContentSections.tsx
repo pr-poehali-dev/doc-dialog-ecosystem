@@ -81,11 +81,11 @@ export default function LandingContentSections({
 
       {/* Gallery Section */}
       {gallery && gallery.length > 0 && (
-        <section className="py-20 sm:py-24 md:py-28 bg-white">
+        <section className="py-16 sm:py-20 md:py-24 bg-white">
           <div className="container mx-auto px-6">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto">
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6 max-w-6xl mx-auto">
               {gallery.map((img, index) => (
-                <div key={index} className="relative group overflow-hidden rounded-2xl aspect-square shadow-lg hover:shadow-2xl transition-all">
+                <div key={index} className="relative group overflow-hidden rounded-2xl w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] aspect-square shadow-lg hover:shadow-2xl transition-all">
                   <img 
                     src={img} 
                     alt={`Фото ${index + 1}`}
@@ -101,12 +101,12 @@ export default function LandingContentSections({
 
       {/* Certificates Section */}
       {certificates && certificates.length > 0 && (
-        <section className="py-20 sm:py-24 md:py-28 bg-gradient-to-b from-amber-50/30 via-orange-50/20 to-white">
+        <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-amber-50/30 via-orange-50/20 to-white">
           <div className="container mx-auto px-6">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-12 bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Сертификаты и дипломы</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto">
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6 max-w-6xl mx-auto">
               {certificates.map((cert, index) => (
-                <div key={index} className="relative group overflow-hidden rounded-2xl border border-amber-200/50 aspect-[3/4] shadow-lg hover:shadow-2xl transition-all bg-white">
+                <div key={index} className="relative group overflow-hidden rounded-2xl border border-amber-200/50 w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] aspect-[3/4] shadow-lg hover:shadow-2xl transition-all bg-white">
                   <img 
                     src={cert} 
                     alt={`Сертификат ${index + 1}`}
@@ -122,7 +122,7 @@ export default function LandingContentSections({
 
       {/* Services Section */}
       {services && services.length > 0 && (
-        <section className="py-20 sm:py-24 md:py-28 bg-white">
+        <section className="py-16 sm:py-20 md:py-24 bg-white">
           <div className="container mx-auto px-6">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-12 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Мои услуги</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto">
@@ -268,7 +268,7 @@ export default function LandingContentSections({
 
       {/* Process Section */}
       {processSteps && processSteps.length > 0 && (
-        <section className="py-20 sm:py-24 md:py-28 bg-gradient-to-b from-gray-50/50 via-white to-gray-50/30">
+        <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-gray-50/50 via-white to-gray-50/30">
           <div className="container mx-auto px-6">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-12 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">{processTitle}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 max-w-7xl mx-auto">
@@ -291,13 +291,15 @@ export default function LandingContentSections({
 
       {/* Blog Section - Premium/Luxury only */}
       {blog && blog.length > 0 && (template === 'premium' || template === 'luxury') && (
-        <section className="py-20 sm:py-24 md:py-28 bg-white overflow-hidden">
+        <section className="py-16 sm:py-20 md:py-24 bg-white overflow-hidden">
           <div className="container mx-auto px-6">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Блог и новости</h2>
-            <p className="text-center text-lg text-gray-600 mb-12 max-w-2xl mx-auto font-light">
-              Полезные материалы и советы от специалиста
-            </p>
-            <div className="flex gap-6 overflow-x-auto pb-6 px-6 -mx-6 snap-x snap-mandatory scrollbar-hide">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Блог и новости</h2>
+              <p className="text-lg text-gray-600 font-light">
+                Полезные материалы и советы от специалиста
+              </p>
+            </div>
+            <div className="flex gap-6 overflow-x-auto pb-6 px-6 -mx-6 snap-x snap-mandatory scrollbar-hide justify-center">
               {blog.map((post, index) => (
                 <div 
                   key={index} 

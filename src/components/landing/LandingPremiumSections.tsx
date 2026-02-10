@@ -153,7 +153,7 @@ export default function LandingPremiumSections({
 
       {/* Offers Section - Super Premium only */}
       {offers && offers.length > 0 && template === 'luxury' && (
-        <section className="py-20 bg-gradient-to-b from-white to-rose-50">
+        <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-white to-rose-50">
           <div className="container mx-auto px-4">
             <h2 className="text-4xl font-bold text-center mb-4">Специальные предложения</h2>
             <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
