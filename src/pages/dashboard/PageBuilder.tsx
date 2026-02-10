@@ -88,7 +88,7 @@ function PageBuilder() {
           const profile = await profileResponse.json();
           const userId = profile.user_id;
           if (userId) {
-            setLandingUrl(`https://dokdialog.ru/landing/${userId}`);
+            setLandingUrl(`https://docdialog.su/landing/${userId}`);
           }
         }
         
