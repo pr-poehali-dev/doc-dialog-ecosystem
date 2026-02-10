@@ -130,7 +130,7 @@ export default function LandingFooterSections({
                     </Button>
                   </div>
                 )}
-                {showMaxMessenger && userProfile?.max_messenger && (
+                {showMaxMessenger && (
                   <div className="p-4 sm:p-6 rounded-2xl bg-white border-2 border-gray-100 shadow-sm text-center">
                     <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mx-auto mb-3 sm:mb-4">
                       <Icon name="MessageSquare" size={24} className="text-white sm:w-7 sm:h-7" />
@@ -139,9 +139,10 @@ export default function LandingFooterSections({
                     <Button 
                       asChild
                       className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:opacity-90"
+                      disabled={!userProfile?.max_messenger}
                     >
                       <a 
-                        href={`https://max.im/${userProfile.max_messenger.replace(/[^0-9]/g, '')}`}
+                        href={userProfile?.max_messenger ? `https://max.im/${userProfile.max_messenger.replace(/[^0-9]/g, '')}` : '#'}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
