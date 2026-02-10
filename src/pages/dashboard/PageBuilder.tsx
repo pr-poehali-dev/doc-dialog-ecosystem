@@ -72,11 +72,27 @@ function PageBuilder() {
   const [pageData, setPageData] = useState(defaultPageData);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
+  const [landingUrl, setLandingUrl] = useState('');
 
   useEffect(() => {
     const loadPageData = async () => {
       try {
         const token = localStorage.getItem('token');
+        
+        // Load profile to get user ID
+        const profileResponse = await fetch('https://functions.poehali.dev/bf27da5d-a5ee-4dc7-b5bb-fcc474598d37', {
+          headers: { 'X-Authorization': `Bearer ${token}` }
+        });
+        
+        if (profileResponse.ok) {
+          const profile = await profileResponse.json();
+          const userId = profile.user_id;
+          if (userId) {
+            setLandingUrl(`https://dokdialog.ru/landing/${userId}`);
+          }
+        }
+        
+        // Load landing data
         const response = await fetch('https://functions.poehali.dev/ea735e68-a4b3-4d19-bb7a-4f720bd82568', {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -292,8 +308,15 @@ function PageBuilder() {
   };
 
   const copyPageLink = () => {
-    const link = `https://dokdialog.ru/masseur/${pageData.heroTitle.toLowerCase().replace(/\s+/g, '-')}`;
-    navigator.clipboard.writeText(link);
+    if (!landingUrl) {
+      toast({
+        title: "Ошибка",
+        description: "Ссылка на лендинг не готова",
+        variant: "destructive"
+      });
+      return;
+    }
+    navigator.clipboard.writeText(landingUrl);
     toast({
       title: "Ссылка скопирована",
       description: "Поделитесь с клиентами",
@@ -1391,12 +1414,34 @@ function PageBuilder() {
                 </CardHeader>
                 <CardContent className="space-y-3 p-4 sm:p-6">
                   {isPublished && (
-                    <div className="p-3 bg-green-100 border border-green-200 rounded-lg">
-                      <div className="flex items-center gap-2 mb-2">
+                    <div className="p-3 bg-green-100 border border-green-200 rounded-lg space-y-3">
+                      <div className="flex items-center gap-2">
                         <Icon name="CheckCircle2" size={16} className="text-green-600" />
                         <span className="text-sm font-semibold text-green-900">Опубликовано</span>
                       </div>
-                      <p className="text-xs text-green-700">Ваш лендинг доступен клиентам</p>
+                      
+                      {landingUrl && (
+                        <div className="space-y-2">
+                          <p className="text-xs font-medium text-green-800">Ссылка на лендинг:</p>
+                          <div className="flex items-center gap-2 p-2 bg-white rounded border border-green-300">
+                            <input
+                              type="text"
+                              value={landingUrl}
+                              readOnly
+                              className="flex-1 text-xs text-gray-700 bg-transparent border-none outline-none"
+                            />
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={copyPageLink}
+                              className="h-7 px-2 hover:bg-green-50"
+                            >
+                              <Icon name="Copy" size={14} className="text-green-600" />
+                            </Button>
+                          </div>
+                          <p className="text-xs text-green-700">Используйте эту ссылку для рекламы</p>
+                        </div>
+                      )}
                     </div>
                   )}
                   <div className="space-y-2">
