@@ -107,6 +107,12 @@ function PageBuilder() {
         
         if (response.ok) {
           const data = await response.json();
+          console.log('[LOAD] Loaded landing data:', {
+            gallery: data.gallery?.length || 0,
+            certificates: data.certificates?.length || 0,
+            blog: data.blog?.length || 0,
+            offers: data.offers?.length || 0
+          });
           
           // Check template subscription
           const subResponse = await fetch('https://functions.poehali.dev/aa8340a4-6315-4ab9-a4f9-8043f792f3ee', {
@@ -125,6 +131,11 @@ function PageBuilder() {
           
           setPageData(data);
           setIsPublished(true);
+        } else if (response.status === 404) {
+          // Landing not found - keep default data
+          console.log('[LOAD] Landing not found, using defaults');
+        } else {
+          console.error('[LOAD] Failed to load:', response.status, response.statusText);
         }
       } catch (e) {
         console.error('Failed to load landing data', e);
