@@ -107,23 +107,24 @@ function PageBuilder() {
         
         if (response.ok) {
           const data = await response.json();
+          
+          // Check template subscription
+          const subResponse = await fetch('https://functions.poehali.dev/aa8340a4-6315-4ab9-a4f9-8043f792f3ee', {
+            headers: { 'X-Authorization': `Bearer ${token}` }
+          });
+          
+          if (subResponse.ok) {
+            const subData = await subResponse.json();
+            setTemplateSubscription(subData);
+            
+            // Auto-revert to minimal if subscription expired
+            if (!subData.has_subscription && (data.template === 'premium' || data.template === 'luxury')) {
+              data.template = 'minimal';
+            }
+          }
+          
           setPageData(data);
           setIsPublished(true);
-        }
-        
-        // Check template subscription
-        const subResponse = await fetch('https://functions.poehali.dev/aa8340a4-6315-4ab9-a4f9-8043f792f3ee', {
-          headers: { 'X-Authorization': `Bearer ${token}` }
-        });
-        
-        if (subResponse.ok) {
-          const subData = await subResponse.json();
-          setTemplateSubscription(subData);
-          
-          // Auto-revert to minimal if subscription expired
-          if (!subData.has_subscription && (pageData.template === 'premium' || pageData.template === 'luxury')) {
-            setPageData(prev => ({ ...prev, template: 'minimal' }));
-          }
         }
       } catch (e) {
         console.error('Failed to load landing data', e);
