@@ -58,6 +58,15 @@ export default function PagePreview() {
   const [userProfile, setUserProfile] = useState<any>(null);
 
   useEffect(() => {
+    // Убираем padding-top у body
+    document.body.classList.add('no-padding');
+    
+    return () => {
+      document.body.classList.remove('no-padding');
+    };
+  }, []);
+
+  useEffect(() => {
     const loadData = async () => {
       try {
         const token = localStorage.getItem('token');
