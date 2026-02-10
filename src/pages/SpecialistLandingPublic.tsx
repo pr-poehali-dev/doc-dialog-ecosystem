@@ -127,11 +127,16 @@ export default function SpecialistLandingPublic() {
     const container = scrollContainerRef.current;
     if (!container || !pageData?.blog || pageData.blog.length === 0) return;
 
-    updateScrollButtons();
+    // Небольшая задержка для корректного расчета после рендера
+    const timer = setTimeout(() => {
+      updateScrollButtons();
+    }, 100);
+
     container.addEventListener('scroll', updateScrollButtons);
     window.addEventListener('resize', updateScrollButtons);
 
     return () => {
+      clearTimeout(timer);
       container.removeEventListener('scroll', updateScrollButtons);
       window.removeEventListener('resize', updateScrollButtons);
     };
@@ -301,8 +306,12 @@ export default function SpecialistLandingPublic() {
               )}
               <div 
                 ref={scrollContainerRef}
-                className="flex gap-4 sm:gap-6 overflow-x-auto pb-4 scroll-smooth"
-                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                className="flex gap-6 overflow-x-scroll pb-4 scroll-smooth"
+                style={{ 
+                  scrollbarWidth: 'none', 
+                  msOverflowStyle: 'none',
+                  WebkitOverflowScrolling: 'touch'
+                }}
               >
                 <style>{`
                   div::-webkit-scrollbar {
@@ -312,7 +321,7 @@ export default function SpecialistLandingPublic() {
                 {pageData.blog.map((post: { title: string; content: string; image: string; date: string }, index: number) => (
                   <div 
                     key={index} 
-                    className="flex-none w-[280px] sm:w-[320px] md:w-[360px]"
+                    className="flex-none w-[350px]"
                   >
                     <div className="bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] border border-gray-100 h-full">
                       {post.image && (
