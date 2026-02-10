@@ -19,7 +19,7 @@ interface LandingFooterSectionsProps {
   reviews: Review[];
   showPhone: boolean;
   showTelegram: boolean;
-  showWhatsapp?: boolean;
+  showMaxMessenger?: boolean;
   userProfile: any;
   gradientClass: string;
   selectedPost: any;
@@ -31,7 +31,7 @@ export default function LandingFooterSections({
   reviews,
   showPhone,
   showTelegram,
-  showWhatsapp = false,
+  showMaxMessenger = false,
   userProfile,
   gradientClass,
   selectedPost,
@@ -80,7 +80,7 @@ export default function LandingFooterSections({
       )}
 
       {/* Contact Section */}
-      {(showPhone || showTelegram || showWhatsapp) && (
+      {(showPhone || showTelegram || showMaxMessenger) && (
         <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-gray-50 to-white">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
@@ -130,22 +130,22 @@ export default function LandingFooterSections({
                     </Button>
                   </div>
                 )}
-                {showWhatsapp && userProfile?.whatsapp && (
+                {showMaxMessenger && userProfile?.max_messenger && (
                   <div className="p-4 sm:p-6 rounded-2xl bg-white border-2 border-gray-100 shadow-sm text-center">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r from-green-500 to-green-600 flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                      <Icon name="MessageCircle" size={24} className="text-white sm:w-7 sm:h-7" />
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                      <Icon name="MessageSquare" size={24} className="text-white sm:w-7 sm:h-7" />
                     </div>
-                    <p className="font-semibold text-base sm:text-lg mb-4 sm:mb-6 text-gray-900">WhatsApp</p>
+                    <p className="font-semibold text-base sm:text-lg mb-4 sm:mb-6 text-gray-900">MAX</p>
                     <Button 
                       asChild
-                      className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:opacity-90"
+                      className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:opacity-90"
                     >
                       <a 
-                        href={`https://wa.me/${userProfile.whatsapp.replace(/[^0-9]/g, '')}`}
+                        href={`https://max.im/${userProfile.max_messenger.replace(/[^0-9]/g, '')}`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <Icon name="MessageCircle" size={18} className="mr-2" />
+                        <Icon name="MessageSquare" size={18} className="mr-2" />
                         Написать
                       </a>
                     </Button>

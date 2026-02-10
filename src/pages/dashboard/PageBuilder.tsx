@@ -62,7 +62,7 @@ const defaultPageData = {
   template: 'minimal',
   showPhone: true,
   showTelegram: true,
-  showWhatsapp: true,
+  showMaxMessenger: true,
   colorTheme: 'gradient',
 };
 
@@ -973,7 +973,7 @@ function PageBuilder() {
                   <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
                     <p className="text-xs text-blue-700 flex items-center gap-2">
                       <Icon name="Info" size={14} />
-                      Контакты подтягиваются из вашего профиля. Укажите телефон, Telegram и WhatsApp в настройках профиля.
+                      Контакты подтягиваются из вашего профиля. Укажите телефон, Telegram и MAX мессенджер в настройках профиля.
                     </p>
                   </div>
                   <div className="flex items-center justify-between">
@@ -991,10 +991,10 @@ function PageBuilder() {
                     />
                   </div>
                   <div className="flex items-center justify-between">
-                    <Label>Показывать WhatsApp</Label>
+                    <Label>Показывать MAX мессенджер</Label>
                     <Switch
-                      checked={pageData.showWhatsapp}
-                      onCheckedChange={(checked) => setPageData({ ...pageData, showWhatsapp: checked })}
+                      checked={pageData.showMaxMessenger}
+                      onCheckedChange={(checked) => setPageData({ ...pageData, showMaxMessenger: checked })}
                     />
                   </div>
                 </CardContent>

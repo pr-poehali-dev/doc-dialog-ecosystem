@@ -19,7 +19,7 @@ export default function ProfileEdit() {
     full_name: "",
     phone: "",
     telegram: "",
-    whatsapp: "",
+    max_messenger: "",
     city: "",
     experience_years: "",
     about: "",
@@ -53,7 +53,7 @@ export default function ProfileEdit() {
             full_name: profile.full_name || "",
             phone: profile.phone || "",
             telegram: profile.telegram || "",
-            whatsapp: profile.whatsapp || "",
+            max_messenger: profile.max_messenger || "",
             city: profile.city || "",
             experience_years: profile.experience_years?.toString() || "",
             about: profile.about || "",
@@ -228,16 +228,16 @@ export default function ProfileEdit() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="whatsapp">WhatsApp</Label>
+                    <Label htmlFor="max_messenger">MAX мессенджер</Label>
                     <Input
-                      id="whatsapp"
+                      id="max_messenger"
                       type="tel"
-                      value={formData.whatsapp}
-                      onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                      value={formData.max_messenger}
+                      onChange={(e) => setFormData({ ...formData, max_messenger: e.target.value })}
                       placeholder="+7 (999) 123-45-67"
                     />
                     <p className="text-xs text-muted-foreground">
-                      Будет отображаться на лендинге как кнопка WhatsApp
+                      Будет отображаться на лендинге как кнопка MAX
                     </p>
                   </div>
 

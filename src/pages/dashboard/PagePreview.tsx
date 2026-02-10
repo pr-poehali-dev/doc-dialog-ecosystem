@@ -48,7 +48,7 @@ interface PageData {
   template: string;
   showPhone: boolean;
   showTelegram: boolean;
-  showWhatsapp?: boolean;
+  showMaxMessenger?: boolean;
   colorTheme: string;
 }
 
@@ -212,7 +212,7 @@ export default function PagePreview() {
         reviews={pageData.reviews}
         showPhone={pageData.showPhone}
         showTelegram={pageData.showTelegram}
-        showWhatsapp={pageData.showWhatsapp}
+        showMaxMessenger={pageData.showMaxMessenger}
         userProfile={userProfile}
         gradientClass={gradientClass}
         selectedPost={selectedPost}

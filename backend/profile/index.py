@@ -66,7 +66,7 @@ def handler(event: dict, context) -> dict:
         if method == 'GET':
             cur.execute(f"""
                 SELECT 
-                    id, user_id, full_name, phone, telegram, whatsapp, city, address,
+                    id, user_id, full_name, phone, telegram, max_messenger, city, address,
                     experience_years, specializations, about,
                     avatar_url, education, languages, 
                     certificates, portfolio_images, rating, reviews_count,
@@ -125,7 +125,7 @@ def handler(event: dict, context) -> dict:
             full_name = body.get('full_name', '')
             phone = body.get('phone', '')
             telegram = body.get('telegram', '')
-            whatsapp = body.get('whatsapp', '')
+            max_messenger = body.get('max_messenger', '')
             city = body.get('city', '')
             address = body.get('address', '')
             experience_years = body.get('experience_years', 0)
@@ -177,7 +177,7 @@ def handler(event: dict, context) -> dict:
                         full_name = '{full_name}',
                         phone = '{phone}',
                         telegram = '{telegram}',
-                        whatsapp = '{whatsapp}',
+                        max_messenger = '{max_messenger}',
                         city = '{city}',
                         address = '{address}',
                         experience_years = {experience_years},
@@ -205,7 +205,7 @@ def handler(event: dict, context) -> dict:
                 
                 cur.execute(f"""
                     UPDATE {schema}.users
-                    SET first_name = '{first_name}', last_name = '{last_name}', phone = '{phone}', telegram = '{telegram}', whatsapp = '{whatsapp}'
+                    SET first_name = '{first_name}', last_name = '{last_name}', phone = '{phone}', telegram = '{telegram}', max_messenger = '{max_messenger}'
                     WHERE id = {user_id}
                 """)
                 
@@ -213,8 +213,8 @@ def handler(event: dict, context) -> dict:
                 
                 cur.execute(f"""
                     INSERT INTO {schema}.masseur_profiles 
-                    (user_id, full_name, phone, telegram, whatsapp, city, address, experience_years, about, education, avatar_url, languages, specializations, certificates, service_descriptions)
-                    VALUES ({user_id}, '{full_name}', '{phone}', '{telegram}', '{whatsapp}', '{city}', '{address}', {experience_years}, '{about}', '{education}', '{avatar_url}',
+                    (user_id, full_name, phone, telegram, max_messenger, city, address, experience_years, about, education, avatar_url, languages, specializations, certificates, service_descriptions)
+                    VALUES ({user_id}, '{full_name}', '{phone}', '{telegram}', '{max_messenger}', '{city}', '{address}', {experience_years}, '{about}', '{education}', '{avatar_url}',
                             '{languages_str}', '{specs_str}', '{certs_str}', '{service_desc_json}'::jsonb)
                     RETURNING id
                 """)
