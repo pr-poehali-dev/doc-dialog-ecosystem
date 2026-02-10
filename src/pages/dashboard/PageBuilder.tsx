@@ -73,6 +73,12 @@ function PageBuilder() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
   const [landingUrl, setLandingUrl] = useState('');
+  const [templateSubscription, setTemplateSubscription] = useState<{
+    has_subscription: boolean;
+    template_type?: string;
+    expires_at?: string;
+    days_left?: number;
+  } | null>(null);
 
   useEffect(() => {
     const loadPageData = async () => {
@@ -103,6 +109,21 @@ function PageBuilder() {
           const data = await response.json();
           setPageData(data);
           setIsPublished(true);
+        }
+        
+        // Check template subscription
+        const subResponse = await fetch('https://functions.poehali.dev/aa8340a4-6315-4ab9-a4f9-8043f792f3ee', {
+          headers: { 'X-Authorization': `Bearer ${token}` }
+        });
+        
+        if (subResponse.ok) {
+          const subData = await subResponse.json();
+          setTemplateSubscription(subData);
+          
+          // Auto-revert to minimal if subscription expired
+          if (!subData.has_subscription && (pageData.template === 'premium' || pageData.template === 'luxury')) {
+            setPageData(prev => ({ ...prev, template: 'minimal' }));
+          }
         }
       } catch (e) {
         console.error('Failed to load landing data', e);
@@ -418,8 +439,8 @@ function PageBuilder() {
         },
         body: JSON.stringify({
           amount: templatePrice,
-          service_type: 'landing_template',
-          description: `Покупка шаблона "${templateName}"`
+          service_type: 'landing_template_subscription',
+          description: `Подписка на шаблон "${templateName}" на 3 месяца`
         })
       });
       
@@ -436,17 +457,41 @@ function PageBuilder() {
         return;
       }
       
-      // Успешная покупка
-      setPageData({
-        ...pageData,
-        template: selectedTemplate,
+      // Создаем подписку на 3 месяца
+      const subResponse = await fetch('https://functions.poehali.dev/aa8340a4-6315-4ab9-a4f9-8043f792f3ee', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          template_type: selectedTemplate,
+          amount: templatePrice
+        })
       });
-      setIsPremiumDialogOpen(false);
-      applyTemplate(selectedTemplate as 'premium' | 'luxury');
-      toast({
-        title: "Шаблон приобретен!",
-        description: `Списано ${templatePrice} ₽. Остаток: ${data.balance.toFixed(2)} ₽`,
-      });
+      
+      if (subResponse.ok) {
+        const subData = await subResponse.json();
+        setTemplateSubscription({
+          has_subscription: true,
+          template_type: selectedTemplate,
+          expires_at: subData.expires_at,
+          days_left: 90
+        });
+        
+        setPageData({
+          ...pageData,
+          template: selectedTemplate,
+        });
+        setIsPremiumDialogOpen(false);
+        applyTemplate(selectedTemplate as 'premium' | 'luxury');
+        
+        const expiresDate = new Date(subData.expires_at).toLocaleDateString('ru-RU');
+        toast({
+          title: "Подписка оформлена!",
+          description: `Шаблон "${templateName}" активен до ${expiresDate}. Списано ${templatePrice} ₽`,
+        });
+      }
     } catch (error) {
       toast({
         title: "Ошибка",
@@ -1338,7 +1383,11 @@ function PageBuilder() {
                     <Icon name="Wand2" size={18} className="text-purple-500" />
                     <CardTitle className="text-base sm:text-lg">Готовые шаблоны</CardTitle>
                   </div>
-                  <CardDescription className="text-xs sm:text-sm">Применить профессиональный дизайн</CardDescription>
+                  <CardDescription className="text-xs sm:text-sm">
+                    {templateSubscription?.has_subscription 
+                      ? `Подписка активна до ${new Date(templateSubscription.expires_at!).toLocaleDateString('ru-RU')} (${templateSubscription.days_left} дней)`
+                      : 'Подписка на 3 месяца'}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3 p-4 sm:p-6">
                   <div className="relative">
@@ -1356,7 +1405,7 @@ function PageBuilder() {
                           )}
                         </div>
                         <p className="text-xs text-muted-foreground mb-1">+ Блог/Новости</p>
-                        <p className="text-xs font-bold text-blue-600">2990 ₽</p>
+                        <p className="text-xs font-bold text-blue-600">2990 ₽ / 3 месяца</p>
                       </div>
                       <Icon name="ChevronRight" size={20} className="text-gray-400" />
                     </Button>
@@ -1396,7 +1445,7 @@ function PageBuilder() {
                           )}
                         </div>
                         <p className="text-xs text-muted-foreground mb-1">+ Блог + Скидки/Сертификаты + Фото к услугам</p>
-                        <p className="text-xs font-bold text-purple-600">4990 ₽</p>
+                        <p className="text-xs font-bold text-purple-600">4990 ₽ / 3 месяца</p>
                       </div>
                       <Icon name="ChevronRight" size={20} className="text-gray-400" />
                     </Button>

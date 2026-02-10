@@ -1,0 +1,36 @@
+{
+  "tests": [
+    {
+      "name": "Get subscription status - no subscription",
+      "method": "GET",
+      "path": "/",
+      "headers": {
+        "X-Authorization": "Bearer valid_token"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "has_subscription": "boolean"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Create subscription",
+      "method": "POST",
+      "path": "/",
+      "headers": {
+        "X-Authorization": "Bearer valid_token"
+      },
+      "body": {
+        "template_type": "premium",
+        "amount": 2990
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true,
+        "template_type": "string",
+        "expires_at": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
