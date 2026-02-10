@@ -286,13 +286,13 @@ function PageBuilder() {
       let compressed: string;
       
       if (type === 'hero') {
-        compressed = await compressImage(file, 1920, 1080, 0.85);
+        compressed = await compressImage(file, 1600, 900, 0.75);
       } else if (type === 'profile') {
         compressed = await compressImage(file, 800, 800, 0.85);
       } else if (type === 'gallery') {
-        compressed = await compressImage(file, 1200, 1200, 0.80);
+        compressed = await compressImage(file, 900, 900, 0.70);
       } else if (type === 'certificate') {
-        compressed = await compressImage(file, 1200, 1600, 0.85);
+        compressed = await compressImage(file, 800, 1100, 0.70);
       } else if (type === 'service') {
         compressed = await compressImage(file, 1000, 800, 0.80);
       } else {
@@ -1341,7 +1341,7 @@ function PageBuilder() {
                                 const file = e.target.files?.[0];
                                 if (file) {
                                   try {
-                                    const compressed = await compressImage(file, 1200, 800, 0.80);
+                                    const compressed = await compressImage(file, 800, 600, 0.70);
                                     setNewBlogPost({ ...newBlogPost, image: compressed });
                                   } catch (error) {
                                     console.error('Failed to compress image:', error);
@@ -1498,7 +1498,7 @@ function PageBuilder() {
                                 const file = e.target.files?.[0];
                                 if (file) {
                                   try {
-                                    const compressed = await compressImage(file, 1200, 800, 0.80);
+                                    const compressed = await compressImage(file, 800, 600, 0.65);
                                     setNewOffer({ ...newOffer, image: compressed });
                                   } catch (error) {
                                     console.error('Failed to compress image:', error);
