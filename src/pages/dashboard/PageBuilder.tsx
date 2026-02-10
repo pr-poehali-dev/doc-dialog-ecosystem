@@ -1210,11 +1210,6 @@ function PageBuilder() {
                             const originalIndex = pageData.blog.length - 1 - index;
                             return (
                               <div key={originalIndex} className="p-3 bg-indigo-50 rounded-lg border border-indigo-100">
-                                {index === 0 && (
-                                  <span className="inline-block px-2 py-1 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-[10px] font-semibold rounded-full mb-2">
-                                    Новое
-                                  </span>
-                                )}
                                 <div className="flex items-start justify-between mb-2">
                                   <p className="font-semibold text-sm">{post.title}</p>
                                   <Button

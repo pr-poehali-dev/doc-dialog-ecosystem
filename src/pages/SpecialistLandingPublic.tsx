@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Icon from '@/components/ui/icon';
@@ -72,6 +72,7 @@ export default function SpecialistLandingPublic() {
   const [error, setError] = useState('');
   const [selectedPost, setSelectedPost] = useState<{ title: string; content: string; image: string; date: string } | null>(null);
   const [isPostDialogOpen, setIsPostDialogOpen] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const loadLandingData = async () => {
@@ -108,6 +109,50 @@ export default function SpecialistLandingPublic() {
 
     loadLandingData();
   }, [userId]);
+
+  // Auto-scroll for blog posts
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container || !pageData?.blog || pageData.blog.length === 0) return;
+
+    let scrollInterval: NodeJS.Timeout;
+    let isUserInteracting = false;
+
+    const startAutoScroll = () => {
+      scrollInterval = setInterval(() => {
+        if (!isUserInteracting && container) {
+          container.scrollLeft += 1;
+          if (container.scrollLeft >= container.scrollWidth - container.clientWidth) {
+            container.scrollLeft = 0;
+          }
+        }
+      }, 30);
+    };
+
+    const handleUserInteraction = () => {
+      isUserInteracting = true;
+      clearInterval(scrollInterval);
+      setTimeout(() => {
+        isUserInteracting = false;
+        startAutoScroll();
+      }, 3000);
+    };
+
+    container.addEventListener('mousedown', handleUserInteraction);
+    container.addEventListener('touchstart', handleUserInteraction);
+    container.addEventListener('wheel', handleUserInteraction);
+
+    startAutoScroll();
+
+    return () => {
+      clearInterval(scrollInterval);
+      if (container) {
+        container.removeEventListener('mousedown', handleUserInteraction);
+        container.removeEventListener('touchstart', handleUserInteraction);
+        container.removeEventListener('wheel', handleUserInteraction);
+      }
+    };
+  }, [pageData?.blog]);
 
   if (loading) {
     return (
@@ -246,13 +291,22 @@ export default function SpecialistLandingPublic() {
             
             {/* Горизонтальная прокрутка */}
             <div className="relative">
-              <div className="flex gap-4 sm:gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+              <div 
+                ref={scrollContainerRef}
+                className="flex gap-4 sm:gap-6 overflow-x-auto pb-4 scroll-smooth"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                <style>{`
+                  div::-webkit-scrollbar {
+                    display: none;
+                  }
+                `}</style>
                 {[...pageData.blog]
                   .reverse()
                   .map((post: { title: string; content: string; image: string; date: string }, index: number) => (
                   <div 
                     key={index} 
-                    className="flex-none w-[280px] sm:w-[320px] md:w-[360px] snap-start"
+                    className="flex-none w-[280px] sm:w-[320px] md:w-[360px]"
                   >
                     <div className="bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] border border-gray-100 h-full">
                       {post.image && (
