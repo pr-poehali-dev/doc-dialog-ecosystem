@@ -25,36 +25,44 @@ def handler(event: dict, context) -> dict:
             'isBase64Encoded': False
         }
     
-    headers = event.get('headers', {})
-    token = headers.get('X-Authorization', headers.get('x-authorization', '')).replace('Bearer ', '')
+    # For public GET requests with userId query param, skip auth
+    query_params = event.get('queryStringParameters') or {}
+    public_user_id = query_params.get('userId')
     
-    if not token:
-        return {
-            'statusCode': 401,
-            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'error': 'Не авторизован'}),
-            'isBase64Encoded': False
-        }
-    
-    try:
-        jwt_secret = os.environ['JWT_SECRET']
-        payload = jwt.decode(token, jwt_secret, algorithms=['HS256'])
-        user_id = payload.get('user_id')
+    if method == 'GET' and public_user_id:
+        user_id = int(public_user_id)
+    else:
+        # For PUT and GET without userId, require authentication
+        headers = event.get('headers', {})
+        token = headers.get('X-Authorization', headers.get('x-authorization', '')).replace('Bearer ', '')
         
-        if not user_id:
+        if not token:
+            return {
+                'statusCode': 401,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Не авторизован'}),
+                'isBase64Encoded': False
+            }
+        
+        try:
+            jwt_secret = os.environ['JWT_SECRET']
+            payload = jwt.decode(token, jwt_secret, algorithms=['HS256'])
+            user_id = payload.get('user_id')
+            
+            if not user_id:
+                return {
+                    'statusCode': 403,
+                    'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                    'body': json.dumps({'error': 'Недействительный токен'}),
+                    'isBase64Encoded': False
+                }
+        except (jwt.InvalidTokenError, jwt.DecodeError, jwt.ExpiredSignatureError):
             return {
                 'statusCode': 403,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
                 'body': json.dumps({'error': 'Недействительный токен'}),
                 'isBase64Encoded': False
             }
-    except (jwt.InvalidTokenError, jwt.DecodeError, jwt.ExpiredSignatureError):
-        return {
-            'statusCode': 403,
-            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-            'body': json.dumps({'error': 'Недействительный токен'}),
-            'isBase64Encoded': False
-        }
     
     dsn = os.environ['DATABASE_URL']
     schema = os.environ['MAIN_DB_SCHEMA']

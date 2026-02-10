@@ -88,7 +88,7 @@ function PageBuilder() {
           const profile = await profileResponse.json();
           const userId = profile.user_id;
           if (userId) {
-            setLandingUrl(`https://docdialog.su/landing/${userId}`);
+            setLandingUrl(`https://docdialog.su/specialist-landing/${userId}`);
           }
         }
         
@@ -1428,13 +1428,17 @@ function PageBuilder() {
                               type="text"
                               value={landingUrl}
                               readOnly
-                              className="flex-1 text-xs text-gray-700 bg-transparent border-none outline-none"
+                              className="flex-1 text-xs text-gray-700 bg-transparent border-none outline-none cursor-text"
+                              onClick={(e) => {
+                                e.currentTarget.select();
+                                copyPageLink();
+                              }}
                             />
                             <Button
                               size="sm"
                               variant="ghost"
                               onClick={copyPageLink}
-                              className="h-7 px-2 hover:bg-green-50"
+                              className="h-7 px-2 hover:bg-green-50 flex-shrink-0"
                             >
                               <Icon name="Copy" size={14} className="text-green-600" />
                             </Button>

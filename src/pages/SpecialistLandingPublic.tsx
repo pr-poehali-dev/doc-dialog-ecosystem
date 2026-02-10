@@ -1,0 +1,194 @@
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import Icon from '@/components/ui/icon';
+import LandingHero from '@/components/landing/LandingHero';
+import LandingContentSections from '@/components/landing/LandingContentSections';
+import LandingPremiumSections from '@/components/landing/LandingPremiumSections';
+import LandingFooterSections from '@/components/landing/LandingFooterSections';
+
+interface PageData {
+  heroTitle: string;
+  heroSubtitle: string;
+  heroImage: string;
+  profilePhoto: string;
+  aboutTitle: string;
+  aboutText: string;
+  services: Array<{
+    name: string;
+    duration: string;
+    price: string;
+    description: string;
+    image?: string;
+  }>;
+  processTitle: string;
+  processSteps: Array<{
+    title: string;
+    description: string;
+    icon: string;
+  }>;
+  gallery: string[];
+  certificates: string[];
+  reviews: Array<{
+    name: string;
+    rating: number;
+    text: string;
+    date: string;
+  }>;
+  blog: Array<{
+    title: string;
+    content: string;
+    image: string;
+    date: string;
+  }>;
+  videos: string[];
+  offers: Array<{
+    title: string;
+    description: string;
+    discount: string;
+    image: string;
+  }>;
+  template: string;
+  showPhone: boolean;
+  showTelegram: boolean;
+  showMaxMessenger: boolean;
+  colorTheme: string;
+}
+
+interface UserProfile {
+  full_name: string;
+  phone: string;
+  telegram: string;
+  max_messenger: string;
+  inn: string;
+  user_id: number;
+}
+
+export default function SpecialistLandingPublic() {
+  const { userId } = useParams<{ userId: string }>();
+  const [pageData, setPageData] = useState<PageData | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [selectedPost, setSelectedPost] = useState<{ title: string; content: string; image: string; date: string } | null>(null);
+  const [isPostDialogOpen, setIsPostDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const loadLandingData = async () => {
+      try {
+        if (!userId) {
+          setError('ID специалиста не указан');
+          setLoading(false);
+          return;
+        }
+
+        // Load landing data from backend
+        const response = await fetch(`https://functions.poehali.dev/ea735e68-a4b3-4d19-bb7a-4f720bd82568?user_id=${userId}`);
+        
+        if (response.ok) {
+          const data = await response.json();
+          setPageData(data);
+
+          // Load user profile
+          const profileResponse = await fetch(`https://functions.poehali.dev/bf27da5d-a5ee-4dc7-b5bb-fcc474598d37?public=true&user_id=${userId}`);
+          if (profileResponse.ok) {
+            const profile = await profileResponse.json();
+            setUserProfile(profile);
+          }
+        } else {
+          setError('Лендинг не найден');
+        }
+      } catch (err) {
+        console.error('Failed to load landing:', err);
+        setError('Ошибка загрузки лендинга');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadLandingData();
+  }, [userId]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-600 text-lg">Загрузка лендинга...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !pageData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-orange-50">
+        <div className="text-center p-8 bg-white rounded-2xl shadow-xl max-w-md">
+          <Icon name="AlertCircle" size={48} className="text-red-500 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Лендинг не найден</h1>
+          <p className="text-gray-600 mb-6">{error || 'Страница специалиста не существует или была удалена'}</p>
+          <a
+            href="/"
+            className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            На главную
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  const gradientClass = 
+    pageData.colorTheme === 'gradient' ? 'from-blue-500 to-indigo-600' :
+    pageData.colorTheme === 'blue' ? 'from-blue-400 to-blue-600' :
+    pageData.colorTheme === 'purple' ? 'from-purple-500 to-pink-600' :
+    'from-blue-500 to-indigo-600';
+
+  const handleOpenPost = (post: { title: string; content: string; image: string; date: string }) => {
+    setSelectedPost(post);
+    setIsPostDialogOpen(true);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-indigo-50">
+      <LandingHero
+        heroTitle={pageData.heroTitle}
+        heroSubtitle={pageData.heroSubtitle}
+        heroImage={pageData.heroImage}
+        profilePhoto={pageData.profilePhoto}
+        gradientClass={gradientClass}
+      />
+
+      <LandingContentSections
+        aboutTitle={pageData.aboutTitle}
+        aboutText={pageData.aboutText}
+        services={pageData.services}
+        processTitle={pageData.processTitle}
+        processSteps={pageData.processSteps}
+        gallery={pageData.gallery}
+        certificates={pageData.certificates}
+        gradientClass={gradientClass}
+        template={pageData.template}
+      />
+
+      <LandingPremiumSections
+        blog={pageData.blog}
+        offers={pageData.offers}
+        gradientClass={gradientClass}
+        template={pageData.template}
+        onOpenPost={handleOpenPost}
+      />
+
+      <LandingFooterSections
+        reviews={pageData.reviews}
+        showPhone={pageData.showPhone}
+        showTelegram={pageData.showTelegram}
+        showMaxMessenger={pageData.showMaxMessenger}
+        userProfile={userProfile}
+        gradientClass={gradientClass}
+        selectedPost={selectedPost}
+        isPostDialogOpen={isPostDialogOpen}
+        onClosePostDialog={() => setIsPostDialogOpen(false)}
+      />
+    </div>
+  );
+}
