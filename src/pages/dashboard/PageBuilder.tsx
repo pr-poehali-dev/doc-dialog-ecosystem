@@ -200,7 +200,7 @@ function PageBuilder() {
           console.error('[AUTOSAVE] Failed:', error);
           toast({
             title: "Ошибка сохранения",
-            description: "Данные сохранены локально, повторим попытку",
+            description: "Повторим попытку через 2 секунды",
             variant: "destructive"
           });
         }
