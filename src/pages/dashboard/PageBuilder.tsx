@@ -102,6 +102,11 @@ function PageBuilder() {
     const saveTimer = setTimeout(async () => {
       try {
         const token = localStorage.getItem('token');
+        console.log('[AUTOSAVE] Starting autosave...', {
+          hasToken: !!token,
+          dataSize: JSON.stringify(pageData).length
+        });
+        
         const response = await fetch('https://functions.poehali.dev/ea735e68-a4b3-4d19-bb7a-4f720bd82568', {
           method: 'POST',
           headers: {
@@ -111,16 +116,28 @@ function PageBuilder() {
           body: JSON.stringify(pageData)
         });
         
+        console.log('[AUTOSAVE] Response:', {
+          status: response.status,
+          ok: response.ok
+        });
+        
         if (response.ok) {
-          console.log('Autosaved successfully');
+          console.log('[AUTOSAVE] ✅ Saved successfully');
+          toast({
+            title: "Автосохранение",
+            description: "Изменения сохранены",
+          });
+        } else {
+          const error = await response.text();
+          console.error('[AUTOSAVE] Failed:', error);
         }
       } catch (e) {
-        console.error('Autosave failed', e);
+        console.error('[AUTOSAVE] ❌ Error:', e);
       }
     }, 2000);
 
     return () => clearTimeout(saveTimer);
-  }, [pageData, isLoaded]);
+  }, [pageData, isLoaded, toast]);
   const [uploadingHero, setUploadingHero] = useState(false);
   const [uploadingProfile, setUploadingProfile] = useState(false);
   const [uploadingGallery, setUploadingGallery] = useState(false);
