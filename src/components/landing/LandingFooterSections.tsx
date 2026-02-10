@@ -161,8 +161,9 @@ export default function LandingFooterSections({
       {/* Footer */}
       <footer className="bg-gradient-to-br from-gray-900 to-gray-800 text-white py-8 sm:py-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="border-t border-gray-700 pt-6 flex flex-col items-center gap-4 text-center">
-            <div className="text-sm text-gray-400">
+          <div className="border-t border-gray-700 pt-6 space-y-6">
+            {/* Specialist Info */}
+            <div className="text-center text-sm text-gray-400">
               {userProfile?.full_name && (
                 <p className="font-medium text-gray-300 mb-1">
                   {userProfile.full_name}
@@ -174,7 +175,37 @@ export default function LandingFooterSections({
                 </p>
               )}
             </div>
-            <div className="flex items-center gap-2 text-gray-400 text-sm">
+
+            {/* Medical Disclaimer */}
+            <div className="max-w-3xl mx-auto text-center">
+              <p className="text-xs text-gray-400 leading-relaxed">
+                Не оказывает медицинских услуг, не ставит диагнозы и не назначает лечение. Вся информация носит ознакомительный характер.
+              </p>
+            </div>
+
+            {/* Legal Links */}
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-gray-400">
+              <a 
+                href="https://docdialog.su/privacy" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-gray-200 transition-colors underline"
+              >
+                Политика конфиденциальности
+              </a>
+              <span className="hidden sm:inline text-gray-600">•</span>
+              <a 
+                href="https://docdialog.su/offer" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-gray-200 transition-colors underline"
+              >
+                Договор оферты
+              </a>
+            </div>
+
+            {/* Platform Credit */}
+            <div className="flex items-center justify-center gap-2 text-gray-400 text-sm pt-2">
               <Icon name="Heart" size={14} className="text-red-400" />
               <a 
                 href="https://docdialog.su" 
