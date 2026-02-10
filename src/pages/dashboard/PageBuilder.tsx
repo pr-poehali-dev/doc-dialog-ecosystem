@@ -355,7 +355,6 @@ function PageBuilder() {
       });
       
       if (response.ok) {
-        localStorage.setItem('pageBuilderData', JSON.stringify(pageData));
         toast({
           title: "Черновик сохранен",
           description: "Ваши изменения сохранены на всех устройствах",
@@ -364,10 +363,10 @@ function PageBuilder() {
         throw new Error('Failed to save');
       }
     } catch (error) {
-      localStorage.setItem('pageBuilderData', JSON.stringify(pageData));
       toast({
-        title: "Черновик сохранен локально",
-        description: "Изменения будут синхронизированы при подключении",
+        title: "Ошибка сохранения",
+        description: "Проверьте подключение к интернету. Автосохранение повторит попытку.",
+        variant: "destructive"
       });
     }
   };
@@ -648,7 +647,6 @@ function PageBuilder() {
                 variant="outline" 
                 size="sm"
                 onClick={() => {
-                  localStorage.setItem('pageBuilderData', JSON.stringify(pageData));
                   setIsPreviewOpen(true);
                 }}
                 className="flex-1 sm:flex-initial"
