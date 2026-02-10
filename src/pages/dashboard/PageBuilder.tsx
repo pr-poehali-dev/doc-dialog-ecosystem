@@ -111,7 +111,9 @@ function PageBuilder() {
             gallery: data.gallery?.length || 0,
             certificates: data.certificates?.length || 0,
             blog: data.blog?.length || 0,
-            offers: data.offers?.length || 0
+            offers: data.offers?.length || 0,
+            reviews: data.reviews?.length || 0,
+            rawData: data
           });
           
           // Check template subscription
