@@ -19,6 +19,7 @@ interface LandingFooterSectionsProps {
   reviews: Review[];
   showPhone: boolean;
   showTelegram: boolean;
+  showWhatsapp?: boolean;
   userProfile: any;
   gradientClass: string;
   selectedPost: any;
@@ -30,6 +31,7 @@ export default function LandingFooterSections({
   reviews,
   showPhone,
   showTelegram,
+  showWhatsapp = false,
   userProfile,
   gradientClass,
   selectedPost,
@@ -78,7 +80,7 @@ export default function LandingFooterSections({
       )}
 
       {/* Contact Section */}
-      {(showPhone || showTelegram) && (
+      {(showPhone || showTelegram || showWhatsapp) && (
         <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-gray-50 to-white">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
@@ -88,7 +90,7 @@ export default function LandingFooterSections({
                   Выберите удобный способ связи и запишитесь на сеанс
                 </p>
               </div>
-              <div className={`grid ${showPhone && showTelegram ? 'sm:grid-cols-2' : 'grid-cols-1'} gap-4 max-w-2xl mx-auto`}>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
                 {showPhone && (
                   <div className="p-4 sm:p-6 rounded-2xl bg-white border-2 border-gray-100 shadow-sm text-center">
                     <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r ${gradientClass} flex items-center justify-center mx-auto mb-3 sm:mb-4`}>
@@ -107,7 +109,7 @@ export default function LandingFooterSections({
                     </Button>
                   </div>
                 )}
-                {showTelegram && (
+                {showTelegram && userProfile?.telegram && (
                   <div className="p-4 sm:p-6 rounded-2xl bg-white border-2 border-gray-100 shadow-sm text-center">
                     <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r ${gradientClass} flex items-center justify-center mx-auto mb-3 sm:mb-4`}>
                       <Icon name="Send" size={24} className="text-white sm:w-7 sm:h-7" />
@@ -116,14 +118,34 @@ export default function LandingFooterSections({
                     <Button 
                       asChild
                       className={`w-full bg-gradient-to-r ${gradientClass} hover:opacity-90`}
-                      disabled={!userProfile?.telegram}
                     >
                       <a 
-                        href={userProfile?.telegram ? `https://t.me/${userProfile.telegram.replace('@', '')}` : '#'}
+                        href={`https://t.me/${userProfile.telegram.replace('@', '')}`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
                         <Icon name="Send" size={18} className="mr-2" />
+                        Написать
+                      </a>
+                    </Button>
+                  </div>
+                )}
+                {showWhatsapp && userProfile?.whatsapp && (
+                  <div className="p-4 sm:p-6 rounded-2xl bg-white border-2 border-gray-100 shadow-sm text-center">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r from-green-500 to-green-600 flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                      <Icon name="MessageCircle" size={24} className="text-white sm:w-7 sm:h-7" />
+                    </div>
+                    <p className="font-semibold text-base sm:text-lg mb-4 sm:mb-6 text-gray-900">WhatsApp</p>
+                    <Button 
+                      asChild
+                      className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:opacity-90"
+                    >
+                      <a 
+                        href={`https://wa.me/${userProfile.whatsapp.replace(/[^0-9]/g, '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Icon name="MessageCircle" size={18} className="mr-2" />
                         Написать
                       </a>
                     </Button>

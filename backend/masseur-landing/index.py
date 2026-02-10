@@ -87,6 +87,7 @@ def handler(event: dict, context) -> dict:
                         'template': landing['template'],
                         'showPhone': landing['show_phone'],
                         'showTelegram': landing['show_telegram'],
+                        'showWhatsapp': landing.get('show_whatsapp', True),
                         'colorTheme': landing['color_theme']
                     }),
                     'isBase64Encoded': False
@@ -113,7 +114,7 @@ def handler(event: dict, context) -> dict:
                         about_title = %s, about_text = %s, services = %s, process_title = %s,
                         process_steps = %s, gallery = %s, certificates = %s, reviews = %s,
                         blog = %s, videos = %s, offers = %s, template = %s, show_phone = %s,
-                        show_telegram = %s, color_theme = %s, updated_at = NOW()
+                        show_telegram = %s, show_whatsapp = %s, color_theme = %s, updated_at = NOW()
                     WHERE user_id = %s
                     RETURNING id
                 """, (
@@ -124,7 +125,7 @@ def handler(event: dict, context) -> dict:
                     json.dumps(data.get('certificates', [])), json.dumps(data.get('reviews', [])),
                     json.dumps(data.get('blog', [])), json.dumps(data.get('videos', [])),
                     json.dumps(data.get('offers', [])), data.get('template'),
-                    data.get('showPhone'), data.get('showTelegram'), data.get('colorTheme'),
+                    data.get('showPhone'), data.get('showTelegram'), data.get('showWhatsapp', True), data.get('colorTheme'),
                     user_id
                 ))
             else:
@@ -132,8 +133,8 @@ def handler(event: dict, context) -> dict:
                     INSERT INTO t_p46047379_doc_dialog_ecosystem.masseur_landing_pages
                     (user_id, hero_title, hero_subtitle, hero_image, profile_photo, about_title,
                      about_text, services, process_title, process_steps, gallery, certificates,
-                     reviews, blog, videos, offers, template, show_phone, show_telegram, color_theme)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                     reviews, blog, videos, offers, template, show_phone, show_telegram, show_whatsapp, color_theme)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     RETURNING id
                 """, (
                     user_id, data.get('heroTitle'), data.get('heroSubtitle'), data.get('heroImage'),
@@ -143,7 +144,7 @@ def handler(event: dict, context) -> dict:
                     json.dumps(data.get('certificates', [])), json.dumps(data.get('reviews', [])),
                     json.dumps(data.get('blog', [])), json.dumps(data.get('videos', [])),
                     json.dumps(data.get('offers', [])), data.get('template'),
-                    data.get('showPhone'), data.get('showTelegram'), data.get('colorTheme')
+                    data.get('showPhone'), data.get('showTelegram'), data.get('showWhatsapp', True), data.get('colorTheme')
                 ))
             
             conn.commit()
