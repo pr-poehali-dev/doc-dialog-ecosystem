@@ -84,7 +84,7 @@ function PageBuilder() {
         
         if (response.ok) {
           const data = await response.json();
-          setPageData({ ...defaultPageData, ...data });
+          setPageData(data);
         }
       } catch (e) {
         console.error('Failed to load landing data', e);
@@ -238,7 +238,7 @@ function PageBuilder() {
   const addService = () => {
     setPageData({
       ...pageData,
-      services: [...pageData.services, { name: '', duration: '', price: '', description: '' }]
+      services: [...pageData.services, { name: '', duration: '', price: '', description: '', image: '' }]
     });
   };
 
