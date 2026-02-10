@@ -131,6 +131,7 @@ const SpecialistLanding = lazy(() => import("./pages/SpecialistLanding"));
 const RegressionHypnosisLanding = lazy(() => import("./pages/RegressionHypnosisLanding"));
 const MasseurLandingPublic = lazy(() => import("./pages/MasseurLandingPublic"));
 const SpecialistLandingPublic = lazy(() => import("./pages/SpecialistLandingPublic"));
+const LandingBuilderPromo = lazy(() => import("./pages/LandingBuilderPromo"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -174,6 +175,7 @@ const App = () => (
           <Route path="/register/client" element={<RegisterClient />} />
           <Route path="/masseur-welcome" element={<MasseurWelcome />} />
           <Route path="/for-specialists" element={<MasseurProfessionalLanding />} />
+          <Route path="/landing-builder" element={<LandingBuilderPromo />} />
           <Route path="/medical-report" element={<MedicalReportLanding />} />
           <Route path="/landing/:userId" element={<MasseurLandingPublic />} />
           <Route path="/dashboard" element={<Dashboard />} />
