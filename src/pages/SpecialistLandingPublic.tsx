@@ -226,8 +226,50 @@ export default function SpecialistLandingPublic() {
         template={pageData.template}
       />
 
+      {/* Блог перед футером */}
+      {pageData.blog && pageData.blog.length > 0 && (pageData.template === 'premium' || pageData.template === 'luxury') && (
+        <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-white to-gray-50">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4">Блог и новости</h2>
+            <p className="text-center text-sm sm:text-base text-gray-600 mb-8 sm:mb-12 max-w-2xl mx-auto px-4">
+              Полезные материалы и советы от специалиста
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-6xl mx-auto">
+              {pageData.blog.map((post: { title: string; content: string; image: string; date: string }, index: number) => (
+                <div 
+                  key={index} 
+                  className="bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow border border-gray-100"
+                >
+                  {post.image && (
+                    <img 
+                      src={post.image} 
+                      alt={post.title} 
+                      className="w-full h-40 sm:h-48 object-cover"
+                    />
+                  )}
+                  <div className="p-4 sm:p-6">
+                    <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-gray-900">{post.title}</h3>
+                    <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4 leading-relaxed line-clamp-3">{post.content}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] sm:text-xs text-gray-500">{post.date}</span>
+                      <button 
+                        className="text-xs sm:text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                        onClick={() => handleOpenPost(post)}
+                      >
+                        Читать далее
+                        <Icon name="ArrowRight" size={14} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       <LandingPremiumSections
-        blog={pageData.blog}
+        blog={[]}
         offers={pageData.offers}
         gradientClass={gradientClass}
         template={pageData.template}
