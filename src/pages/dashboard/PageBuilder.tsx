@@ -1204,29 +1204,45 @@ function PageBuilder() {
                   <CardContent className="space-y-4">
                     {pageData.blog && pageData.blog.length > 0 && (
                       <div className="space-y-3 mb-4">
-                        {pageData.blog.map((post, index) => (
-                          <div key={index} className="p-3 bg-indigo-50 rounded-lg border border-indigo-100">
-                            <div className="flex items-start justify-between mb-2">
-                              <p className="font-semibold text-sm">{post.title}</p>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => {
-                                  setPageData({
-                                    ...pageData,
-                                    blog: pageData.blog.filter((_, i) => i !== index)
-                                  });
-                                }}
-                              >
-                                <Icon name="Trash2" size={14} />
-                              </Button>
-                            </div>
-                            {post.image && (
-                              <img src={post.image} alt={post.title} className="w-full h-20 object-cover rounded mb-2" />
-                            )}
-                            <p className="text-xs text-gray-600 line-clamp-2">{post.content}</p>
-                          </div>
-                        ))}
+                        {[...pageData.blog]
+                          .sort((a, b) => {
+                            const dateA = new Date(a.date.split('.').reverse().join('-'));
+                            const dateB = new Date(b.date.split('.').reverse().join('-'));
+                            return dateB.getTime() - dateA.getTime();
+                          })
+                          .map((post, index) => {
+                            const originalIndex = pageData.blog.findIndex(p => p === post);
+                            return (
+                              <div key={originalIndex} className="p-3 bg-indigo-50 rounded-lg border border-indigo-100">
+                                {index === 0 && (
+                                  <span className="inline-block px-2 py-1 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-[10px] font-semibold rounded-full mb-2">
+                                    Новое
+                                  </span>
+                                )}
+                                <div className="flex items-start justify-between mb-2">
+                                  <p className="font-semibold text-sm">{post.title}</p>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => {
+                                      setPageData({
+                                        ...pageData,
+                                        blog: pageData.blog.filter((_, i) => i !== originalIndex)
+                                      });
+                                    }}
+                                  >
+                                    <Icon name="Trash2" size={14} />
+                                  </Button>
+                                </div>
+                                {post.image && (
+                                  <img src={post.image} alt={post.title} className="w-full h-20 object-cover rounded mb-2" />
+                                )}
+                                <p className="text-xs text-gray-600 line-clamp-2">{post.content}</p>
+                                <p className="text-[10px] text-gray-500 mt-1">{post.date}</p>
+                              </div>
+                            );
+                          })
+                        }
                       </div>
                     )}
 
