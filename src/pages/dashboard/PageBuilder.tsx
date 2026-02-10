@@ -192,8 +192,8 @@ function PageBuilder() {
         if (response.ok) {
           console.log('[AUTOSAVE] ✅ Saved successfully');
           toast({
-            title: "Автосохранение",
-            description: "Изменения сохранены",
+            title: "✅ Сохранено",
+            description: "Изменения сохранены. Обновите лендинг (F5) для просмотра.",
           });
         } else {
           const error = await response.text();
@@ -356,8 +356,8 @@ function PageBuilder() {
       
       if (response.ok) {
         toast({
-          title: "Черновик сохранен",
-          description: "Ваши изменения сохранены на всех устройствах",
+          title: "✅ Успешно сохранено!",
+          description: "Изменения применены. Откройте лендинг и обновите страницу (F5).",
         });
       } else {
         throw new Error('Failed to save');
@@ -647,6 +647,15 @@ function PageBuilder() {
               <p className="text-sm sm:text-base text-muted-foreground">Создайте страницу, которая привлекает клиентов</p>
             </div>
             <div className="flex gap-2 flex-wrap">
+              <Button 
+                variant="default" 
+                size="sm"
+                onClick={handleSave}
+                className="flex-1 sm:flex-initial bg-green-600 hover:bg-green-700"
+              >
+                <Icon name="Save" size={16} className="sm:mr-2" />
+                <span className="hidden sm:inline">Сохранить</span>
+              </Button>
               <Button 
                 variant="outline" 
                 size="sm"
@@ -1513,17 +1522,20 @@ function PageBuilder() {
                             return;
                           }
                           if (newOffer.title && newOffer.discount && newOffer.description) {
+                            const updatedOffers = [
+                              ...pageData.offers,
+                              { ...newOffer }
+                            ];
+                            console.log('[ADD OFFER] Adding new offer:', newOffer.title);
+                            console.log('[ADD OFFER] Total offers now:', updatedOffers.length);
                             setPageData({
                               ...pageData,
-                              offers: [
-                                ...pageData.offers,
-                                { ...newOffer }
-                              ]
+                              offers: updatedOffers
                             });
                             setNewOffer({ title: '', description: '', discount: '', image: '' });
                             toast({
-                              title: 'Предложение добавлено',
-                              description: 'Предложение появится на лендинге',
+                              title: '✅ Скидка добавлена',
+                              description: `Автосохранение через 2 сек. Или нажмите "Сохранить" сейчас. Всего: ${updatedOffers.length}`,
                             });
                           }
                         }}
