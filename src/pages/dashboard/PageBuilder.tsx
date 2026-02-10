@@ -69,7 +69,7 @@ function PageBuilder() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [pageData, setPageData] = useState(defaultPageData);
-
+  const [isLoaded, setIsLoaded] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
 
   useEffect(() => {
@@ -88,6 +88,8 @@ function PageBuilder() {
         }
       } catch (e) {
         console.error('Failed to load landing data', e);
+      } finally {
+        setIsLoaded(true);
       }
     };
     
@@ -95,10 +97,12 @@ function PageBuilder() {
   }, []);
 
   useEffect(() => {
+    if (!isLoaded) return;
+    
     const saveTimer = setTimeout(async () => {
       try {
         const token = localStorage.getItem('token');
-        await fetch('https://functions.poehali.dev/ea735e68-a4b3-4d19-bb7a-4f720bd82568', {
+        const response = await fetch('https://functions.poehali.dev/ea735e68-a4b3-4d19-bb7a-4f720bd82568', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -106,13 +110,17 @@ function PageBuilder() {
           },
           body: JSON.stringify(pageData)
         });
+        
+        if (response.ok) {
+          console.log('Autosaved successfully');
+        }
       } catch (e) {
         console.error('Autosave failed', e);
       }
     }, 2000);
 
     return () => clearTimeout(saveTimer);
-  }, [pageData]);
+  }, [pageData, isLoaded]);
   const [uploadingHero, setUploadingHero] = useState(false);
   const [uploadingProfile, setUploadingProfile] = useState(false);
   const [uploadingGallery, setUploadingGallery] = useState(false);
