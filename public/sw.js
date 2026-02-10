@@ -36,19 +36,29 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // API запросы - Network First
+  // API запросы - Network First (только GET)
   if (url.hostname.includes('functions.poehali.dev')) {
     event.respondWith(
       fetch(request)
         .then((response) => {
-          const clonedResponse = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(request, clonedResponse);
-          });
+          // Кешируем только GET-запросы
+          if (request.method === 'GET') {
+            const clonedResponse = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, clonedResponse);
+            });
+          }
           return response;
         })
         .catch(() => {
-          return caches.match(request);
+          // Fallback на кеш только для GET
+          if (request.method === 'GET') {
+            return caches.match(request);
+          }
+          return new Response(JSON.stringify({ error: 'Network unavailable' }), {
+            status: 503,
+            headers: { 'Content-Type': 'application/json' }
+          });
         })
     );
     return;
