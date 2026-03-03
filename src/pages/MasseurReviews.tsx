@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
 import { formatRelativeTime } from '@/utils/datetime';
-import { useNewReviews } from '@/hooks/useNewReviews';
+import useDashboardPolling from '@/hooks/useDashboardPolling';
 
 const API_URL = 'https://functions.poehali.dev/04d0b538-1cf5-4941-9c06-8d1bef5854ec';
 
@@ -26,7 +26,7 @@ export default function MasseurReviews() {
   const [replyingTo, setReplyingTo] = useState<number | null>(null);
   const [replyText, setReplyText] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const { markReviewsAsViewed } = useNewReviews();
+  const { markReviewsAsViewed } = useDashboardPolling();
 
   useEffect(() => {
     fetchReviews();

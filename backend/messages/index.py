@@ -67,6 +67,8 @@ def handler(event: dict, context) -> dict:
                 return get_masseur_orders(user_data['user_id'], user_data.get('role', 'client'))
             elif action == 'get-client-orders':
                 return get_client_orders(user_data['user_id'])
+            elif action == 'get-dashboard-counts':
+                return get_dashboard_counts(user_data['user_id'], user_data.get('role', 'client'))
         
         if method == 'POST':
             body = json.loads(event.get('body', '{}'))
@@ -820,6 +822,66 @@ def get_client_orders(user_id: int) -> dict:
         import traceback
         traceback.print_exc()
         return error_response(f"Ошибка получения заказов: {str(e)}", 500)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_dashboard_counts(user_id: int, user_role: str) -> dict:
+    '''Получение всех счётчиков для дашборда одним запросом'''
+    conn, cursor = get_db_connection()
+    
+    try:
+        schema = 't_p46047379_doc_dialog_ecosystem'
+        
+        cursor.execute(f"""
+            SELECT COALESCE(SUM(
+                CASE WHEN m.sender_id != %s AND m.is_read = FALSE THEN 1 ELSE 0 END
+            ), 0) as unread_messages
+            FROM {schema}.messages m
+            WHERE m.receiver_id = %s
+        """, (user_id, user_id))
+        unread_row = cursor.fetchone()
+        unread_messages = unread_row['unread_messages'] if unread_row else 0
+        
+        pending_orders = 0
+        if user_role == 'masseur':
+            cursor.execute(f"""
+                SELECT mp.id FROM {schema}.masseur_profiles mp WHERE mp.user_id = %s
+            """, (user_id,))
+            mp_row = cursor.fetchone()
+            if mp_row:
+                cursor.execute(f"""
+                    SELECT COUNT(*) as cnt FROM {schema}.service_orders
+                    WHERE masseur_id = %s AND status = 'pending'
+                """, (mp_row['id'],))
+                orders_row = cursor.fetchone()
+                pending_orders = orders_row['cnt'] if orders_row else 0
+        
+        new_reviews = 0
+        if user_role == 'masseur':
+            cursor.execute(f"""
+                SELECT mp.id FROM {schema}.masseur_profiles mp WHERE mp.user_id = %s
+            """, (user_id,))
+            mp_row = cursor.fetchone()
+            if mp_row:
+                cursor.execute(f"""
+                    SELECT COUNT(*) as cnt FROM {schema}.reviews
+                    WHERE masseur_id = %s AND moderation_status = 'approved'
+                """, (mp_row['id'],))
+                reviews_row = cursor.fetchone()
+                new_reviews = reviews_row['cnt'] if reviews_row else 0
+        
+        return success_response({
+            'unread_messages': unread_messages,
+            'pending_orders': pending_orders,
+            'total_approved_reviews': new_reviews
+        })
+    except Exception as e:
+        print(f"ERROR in get_dashboard_counts: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return error_response(f"Ошибка получения счётчиков: {str(e)}", 500)
     finally:
         cursor.close()
         conn.close()

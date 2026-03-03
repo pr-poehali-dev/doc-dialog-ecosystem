@@ -3,17 +3,13 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
-import { useUnreadMessages } from '@/hooks/useUnreadMessages';
-import { useNewReviews } from '@/hooks/useNewReviews';
-import { useNewOrders } from '@/hooks/useNewOrders';
+import useDashboardPolling from '@/hooks/useDashboardPolling';
 import PromoteMasseurDialog from '@/components/masseur/PromoteMasseurDialog';
 
 const MASSEURS_API = 'https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436';
 
 export default function MasseurDashboard() {
-  const { unreadCount } = useUnreadMessages();
-  const { newReviewsCount } = useNewReviews();
-  const { newOrdersCount } = useNewOrders();
+  const { unreadCount, newOrdersCount, newReviewsCount } = useDashboardPolling();
   const [promoteDialogOpen, setPromoteDialogOpen] = useState(false);
   const [masseurData, setMasseurData] = useState<any>(null);
   const [promoOffersCount, setPromoOffersCount] = useState(0);

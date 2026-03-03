@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
-import { useUnreadMessages } from '@/hooks/useUnreadMessages';
+import useDashboardPolling from '@/hooks/useDashboardPolling';
 import { getUserId } from '@/utils/auth';
 
 interface SubscriptionPlan {
@@ -22,7 +22,7 @@ interface SubscriptionData {
 }
 
 export default function SchoolDashboard() {
-  const { unreadCount } = useUnreadMessages();
+  const { unreadCount } = useDashboardPolling();
   const [canSendMessages, setCanSendMessages] = useState(false);
   const [subscriptionPlan, setSubscriptionPlan] = useState<SubscriptionPlan | null>(null);
   const [validUntil, setValidUntil] = useState<string | null>(null);

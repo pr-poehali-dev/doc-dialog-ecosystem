@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useUnreadMessages } from '@/hooks/useUnreadMessages';
+import useDashboardPolling from '@/hooks/useDashboardPolling';
 import VacancyForm from '@/components/dashboard/VacancyForm';
 import VerificationBanner from '@/components/dashboard/salon/VerificationBanner';
 import DashboardCards from '@/components/dashboard/salon/DashboardCards';
@@ -9,7 +9,7 @@ import VacancyInfoCard from '@/components/dashboard/salon/VacancyInfoCard';
 const SALON_API = 'https://functions.poehali.dev/01aa5a2f-6476-4fbc-ba10-6808960c8a21';
 
 export default function SalonDashboard() {
-  const { unreadCount } = useUnreadMessages();
+  const { unreadCount } = useDashboardPolling();
   const [isVerified, setIsVerified] = useState<boolean | null>(null);
   const [salonExists, setSalonExists] = useState(false);
   const [loading, setLoading] = useState(true);

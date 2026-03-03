@@ -2,11 +2,11 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
-import { useUnreadMessages } from '@/hooks/useUnreadMessages';
+import useDashboardPolling from '@/hooks/useDashboardPolling';
 import { useToast } from '@/hooks/use-toast';
 
 export default function ClientDashboard() {
-  const { unreadCount } = useUnreadMessages();
+  const { unreadCount } = useDashboardPolling();
   const { toast } = useToast();
 
   const handleInDevelopment = () => {
