@@ -69,10 +69,9 @@ export default function Favorites() {
         return;
       }
 
-      console.log('Загрузка массажистов из', MASSEURS_API);
+      const masseurIds = favoriteIds.map((f: any) => f.masseur_id).join(',');
       
-      // Получаем список всех массажистов
-      const masseursResponse = await fetch(MASSEURS_API);
+      const masseursResponse = await fetch(`${MASSEURS_API}?ids=${masseurIds}`);
       if (!masseursResponse.ok) {
         console.error('Ошибка загрузки массажистов:', masseursResponse.status);
         return;
@@ -80,9 +79,7 @@ export default function Favorites() {
 
       const masseursData = await masseursResponse.json();
       const allMasseurs = masseursData.masseurs || [];
-      console.log('Всего массажистов:', allMasseurs.length);
 
-      // Фильтруем только избранных массажистов
       const favoriteIdSet = new Set(favoriteIds.map((f: any) => f.masseur_id));
       console.log('ID избранных:', Array.from(favoriteIdSet));
       

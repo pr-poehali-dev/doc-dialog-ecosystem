@@ -110,11 +110,10 @@ const MasseurProfile = () => {
 
   const loadMasseurProfile = async () => {
     try {
-      const response = await fetch('https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436');
+      const response = await fetch(`https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436?id=${id}`);
       if (response.ok) {
         const data = await response.json();
-        const masseurs = data.masseurs || data;
-        const foundMasseur = masseurs.find((m: Masseur) => m.id === parseInt(id || '0'));
+        const foundMasseur = data.masseur;
         
         if (foundMasseur) {
           setMasseur(foundMasseur);

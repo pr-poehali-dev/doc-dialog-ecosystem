@@ -27,12 +27,10 @@ export default function MasseurDashboard() {
       const user = JSON.parse(atob(token.split('.')[1]));
       const userId = user.user_id;
 
-      const response = await fetch(MASSEURS_API);
+      const response = await fetch(`${MASSEURS_API}?user_id=${userId}`);
       if (response.ok) {
         const data = await response.json();
-        const masseurs = data.masseurs || data;
-        const found = masseurs.find((m: any) => m.user_id === userId);
-        setMasseurData(found);
+        setMasseurData(data.masseur || null);
       }
     } catch (error) {
       console.error('Error loading masseur data:', error);

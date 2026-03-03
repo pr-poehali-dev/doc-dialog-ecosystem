@@ -7,6 +7,26 @@
       "expectedStatus": 200
     },
     {
+      "name": "Get masseur by id - not found",
+      "method": "GET",
+      "path": "/?id=999999",
+      "expectedStatus": 404,
+      "expectedBody": {
+        "error": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Get masseur by user_id - not found",
+      "method": "GET",
+      "path": "/?user_id=999999",
+      "expectedStatus": 404,
+      "expectedBody": {
+        "error": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
       "name": "OPTIONS for CORS",
       "method": "OPTIONS",
       "path": "/",

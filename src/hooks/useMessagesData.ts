@@ -97,17 +97,13 @@ export function useMessagesData() {
 
   const loadMasseurAndCreateChat = async (masseurId: number, isBooking: boolean = false, serviceParam: string | null = null) => {
     try {
-      console.log('🔍 Loading masseur with ID:', masseurId);
-      const response = await fetch('https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436');
+      console.log('Loading masseur with ID:', masseurId);
+      const response = await fetch(`https://functions.poehali.dev/49394b85-90a2-40ca-a843-19e551c6c436?id=${masseurId}`);
       if (response.ok) {
         const data = await response.json();
-        console.log('📦 API response:', data);
+        const masseur = data.masseur;
         
-        // API может вернуть { masseurs: [...] } или просто массив
-        const masseursList = data.masseurs || data;
-        const masseur = masseursList.find((m: any) => m.id === masseurId);
-        
-        console.log('👤 Found masseur:', masseur);
+        console.log('Found masseur:', masseur);
         
         if (masseur) {
           const alreadyExists = chats.some(c => c.other_user_id === masseur.user_id);
